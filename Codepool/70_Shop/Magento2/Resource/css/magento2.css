@@ -1,0 +1,30 @@
+/* productlist css */
+.ml-plist tbody > tr > *{
+    vertical-align: middle;
+}
+body.magna.jqueryui .ui-widget {
+    font-family: sans-serif;
+    font-size: 13px;
+    background: #F5F5F5;
+    border: none;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    padding: 8px 26px 23px;
+    visibility: visible;
+    opacity: inherit;
+}
+
+body.magento2 div.magna table#tableWrap {
+    padding: 0 25px !important;
+}
+
+body.magento2 div.magna form{
+    display: inline;
+}
+html{
+    overflow:auto;
+}
+#magnafooter .latest-version-text {
+    color: red;
+}

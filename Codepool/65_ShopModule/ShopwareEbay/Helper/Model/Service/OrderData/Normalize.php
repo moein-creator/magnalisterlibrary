@@ -1,0 +1,30 @@
+<?php
+
+MLFilesystem::gi()->loadClass('Ebay_Helper_Model_Service_OrderData_Normalize');
+
+class ML_ShopwareEbay_Helper_Model_Service_OrderData_Normalize extends ML_Ebay_Helper_Model_Service_OrderData_Normalize {
+
+    protected function normalizeOrder() {
+        parent::normalizeOrder();
+        if (isset($this->aOrder['Order']['Payed']) && $this->aOrder['Order']['Payed']) {
+             $this->aOrder['Order']['PaymentStatus'] = MLModul::gi()->getConfig('paymentstatus.paid');
+        }elseif(MLModul::gi()->getConfig('orderimport.paymentstatus') !== null){
+            $this->aOrder['Order']['PaymentStatus'] = MLModul::gi()->getConfig('orderimport.paymentstatus');
+        }else{
+            $this->aOrder['Order']['PaymentStatus'] = 17;//deprecated code , just use for user who configured ebay before
+        }
+        return $this;
+    }
+    protected function normalizeAddressSets () {
+        $address = !empty($this->aOrder['AddressSets']['Shipping']['StreetAddress']) 
+            ? $this->aOrder['AddressSets']['Shipping']['StreetAddress'] 
+            : $this->aOrder['AddressSets']['Shipping']['Street'] . ' ' . $this->aOrder['AddressSets']['Shipping']['Housenumber'];
+        if (strpos($address, 'Packstation') === 0) {
+            $this->aOrder['AddressSets']['Shipping']['Street'] = $address;
+            $this->aOrder['AddressSets']['Shipping']['Housenumber'] = '0';
+        }
+        parent::normalizeAddressSets();
+        return $this;
+    }
+    
+}

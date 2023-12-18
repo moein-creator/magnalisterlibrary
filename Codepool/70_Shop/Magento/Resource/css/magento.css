@@ -1,0 +1,4 @@
+/* productlist css */
+.ml-plist tbody > tr > *{
+    vertical-align: middle;
+}

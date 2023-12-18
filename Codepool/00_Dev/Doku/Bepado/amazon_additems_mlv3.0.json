@@ -1,0 +1,87 @@
+{
+    "ACTION": "AddItems",
+    "SUBSYSTEM": "Amazon",
+    "MODE": "ADD",
+    "DATA": [
+        {
+            "SKU": "CoolPants",
+            "Price": 35.99,
+            "Quantity": "1",
+            "ConditionType": "New",
+            "MainCategory": "Apparel",
+            "ProductType": "",
+            "BrowseNodes": [
+                "78721031"
+            ],
+            "ItemTitle": "Eine coole Hose",
+            "Manufacturer": "D\u00f6rte",
+            "Brand": "CoolPants",
+            "ManufacturerPartNumber": "",
+            "EAN": "8299684859352",
+            "Images": [
+                "http:\/\/dev.magnalister.com\/shops\/xtcommerce\/images\/product_images\/popup_images\/24_0.jpg"
+            ],
+            "BulletPoints": [
+                "Coole Hose",
+                "Mit Hosentaschen",
+                "Aus Stoff",
+                "",
+                ""
+            ],
+            "Description": "Super Hose. Mit Hosentaschen!",
+            "Keywords": [
+                "Hosentaschen",
+                "Stoff",
+                "",
+                "",
+                ""
+            ],
+            "Attributes": {
+                "ClothingType": "Pants",
+                "StyleKeyword": "Bekleidung",
+                "Department": "Damen"
+            },
+            "ConditionNote": "",
+            "Variations": [
+                {
+                    "SKU": "ML4123_36B",
+                    "Price": "47.00",
+                    "Currency": "EUR",
+                    "Quantity": "5",
+                    "EAN": "2345234567534",
+                    "Variation": [
+                        {
+                            "Name": "Farbe",
+                            "Value": "Blau"
+                        },
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "36"
+                        }
+                    ],
+                    "VariationImage": "http:\/\/www.example.org\/productimages\/coolpantsblue.jpg",
+                    "ShippingTime": "2",
+                },
+                {
+                    "SKU": "ML4123_34S",
+                    "Price": "45.00",
+                    "Currency": "EUR",
+                    "Quantity": "2",
+                    "EAN": "2345654563455",
+                    "Variation": [
+                        {
+                            "Name": "Farbe",
+                            "Value": "Schwarz"
+                        },
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "34"
+                        }
+                    ],
+                    "VariationImage": "http:\/\/www.example.org\/productimages\/coolpantsblack.jpg",
+                    "ShippingTime": "8",
+                }
+            ]
+        }
+    ]
+}

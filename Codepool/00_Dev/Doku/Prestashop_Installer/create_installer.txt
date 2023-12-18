@@ -1,0 +1,32 @@
+to create installer :
+
+download the prestashop package from magnalister from 
+http://www.magnalister.com/downloads/plugin/magnalister_prestashop_current.zip
+
+you can see magnalister.zip in files, extract it  ,
+we need just following file . so remove other files and folder from current installer
+
+** add "10_Customer/Partner/Setting/shopware.php" from current directory
+** add "upgrade/*" from current directory
+** if new version = 3.4.3 , we should have upgrade/upgrade_module-3.4.3.php with same content
+
+/magnalister/config.xml
+/magnalister/logo.png
+/magnalister/magnalister.php
+/magnalister/Readme.md
+/magnalister/controllers/*
+/magnalister/translations/*
+/magnalister/upgrade/*
+/magnalister/views/*
+/magnalister/lib/Alias/*
+/magnalister/lib/Codepool/70_Shop/Prestashop/isActive.php
+/magnalister/lib/Codepool/70_Shop/Prestashop/isShop.php
+/magnalister/lib/Codepool/70_Shop/Prestashop/Model/Http.php
+/magnalister/lib/Codepool/70_Shop/Prestashop/Model/Shop.php
+/magnalister/lib/Codepool/70_Shop/Prestashop/Model/Language.php
+/magnalister/lib/Codepool/90_System/Core/*
+/magnalister/lib/Codepool/90_System/Shop/*
+/magnalister/lib/Core/*
+
+and then you can add index.php file by this script 
+ https://github.com/jmcollin/autoindex/

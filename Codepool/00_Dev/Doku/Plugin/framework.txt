@@ -1,0 +1,43 @@
+Folderstructure 
+Values in brackets are optional and only for priority of loading (0=highest priority)
+
+
+/Codepool/                                                                      here are all moduls
+
+/Codepool/(numeric+"_")ModulType/(numeric+"_")ModulName/                        a single modul
+                                                                                class name starts with ML_ModulName (without numeric+"_")
+
+/Codepool/*/*/{*/}*/(numeric+"_")+FileName.Extension
+
+
+
+
+/Codepool/*/*/isActive.php                                                      simple php script for including (optional).
+                                                                                @return bool, default=true
+                                                                                if false and isShop==false 'resource'- and 'include'- subfolders will be accessible
+                                                                                if true all subfolders will be accessible
+
+/Codepool/*/*/isShop.php                                                        simple php script for including (optional).
+                                                                                @return bool, default=false
+                                                                                if false 'resource'- and 'include'- subfolders will be accessible
+                                                                                if true and isActive==true all subfolders will be accessible
+                                                                                if true and isActive==false no subfolders will be accessible
+Logic for isActive.php and isShop.php
+    !isShop             =>  'resource' and 'include' subfolders will be accessible
+    isShop && isActive  =>  all subfolders will be accessible
+    isShop && !isActive =>  no subfolders will be accessible
+
+
+
+
+/Codepool/*/*/Controller/*                                                      Controller-Classes
+/Codepool/*/*/Helper/*                                                          Helper-Classes
+/Codepool/*/*/I18n/*                                                            PHP-Scripts for language
+/Codepool/*/*/Include/*                                                         PHP-Scripts will be ever included in init-process.
+/Codepool/*/*/Init/*                                                            PHP-Scripts will be included in init-process.
+/Codepool/*/*/Model/*                                                           Model-Classes
+/Codepool/*/*/Resource/*                                                        Misc-Files all what can be included in HTML.
+/Codepool/*/*/Setting/*                                                         PHP-Scripts for settings
+/Codepool/*/*/View/*                                                            PHP-Scripts for Views, same structure like Controller
+/Codepool/*/*/View/widget/*                                                     Widget-Views
+

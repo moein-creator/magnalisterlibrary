@@ -1,0 +1,17 @@
+/* Shopware 6 css */
+
+body.shopware6 div.magna table#tableWrap {
+    padding: 0 25px !important;
+}
+
+body.shopware6 div.magna form{
+    display: inline;
+}
+
+html{
+    overflow:auto;
+}
+
+#magnafooter .latest-version-text {
+    color: red;
+}

@@ -1,0 +1,324 @@
+<?php
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
+
+use Magna\Service\MailService;
+use Shopify\API\Application\Application;
+use Shopify\API\Application\Request\Products\NotExistingProducts\NotExistingProductParams;
+
+MLFilesystem::gi()->loadClass('Shopify_Controller_Frontend_Do_ShopifyProductCache');
+
+class ML_Shopify_Controller_Frontend_Do_ShopifyDeleteProductCache extends ML_Shopify_Controller_Frontend_Do_ShopifyProductCache {
+
+    /**
+     * Starting point for get product list via sql query
+     * @var int
+     */
+    protected $iStart;
+
+    /**
+     * Count of row in current sql query
+     * @var int
+     */
+    protected $iCount;
+
+    /**
+     * Limit for get product list via sql query
+     * @var int
+     */
+    protected $iLimit = 200;
+
+    protected $sType = 'ProductDelete';
+
+    protected $iLimitationOfIteration = 10;
+    private $aDeleted = [];
+    private $aCannotBeDeleted = [];
+
+    /**
+     * @return int
+     */
+    protected function getPage() {
+        if ($this->iCurrentPage === null) {
+            $this->iCurrentPage = (int)MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyDeleteProductPage')->get('value');
+        }
+        return $this->iCurrentPage + $this->iNumberOfRepeat;
+    }
+
+    protected function getUpdatedProductsData() {
+        $this->iStart = ($this->getPage() - 1) * $this->iLimit;
+        $oQuery = MLProduct::factory()->getList()->getQueryObject()->limit($this->iStart, $this->iLimit)->where('`ParentId` = 0');
+        $this->iCount = $oQuery->getCount();
+        $application = new Application(MLShopifyAlias::getShopHelper()->getShopId());
+        $oParams = new NotExistingProductParams();
+        $aProducts = [];
+        foreach ($oQuery->getResult() as $aProduct) {
+            $aProducts[$aProduct['ID']] = $aProduct['ProductsId'];
+        }
+        $oParams->setProductIds($aProducts);
+        $aData = $application->getProductRequest()->notExistingProduct($oParams)->getBodyAsArray()['data'];
+        return array_filter($aData, static function ($mItem) {
+            return $mItem === null;
+        });
+    }
+
+    public function execute() {
+        $iStartTime = microtime(true);
+
+        while ($this->iNumberOfRepeat < $this->iLimitationOfIteration) {
+            $this->showHeaderAndFooter('Shopify deleting product cache');
+            try {
+                $aProducts = $this->getUpdatedProductsData();
+                $blAnyProduct = false;
+                foreach ($aProducts as $sKey => $mValue) {
+                    $blAnyProduct = true;
+                    $iMLId = substr($sKey, 1);
+                    try {
+                        MLShopifyAlias::getProductModel()->set('id', $iMLId)->delete();
+                        $this->out(' magnalister Product id: '.$iMLId." is deleted\n");
+                    } catch (\Exception $oEx) {
+                        $this->out(' A problem occurred by deleting magnalister product id: '.$iMLId."\n".$oEx->getMessage()."\n".$oEx->getTraceAsString());
+                        MLMessage::gi()->addDebug($oEx);
+                    }
+                }
+                if (!$blAnyProduct) {
+                    $this->out(' There is no product to be deleted'."\n");
+                }
+
+                if ($this->iStart + $this->iLimit > $this->iCount) {
+                    $this->showHeaderAndFooter('Shopify deleting process is done');
+                    MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyDeleteProductPage')->set('value', 0)->save();
+                    break;
+                } else {
+                    $this->showHeaderAndFooter('Shopify deleting page '.$this->getPage().' was successful. Next page will be proceeded in next call automatically');
+                    MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyDeleteProductPage')->set('value', $this->getPage())->save();
+                }
+
+            } catch (Exception $oEx) {
+                $this->out($oEx->getMessage()."\n");
+            }
+
+            $this->iNumberOfRepeat++;
+        }
+
+        $this->removeOrphanedVariant();
+        $this->removeDuplicatedProduct();
+
+        $this->out("\n\nComplete (".microtime2human(microtime(true) - $iStartTime).").\n");
+    }
+
+    /**
+     * @param $sStr string
+     * @return ML_Shopify_Controller_Frontend_Do_ShopifyProductCache|void
+     */
+    protected function out($sStr) {
+        echo $sStr;
+        $this->oLogger->addLog($sStr);
+    }
+
+    /**
+     * By deleting product, variant should be also deleted automatically,
+     * it seems, always it doesn't work , so here it checks variant without parent and it delete them
+     */
+    protected function removeOrphanedVariant() {
+        MLDatabase::getDbInstance()->query("
+            DELETE v
+            FROM `magnalister_products` v
+            LEFT JOIN `magnalister_products` p ON v.ParentID=p.ID
+            WHERE  v.ParentID != '0' AND p.ID IS NULL");
+        $this->showHeaderAndFooter(' Deleting orphaned variant: '.MLDatabase::getDbInstance()->affectedRows());
+    }
+
+    /**
+     * Running same CRON simultaneously can generate duplicated product
+     * it tries to remove these products
+     */
+    protected function removeDuplicatedProduct() {
+        $aDuplicatedProductData = MLDatabase::getDbInstance()->fetchArray('
+SELECT
+    p.ID,
+    p.ProductsSku,
+    p.ProductsId
+FROM
+    `magnalister_products` p
+INNER JOIN(
+    SELECT
+        ProductsSku,
+        ProductsId
+    FROM
+        magnalister_products
+    GROUP BY
+        ProductsSku,
+        ProductsId,
+        ParentId
+    HAVING
+        COUNT(ProductsSku) > 1 AND COUNT(ProductsId) > 1 AND ParentId = 0
+) d
+ON
+    p.ProductsId = d.ProductsId AND p.ProductsSku = d.ProductsSku
+ORDER BY
+    p.ProductsSku,
+    p.ProductsId,
+    p.ID
+DESC
+    ');
+        $aDeletingProducts = [];
+        $iNumberOfDeletingProduct = 0;
+        if (is_array($aDuplicatedProductData)) {
+            $iID = null;
+            $sProductsSku = null;
+            $sProductsId = null;
+            foreach ($aDuplicatedProductData as $aRow) {
+                if ($sProductsSku === $aRow['ProductsSku'] && $sProductsId === $aRow['ProductsId']) {//next duplicated product
+                    $iNumberOfDeletingProduct++;
+                    $aDeletingProducts[$iID] = $aRow['ID'];
+                } else {//First duplicated product
+                    $iID = $aRow['ID'];
+                    $sProductsSku = $aRow['ProductsSku'];
+                    $sProductsId = $aRow['ProductsId'];
+                }
+            }
+        }
+        $this->showHeaderAndFooter(' Deleting duplicated products: '.$iNumberOfDeletingProduct);
+
+        $this->deleteProductSafely($aDeletingProducts);
+        $this->outLabel('Deleting products');
+        $this->out(json_indent(json_encode($aDeletingProducts)));
+    }
+
+    public function deleteProductSafely(array $aDeletingProducts) {
+        if (count($aDeletingProducts) > 0) {
+            $aTables = $this->getPrepareTablesInfo();
+            foreach ($aDeletingProducts as $aCorrectProductID => $aDeleteProductID) {
+                $aDeleteVariations = MLDatabase::getDbInstance()->fetchArray("SELECT * FROM magnalister_products WHERE parentid = ".$aDeleteProductID);
+                $aCorrectVariation = MLDatabase::getDbInstance()->fetchArray("SELECT * FROM magnalister_products WHERE parentid = ".$aCorrectProductID);
+                $this->logCurrentDuplicatedProduct($aDeleteProductID, $aDeleteVariations[0]['ID']);
+
+                if (count($aDeleteVariations) == 0) {//delete duplicated product without variation
+                    $this->safeDelete($aDeleteProductID);
+                } else {//delete duplicated variation product
+                    foreach ($aDeleteVariations as $aDeleteVariation) {
+                        foreach ($aTables as $sTable => $sColumn) {
+                            if (MLDatabase::getDbInstance()->recordExists($sTable, [$sColumn => $aDeleteVariation['ID']])) {
+                                $this->aCannotBeDeleted[$aDeleteProductID][] = $aDeleteVariation['ID'];
+                                break;
+                            }
+                        }
+                        if (!isset($this->aCannotBeDeleted[$aDeleteProductID]) || !in_array($aDeleteVariation['ID'], $this->aCannotBeDeleted[$aDeleteProductID])) {
+                            $this->safeDelete($aDeleteVariation['ID']);
+                        }
+                    }
+                    $this->deleteParentWithoutChild($aDeleteProductID);
+
+                }
+
+                $this->outLabel('Deleted');
+                $this->out(json_indent(json_encode($this->aDeleted)));
+            }
+            //            if (count($this->aCannotBeDeleted) > 0) {
+            $this->developerNotification();
+            //            }
+        }
+    }
+
+    protected function safeDelete($iId) {
+        if ($iId) {
+            $backup = MLDatabase::getDbInstance()->fetchArray('SELECT * FROM magnalister_products WHERE ID = '.$iId);
+            MLLog::gi()->add('deleted_magnalister_products', $backup);
+            MLDatabase::getDbInstance()->delete('magnalister_products', array('ID' => $iId));
+            $this->aDeleted[] = $iId;
+        }
+    }
+
+    /**
+     * @return array
+     * {
+     *     "magnalister_amazon_prepare": "ProductsID",
+     *     "magnalister_cdiscount_prepare": "products_id",
+     *     "magnalister_ebay_prepare": "products_id",
+     *     "magnalister_etsy_prepare": "products_id",
+     *     "magnalister_idealo_prepare": "products_id",
+     *     "magnalister_ricardo_prepare": "products_id"
+     * }
+     */
+    protected function getPrepareTablesInfo(): array {
+        $aTables = [];
+        $aAllTables = MLDatabase::getDbInstance()->fetchArray('show tables', true);
+        foreach ($aAllTables as $sTable) {
+            $aT = explode('_', $sTable);
+            if (count($aT) == 3 && $aT[0] == 'magnalister' && $aT[2] == 'prepare') {
+                $aT = explode('_', $sTable);
+                if (count($aT) == 3 && $aT[0] == 'magnalister' && $aT[2] == 'prepare') {
+                    $sColumn = null;
+                    if (MLDatabase::getDbInstance()->columnExistsInTable('products_id', $sTable)) {
+                        $sColumn = 'products_id';
+                    } else if ($sTable == 'magnalister_amazon_prepare' && MLDatabase::getDbInstance()->columnExistsInTable('ProductsID', $sTable)) {
+                        $sColumn = 'ProductsID';
+                    }
+                    if ($sColumn !== null) {
+                        $aTables[$sTable] = $sColumn;
+                    }
+                }
+            }
+        }
+        $this->outLabel('Prepare Data');
+        $this->out(json_indent(json_encode($aTables)));
+        return $aTables;
+    }
+
+    protected function outLabel($sLabel) {
+        $this->out("\n\n$sLabel\n");
+    }
+
+    protected function developerNotification(): void {
+        $this->outLabel('Cannot be deleted');
+        $this->out(json_indent(json_encode($this->aCannotBeDeleted)));
+        $oMail = new MailService();
+        $oMail->from('no-reply@magnalister.com', ' magnalister Shopify Server')
+            ->addTo('masoud.khodaparast@magnalister.com')
+            ->subject('Removing duplicated product')
+            ->content("Deleted: \n".json_indent(json_encode($this->aDeleted)).
+                "\n\nCannot be deleted Deleted: \n".json_indent(json_encode($this->aCannotBeDeleted)));
+        $success = $oMail->send();
+    }
+
+    /**
+     * @param $aDeleteProductID
+     */
+    protected function deleteParentWithoutChild($aDeleteProductID): void {
+        $backup = MLDatabase::getDbInstance()->fetchArray('SELECT * FROM magnalister_products WHERE ID = '.$aDeleteProductID);
+
+        MLDatabase::getDbInstance()->query('DELETE p
+FROM
+    `magnalister_products` p
+LEFT JOIN `magnalister_products` v ON p.ID = v.ParentId
+WHERE p.ParentId = 0 AND v.ID IS NULL AND p.ID='.(int)$aDeleteProductID);
+        if (MLDatabase::getDbInstance()->affectedRows() > 0) {
+            MLLog::gi()->add('deleted_magnalister_products', $backup);
+        }
+    }
+
+    /**
+     * @param $aDeleteProductID
+     * @param $ID
+     */
+    protected function logCurrentDuplicatedProduct($aDeleteProductID, $ID): void {
+        $this->outLabel('Product ID');
+        $this->out(json_indent(json_encode($aDeleteProductID)));
+        $this->outLabel('Variation ID');
+        $this->out(json_indent(json_encode($ID)));
+    }
+}

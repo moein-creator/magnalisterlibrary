@@ -1,0 +1,19 @@
+{
+   "name": "redgecko/magnalisterLibrary",
+   "type": "library",
+   "description": "magnalister library",
+   "version": "2.0.0",
+   "homepage": "",
+   "license": "Apache-2.0",
+   "authors": [
+      {
+         "name": "magnalister library",
+         "email": ""
+      }
+   ],
+   "autoload": {
+      "psr-4": {
+          "Redgecko\\MagnalisterLibrary\\": ""
+      }
+   }
+}

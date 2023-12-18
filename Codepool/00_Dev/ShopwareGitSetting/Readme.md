@@ -1,0 +1,1 @@
+if you are using git repo to load magnalister in shopware (using symbolik link) you can make isActive.php true it should set needed modification for your magnalister

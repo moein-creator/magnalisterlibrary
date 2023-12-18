@@ -1,0 +1,105 @@
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
+
+html {
+    overflow: auto;
+}
+
+.pagination_bar form {
+    display: inline;
+}
+
+body {
+    line-height: initial;
+}
+
+body.wp-admin.magna div.magna form {
+    display: inline;
+}
+
+input, select {
+    margin: 0;
+}
+
+input, select, textarea {
+    font-size: 12px;
+    padding: 0;
+}
+
+body.wp-admin.magna select {
+    height: 23px;
+}
+
+body.wp-admin.magna select[multiple="multiple"] {
+    height: auto;
+}
+
+body.wp-admin.magna input[type="checkbox"],
+body.wp-admin.magna input[type="radio"] {
+    margin: 1px;
+    min-width: 14px;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #818181;
+}
+
+body.wp-admin.magna input[type="checkbox"]:checked::before {
+    margin: -4px 0 0 -5px;
+}
+
+body.wp-admin.magna input[type="radio"]:checked::before {
+    margin: 2px;
+}
+
+body.wp-admin.magna div.magnaTabs2 ul li {
+    margin-bottom: 0;
+}
+body.wp-admin.magna input[type="date"],
+body.wp-admin.magna input[type="datetime-local"],
+body.wp-admin.magna input[type="datetime"],
+body.wp-admin.magna input[type="email"],
+body.wp-admin.magna input[type="month"],
+body.wp-admin.magna input[type="number"],
+body.wp-admin.magna input[type="password"],
+body.wp-admin.magna input[type="search"],
+body.wp-admin.magna input[type="tel"],
+body.wp-admin.magna input[type="text"],
+body.wp-admin.magna input[type="time"],
+body.wp-admin.magna input[type="url"],
+body.wp-admin.magna input[type="week"],
+body.wp-admin.magna select,
+body.wp-admin.magna textarea {
+    border-radius: 0;
+    min-height: 0;
+    line-height: 17px;
+}
+
+body.wp-admin.magna div.newSearch input[type="text"] {
+    box-sizing: content-box;
+    margin: 0;
+}
+
+body.wp-admin.magna table.attributesTable td input[type="text"],
+body.wp-admin.magna table.attributesTable td input[type="password"],
+body.wp-admin.magna table.attributesTable td select,
+body.wp-admin.magna table.attributesTable td textarea {
+    padding: 2px 4px;
+}
+
+.magna ul {
+    list-style: inherit;
+}

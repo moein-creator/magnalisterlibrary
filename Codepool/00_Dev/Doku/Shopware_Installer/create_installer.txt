@@ -1,0 +1,26 @@
+to create installer :
+
+download the prestashop package from magnalister from 
+http://www.magnalister.com/downloads/plugin/magnalister_shopware_current.zip
+
+you can see magnalister.zip in files, extract it  ,
+we need just following file . so remove other files and folder from current installer
+
+** add "10_Customer/Partner/Setting/shopware.php" from current directory
+
+/Backend/RedMagnalister/Bootstrap.php
+/Backend/RedMagnalister/BootstrapLegacy.php
+/Backend/RedMagnalister/Backend/plugin.png
+/Backend/RedMagnalister/Controllers/*
+/Backend/RedMagnalister/Views/*
+/Backend/RedMagnalister/lib/Alias/*
+/Backend/RedMagnalister/lib/Codepool/10_Customer/Partner/Setting/shopware.php
+/Backend/RedMagnalister/lib/Codepool/70_Shop/Shopware/isActive.php
+/Backend/RedMagnalister/lib/Codepool/70_Shop/Shopware/isShop.php
+/Backend/RedMagnalister/lib/Codepool/70_Shop/Shopware/Model/Http.php
+/Backend/RedMagnalister/lib/Codepool/70_Shop/Shopware/Model/Shop.php
+/Backend/RedMagnalister/lib/Codepool/70_Shop/Shopware/Model/Language.php
+/Backend/RedMagnalister/lib/Codepool/90_System/Core/*
+/Backend/RedMagnalister/lib/Codepool/90_System/Shop/*
+/Backend/RedMagnalister/lib/Core/*
+

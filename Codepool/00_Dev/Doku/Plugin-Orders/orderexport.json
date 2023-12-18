@@ -1,0 +1,128 @@
+[ // Data-Element vom Response
+    {
+        "AddressSets": {
+            "Main": {
+                "Gender": "m",
+                "Firstname": "Dieter",
+                "Lastname": "Bohlen",
+                "Company": "",
+                "Street": "Müllerstraße 123",
+                "Postcode": "21224",
+                "City": "Tötensen",
+                "Suburb": "Niedersachsen",
+                "CountryCode": "DE",
+                "Phone": "",
+                "EMail": "dieter.bohlen@magnalister.com",
+                "DayOfBirth": "0000-00-00",             // yatego
+                "DateAdded": "2012-05-09 13:52:07",
+                "LastModified": "2012-05-09 13:52:07"
+            },
+            "Billing": {
+                "Gender": "f",
+                "Firstname": "Birgit",
+                "Lastname": "Urban",
+                "Company": "",
+                "Street": "Kraftwerksweg 40",
+                "Postcode": "02943",
+                "City": "Boxberg/O.L.",
+                "Suburb": "Sachsen",
+                "CountryCode": "DE",
+                "Phone": "017656095087",
+                "EMail": "BirgitUrban@magnalister.com",
+                "DayOfBirth": "0000-00-00",             // yatego
+                "DateAdded": "2012-05-09 13:52:07",
+                "LastModified": "2012-05-09 13:52:07"
+            },
+            "Shipping": {
+                "Gender": "f",
+                "Firstname": "Birgit",
+                "Lastname": "Urban",
+                "Company": "",
+                "Street": "Kraftwerksweg 40",
+                "Postcode": "02943",
+                "City": "Boxberg/O.L.",
+                "Suburb": "Sachsen",
+                "CountryCode": "DE",
+                "Phone": "017656095087",
+                "EMail": "BirgitUrban@magnalister.com",
+                "DayOfBirth": "0000-00-00",             // yatego
+                "DateAdded": "2012-05-09 13:52:07",
+                "LastModified": "2012-05-09 13:52:07"
+            }
+        },
+        "Order": {
+            "Currency": "EUR",
+            "LastModified": "2012-05-09 13:52:07",
+            "DatePurchased": "2012-05-09 13:52:07",
+            "Comments": ""
+        },
+        "MPSpecific": {
+            "MOrderID": "Y28-7671806-6575529",      // amazon
+            "OrderURL": "https://ssl.hitmeister.de/account_orders.php?id_order_crypted=MZ8GWE", // hitmeister, ebay, ...
+            "FulfillmentChannel": "MFN",            // amazon
+            "PromiseDate": "2012-04-19 23:59:59",   // amazon MFN & rakuten
+            "GiftMessage": "Alles gute und so.",    // amazon
+            "GiftPaper": "Herzchenpapier",          // amazon
+            "ShippingDate": "2012-08-14 11:05:43",  // amazon AFN
+            "EstimatedArrivalDate": "2012-08-17 20:00:00", // amazon AFN
+            "Carrier": "DP",                        // amazon AFN
+            "Trackingcode": "345134148003",         // amazon AFN
+            "BuyerUsername": "1manni2",             // ebay
+            "EBaySalesRecordNumber": "8861"         // ebay
+        },
+        "Totals": [
+            {
+                "Type":"Payment",
+                "Code": "CollectOnDelivery",
+                "Value": "10.0",
+            },
+            {
+                "Type":"Coupon",
+                "Code": "Promo0815",
+                "Value": "-15.0",
+            },
+            {
+                "Type":"Discount",
+                "Value": "-5.95",
+            },
+            {
+                "Type":"Shipping",
+                "Code": "marketplace",
+                "Code": "UK_RoyalMailFirstClassStandard", // ebay
+                "Value": "11.45",
+                "Tax": false
+            }
+        ],
+        "Payment": {
+            "Method": "marketplace",    // a lot of MPs
+            "Method": "PAL",            // rakuten paypal
+            "Method": "Nachname",       // yatgo
+            "Method": "Vorauskasse / Überweisung", // yatgo
+            "BankAccount": {            // yatgo
+                "Owner": "Sandras Ideen-Reich",
+                "Account": "2918564382",
+                "Code": "50050000",
+                "InstituteName": "Irgendeine Bank"
+             }
+        },
+        "Products": [
+            {
+                "SKU": "p4641_Brn_M",
+                "ItemTitle": "Coole Hose",
+                "Price": "34.9000",
+                "Quantity": "1",
+                "Tax": "19"
+            },
+            {
+                "SKU": "ML515",
+                "ItemTitle": "10x Hochzeitskamera Einwegkamera I mog Di weiss",
+                "Price": "30.3500",
+                "Quantity": "1",
+                "Tax": false // nicht null, da JSON Bibliotheken teilweise null nicht richtig dekodieren können. false heißt client muss das füllen, 0 heißt keine Steuer, > 0 direkt übernehmen
+            }
+        ]
+    },
+    {
+        .... // weitere bestellung
+    }
+]
