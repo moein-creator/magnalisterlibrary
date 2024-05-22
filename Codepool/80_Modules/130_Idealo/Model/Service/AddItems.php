@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -26,6 +26,12 @@ class ML_Idealo_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_A
         /* @var $oPrepareHelper ML_Idealo_Helper_Model_Table_Idealo_PrepareData */
         $oPrepareHelper = MLHelper::gi('Model_Table_idealo_PrepareData');
         $aMasterProducts = array();
+        $sCampaingLink = MLModule::gi()->getConfig('campaignlink');
+        if (!empty($sCampaingLink)) {
+            $sCampaingLink = '?mlcampaign='.$sCampaingLink;
+        } else {
+            $sCampaingLink = '';
+        }
         foreach ($this->oList->getList() as $oProduct) {
             /* @var $oProduct ML_Shop_Model_Product_Abstract */
             foreach ($this->oList->getVariants($oProduct) as $oVariant) {
@@ -38,9 +44,6 @@ class ML_Idealo_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_A
                         'ShippingCostMethod' => array('optional' => array('active' => true)),
                         'ShippingCost' => array('optional' => array('active' => true)),
                         'ShippingTime' => array('optional' => array('active' => true)),
-                        'FulFillmentType' => array('optional' => array('active' => true)),
-                        'TwoManHandlingFee' => array('optional' => array('active' => true)),
-                        'DisposalFee' => array('optional' => array('active' => true)),
                         'PaymentMethod' => array('optional' => array('active' => true)),
                         'Image' => array('optional' => array('active' => true)),
                         'Price' => array('optional' => array('active' => true)),
@@ -48,7 +51,6 @@ class ML_Idealo_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_A
                         'BasePrice' => array('optional' => array('active' => true)),
                         'BasePriceString' => array('optional' => array('active' => true)),
                         'ItemUrl' => array('optional' => array('active' => true)),
-                        'Checkout' => array('optional' => array('active' => true)),
                         'Manufacturer' => array('optional' => array('active' => true)),
                         'ItemWeight' => array('optional' => array('active' => true)),
                         'ManufacturerPartNumber' => array('optional' => array('active' => true)),
@@ -60,11 +62,7 @@ class ML_Idealo_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_A
                         ->setPrepareList(null)
                         ->setProduct($oVariant)
                         ->getPrepareData($aPrepareFields, 'value');
-                    $aMasterProducts[$iVariantID]['TwoManHandlingFee'] = (string)number_format(priceToFloat($aMasterProducts[$iVariantID]['TwoManHandlingFee']), 2, '.', '');
-                    $aMasterProducts[$iVariantID]['DisposalFee'] = (string)number_format(priceToFloat($aMasterProducts[$iVariantID]['DisposalFee']), 2, '.', '');
 
-                    $aMasterProducts[$iVariantID]['Checkout'] = MLModul::gi()->idealoHaveDirectBuy() ? $aMasterProducts[$iVariantID]['checkout'] : false;
-                    unset($aMasterProducts[$iVariantID]['checkout']);
                     // shipping-cost = itemWeight
                     if ($aMasterProducts[$iVariantID]['ShippingCostMethod'] === '__ml_weight') {
                         $aMasterProducts[$iVariantID]['ShippingCost'] = $aMasterProducts[$iVariantID]['ItemWeight'];
@@ -76,21 +74,8 @@ class ML_Idealo_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_A
                         $aMasterProducts[$iVariantID]['ShippingTime'] = $aMasterProducts[$iVariantID]['ShippingTime']['type'];
                     }
 
-                    // unset checkout status fields if deactivated
-                    if (!$aMasterProducts[$iVariantID]['Checkout']) {MLMessage::gi()->addDebug(__LINE__.':'.microtime(true), array($aMasterProducts[$iVariantID]));
-                        unset($aMasterProducts[$iVariantID]['FulFillmentType']);
-                        unset($aMasterProducts[$iVariantID]['TwoManHandlingFee']);
-                        unset($aMasterProducts[$iVariantID]['DisposalFee']);
-                    }
-
-
-                    // only submit TwoManHandlingFee and DisposalFee if its "Spedition" -> "Haulage"
-                    if (array_key_exists('FulFillmentType', $aMasterProducts[$iVariantID])
-                        && $aMasterProducts[$iVariantID]['FulFillmentType'] !== 'Spedition'
-                    ) {
-                        unset($aMasterProducts[$iVariantID]['TwoManHandlingFee']);
-                        unset($aMasterProducts[$iVariantID]['DisposalFee']);
-                    }
+                    // campaign link (affiliate link), empty if not configured
+                    $aMasterProducts[$iVariantID]['ItemUrl'] .= $sCampaingLink;
 
                     foreach ($aMasterProducts[$iVariantID] as $sKey => $mValue) {
                         if ($mValue === null) {

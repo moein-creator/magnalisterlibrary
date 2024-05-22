@@ -145,7 +145,7 @@ class ML_Hood_Controller_Hood_Prepare_Apply_Form extends ML_Form_Controller_Widg
     protected function titleField(&$aField) {
         $aField['default'] = $this->oPrepareHelper->replaceTitle(MLModul::gi()->getConfig('template.name'));
         $aField['type'] = 'string';
-        $aField['maxlength'] = 80;
+        $aField['maxlength'] = 85;
     }
 
     protected function subtitleField(&$aField) {

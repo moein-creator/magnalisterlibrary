@@ -24,7 +24,7 @@ MLI18n::gi()->{'ML_Amazon_Shippinglabel_Package_Length'} = 'L&auml;nge';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Package_Width'} = 'Breite';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Package_Height'} = 'H&ouml;he';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Form_Customer_Name_Label'} = 'Kunden Name';
-MLI18n::gi()->{'ML_Amazon_Shippinglabel_Form_PrductName'} = 'Produkt';
+MLI18n::gi()->{'ML_Amazon_Shippinglabel_Form_ProductName'} = 'Produkt';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Form_Sent'} = 'Artikel bereits gesendet';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Form_Quantity'} = 'Artikel im Paket';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Form_Shipping_Information_Label'} = 'Versandinformationen';
@@ -45,7 +45,6 @@ MLI18n::gi()->{'ML_Amazon_Shippinglabel_Receiver'} = 'Versand an';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_ShippingDate'} = 'Versanddatum';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Weight'} = 'Gewicht';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_CarrierName'} = 'Transporteur';
-MLI18n::gi()->{'ML_Amazon_Shippinglabel_UnitPrice'} = 'Grundpreis';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_TotalPrice'} = 'Summe Versandkosten';
 
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Form_CarrierName'} = 'Transportdienst';
@@ -69,6 +68,91 @@ MLI18n::gi()->{'ML_Amazon_Shippinglabel_Filter_Status_Default'} = 'Filter (Entge
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Filter_Status_Full'} = 'vollst&auml;ndig';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Filter_Status_Partly'} = 'teilweise';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Filter_Status_Not'} = 'nicht';
+
+
+// bopis
+MLI18n::gi()->{'ML_Amazon_Bopis_Filter_Status_Default'} = 'Filter (Bestellstatus)';
+MLI18n::gi()->{'ML_Amazon_Bopis_Filter_Store_Default'} = 'Filter (Filiale)';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_BuyerPhone'} = 'Kunde Telefonnummer';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Deadline_Pickup'} = 'Abholfrist';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_SupplySourceAlias'} = 'Name der Filiale';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Deadline_ReadyForPickup'} = 'Abholbereit in';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Actions'} = 'Aktionen';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_ExecuteSelectedAction'} = 'Bestellstatus updaten';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_StatusDropdown'} = 'Bestellstatus auswählen: ';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_ChangeOrderStatus_Header'} = 'Bestellstatus ändern';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_ChangeOrderStatus_Body'} = 'Sind Sie sicher, dass Sie den Auftragsstatus der folgenden Aufträge ';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_CancelReasonSelectorBatchUpdateLabel'} = 'Bitte wählen Sie den Grund für Ihre Stornierung aus: ';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_RefundReasonSelectorBatchUpdateLabel'} = 'Bitte wählen Sie den Grund für Ihre Rückerstattung aus: ';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_UnprocessableOrderIdListLabel'} = 'Folgende Bestellungen können wir nicht verarbeiten (Für mehr Informationen mit der Maus über die Auftragsnummer(n) hovern)';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_NewShippingStatusBatchUpdateContainerFirstPart'} = 'zu';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_NewShippingStatusBatchUpdateContainerSecondPart'} = ' ändern möchten?';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_NewShippingStatusSingleUpdateContainerFirstPart'} = 'von ';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_NewShippingStatusSingleUpdateContainerSecondPart'} = ' zu';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_NewShippingStatusSingleUpdateContainerThirdPart'} = ' ändern möchten?';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_Cancel'} = 'stornieren';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_Cancelled'} = 'Storniert';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_CancellationVerb'} = 'Stornieren';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_CancellationNoun'} = 'Stornierung';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_Refunded'} = 'Rückerstattet';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_RefundVerb'} = 'Rückerstatten';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_RefundNoun'} = 'Rückerstattung';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_NoInventory'} = 'Ware nicht auf Lager';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_CustomerReturn'} = 'Kundenretoure';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_GeneralAdjustment'} = 'Allgemeine Anpassung';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_ShippingAddressUndeliverable'} = 'Unzustellbare Lieferadresse';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_CustomerExchange'} = 'Kundenaustausch';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_BuyerCanceled'} = 'Käuferstorno';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_CouldNotShip'} = 'Konnte nicht zugestellt werden';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_DifferentItem'} = 'Anderes Produkt';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Abandoned'} = 'Paket nicht abgeholt';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_CustomerCancel'} = 'Kundenstorno';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_PriceError'} = 'Fehlerhafter Preis';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_TemplateHeader'} = 'Bestellung ';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Action_TemplateBody'} = 'Bitte wählen Sie einen Grund für die ';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Open'} = 'Offen';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_ReadyForPickup'} = 'Abholbereit';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_PickedUp'} = 'Abgeholt';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_RefusedPickup'} = 'Abholung verweigert';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Cancelled'} = 'Storniert';
+MLI18n::gi()->{'ML_Amazon_Bopis_Orderlist_Refunded'} = 'Rückerstattet';
+MLI18n::gi()->{'ML_Amazon_Bopis_OrderAlreadyCancelledHover'} = 'Dieser Auftrag wurde bereits storniert';
+MLI18n::gi()->{'ML_Amazon_Bopis_OrderAlreadyRefundedHover'} = 'Diese Bestellung wurde bereits zurückerstattet';
+MLI18n::gi()->{'ML_Amazon_Bopis_CantRefundOrderHover'} = 'Diese Bestellung kann nicht zurückerstattet werden, da sie noch den Status \'Offen\' hat. Bitte stornieren Sie sie stattdessen.';
+MLI18n::gi()->{'ML_Amazon_Bopis_CantCancelOrderHover'} = 'Dieser Auftrag kann nicht storniert werden, da er den Status \"{#currentStatus#}\" hat, bitte rückerstatten Sie ihn stattdessen.';
+MLI18n::gi()->{'ML_Amazon_Bopis_NewShippingStatusBatchUpdateContainerCancelOrRefund'} = '
+        <p style="font-weight: normal" id="allOrdersToBatchUpdateCancelOrRefund">
+            Sind Sie sicher, dass Sie den Auftragsstatus der folgenden Aufträge 
+        </p>
+        <div style="display: flex" id="newShippingStatusBatchUpdateContainerCancelOrRefund">
+            <p>
+                zu
+            </p>
+            <p id="newShippingStatusBatchUpdateCancelOrRefund" style="font-weight: bold; margin-left : 4px ;margin-right: 4px">
+            </p>
+            <p>
+                ändern möchten?
+            </p>
+        </div>
+
+';
+MLI18n::gi()->{'ML_Amazon_Bopis_NewShippingStatusBatchUpdateContainer'} = '
+        <p style="font-weight: normal" id="allOrdersToBatchUpdate">
+            Sind Sie sicher, dass Sie den Auftragsstatus der folgenden Aufträge 
+        </p>
+        <div style="display: flex" id="newShippingStatusBatchUpdateContainer">
+            <p>
+                zu
+            </p>
+            <p id="newShippingStatusBatchUpdate" style="font-weight: bold; margin-left : 4px ;margin-right: 4px">
+            </p>
+            <p>
+                ändern möchten?
+            </p>
+        </div>
+
+';
+
 
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Filter_OrderType_Default'} = 'Filter (FulfillmentChannel)';
 MLI18n::gi()->{'ML_Amazon_Shippinglabel_Filter_OrderType_MFN'} = 'Standard (MFN)';

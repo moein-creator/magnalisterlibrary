@@ -9,5 +9,5 @@ MLI18n::gi()->{'Check24_Productlist_Filter_aPreparedStatus__ERROR'} = 'Prepared 
 MLI18n::gi()->{'Check24_Productlist_Filter_aPreparedStatus__OPEN'} = 'Prepared Status: Open';
 MLI18n::gi()->{'Check24_Productlist_Cell_aPreparedType__Chinese'} = 'Chinese auction';
 MLI18n::gi()->{'Check24_Productlist_Cell_aPreparedType__FixedPriceItem'} = 'Fixed price';
-MLI18n::gi()->{'Check24_Productlist_Cell_aPreparedType__StoresFixedPrice'} = 'Fixed price (Check24 Store)';
+MLI18n::gi()->{'Check24_Productlist_Cell_aPreparedType__StoresFixedPrice'} = 'Fixed price (CHECK24 Store)';
 MLI18n::gi()->{'Check24_Productlist_Header_sPreparedType'} = 'Type of Auction';

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -19,10 +19,10 @@
 MLSetting::gi()->add('ebay_config_account', array(    
     'tabident' => array(
         'legend' => array(
-            'classes' => array('mlhidden'),
+            'classes' => array(''),
         ),
         'fields' => array(
-            array(
+            'tabident' => array(
                 'name' => 'tabident',
                 'type' => 'string',
             ),
@@ -30,23 +30,19 @@ MLSetting::gi()->add('ebay_config_account', array(
     ),
     'account' => array(
         'fields' => array(
-            array(
+            'username' => array(
                 'name' => 'username',
                 'type' => 'string',
             ),
-            array(
+            'token' => array(
                 'name' => 'token',
                 'type' => 'ebay_token',
             ),
-            /*array(
-                'name' => 'oauth.token',
-                'type' => 'ebay_token',
-            ),*/
-            array(
+            'site' => array(
                 'name' => 'site',
                 'type' => 'select'
             ),
-            array(
+            'currency' => array(
                 'name' => 'currency',
                 'type' => 'ajax'
             ),
@@ -58,15 +54,15 @@ MLSetting::gi()->add('ebay_config_account', array(
 MLSetting::gi()->add('ebay_config_prepare', array(
     'location'=> array(
         'fields' => array(
-            array(
+            'postalcode' => array(
                 'name' => 'postalcode',
                 'type' => 'string',
             ),
-            array(
+            'location' => array(
                 'name' => 'location',
                 'type' => 'string',
             ),
-            array(
+            'country' => array(
                 'name' => 'country',
                 'type' => 'select',
             ),
@@ -74,32 +70,37 @@ MLSetting::gi()->add('ebay_config_prepare', array(
     ),
     'prepare' => array(
         'fields' => array(
-            array(
+            'prepare.status' => array(
                 'name' => 'prepare.status',
                 'type' => 'bool',
             ),
-            array(
+            'mwst' => array(
                 'name' => 'mwst',
                 'type' => 'string',
             ),
-            array(
+            'setalways' => array (
+                'name' => 'mwst.always',
+                'type' => 'bool',
+            ),
+            'conditionid' => array(
                 'name' => 'conditionid',
                 'type' => 'select',
             ),
-            array(
+            'lang' => array(
                 'name' => 'lang',
                 'type' => 'select',
             ),
-            array(
+            'topten' => array(
                 'name' => 'topten',
                 'type' => 'topten',
+                'default' => 30,
                 'expert' => true,
             ),
         ),
     ),
     'fixedprice' => array(
         'fields' => array(
-            array(
+            'fixed.quantity' => array(
                 'name' => 'fixed.quantity',
                 'type' => 'selectwithtextoption',
                 'subfields' => array(
@@ -107,16 +108,16 @@ MLSetting::gi()->add('ebay_config_prepare', array(
                     'string' => array('name' => 'fixed.quantity.value', 'type' => 'string')
                 )
             ),
-             array(
+            'maxquantity' => array(
                 'name' => 'maxquantity',
                 'type' => 'string',
             ),
-           array(
+            'fixed.duration' => array(
                 'name' => 'fixed.duration',
                 'type' => 'select',
                 'default' => 'GTC',
             ),
-           array(
+            'ebayplus' => array(
                 'name' => 'ebayplus',
                 'type' => 'bool',
             ),
@@ -124,11 +125,11 @@ MLSetting::gi()->add('ebay_config_prepare', array(
     ),
     'chineseprice' => array(
         'fields' => array(
-            array(
+            'chinese.quantity' => array(
                 'name' => 'chinese.quantity',
                 'type' => 'information',
             ),
-            array(
+            'chinese.duration' => array(
                 'name' => 'chinese.duration',
                 'type' => 'select',
             ),
@@ -136,21 +137,21 @@ MLSetting::gi()->add('ebay_config_prepare', array(
     ),
     'pictures' => array(
         'fields' => array(
-            array(
+            'imagesize' => array(
                 'name' => 'imagesize',
                 'type' => 'select',
             ),
-            array(
+            'gallerytype' => array(
                 'name' => 'gallerytype',
                 'type' => 'select',
                 'default' => 'Gallery',
             ),
-            array(
+            'picturepack' => array(
                 'name' => 'picturepack',
                 'type' => 'addon_bool',
                 'addonsku' => 'EbayPicturePack',
             ),
-            array(
+            'variationdimensionforpictures' => array(
                 'name' => 'variationdimensionforpictures',
             ),
         ),
@@ -161,7 +162,7 @@ MLSetting::gi()->add('ebay_config_prepare', array(
                 'name' => 'paymentsellerprofile',
                 'type' => 'select'
             ),
-            array(
+            'paymentmethods' => array(
                 'name' => 'paymentmethods',
                 'type' => 'multipleselect',
             ),
@@ -181,16 +182,16 @@ MLSetting::gi()->add('ebay_config_prepare', array(
                 'name' => 'shippingsellerprofile',
                 'type' => 'select'
             ),
-            array(
+            'shippinglocalcontainer' => array(
                 'name' => 'shippinglocalcontainer',
                 'type' => 'ebay_shippingcontainer'
             ),
-            array(
+            'dispatchtimemax' => array(
                 'name' => 'dispatchtimemax',
                 'type' => 'select',
                 'default' => '3',
             ),
-            array(
+            'shippinginternationalcontainer' => array(
                 'name' => 'shippinginternationalcontainer',
                 'type' => 'optional',
                 'optional' => array(
@@ -209,7 +210,7 @@ MLSetting::gi()->add('ebay_config_prepare', array(
                 'name' => 'returnsellerprofile',
                 'type' => 'select'
             ),
-            array(
+            'returnpolicy.returnsaccepted' => array(
                 'name' => 'returnpolicy.returnsaccepted',
                 'type' => 'select',
             ),
@@ -217,19 +218,19 @@ MLSetting::gi()->add('ebay_config_prepare', array(
                 'name' => 'returnpolicy.returnswithin',
                 'type' => 'select',
             ),
-            array(
+            'returnpolicy.shippingcostpaidby' => array(
                 'name' => 'returnpolicy.shippingcostpaidby',
                 'type' => 'select',
             ),
-            array(
+            'returnpolicy.description' => array(
                 'name' => 'returnpolicy.description',
                 'type' => 'text',
             ),
         ),
     ),
     'misc' => array(
-        'fields' => array(  
-            array(
+        'fields' => array(
+            'usevariations' => array(
                 'name' => 'usevariations',
                 'type' => 'bool',
                 'default' => true
@@ -243,10 +244,6 @@ MLSetting::gi()->add('ebay_config_prepare', array(
                 'name' => 'privatelisting',
                 'type' => 'bool',
             ),
-            'hitcounter' => array(
-                'name' => 'hitcounter',
-                'type' => 'select',
-            ),
             'restrictedtobusiness' => array(
                 'name' => 'restrictedtobusiness',
                 'type' => 'bool',
@@ -255,18 +252,26 @@ MLSetting::gi()->add('ebay_config_prepare', array(
     ),
     'upload' => array(
         'fields' => array(
-            array(
+            'productfield.brand' => array(
                 'name' => 'productfield.brand',
                 'type' => 'select',
             ),
+            'productfield.tecdocktype' => array(
+                'name' => 'productfield.tecdocktype',
+                'type' => 'select',
+                'expert' => true,
+            ),
         )
+
+
+
     ),
 ), false);
 
 MLSetting::gi()->add('ebay_config_price', array(
         'fixedprice' => array(
             'fields' => array(
-                array(
+                'fixed.price' => array(
                     'name' => 'fixed.price',
                     'type' => 'subFieldsContainer',
                     'subfields' => array(
@@ -275,7 +280,7 @@ MLSetting::gi()->add('ebay_config_price', array(
                         'signal' => array('name' => 'fixed.price.signal', 'type' => 'string')
                     )
                 ),
-                array(
+                'fixed.priceoptions' => array(
                     'name' => 'fixed.priceoptions',
                     'type' => 'subFieldsContainer',
                     'subfields' => array(
@@ -283,7 +288,7 @@ MLSetting::gi()->add('ebay_config_price', array(
                         'usespecialoffer' => array('name' => 'fixed.price.usespecialoffer', 'type' => 'bool'),
                     ),
                 ),
-                array(
+                'strikepriceoptions' => array(
                     'name' => 'strikepriceoptions',
                     'type' => 'subFieldsContainer',
                     'subfields' => array(
@@ -296,7 +301,7 @@ MLSetting::gi()->add('ebay_config_price', array(
         ),
         'chineseprice' => array(
             'fields' => array(
-                array(
+                'chinese.price' => array(
                     'name' => 'chinese.price',
                     'type' => 'subFieldsContainer',
                     'subfields' => array(
@@ -305,7 +310,7 @@ MLSetting::gi()->add('ebay_config_price', array(
                         'signal' => array('name' => 'chinese.price.signal', 'type' => 'string')
                     )
                 ),
-                array(
+                'chinese.buyitnow.price' => array(
                     'name' => 'chinese.buyitnow.price',
                     'type' => 'subFieldsContainer',
                     'subfields' => array(
@@ -315,7 +320,7 @@ MLSetting::gi()->add('ebay_config_price', array(
                         'use' => array('name' => 'buyitnowprice', 'type' => 'bool'),
                     )
                 ),
-                array(
+                'chinese.priceoptions' => array(
                     'name' => 'chinese.priceoptions',
                     'type' => 'subFieldsContainer',
                     'subfields' => array(
@@ -328,15 +333,15 @@ MLSetting::gi()->add('ebay_config_price', array(
 
         'price' => array(
             'fields' => array(
-                array(
+                'bestofferenabled' => array(
                     'name' => 'bestofferenabled',
                     'type' => 'bool',
                 ),
-                array(
+                'exchangerate_update' => array(
                     'name' => 'exchangerate_update',
                     'type' => 'bool',
                 ),
-            )           
+            )
         )
 ), false);
 
@@ -344,37 +349,31 @@ MLSetting::gi()->add('ebay_config_price', array(
 MLSetting::gi()->add('ebay_config_sync', array(
     'sync' => array(
         'fields' => array(
-            array(
-                'name' => 'stocksync.tomarketplace',              
+            'stocksync.tomarketplace' => array(
+                'name' => 'stocksync.tomarketplace',
                 'type' => 'select',/*
                 'type' => 'addon_select',
                 'addonsku' => 'FastSyncInventory',*/
             ),
-            array(
+            'stocksync.frommarketplace' => array(
                 'name' => 'stocksync.frommarketplace',
                 'type' => 'select',
             ),
-            array(
+            'inventorysync.price' => array(
                 'name' => 'inventorysync.price',
                 'type' => 'select',
-            ), 
-            array(
-                'name' => 'inventory.import',
-                'type' => 'radio',
-                'default' => 'true',
-                'expert' => 'true',
             ),
-            array(
+            'synczerostock' => array(
                 'name' => 'synczerostock',
                 'type' => 'addon_bool',
                 'addonsku' => 'EbayZeroStockAndRelisting',
             ),
-            array(
+            'syncrelisting' => array(
                 'name' => 'syncrelisting',
                 'type' => 'addon_bool',
                 'addonsku' => 'EbayZeroStockAndRelisting',
             ),
-            array(
+            'syncproperties' => array(
                 'name' => 'syncproperties',
                 'type' => 'addon_bool',
                 'addonsku' => 'EbayProductIdentifierSync',
@@ -383,15 +382,15 @@ MLSetting::gi()->add('ebay_config_sync', array(
     ),
     'syncchinese' => array(
         'fields' => array(
-            array(
+            'chinese.stocksync.tomarketplace' => array(
                 'name' => 'chinese.stocksync.tomarketplace',
                 'type' => 'select',
             ),
-            array(
+            'chinese.stocksync.frommarketplace' => array(
                 'name' => 'chinese.stocksync.frommarketplace',
                 'type' => 'select',
             ),
-            array(
+            'chinese.inventorysync.price' => array(
                 'name' => 'chinese.inventorysync.price',
                 'type' => 'select',
             ),
@@ -402,7 +401,7 @@ MLSetting::gi()->add('ebay_config_sync', array(
 MLSetting::gi()->add('ebay_config_orderimport', array(
     'importactive' => array( 
         'fields' => array(
-            array(
+            'importactive' => array(
                 'name' => 'importactive',
                 'type' => 'subFieldsContainer',
                 'subfields' => array(
@@ -416,7 +415,7 @@ MLSetting::gi()->add('ebay_config_orderimport', array(
                 'default' => false,
                 'expert' => true,
             ),
-            array(
+            'customergroup' => array(
                 'name' => 'customergroup',
                 'type' => 'select',
             ),
@@ -429,11 +428,11 @@ MLSetting::gi()->add('ebay_config_orderimport', array(
                 'type'           => 'ebay_importonlypaid',
                 'importonlypaid' => array('disablefields' => array('orderstatus.closed', 'updateable.orderstatus', 'update.orderstatus', 'orderstatus.paid')),
             ),
-            array(
+            'orderstatus.closed' => array(
                 'name' => 'orderstatus.closed',
                 'type' => 'multipleselect'
             ),
-            array(
+            'orderimport.shop' => array(
                 'name' => 'orderimport.shop',
                 'type' => 'select',
             ),
@@ -459,7 +458,7 @@ MLSetting::gi()->add('ebay_config_orderimport', array(
     ),
     'mwst' => array(
         'fields' => array(
-            array(
+            'mwstfallback' => array(
                 'name' => 'mwstfallback',
                 'type' => 'string',
                 'default' => 19,
@@ -475,7 +474,7 @@ MLSetting::gi()->add('ebay_config_orderimport', array(
     ),
     'orderupdate' => array(
         'fields' => array(
-            array(
+            'updateableorderstatus' => array(
                 'name' => 'updateableorderstatus',
                 'type' => 'subFieldsContainer',
                 'subfields' => array(
@@ -491,20 +490,20 @@ MLSetting::gi()->add('ebay_config_orderimport', array(
     ),
     'orderstatus' => array(
         'fields' => array(
-            array(
+            'orderstatus.sync' => array(
                 'i18n' => '{#i18n:formfields__orderstatus.sync#}',
                 'name' => 'orderstatus.sync',
                 'type' => 'select',
             ),
-            array(
+            'orderstatus.shipped' => array(
                 'name' => 'orderstatus.shipped',
                 'type' => 'select'
             ),
-            array(
+            'orderstatus.carrier.default' => array(
                 'name' => 'orderstatus.carrier.default',
                 'type' => 'select'
             ),
-            array(
+            'orderstatus.cancelled' => array(
                 'name' => 'orderstatus.cancelled',
                 'type' => 'select'
             ),
@@ -512,7 +511,7 @@ MLSetting::gi()->add('ebay_config_orderimport', array(
     ),
     'orderrefund' => array(
         'fields' => array(
-            array(
+            'orderstatus.refund' => array(
                 'name' => 'orderstatus.refund',
                 'type' => 'duplicate',
                 'duplicate' => array(
@@ -521,9 +520,9 @@ MLSetting::gi()->add('ebay_config_orderimport', array(
                 'norepeat_included' => true,
                 'subfields' => array(
                     'status' => array(
-                        'name' => 'refundstatus',
-                        'type' => 'select',
-                        'cssclass' => array('ml-ebay-refundstatus'),
+                        'name'     => 'refundstatus',
+                        'type'     => 'select',
+                        'cssclass' => array('ml-form-type-duplicated-norepeat'),
                         'norepeat' => true
                     ),
                     'reason' => array(
@@ -544,22 +543,22 @@ MLSetting::gi()->add('ebay_config_orderimport', array(
 MLSetting::gi()->add('ebay_config_emailtemplate', array(
     'mail' => array(
         'fields' => array(
-            array(
+            'mail.send' => array(
                 'name' => 'mail.send',
                 'type' => 'radio',
                 'default' => 'false',
             ),
-            array(
+            'mail.originator.name' => array(
                 'name' => 'mail.originator.name',
                 'type' => 'string',
                 'default' => '{#i18n:ebay_config_account_emailtemplate_sender#}',
             ),
-            array(
+            'mail.originator.adress' => array(
                 'name' => 'mail.originator.adress',
                 'type' => 'string',
                 'default' => '{#i18n:ebay_config_account_emailtemplate_sender_email#}',
             ),
-            array(
+            'mail.subject' => array(
                 'name' => 'mail.subject',
                 'type' => 'string',
                 'default' => '{#i18n:ebay_config_account_emailtemplate_subject#}',
@@ -570,13 +569,13 @@ MLSetting::gi()->add('ebay_config_emailtemplate', array(
 //                'default' => '{#i18n:ebay_config_emailtemplate_content#}',
 //                'resetdefault' => '{#i18n:ebay_config_emailtemplate_content#}',
 //            ),
-            array(
+            'mail.content' => array(
                 'name' => 'mail.content',
                 'type' => 'configMailContentContainer',
                 'default' => '{#i18n:ebay_config_emailtemplate_content#}',
                 'resetdefault' => '{#i18n:ebay_config_emailtemplate_content#}',
             ),
-            array(
+            'mail.copy' => array(
                 'name' => 'mail.copy',
                 'type' => 'radio',
                 'default' => 'true',
@@ -589,18 +588,18 @@ MLSetting::gi()->add('ebay_config_emailtemplate', array(
 MLSetting::gi()->add('ebay_config_producttemplate', array(
     'product' => array(
         'fields' => array(
-             array(
+            'template.name' => array(
                 'name' => 'template.name',
                 'type' => 'string',
                 'default' => '#TITLE#',
             ),
-            array(
+            'template.mobile.active' => array(
                 'name' => 'template.mobile.active',
                 'type' => 'radio',
                 'default' => 'false',
                 'alertvalue' => 'true',
             ),
-             array(
+            'template.tabs' => array(
                  'type' => 'tabs',
                  'name' => 'template.tabs',
                  'subfields' => array(

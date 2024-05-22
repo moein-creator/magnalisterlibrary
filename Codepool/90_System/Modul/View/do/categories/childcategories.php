@@ -11,14 +11,14 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 if (!class_exists('ML', false))
     throw new Exception();
 $sOut = $this->includeViewBuffered('do_categories_childcategories_tree', array('sType' => $sType, 'sParentId' => $sParentId));
-$sIdent = 'ml-ajax-catContainer_'.MLModul::gi()->getMarketPlaceName().'_'.  MLModul::gi()->getMarketPlaceId().'_'.$sType.'_';
+$sIdent = 'ml-ajax-catContainer_' . MLModule::gi()->getMarketPlaceName() . '_' . MLModule::gi()->getMarketPlaceId() . '_' . $sType . '_';
 if (MLHttp::gi()->isAjax()) {
     MLSetting::gi()->add('aAjaxPlugin', array('dom' => array('.'.$sIdent.str_replace(array(':', '.', ' '), array('_', '\.', '_'), $sParentId) => $sOut)));
 } else { 

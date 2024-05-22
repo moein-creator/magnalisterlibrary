@@ -19,5 +19,14 @@
  */
 
 class ML_Ricardo_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncOrderStatus_Abstract {
-	
+
+    public function __construct() {
+        $sOrderstatusCarrierDefault = MLModule::gi()->getConfig('orderstatus.carrier.default');
+        if (empty($sOrderstatusCarrierDefault)) {
+            // Carrier has to be taken from the order data, unless defined differently (like in Shopware)
+            MLModule::gi()->setConfig('orderstatus.carrier.default', '-1', true);
+        }
+        parent::__construct();
+    }
+
 }

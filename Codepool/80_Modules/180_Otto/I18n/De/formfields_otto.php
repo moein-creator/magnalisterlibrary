@@ -87,8 +87,8 @@ MLI18n::gi()->add('formfields_otto', array(
     'orderstatus.open' => array(
         'label' => 'Webshop-Status für “offene” Bestellungen',
         'help' => '
-            <p>Der OTTO Bestellstatus “offen” bedeutet, dass der Käufer die Ware bereits bezahlt hat. Sie kann also risikofrei versendet werden.</p>
-            <p>Wählen Sie hier den entsprechenden Webshop-Bestellstatus, den eine importierte OTTO Bestellung mit dem Status “offen” erhalten soll.</p>
+            <p>Der OTTO Market Bestellstatus “offen” bedeutet, dass der Käufer die Ware bereits bezahlt hat. Sie kann also risikofrei versendet werden.</p>
+            <p>Wählen Sie hier den entsprechenden Webshop-Bestellstatus, den eine importierte OTTO Market Bestellung mit dem Status “offen” erhalten soll.</p>
         ',
     ),
     'orderimport.paymentstatus' => array(
@@ -98,22 +98,22 @@ MLI18n::gi()->add('formfields_otto', array(
     /*
     'paymentmethods' => array(
         'label' => 'Payment Methods',
-        'help' => 'Payment method that will apply to all orders imported from OTTO. Standard: "OTTO"<br><br>
+        'help' => 'Payment method that will apply to all orders imported from OTTO Market. Standard: "OTTO Market"<br><br>
             This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.'
     ),
     'shippingservice' => array(
         'label' => 'Shipping Service',
-        'help' => 'Shipping methods that will be assigned to all OTTO orders. Standard: "Marketplace"<br><br>
+        'help' => 'Shipping methods that will be assigned to all OTTO Market orders. Standard: "Marketplace"<br><br>
             This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.'
     ),*/
 
     'orderstatus.standardshipping' => array(
         'label' => 'Versanddienstleister für versendete Bestellungen',
-        'hint' => 'OTTO lässt nur bestimmte Versanddienstleister zu.<br>Bitte achten Sie darauf, dass Sie nur gültige Daten angeben.'
+        'hint' => 'OTTO Market lässt nur bestimmte Versanddienstleister zu.<br>Bitte achten Sie darauf, dass Sie nur gültige Daten angeben.'
     ),
     'orderstatus.forwardershipping' => array(
         'label' => 'Versanddienstleister (Spedition) für versendete Bestellungen',
-        'hint' => 'OTTO lässt nur bestimmte Versanddienstleister zu.<br>Bitte achten Sie darauf, dass Sie nur gültige Daten angeben.'
+        'hint' => 'OTTO Market lässt nur bestimmte Versanddienstleister zu.<br>Bitte achten Sie darauf, dass Sie nur gültige Daten angeben.'
     ),
     'orderstatus.shippedaddress' => array(
         'label' => 'Bestätigen Sie die Versand- und Absenderadresse mit',
@@ -130,14 +130,14 @@ MLI18n::gi()->add('formfields_otto', array(
     ),
     'orderstatus.carrier' => array(
         'label' => '&nbsp;&nbsp;&nbsp;&nbsp;Spediteur',
-        'help' => 'Vorausgew&auml;hlter Spediteur beim Best&auml;tigen des Versandes nach OTTO.',
+        'help' => 'Vorausgew&auml;hlter Spediteur beim Best&auml;tigen des Versandes nach OTTO Market.',
     ),
     'customfield.carrier' => array(
         'label' => 'Versanddienstleister'
     ),
     'return.carrier' => array(
         'label' => 'Versanddienstleister des Retourenschein',
-        'hint' => 'OTTO lässt nur bestimmte Versanddienstleister zu.<br>Bitte achten Sie darauf, dass Sie nur gültige Daten angeben.'
+        'hint' => 'OTTO Market lässt nur bestimmte Versanddienstleister zu.<br>Bitte achten Sie darauf, dass Sie nur gültige Daten angeben.'
     ),
     'return.trackingkey' => array(
         'label' => 'Retouren-Sendungsnummer des Retourenschein',

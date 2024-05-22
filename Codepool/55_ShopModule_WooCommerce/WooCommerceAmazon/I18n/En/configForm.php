@@ -85,3 +85,4 @@ Choose this option if you want to <strong>manually enter the same shipping metho
 	<li>Failure to provide the shipping method may result in temporary suspension of the sales permission on Amazon.</li>
 </ul>
 ';
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcs.invoice__values__germanmarket'} = 'Invoices created in the German Market are uploaded to Amazon';

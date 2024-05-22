@@ -25,7 +25,7 @@ class ML_Amazon_Controller_Amazon_Errorlog extends ML_ErrorLog_Controller_Widget
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
     
     public function render(){

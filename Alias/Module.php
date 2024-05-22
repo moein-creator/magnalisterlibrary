@@ -23,10 +23,19 @@ class MLModule {
     
     /**
      * Returns the instance of the marketplace module model.
-     * @return ML_Modul_Model_Modul_Abstract 
+     * @return ML_Modul_Model_Modul_Abstract|object|ML_Amazon_Model_Modul
      */
     public static function gi() {  
         return ML::gi()->instance('model_modul', array('Modul_Model_Modul_Abstract'));
+    }
+
+    /**
+     * @return ML_Form_Helper_Model_Table_PrepareData_Abstract|object
+     * @throws Exception
+     */
+    public static function getPrepareDataHelper() {
+        return ML::gi()->instance('helper_model_table_' . MLModule::gi()->getMarketPlaceName() . '_preparedata');
+
     }
     
 }

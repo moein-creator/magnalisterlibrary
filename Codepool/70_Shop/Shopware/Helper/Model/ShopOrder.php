@@ -11,10 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 
 class ML_Shopware_Helper_Model_ShopOrder {
 
@@ -637,11 +638,11 @@ class ML_Shopware_Helper_Model_ShopOrder {
             //update address data
             $this->updateShippingAddress();
             $this->updateBillingAddress();
-            $iTaxfree = $this->getTaxFree($aAddresses['Shipping']);
+            $iNet = $iTaxfree = $this->getTaxFree($aAddresses['Shipping']);//net column will be filled with same value from taxfree
 
 
             $this->executeSql(
-                'UPDATE `s_order` SET `taxfree` = '.$iTaxfree.
+                'UPDATE `s_order` SET `taxfree` = '.$iTaxfree.', `net`='.$iNet.
                 (MLDatabase::getDbInstance()->columnExistsInTable('changed', 's_order') ? ' ,`changed` = NOW()' : '').
                 ' WHERE id = '.$this->oCurrentOrder->getId()
             );
@@ -666,6 +667,21 @@ class ML_Shopware_Helper_Model_ShopOrder {
      * @return string
      */
     protected function getShopwareOrderNumber() {
+        If(class_exists('SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator')){
+            $key = SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY;
+            if (method_exists(Shopware()->Session(), 'has')) {
+                $found = Shopware()->Session()->has($key);
+            } else {//older version of shopware e.g. 5.5.8
+                $found = Shopware()->Session()->offsetExists($key);
+            }
+            if ($found) {
+                if (method_exists(Shopware()->Session(), 'remove')) {
+                    Shopware()->Session()->remove($key);
+                } else {//older version of shopware e.g. 5.5.8
+                    Shopware()->Session()->offsetUnset($key);
+                }
+            }
+        }
         return Shopware()->Modules()->Order()->sGetOrderNumber();
     }
 
@@ -690,18 +706,16 @@ class ML_Shopware_Helper_Model_ShopOrder {
         }
 
         $oShopwareOrder = Shopware()->Modules()->Order();
-        $this->sOrderNumber = $this->getShopwareOrderNumber();
         $aPayment = $this->getTotal('Payment');
-        $iCustomerPaymentID = $this->getPaymentMethod($aPayment['Code'], true);
+        $iCustomerPaymentID = $this->getPaymentMethod($aPayment['Code']);
         $iCustomerPaymentID = empty($iCustomerPaymentID) ? $this->getPaymentMethod($aPayment['Code'], false) : $iCustomerPaymentID;
         $iCustomerNumber = $this->addCustomerToOrder($aData['AddressSets'], $iCustomerPaymentID);//importand I pass main data object to set password of customer
-
+        $this->sOrderNumber = $this->getShopwareOrderNumber();
         $iDispatchId = $this->getDispatch();
         $iCleared = $this->getPaymentStatus();
-        $fNet = 0;
         $iTransactionID = $this->getTransactionId();
 
-        $iTaxfree = $this->getTaxFree($aAddresses['Shipping']);
+        $fNet = $iTaxfree = $this->getTaxFree($aAddresses['Shipping']);
         $iTemporaryID = '';
         $oCurrency = $oShopwareModel->getRepository('\Shopware\Models\Shop\Currency')->findOneBy(array('currency' => $aData['Order']['Currency']));
         if (!is_object($oCurrency)) {
@@ -717,7 +731,7 @@ class ML_Shopware_Helper_Model_ShopOrder {
         $sInternalComment = isset($aData['MPSpecific']['InternalComment']) ? $aData['MPSpecific']['InternalComment'] : '';
         //show in order detail and invoice pdf
         $sCustomerComment = '';
-        if (MLModul::gi()->getConfig('order.information')) {
+        if (MLModule::gi()->getConfig('order.information')) {
             $sCustomerComment .= isset($aData['MPSpecific']['InternalComment']) ? $aData['MPSpecific']['InternalComment'] : '';
         }
 
@@ -884,9 +898,9 @@ class ML_Shopware_Helper_Model_ShopOrder {
      */
     protected function getPaymentStatus() {
         if (empty($this->aNewData['Order']['PaymentStatus'])) {// it could be filled in Normalize files (e.g. eBay)
-            $this->aNewData['Order']['PaymentStatus'] = MLModul::gi()->getConfig('orderimport.paymentstatus');
+            $this->aNewData['Order']['PaymentStatus'] = MLModule::gi()->getConfig('orderimport.paymentstatus');
             if ($this->aNewData['Order']['PaymentStatus'] === null) {
-                $this->aNewData['Order']['PaymentStatus'] = MLModul::gi()->getConfig('paymentstatus');
+                $this->aNewData['Order']['PaymentStatus'] = MLModule::gi()->getConfig('paymentstatus');
             }
             if (empty($this->aNewData['Order']['PaymentStatus'])) {
                 $this->aNewData['Order']['PaymentStatus'] = 17;
@@ -1116,7 +1130,7 @@ class ML_Shopware_Helper_Model_ShopOrder {
             'street'                => empty($aAddress['Street']) || !$blSNExist ? (isset($aAddress['StreetAddress']) ? $aAddress['StreetAddress'] : '--') : $aAddress['Street'],
             'streetnumber'          => $aAddress['Housenumber'],
             'magna_origstreet'      => empty($aAddress['Street']) ? (isset($aAddress['StreetAddress']) ? $aAddress['StreetAddress'] : '') : $aAddress['Street'],
-            'zipcode'               => $aAddress['Postcode'],
+            'zipcode'               => !empty($aAddress['Postcode']) ? $aAddress['Postcode'] : '',
             'city'                  => $sCity,
             'countryID'             => $iCountryId,
             'magna_origcountrycode' => trim($aAddress['CountryCode']),
@@ -1450,12 +1464,14 @@ class ML_Shopware_Helper_Model_ShopOrder {
 
         $sEanSql = '';
         $iTaxClass = null;
-
+        $iArticleDetailId = null;
         if (isset($aProduct['SKU'])
             && $oProduct->getByMarketplaceSKU($aProduct['SKU'])->exists()
         ) {
             $sArticleNumber = $oProduct->getProductField('number');
             $iArticleId = (int)$oProduct->getId();
+            $iArticleDetailId = (int)$oProduct->getArticleDetail()->getId();
+
             if (MLDatabase::getDbInstance()->columnExistsInTable('ean', 's_order_details')) {
                 $sEanSql = ",ean = ".$this->getShopwareDB()->quote($oProduct->getEAN());
             }
@@ -1483,10 +1499,10 @@ class ML_Shopware_Helper_Model_ShopOrder {
             $sArticleNumber = $aProduct['SKU'];
             $iArticleId = 0;
             $blIsEsdarticle = 0;
-            $fDefaultProductTax = MLModul::gi()->getConfig('mwst.fallback');
+            $fDefaultProductTax = MLModule::gi()->getConfig('mwst.fallback');
             // fallback
             if ($fDefaultProductTax === null) {
-                $fDefaultProductTax = MLModul::gi()->getConfig('mwstfallback'); // some modules have this, other that
+                $fDefaultProductTax = MLModule::gi()->getConfig('mwstfallback'); // some modules have this, other that
             }
             $fTaxPercent = (($aProduct['Tax'] === false) ? $fDefaultProductTax : $aProduct['Tax']);
             //            $aProduct['Modus'] = 12;
@@ -1521,8 +1537,9 @@ class ML_Shopware_Helper_Model_ShopOrder {
             INSERT INTO `s_order_details`
                     SET orderID = $iOrderId,
                         ordernumber = '$sOrderNumber',
-                        articleID = $iArticleId,
-                        articleordernumber = '$sArticleNumber',
+                        articleID = $iArticleId,".
+            (MLDatabase::getDbInstance()->columnExistsInTable('articleDetailID', 's_order_details') ? "articleDetailID = ".(isset($iArticleDetailId) ? $iArticleDetailId : 'NULL')."," : '').
+            "articleordernumber = '$sArticleNumber',
                         price = {$fGros},
                         quantity = {$aProduct['Quantity']},
                         name = {$sName},
@@ -1645,9 +1662,9 @@ class ML_Shopware_Helper_Model_ShopOrder {
             $aAddresses['Main']['Password'] = $sPassword; //important to send password in Promotion Mail
             $sEncodedPassword = md5($sPassword);
 
-            $sConfigCustomerGroup = MLModul::gi()->getConfig('CustomerGroup');
+            $sConfigCustomerGroup = MLModule::gi()->getConfig('CustomerGroup');
             if ($sConfigCustomerGroup === null) {
-                $sConfigCustomerGroup = MLModul::gi()->getConfig('customergroup');
+                $sConfigCustomerGroup = MLModule::gi()->getConfig('customergroup');
             }
             if ($sConfigCustomerGroup == '-') {
                 $oCustomerGroup = null;
@@ -1714,8 +1731,9 @@ class ML_Shopware_Helper_Model_ShopOrder {
             }
             $sCustomerSql = "
                 UPDATE s_user
-                   SET email = ".$this->getShopwareDB()->quote(trim($aAddresses['Main']['EMail']))."
-                 WHERE id = ".$oCustomer->getId()."
+                   SET
+                   paymentID=" . (int)$iPaymentID . " 
+                 WHERE id = " . (int)$oCustomer->getId() . "
             ";
             if (!$this->executeSql($sCustomerSql)) {
                 throw new Exception('error in adding user');
@@ -1734,12 +1752,14 @@ class ML_Shopware_Helper_Model_ShopOrder {
             $oBillingAddress->fromArray($this->prepareAddress($aAddresses['Billing'], $iCustomerNumber, array('customer', 'company', 'department', 'salutation', 'firstname', 'lastname', 'street', 'zipcode', 'city', 'country', 'customernumber', 'state', 'phone', 'ustid', 'additional_address_line1'), true));
             $oShopwareModel->persist($oBillingAddress);
             $oShopwareModel->flush($oBillingAddress);
+            $this->addAddressAttribute($oBillingAddress, $aAddresses['Billing']);
             $oCustomer->setDefaultBillingAddress($oBillingAddress);
 
             $oShippingAddress = new Shopware\Models\Customer\Address();
             $oShippingAddress->fromArray($this->prepareAddress($aAddresses['Shipping'], $iCustomerNumber, array('customer', 'company', 'department', 'salutation', 'firstname', 'lastname', 'street', 'zipcode', 'city', 'country', 'customernumber', 'state', 'phone', 'ustid', 'additional_address_line1'), true, 'Shipping'));
             $oShopwareModel->persist($oShippingAddress);
             $oShopwareModel->flush($oShippingAddress);
+            $this->addAddressAttribute($oShippingAddress, $aAddresses['Shipping']);
             $oCustomer->setDefaultShippingAddress($oShippingAddress);
             $oShopwareModel->persist($oShippingAddress);
             $oShopwareModel->flush($oShippingAddress);
@@ -1755,8 +1775,14 @@ class ML_Shopware_Helper_Model_ShopOrder {
                 if ($oShippingAddress->getId() == null || $oBillingAddress->getId() == null) {
                     throw new Exception('shipping or billing address is not correctly created');
                 }
-                MLDatabase::getDbInstance()->update('s_user', array('default_billing_address_id' => $oBillingAddress->getId()), array('id' => $oCustomer->getId()));
-                MLDatabase::getDbInstance()->update('s_user', array('default_shipping_address_id' => $oShippingAddress->getId()), array('id' => $oCustomer->getId()));
+                // do not use magnalister DB instance "MLDatabase::getDbInstance()" to update any database tables during a shopware transaction
+                $sqlUpdateDefaultAddress = "
+                    UPDATE s_user
+                       SET default_billing_address_id = ".$oBillingAddress->getId().",
+                           default_shipping_address_id = ".$oShippingAddress->getId()."
+                     WHERE id = ".$oCustomer->getId()."
+                ";
+                $this->executeSql($sqlUpdateDefaultAddress);
             }
         }
         $this->SaveCustomerShippingAddress($this->prepareAddress($aAddresses['Shipping'], $iCustomerNumber, array(), false, 'Shipping'), $blCustomerExists);
@@ -1884,5 +1910,13 @@ class ML_Shopware_Helper_Model_ShopOrder {
             $iTaxfree = 0;
         }
         return $iTaxfree;
+    }
+
+    /**
+     * @param \Shopware\Models\Customer\Address $oAddress
+     * @param mixed $Billing
+     * @return null
+     */
+    protected function addAddressAttribute($oAddress, $aMarketplaceAddress) {
     }
 }

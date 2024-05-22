@@ -1,4 +1,5 @@
-<?php class_exists('ML', false) or die();?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
 <?php
 /*
  * 888888ba                 dP  .88888.                    dP

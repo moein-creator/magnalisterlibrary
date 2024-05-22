@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,9 +12,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
-* (c) 2010 - 2018 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -22,37 +20,33 @@ MLFilesystem::gi()->loadClass('Form_Controller_Widget_Form_PrepareWithVariationM
 
 class ML_Etsy_Controller_Etsy_Prepare_Apply_Form extends ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstract {
 
-    protected function shippingTemplateField(&$aField) {
-        $shippingTemplates = $this->callApi('GetShippingTemplates');
-        foreach ($shippingTemplates['ShippingTemplates'] as $shippingTemplate) {
-            $aField['values'][$shippingTemplate['shippingTemplateId'].''] = $shippingTemplate['title'];
+    protected function shippingProfileField(&$aField) {
+        $shippingProfiles = $this->callApi('GetShippingProfiles');
+        foreach ($shippingProfiles['ShippingProfiles'] as $shippingProfile) {
+            $aField['values'][$shippingProfile['shippingProfileId'].''] = $shippingProfile['title'];
         }
     }
 
     protected function callGetCategoryDetails($sCategoryId) {
-        return MagnaConnector::gi()->submitRequestCached(array(
-                'ACTION' => 'GetCategoryDetails',
-                'DATA' => array(
-                    'CategoryID' => $sCategoryId,
-                    'Language' => MLModul::gi()->getConfig('shop.language'),
-                )
-            )
-        );
+        return MLModule::gi()->getCategoryDetails($sCategoryId);
     }
 
-    public function callAjaxSaveShippingTemplate() {
-        $results = array(
-            'title'             => MLRequest::gi()->data('title'),
-            'origin_country_id' => MLRequest::gi()->data('originCountry'),
-            'primary_cost'      => MLRequest::gi()->data('primaryCost'),
-            'secondary_cost'    => MLRequest::gi()->data('secondaryCost')
-        );
+    public function callAjaxSaveShippingProfile() {
         try {
-            $result = MagnaConnector::gi()->submitRequest(array(
-                'ACTION' => 'SaveShippingTemplate',
-                'DATA'   => $results
+            MLModule::gi()->saveShippingProfile();
+            MLCache::gi()->flush();
+            $aField = $this->getField('shippingprofile');
+            $aField['type'] = 'select';//type seems missing from getField
+            $sField = $this->includeTypeBuffered($aField);
+            MLMessage::gi()->addSuccess(MLI18n::gi()->ML_LABEL_SAVED_SUCCESSFULLY);
+            MLSetting::gi()->add('aAjaxPlugin', array(
+                'dom' => array(
+                    '#etsy_prepare_apply_form_field_shippingprofile' => $sField,
+                ),
             ));
         } catch (MagnaException $e) {
+            MLMessage::gi()->addError($e->getMessage());
+        } catch (Exception $e) {
             MLMessage::gi()->addDebug($e);
         }
     }

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,15 +11,10 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-
-use Magna\Library\MLContainer;
-use Magna\Library\MLLogger;
-use Shopify\API\Application\Request\Products\CountProducts\CountProductsParams;
-use Shopify\API\Application\Request\Products\ListOfProducts\ListOfProductsParams;
 
 MLFilesystem::gi()->loadClass('Shopify_Controller_Frontend_Do_ShopifyProductCache');
 
@@ -28,18 +23,13 @@ MLFilesystem::gi()->loadClass('Shopify_Controller_Frontend_Do_ShopifyProductCach
  */
 class ML_Shopify_Controller_Frontend_Do_ShopifyUpdateProductCache extends ML_Shopify_Controller_Frontend_Do_ShopifyProductCache {
 
-    protected $sType = 'UpdatedProductAddOrUpdate';
+    protected $sType = 'UpdatedProduct';
 
     protected $sConfigKeyUpdatedAtMin = 'updateShopifyUpdatedAtMin';
 
     protected $sConfigKeyPage = 'updateShopifyProductPage';
 
-    public function __construct() {
-        parent::__construct();
-        $iCount = $this->getTotalCountOfProduct();
-        $this->iLimitationOfIteration *= ceil($iCount / 2000);
-    }
-
+    protected $sConfigKeyNextPage = 'updateShopifyProductNextPage';
 
     /**
      * get date to limit products and get only updated product
@@ -56,7 +46,7 @@ class ML_Shopify_Controller_Frontend_Do_ShopifyUpdateProductCache extends ML_Sho
             }
             $oUpdateTime->modify('-1 hour');
             $sDate = $oUpdateTime->format('c');
-            MLDatabase::factory('config')->set('mpid', 0)->set('mkey', $this->sConfigKeyUpdatedAtMin)->set('value', $sDate);
+            MLDatabase::factory('config')->set('mpid', 0)->set('mkey', $this->sConfigKeyUpdatedAtMin)->set('value', $sDate)->save();
         }
         return parent::getUpdatedAtMin();
     }

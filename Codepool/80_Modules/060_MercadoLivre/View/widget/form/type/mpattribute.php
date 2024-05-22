@@ -19,7 +19,8 @@
  */
 
 /** @var ML_MercadoLivre_Controller_MercadoLivre_Prepare_Form $this */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 
 $aParent = $this->getField(substr($aField['realname'], 0, -5));
 $aParentValue = isset($aParent['valuearr']) ? $aParent['valuearr'] : null;

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2018 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -19,15 +19,15 @@ MLFilesystem::gi()->loadClass('Form_Helper_Model_Table_ConfigData_Abstract');
 
 class ML_Etsy_Helper_Model_Table_Etsy_ConfigData extends ML_Form_Helper_Model_Table_ConfigData_Abstract {
 
-    public function shippingtemplateField(&$aField) {
-        $shippingTemplates = $this->callApi(array('ACTION' => 'GetShippingTemplates'), 12 * 12 * 60);
+    public function shippingprofileField(&$aField) {
+        $shippingProfiles = $this->callApi(array('ACTION' => 'GetShippingProfiles'), 12 * 12 * 60);
 
-        if (isset($shippingTemplates['ShippingTemplates'])) {
-            foreach ($shippingTemplates['ShippingTemplates'] as $shippingTemplate) {
-                $aField['values'][$shippingTemplate['shippingTemplateId'].''] = $shippingTemplate['title'];
+        if (isset($shippingProfiles['ShippingProfiles'])) {
+            foreach ($shippingProfiles['ShippingProfiles'] as $shippingProfile) {
+                $aField['values'][$shippingProfile['shippingProfileId'].''] = $shippingProfile['title'];
             }
         } else {
-            $aField['values'][] = 'No shipping template created';
+            $aField['values'][] = 'No delivery profile created';
         }
 
     }
@@ -37,15 +37,35 @@ class ML_Etsy_Helper_Model_Table_Etsy_ConfigData extends ML_Form_Helper_Model_Ta
         $aField['values'] = MLI18n::gi()->get('etsy_configform_sync_values');
     }
 
-    public function shippingtemplatecountryField(&$aField) {
-        $countries = $this->callApi(array('ACTION' => 'GetCountries'), 100);
+    public function shippingprofileorigincountryField(&$aField) {
+        $this->getShippingProfileCountry($aField);
+    }
 
-        if (isset($countries['OriginCountries'])) {
-            foreach ($countries['OriginCountries'] as $country) {
-                $aField['values'][$country['countryId']] = $country['name'];
+    public function shippingprofiledestinationcountryField(&$aField) {
+        $this->getShippingProfileCountry($aField);
+    }
+
+    public function shippingprofiledestinationregionField(&$aField) {
+        $countries = $this->callApi(array('ACTION' => 'GetShippingDestinationRegions'), 100);
+
+        if (isset($countries)) {
+            foreach ($countries as $value => $name) {
+                $aField['values'][$value] = $name;
             }
         } else {
-            $aField['values'][] = 'No origin country';
+            $aField['values'][] = 'No regions available';
+        }
+    }
+
+    private function getShippingProfileCountry(&$aField) {
+        $countries = $this->callApi(array('ACTION' => 'GetCountries', 'SUBSYSTEM' => 'Core'), 100);
+
+        if (isset($countries)) {
+            foreach ($countries as $iso => $countryName) {
+                $aField['values'][$iso] = $countryName;
+            }
+        } else {
+            $aField['values'][] = 'No country available';
         }
     }
 
@@ -59,8 +79,8 @@ class ML_Etsy_Helper_Model_Table_Etsy_ConfigData extends ML_Form_Helper_Model_Ta
 
     public function primaryCategoryField(&$aField) {
         $aRequest = MLRequest::gi()->data();
-        if (MLModul::gi()->getMarketPlaceName().':'.MLModul::gi()->getMarketPlaceId().'_prepare_variations' === $aRequest['controller']) {
-            $aField['values'] = MLDatabase::factory(MLModul::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
+        if (MLModule::gi()->getMarketPlaceName() . ':' . MLModule::gi()->getMarketPlaceId() . '_prepare_variations' === $aRequest['controller']) {
+            $aField['values'] = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
         } else {
             $aField['values'] = MLDatabase::factory( MLModul::gi()->getMarketPlaceName() . '_prepare')->getTopPrimaryCategories();
         }

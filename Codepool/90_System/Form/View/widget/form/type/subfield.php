@@ -19,10 +19,10 @@ if (!class_exists('ML', false))
     throw new Exception();
 
 $display = isset($aField['breakbefore']) && $aField['breakbefore'] == 'true' ? '' : 'display:table-cell;';
-$padding = $aField['type'] == 'bool' ? '.5' : (isset($aField['padding-right']) ? $aField['padding-right'] : '2');
+$padding = $aField['type'] == 'bool' ? '.2' : (isset($aField['padding-right']) ? $aField['padding-right'] : '1.35');
 $float = (isset($aField['float']) ? $aField['float'] : 'none');
 if (!empty($aField['i18n']['label']) && $aField['type'] != 'bool') { ?>
-    <span style="<?php echo $display; ?>"><label style="margin-right: 3px;" for="<?php echo $aField['id']; ?>"><?php echo $aField['i18n']['label']; ?><lable></span>
+    <span style="<?php echo $display; ?>"><label style="margin-right: 5px;" for="<?php echo $aField['id']; ?>"><?php echo $aField['i18n']['label']; ?><lable></span>
 <?php }
 if (!empty($aField['i18n']['help'])) { ?>
     <span style="<?php echo $display; ?>" class="mlhelp ml-js-noBlockUi">
@@ -38,5 +38,5 @@ if (!empty($aField['i18n']['label']) && $aField['type'] != 'bool') { ?>
 	<?php $this->includeType($aField, array('iValue' => $iValue)); ?>
 </span>
 <?php if (!empty($aField['i18n']['label']) && $aField['type'] == 'bool') { ?>
-    <span style="<?php echo $display; ?>padding-right:1.2em;padding-left:7px;"><?php echo $aField['i18n']['label']; ?></span>
+    <span style="<?php echo $display; ?>padding-right:1.2em;"><?php echo $aField['i18n']['label']; ?></span>
 <?php }

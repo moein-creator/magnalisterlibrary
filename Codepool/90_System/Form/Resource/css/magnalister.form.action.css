@@ -16,12 +16,73 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-.magnalisterForm tr.action{border-left:1px solid #747474;border-right:1px solid #747474;}
-.magnalisterForm tr.action table{border-style:none ;table-layout: fixed;width:100%;}
-.magnalisterForm tr.action table td{vertical-align:top;border:none;white-space: nowrap;text-align: center;width:33%}
-.magnalisterForm tr.action table td.ml-form-action-left>table{float:left;}
-.magnalisterForm tr.action table td.ml-form-action-right>table{float:right;}
-.magnalisterForm tr.action table td.ml-form-action-center>table{margin:0 auto;}
-.magnalisterForm tr.action table td>table{width:auto;clear:both}
-.magnalisterForm tr.action table td>table td {width:inherit;}
-.magnalisterForm tr.action table td .mlbtn{width:100%;}
+.magnalisterForm tr.action {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+}
+.magnalisterForm tr.action table {
+    border-style: none;
+    table-layout: fixed;
+    width: 100%;
+}
+.magnalisterForm tr.action table td {
+    vertical-align: top;
+    border: none;
+    white-space: nowrap;
+    text-align: center;
+    width: 33%;
+}
+.magnalisterForm tr.action table td.ml-form-action-left > table {
+    float: left;
+}
+.magnalisterForm tr.action table td.ml-form-action-right > table {
+    float: right;
+}
+.magnalisterForm tr.action table td.ml-form-action-center > table {
+    margin: 0 auto;
+}
+.magnalisterForm tr.action table td > table {
+    width: auto;
+    clear: both;
+}
+.magnalisterForm tr.action table td > table td {
+    width: inherit;
+}
+.magnalisterForm tr.action table td .mlbtn {
+    width: 100%;
+}
+
+.ml-row-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /*padding: 17px 15px 17px 4px;*/
+    padding: 17px 4px 17px 4px;
+}
+.ml-row-x-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 10px 10px;
+}
+
+.ml-row-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.ml-row-container-sm {
+    width: 125px;
+}
+
+.ml-row-container-md {
+    width: 250px;
+}
+
+.ml-row-container-wd {
+    width: 365px;
+}
+.ml-btn-gray {
+    background-color: #fff;
+}

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -170,7 +170,7 @@ class DeletedView  extends ML_Core_Controller_Abstract{
 					<tr class="'.(($oddEven = !$oddEven) ? 'odd' : 'even').'">
 						<td title="'.$item['ShopItemName'].'">'.$item['ShopItemNameShort'].'</td>
 						<td><a href="http://www.amazon.de/gp/offer-listing/'.$item['ASIN'].'" class="ml-js-noBlockUi" title="'.$this->__('ML_AMAZON_LABEL_SAME_PRODUCTS').'" target="_blank">'.$item['ASIN'].'</a></td>
-						<td>'.(isset($item['Price'])?MLPrice::factory()->format($item['Price'], MLModul::gi()->getConfig('currency')):'').'</td>
+						<td>' . (isset($item['Price']) ? MLPrice::factory()->format($item['Price'], MLModule::gi()->getConfig('currency')) : '') . '</td>
 						<td>'.$item['Quantity'].'</td>
 						<td>'.date("d.m.Y", $item['DateAdded']).' &nbsp;&nbsp;<span class="small">'.date("H:i", $item['DateAdded']).'</span>'.'</td>
 						<td title="'.$this->__('ML_GENERIC_DELETED').'"><img src="'.MLHttp::gi()->getResourceUrl('images/status/green_dot.png').'" alt="'.$this->__('ML_GENERIC_DELETED').'"/></td>

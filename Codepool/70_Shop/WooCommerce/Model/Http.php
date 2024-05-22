@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -103,7 +103,7 @@ class ML_WooCommerce_Model_Http extends ML_Shop_Model_Http_Abstract {
      * @return string
      */
     public function getBackendBaseUrl() {
-        $sBaseUrl = get_site_url(). '/wp-admin/admin.php?page=magnalister&';
+        $sBaseUrl = admin_url().'/admin.php?page=magnalister&';
 
         return $sBaseUrl;
     }
@@ -171,7 +171,7 @@ class ML_WooCommerce_Model_Http extends ML_Shop_Model_Http_Abstract {
      * @return string
      */
     public function getFrontendDoUrl($aParams = array()) {
-        $sConfig = $this->getConfigFrontCornURL($aParams);
+        $sConfig = $this->getConfigFrontCronURL($aParams);
         if ($sConfig !== '') {
             return $sConfig;
         }

@@ -24,6 +24,6 @@ MLI18n::gi()->Otto_Productlist_Filter_aPreparedStatus__OK = 'Erfolgreich vorbere
 MLI18n::gi()->Otto_Productlist_Filter_aPreparedStatus__ERROR = 'Fehlerhaft vorbereitete';
 
 MLI18n::gi()->Otto_Productlist_Upload_ShippingFee_Notice_Title = "Information";
-MLI18n::gi()->Otto_Productlist_Upload_ShippingFee_Notice_Content = "OTTO berechnet je nach Vertrag Gebühren pro Listing oder bei Verwendung von Zusatzfunktionen wie „Untertitel“.
+MLI18n::gi()->Otto_Productlist_Upload_ShippingFee_Notice_Content = "OTTO Market berechnet je nach Vertrag Gebühren pro Listing oder bei Verwendung von Zusatzfunktionen wie „Untertitel“.
 Das &Uuml;bermitteln der Produkte l&ouml;st solche Geb&uuml;hren aus.
 Pr&uuml;fen Sie Ihren OTTO-Tarif, um ungewollte Geb&uuml;hren zu vermeiden.";

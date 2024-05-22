@@ -17,7 +17,6 @@
  */
 
 MLSetting::gi()->add('magnalister_shop_order_additional_field', array(
-    'trackingNumber'  => 'magnalister Otto tracking-number',
     'returnCarrier' => 'magnalister Otto return-carrier',
     'returnTrackingNumber' => 'magnalister Otto return-tracking-number',
 ));

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -19,11 +19,7 @@
 MLFilesystem::gi()->loadClass('Form_Helper_Model_Table_ConfigData_Abstract');
 
 class ML_Ebay_Helper_Model_Table_Ebay_ConfigData extends ML_Form_Helper_Model_Table_ConfigData_Abstract {
-    
-    public function hitcounterField(&$aField){
-        $aField['values'] = MLI18n::gi()->ebay_configform_prepare_hitcounter_values;
-    }
-    
+
     public function dispatchtimemaxField(&$aField){
         $aField['values'] = MLI18n::gi()->ebay_configform_prepare_dispatchtimemax_values;
     }
@@ -39,8 +35,8 @@ class ML_Ebay_Helper_Model_Table_Ebay_ConfigData extends ML_Form_Helper_Model_Ta
 
     public function primaryCategoryField(&$aField) {
         $aRequest = MLRequest::gi()->data();
-        if (MLModul::gi()->getMarketPlaceName().':'.MLModul::gi()->getMarketPlaceId().'_prepare_variations' === $aRequest['controller']) {
-            $aField['values'] = MLDatabase::factory(MLModul::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
+        if (MLModule::gi()->getMarketPlaceName() . ':' . MLModule::gi()->getMarketPlaceId() . '_prepare_variations' === $aRequest['controller']) {
+            $aField['values'] = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
         } else {
             $aField['values'] = MLDatabase::factory('ebay_categories')->getTopTenCategories('top'.$aField['name']);
         }
@@ -79,7 +75,21 @@ class ML_Ebay_Helper_Model_Table_Ebay_ConfigData extends ML_Form_Helper_Model_Ta
     }
     
     public function orderstatus_carrier_defaultField (&$aField) {
-        $aField['values'] = MLFormHelper::getModulInstance()->getCarrier();
+        if (MLSetting::gi()->IVCarrierFreeTextFieldMatching) {//we don't release right now for all because of lot work about content and all detail
+            $aShopFreeTextFieldsAttributes = MLFormHelper::getShopInstance()->getOrderFreeTextFieldsAttributes();
+            $optGroups = array(
+                MLI18n::gi()->get('ebay_config_carrier_option_group_marketplace_carrier').':' => MLFormHelper::getModulInstance()->getCarrier()
+            );
+            if (!empty($aShopFreeTextFieldsAttributes)) {
+                $aShopFreeTextFieldsAttributes['optGroupClass'] = 'freetextfield';
+                $optGroups += array(
+                    MLI18n::gi()->get('ebay_config_carrier_option_group_shopfreetextfield_option_carrier').':' => $aShopFreeTextFieldsAttributes
+                );
+            }
+            $aField['values'] = $optGroups;
+        } else {
+            $aField['values'] = MLFormHelper::getModulInstance()->getCarrier();
+        }
     }
     
     public function inventorysync_priceField (&$aField) {
@@ -114,7 +124,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_ConfigData extends ML_Form_Helper_Model_Ta
     }
     
     public function conditionIdField(&$aField) {
-        $aField['values'] = MLModul::gi()->getConditionValues();
+        $aField['values'] = MLModule::gi()->getConditionValues();
     }
     
     public function fixed_price_addKindField (&$aField) {
@@ -139,7 +149,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_ConfigData extends ML_Form_Helper_Model_Ta
     
     public function fixed_quantity_valueField (&$aField) {        
         $aField['value'] = isset($aField['value']) ? trim($aField['value']) : 0;
-        if (MLModul::gi()->getConfig('fixed.quantity.type') != 'stock' && (string)((int)$aField['value']) != $aField['value']) {
+        if (MLModule::gi()->getConfig('fixed.quantity.type') != 'stock' && (string)((int)$aField['value']) != $aField['value']) {
             $this->addError($aField, MLI18n::gi()->get('configform_quantity_value_error'));
         }
     }
@@ -232,10 +242,13 @@ class ML_Ebay_Helper_Model_Table_Ebay_ConfigData extends ML_Form_Helper_Model_Ta
     public function productfield_brandField(&$aField) {
         $aField['values'] = MLFormHelper::getShopInstance()->getBrand();
     }
-    
+
+    public function productfield_tecdocktypeField(&$aField){
+        $aField['values'] = MLFormHelper::getShopInstance()->getShopSystemAttributeList();
+    }
     public function ebayplusField (&$aField) {        
         $aField['disabled'] = true;
-        $aSetting = MLModul::gi()->getEBayAccountSettings();
+        $aSetting = MLModule::gi()->getEBayAccountSettings();
         if(isset($aSetting['eBayPlus']) && $aSetting['eBayPlus'] == "true"){
             $aField['disabled'] = false;
         }
@@ -266,7 +279,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_ConfigData extends ML_Form_Helper_Model_Ta
     }
 
     public function orderstatus_refundField(&$aField) {
-        if(!MLModul::gi()->isPaymentProgramAvailable()) {
+        if (!MLModule::gi()->isPaymentProgramAvailable()) {
             $aField = array();
         }
     }
@@ -283,7 +296,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_ConfigData extends ML_Form_Helper_Model_Ta
         } else {
             // Tax was not included in default field, because of that after including key in default field could cause zero value
             // with these lines of code we can prevent that
-            $sConfigValue = (int)MLModul::gi()->getConfig('mwst');
+            $sConfigValue = (int)MLModule::gi()->getConfig('mwst');
             if($sOriginalValue === null && $aField['value'] !== $sConfigValue){
                 $aField['value'] = $sConfigValue;
             }

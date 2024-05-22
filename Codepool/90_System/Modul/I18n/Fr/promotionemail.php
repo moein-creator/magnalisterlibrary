@@ -5,3 +5,7 @@ MLI18n::gi()->{'ML_GENERIC_QTY'} = 'Quantité';
 MLI18n::gi()->{'ML_GENERIC_ITEM'} = 'Article';
 MLI18n::gi()->{'ML_GENERIC_EACH'} = 'Prix unitaire';
 MLI18n::gi()->{'ML_GENERIC_TOTAL'} = 'Prix total';
+MLI18n::gi()->{'ML_GENERIC_TOTAL'} = 'Prix total';
+MLI18n::gi()->{'ML_GENERIC_QTY'} = 'Quantité';
+MLI18n::gi()->{'ML_GENERIC_ITEM'} = 'Article';
+MLI18n::gi()->{'ML_GENERIC_EACH'} = 'Prix unitaire';

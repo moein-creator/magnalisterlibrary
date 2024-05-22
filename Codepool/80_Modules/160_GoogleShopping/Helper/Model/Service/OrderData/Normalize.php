@@ -61,12 +61,12 @@ class ML_GoogleShopping_Helper_Model_Service_OrderData_Normalize extends ML_Modu
     }
     
     protected function googleshoppingFindCustomerIdent($sBuyer, $sDefault) {
-        if (MLModul::gi()->getConfig('customersync')) {
+        if (MLModule::gi()->getConfig('customersync')) {
             $sResult = MLDatabase::getDbInstance()->fetchOne("
                 SELECT orderdata 
                 FROM magnalister_orders 
                 WHERE orderdata like  '%\"BuyerUsername\":\"".$sBuyer."\"%' 
-                AND platform = '".MLModul::gi()->getMarketPlaceName()."'
+                AND platform = '" . MLModule::gi()->getMarketPlaceName() . "'
                 ORDER BY inserttime desc
                 LIMIT 1
             ");

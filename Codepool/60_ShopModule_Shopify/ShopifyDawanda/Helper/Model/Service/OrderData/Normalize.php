@@ -22,7 +22,7 @@ class ML_ShopifyDawanda_Helper_Model_Service_OrderData_Normalize extends ML_Dawa
     
     protected function normalizeOrder () {
         parent::normalizeOrder();
-        $this->aOrder['Order']['PaymentStatus'] = MLModul::gi()->getConfig('orderimport.paymentstatus');
+        $this->aOrder['Order']['PaymentStatus'] = MLModule::gi()->getConfig('orderimport.paymentstatus');
         return $this;
     }
 

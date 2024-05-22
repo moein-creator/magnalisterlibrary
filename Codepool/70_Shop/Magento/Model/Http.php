@@ -160,7 +160,7 @@ class ML_Magento_Model_Http extends ML_Shop_Model_Http_Abstract {
      * @return string
      */
     public function getFrontendDoUrl($aParams = array()) {
-        $sConfig = $this->getConfigFrontCornURL($aParams);
+        $sConfig = $this->getConfigFrontCronURL($aParams);
         if ($sConfig !== '') {
             return $sConfig;
         }

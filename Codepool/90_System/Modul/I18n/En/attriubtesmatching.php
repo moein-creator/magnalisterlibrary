@@ -31,7 +31,7 @@ MLI18n::gi()->{'attributes_matching_type_manually_matched'} = ' - (assinged auto
 MLI18n::gi()->{'attributes_matching_type_free_text'} = ' - (own values)';
 
 // Messages
-MLI18n::gi()->{'attributes_matching_multi_select_hint'} = 'Press CMD and select all favored attributes to be submitted';
+MLI18n::gi()->{'attributes_matching_multi_select_hint'} = 'Press the Command key (CMD) on macOS or the Control key (Ctrl) on Windows, and select all the desired values for transmission.';
 MLI18n::gi()->{'attributes_matching_reset_matching_message'} = 'Do you really want to delete the matching?';
 MLI18n::gi()->{'attributes_matching_prepared_different_notice'} = 'Please note that some of the Items from the selected category "{#category_name#}" have been matched differently in "prepare products". These products will be uploaded as specified in "prepare products".';
 MLI18n::gi()->{'attributes_matching_attribute_deleted_from_shop_message'} = 'This attribute was deleted or changed from shop. Therefore, matchings were voided.If required, please match again with a proper shop attribute.';

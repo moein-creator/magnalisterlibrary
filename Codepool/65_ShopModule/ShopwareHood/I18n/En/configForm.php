@@ -133,3 +133,27 @@ MLI18n::gi()->{'hood_config_producttemplate__field__template.content__hint'} = '
     <dt>#PICTURE2# etc.</dt>
             <dd>Second product image; with #PICTURE3#, #PICTURE4# etc, you can transfer as many pictures as you have available in your Shop.</dd><br><dt>Free text field:</dt><br><dt>#Description1#&nbsp;#Freetextfield1#</dt><dt>#Description2#&nbsp;#Freetextfield2#</dt><dt>#Description..#&nbsp;#Freetextfield..#</dt><br><dd>Transfer of item free text field&nbsp;the characters after the placeholder (e.g. #Freetextfield1#) designates the position of the free text field.***
                            <br> See Settings > Basic Settings > Items > Item Free Text Field***</dd><dt>#PROPERTIES#</dt><dd>A list of all product attributes. Appearance can be determined with CSS (see the code from the Standard Template)</dd></dl>br';
+MLI18n::gi()->{'hood_config_price__field__fixed.priceoptions__help'} = '<p>With this function you can transfer different prices to the marketplace and synchronize them automatically.<br />
+<br />
+Select a customer group from your webshop using the dropdown on the right.<br />
+<br />
+If you do not enter a price in the new customer group, the default price from the webshop will be used automatically. This makes it very easy to enter a different price even for just a few items. The other price configurations are also applied.<br />
+<br />
+<b>Example:</b></p>
+<ul>
+<li>Create a customer group in your webshop, e.g. "{#setting:currentMarketplaceName#} customers".</li>
+<li>In your webshop, add the wanted prices to the new customer group\'s items.</li>
+</ul>
+<p>The discount mode of the customer groups can also be used. You can enter a  discount there (in percent). If the discount mode is activated in the Shopware item, the discounted price is transferred to the marketplace via magnalister. Important: the marketplace price is not displayed as a strike price.</p>';
+MLI18n::gi()->{'hood_config_price__field__chinese.priceoptions__help'} = '<p>With this function you can transfer different prices to the marketplace and synchronize them automatically.<br />
+<br />
+Select a customer group from your webshop using the dropdown on the right.<br />
+<br />
+If you do not enter a price in the new customer group, the default price from the webshop will be used automatically. This makes it very easy to enter a different price even for just a few items. The other price configurations are also applied.<br />
+<br />
+<b>Example:</b></p>
+<ul>
+<li>Create a customer group in your webshop, e.g. "{#setting:currentMarketplaceName#} customers".</li>
+<li>In your webshop, add the wanted prices to the new customer group\'s items.</li>
+</ul>
+<p>The discount mode of the customer groups can also be used. You can enter a  discount there (in percent). If the discount mode is activated in the Shopware item, the discounted price is transferred to the marketplace via magnalister. Important: the marketplace price is not displayed as a strike price.</p>';

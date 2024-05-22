@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -20,8 +20,8 @@ class ML_Hood_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncO
 
     protected $sOrderIdConfirmations = 'MOrderID';
 
-    protected function submitRequestAndProcessResult($sAction, $aRequest, $aModels) {
-        $oModule = MLModul::gi();
+    protected function submitRequestAndProcessResult($sAction, $aRequest, $aModels, $singleOrderRequestOrderId = false) {
+        $oModule = MLModule::gi();
         foreach ($aModels as $sModel => $oModel) {
             $aRequest['SendMail'] = ($oModule->getConfig('orderstatus.sendmail') == 1);
             if ('CancelShipment' === $sAction && array_key_exists($sModel, $aRequest)) {
@@ -37,11 +37,12 @@ class ML_Hood_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncO
                 $aRequest[$sModel]['Reason'] = $sReason;
             }
         }
-        return parent::submitRequestAndProcessResult($sAction, $aRequest, $aModels);
+
+        parent::submitRequestAndProcessResult($sAction, $aRequest, $aModels);
     }
 
     protected function isCancelled($sShopStatus) {
-        $oModule = MLModul::gi();
+        $oModule = MLModule::gi();
         $aCancelledStatuses = array(
             $oModule->getConfig('orderstatus.canceled.nostock'),
             $oModule->getConfig('orderstatus.canceled.revoked'),

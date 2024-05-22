@@ -15,9 +15,9 @@
  * -----------------------------------------------------------------------------
  */
 
-.magnalisterForm tr th {
-    border-right:none;
-}
+/*.magnalisterForm tr th {
+    border-right: none;
+}*/
 .magnalisterForm tr.mlexpert th label {
     color: #004090;
     font-style: italic;
@@ -25,9 +25,9 @@
 .magnalisterForm tr td.mlhelp {
     width: 16px;
     min-width: 16px;
-    border-left:none;
+    border-left: none;
 }
-.magnalisterForm .mlhelp a{
+.magnalisterForm .mlhelp a {
     background: url("../images/information.png") no-repeat scroll 0 0 transparent;
     cursor: pointer;
     display: table-cell;
@@ -36,28 +36,31 @@
     width: 16px;
     text-decoration: none;
     text-align: right;
+    margin-top: 2px;
 }
 .magnalisterForm .mlhidden {
-    display:none;
+    display: none;
 }
-.magnalisterForm .mlMultipleSelect{
+.magnalisterForm .mlMultipleSelect {
     width: 100%;
     margin-top: 6px;
 }
 .magnalisterForm .ml-force-hidden {
-    display:none !important;
+    display: none !important;
 }
 
 .magnalisterForm .ml-js-not-editable td.input {
-    opacity: .2;
+    opacity: 0.2;
 }
 
 .magnalisterForm .mlWarning span {
-    background: url("../images/info_tooltip.png") no-repeat scroll 0 3px transparent;
+    background: url("../images/info_tooltip.png") no-repeat scroll 0 3px
+    transparent;
     height: 19px;
     width: 16px;
     text-align: right;
 }
+
 
 .magnalisterForm .mlCollapse {
     border: none;
@@ -65,19 +68,24 @@
 }
 
 .magnalisterForm .mlCollapse span {
-	background: url("../images/collapse_arrow.png") no-repeat scroll 0 0px transparent;
-	height: 22px;
-	width: 25px;
-	margin-top: 5px;
-	float: right;
+    background: url("../images/collapse_arrow.png") no-repeat scroll 0 0px
+    transparent;
+    height: 22px;
+    width: 25px;
+    margin-top: 5px;
+    float: right;
 }
 
 .magnalisterForm table.tableHeadCarrierMatching th {
-    background: #7b7b7b78;
-    border-right: 1px solid #747474 !important;
+    border-right: 1px solid #dadada;
 }
 
-.magnalisterForm div.ml-duplicatematchingoption div.duplicate > div > span button.mlbtn.fullfont {
+.magnalisterForm
+div.ml-duplicatematchingoption
+div.duplicate
+> div
+> span
+button.mlbtn.fullfont {
     margin-top: 26px;
 }
 

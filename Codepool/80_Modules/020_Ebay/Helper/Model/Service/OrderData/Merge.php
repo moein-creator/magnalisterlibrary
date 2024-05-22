@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -137,7 +137,7 @@ class ML_Ebay_Helper_Model_Service_OrderData_Merge extends ML_Modul_Helper_Model
      * @return float
      */
     protected function ebayCalcPromotionalDiscount ($fCost, $fOrderCost, $iQty) {
-        $aPromotion = MLModul::gi()->getShippingPromotionalDiscount();
+        $aPromotion = MLModule::gi()->getShippingPromotionalDiscount();
         $this->ebayDebug(array('aPromotion' => $aPromotion));
         $blPromotion = false;
         if (empty($aPromotion)) {
@@ -210,7 +210,7 @@ class ML_Ebay_Helper_Model_Service_OrderData_Merge extends ML_Modul_Helper_Model
                 break;
             }
         }
-        $sDestination = strtoupper(MLModul::gi()->getConfig('country')) == strtoupper($sOrderCountry) ? 'Local' : 'International';
+        $sDestination = strtoupper(MLModule::gi()->getConfig('country')) == strtoupper($sOrderCountry) ? 'Local' : 'International';
         $this->ebayDebug(array('destination' => $sDestination));
         $aPreparedDestinationData = $oPrepareHelper
             ->setProduct($oProduct)//could be null for default values
@@ -229,7 +229,7 @@ class ML_Ebay_Helper_Model_Service_OrderData_Merge extends ML_Modul_Helper_Model
         $this->ebayDebug(array('preparedDestinationData' => $aPreparedDestinationData));
         $iProfileId = $aPreparedDestinationData['Shipping'.$sDestination.'Profile']['value'];
         $blDiscount = (bool)$aPreparedDestinationData['Shipping'.$sDestination.'Discount']['value'];
-        $aMpProfileData = MLModul::gi()->getShippingDiscountProfiles();
+        $aMpProfileData = MLModule::gi()->getShippingDiscountProfiles();
         if (array_key_exists($iProfileId, $aMpProfileData)) {
             $this->ebayDebug(array('shippingDiscountProfile' => array('id' => $iProfileId, 'data' => $aMpProfileData[$iProfileId])));
             $fAdd = $aMpProfileData[$iProfileId]['amount'];

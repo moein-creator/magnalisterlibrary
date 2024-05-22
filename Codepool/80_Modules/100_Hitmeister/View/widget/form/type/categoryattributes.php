@@ -1,11 +1,12 @@
-<?php class_exists('ML', false) or die() ?>
-<table class="categoryAttributes" style="width:100%;">  
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
+<table class="categoryAttributes" style="width:100%;">
 </table>
 <script type="text/javascript">
-    (function($) {
-        $(document).ready(function() {
+    (function ($) {
+        $(document).ready(function () {
             $('.categoryAttributes').closest('.js-field.even').hide();
-			var url = $('form.magnalisterForm').attr('action').replace(/^https?:/, window.location.protocol);
+            var url = $('form.magnalisterForm').attr('action').replace(/^https?:/, window.location.protocol);
             var catID = $('#hitmeister_prepare_apply_form_field_primarycategory').val();
             var itemID = '<?php echo isset($aField['productid']) ? $aField['productid'] : '' ?>';
 
@@ -74,11 +75,11 @@
 
         function addRow(className, thTitle, elementId, mandatory) {
             var url = $('form.magnalisterForm').attr('action').replace(/^https?:/, window.location.protocol);
-            if (className === 'even') {
+            /*if (className === 'even') {
                 className = 'odd';
             } else {
                 className = 'even';
-            }
+            }*/
 
             var idForClass = newElementId(elementId, false, false);
             var key = newElementId(elementId, false, true);
@@ -102,13 +103,13 @@
             var idForClass = newElementId(elementId, false, false);
             var key = newElementId(elementId, false, true);
             var classSelector;
-            if (className === 'even') {
+            /*if (className === 'even') {
                 className = 'odd';
                 classSelector = 'even';
             } else {
                 className = 'even';
                 classSelector = 'odd';
-            }
+            }*/
             
             $.ajax({
                 url: url + '&ml[method]=getCategoryAdditionalCategories&ml[ajax]=true&ml[className]=' + className + '&ml[thTitle]=' + thTitle + '&ml[elementId]=' + idForClass + '&ml[key]=' + key,

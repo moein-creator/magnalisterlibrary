@@ -26,6 +26,6 @@ class ML_GoogleShopping_Controller_GoogleShopping_Listings_Deleted extends ML_Li
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

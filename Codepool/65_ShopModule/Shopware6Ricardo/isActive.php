@@ -19,5 +19,5 @@
 global $magnaConfig;
 return (
         isset($magnaConfig['maranon']['Marketplaces'][MLRequest::gi()->data('mp')]) && $magnaConfig['maranon']['Marketplaces'][MLRequest::gi()->data('mp')] == 'ricardo' //ricardo module activation
-    && class_exists('Shopware\Storefront\Framework\Routing\StorefrontResponse')//showpare 6 shop activation
+        && class_exists('Shopware\Storefront\Framework\Routing\StorefrontRouteScope')//showpare 6 shop activation
     );

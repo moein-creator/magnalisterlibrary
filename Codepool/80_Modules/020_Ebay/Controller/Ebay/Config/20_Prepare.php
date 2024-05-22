@@ -1,61 +1,37 @@
 <?php
-/**
- * 888888ba                 dP  .88888.                    dP                
- * 88    `8b                88 d8'   `88                   88                
- * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b. 
- * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88 
- * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88 
- * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P' 
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
  *                          m a g n a l i s t e r
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 MLFilesystem::gi()->loadClass('Form_Controller_Widget_Form_ConfigAbstract');
 class ML_Ebay_Controller_Ebay_Config_Prepare extends ML_Form_Controller_Widget_Form_ConfigAbstract {
-    public static function getTabTitle () {
+    public static function getTabTitle() {
         return MLI18n::gi()->get('ebay_config_account_prepare');
     }
-    
+
     public static function getTabActive() {
         return self::calcConfigTabActive(__class__, false);
     }
 
-    public function renderAjax() {
-        if ($this->getRequest('what') === 'topTenConfig') {
-            $aGet = MLRequest::gi()->data();
-            $sDs = DIRECTORY_SEPARATOR;
-            $oTopTen = MLHelper::gi('widget_topten');
-            $oTopTen->setMarketPlaceId(MLModul::gi()->getMarketPlaceId());
-
-            if ($this->getRequest('tab') === null) {
-                echo $oTopTen->renderConfig();
-            } elseif ($this->getRequest('tab') == 'init') {
-                echo $oTopTen->renderConfigCopy((isset($aGet['executeTT'])) && ($aGet['executeTT'] == 'true'));
-            } elseif ($this->getRequest('tab') == 'delete') {
-                echo $oTopTen->renderConfigDelete(
-                    isset($aGet['delete']) ? $aGet['delete'] : array()
-                );
-            }
-            die();
-        } else {
-            parent::renderAjax();
-        }
-    }
-
     public function render() {
-        if(!MLHttp::gi()->isAjax()){
-            MLSetting::gi()->add('aCss','magnalister.ebayshippingservice.css', true);
+        if (!MLHttp::gi()->isAjax()) {
+            MLSetting::gi()->add('aCss', 'magnalister.ebayshippingservice.css', true);
         }
         parent::render();
     }
-    
+
     public function paymentSellerProfileField(&$aField) {
         MLHelper::gi('model_form_type_sellerprofiles')->sellerProfileField($aField, 'payment', true);
     }
@@ -69,7 +45,7 @@ class ML_Ebay_Controller_Ebay_Config_Prepare extends ML_Form_Controller_Widget_F
     }
     
     public function paymentMethodsField(&$aField) {
-        $aField['values'] = MLModul::gi()->getPaymentOptions();
+        $aField['values'] = MLModule::gi()->getPaymentOptions();
         if (count($aField['values']) == 1) {
             $aField['value'] = current($aField['values']);
             $aField['type'] = 'information';
@@ -110,12 +86,12 @@ class ML_Ebay_Controller_Ebay_Config_Prepare extends ML_Form_Controller_Widget_F
     }
     
     public function shippingLocalField(&$aField) {
-        $aField['values'] = MLModul::gi()->getLocalShippingServices();
+        $aField['values'] = MLModule::gi()->getLocalShippingServices();
         $this->_shippingField($aField);
     }
     public function shippingInternationalField(&$aField) {
-        $aField['values'] = array_merge( array('' => MLI18n::gi()->get('sEbayNoInternationalShipping')), MLModul::gi()->getInternationalShippingServices());
-        $aField['locations'] = MLModul::gi()->getInternationalShippingLocations();
+        $aField['values'] = array_merge(array('' => MLI18n::gi()->get('sEbayNoInternationalShipping')), MLModule::gi()->getInternationalShippingServices());
+        $aField['locations'] = MLModule::gi()->getInternationalShippingLocations();
         $this->_shippingField($aField);
     }
     
@@ -136,9 +112,9 @@ class ML_Ebay_Controller_Ebay_Config_Prepare extends ML_Form_Controller_Widget_F
         $aProfiles = array();
         $oI18n = MLI18n::gi();
         $oPrice = MLPrice::factory();
-        $sCurrency = MLModul::gi()->getConfig('currency');
+        $sCurrency = MLModule::gi()->getConfig('currency');
         if (isset($aField['i18n'])) {
-            foreach (MLModul::gi()->getShippingDiscountProfiles() as $sProfil => $aProfil) {
+            foreach (MLModule::gi()->getShippingDiscountProfiles() as $sProfil => $aProfil) {
                 $aProfiles[$sProfil] = $oI18n->replace(
                     $aField['i18n']['option'], array(
                         'NAME' => $aProfil['name'],
@@ -169,17 +145,17 @@ class ML_Ebay_Controller_Ebay_Config_Prepare extends ML_Form_Controller_Widget_F
     }
     
     public function returnpolicy_returnsacceptedField(&$aField) {
-        $aField['values'] = MLModul::gi()->geteBaySingleReturnPolicyDetail('ReturnsAccepted');
+        $aField['values'] = MLModule::gi()->geteBaySingleReturnPolicyDetail('ReturnsAccepted');
         MLHelper::gi('model_form_type_sellerprofiles')->manipulateFieldForSellerProfile($aField, $this->getField('returnSellerProfile'), 'return');
     }
     
     public function returnpolicy_returnswithinField(&$aField) {
-        $aField['values'] = MLModul::gi()->geteBaySingleReturnPolicyDetail('ReturnsWithin');
+        $aField['values'] = MLModule::gi()->geteBaySingleReturnPolicyDetail('ReturnsWithin');
         MLHelper::gi('model_form_type_sellerprofiles')->manipulateFieldForSellerProfile($aField, $this->getField('returnSellerProfile'), 'return');
     }
     
     public function returnpolicy_shippingcostpaidbyField(&$aField) {
-        $aField['values'] = MLModul::gi()->geteBaySingleReturnPolicyDetail('ShippingCostPaidBy');
+        $aField['values'] = MLModule::gi()->geteBaySingleReturnPolicyDetail('ShippingCostPaidBy');
         MLHelper::gi('model_form_type_sellerprofiles')->manipulateFieldForSellerProfile($aField, $this->getField('returnSellerProfile'), 'return');
     }
     

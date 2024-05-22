@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -19,7 +19,7 @@
 /** @var ML_Form_Controller_Widget_Form_VariationsAbstract $this */
 if (!class_exists('ML', false))
     throw new Exception();
-$marketplaceName = MLModul::gi()->getMarketPlaceName();
+$marketplaceName = MLModule::gi()->getMarketPlaceName();
 // if there are more than 5 optional attributes, they are displayed as a dropdown
 $optionalAttributesMaxSize = 5;
 $mParentValue = $this->getField('variationgroups.value', 'value');
@@ -152,7 +152,7 @@ if (!empty($mParentValue) && $mParentValue !== 'none' && $mParentValue !== 'new'
         if ($bError == true) {
             $aSelectField['cssclass'] = 'error';
             $aCustomSelectField['cssclass'] = 'error';
-            $style = 'color:red';
+            $style = 'color:#e31a1c;';
         }
 
         $aAjaxField = $this->getField($sId . '_ajax');
@@ -329,6 +329,15 @@ if (!empty($mParentValue) && $mParentValue !== 'none' && $mParentValue !== 'new'
                 'name' => $sBaseName . '[AttributeName]',
                 'id' => $sId . '_attribute_name',
                 'value' => isset($sAttribute['value']) ? $sAttribute['value'] : '',
+                'padding-right' => 0,
+            );
+        }
+        if (isset($sAttribute['attributeId'])) {
+            $aAttributeMatchingSubfields['hidden_attribute_id'] = array(
+                'type' => 'hidden',
+                'name' => $sBaseName . '[AttributeId]',
+                'id' => $sId . '_attribute_id',
+                'value' => $sAttribute['attributeId'],
                 'padding-right' => 0,
             );
         }

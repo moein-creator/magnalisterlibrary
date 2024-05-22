@@ -27,7 +27,7 @@ class ML_PriceMinister_Controller_PriceMinister_ErrorLog extends ML_ErrorLog_Con
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public function getFields()

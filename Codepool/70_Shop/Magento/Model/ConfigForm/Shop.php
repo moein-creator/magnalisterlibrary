@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -68,6 +68,9 @@ class ML_Magento_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
     public function getBrand() {
         return $this->getAttributeList();
     }
+    public function getShopSystemAttributeList() {
+        return $this->getAttributeList();
+    }
 
     public function getShippingTime() {
         return $this->getAttributeList();
@@ -114,24 +117,24 @@ class ML_Magento_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
     public function getPrefixedAttributeList($getProperties = false) {
         return $this->getProductAttributes();
     }
-
-    /**
-     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
-     * 
-     * @return array Collection of attributes with options
-     */
-    public function getAttributeListWithOptions() {
-        $aResult = $this->getProductAttributes('frontend_input', array('in' => array('select', 'multiselect')));
-
-        // filter out attributes without options
-        foreach (array_keys($aResult) as $sAttributeCode) {
-            if ($sAttributeCode != '' && count($this->getAttributeOptions($sAttributeCode)) === 0) {
-                unset($aResult[$sAttributeCode]);
-            }
-        }
-
-        return $aResult;
-    }
+    //
+    //    /**
+    //     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
+    //     *
+    //     * @return array Collection of attributes with options
+    //     */
+    //    public function getAttributeListWithOptions() {
+    //        $aResult = $this->getProductAttributes('frontend_input', array('in' => array('select', 'multiselect')));
+    //
+    //        // filter out attributes without options
+    //        foreach (array_keys($aResult) as $sAttributeCode) {
+    //            if ($sAttributeCode != '' && count($this->getAttributeOptions($sAttributeCode)) === 0) {
+    //                unset($aResult[$sAttributeCode]);
+    //            }
+    //        }
+    //
+    //        return $aResult;
+    //    }
 
     /**
      * Gets the list of product attribute options for attributes that have options

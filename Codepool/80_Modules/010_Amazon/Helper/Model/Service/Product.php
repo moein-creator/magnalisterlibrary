@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -63,9 +63,9 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     public function __construct() {
-        $this->aModul = MLModul::gi()->getConfig();
+        $this->aModul = MLModule::gi()->getConfig();
         $this->oPrepare = MLDatabase::factory('amazon_prepare');
-        $this->oMarketplace = MLModul::gi();
+        $this->oMarketplace = MLModule::gi();
         $this->oPrepareDataHelper = MLHelper::gi('model_table_amazon_preparedata');
     }
 
@@ -123,6 +123,7 @@ class ML_Amazon_Helper_Model_Service_Product {
                                  'BasePrice',
                                  'Weight',
                                  'variation_theme',
+                                 'BopisStores',
                              ) as $sField) {
                         $aVariantData[$sField] = $this->{'get'.$sField}();
                     }
@@ -176,6 +177,7 @@ class ML_Amazon_Helper_Model_Service_Product {
                                  'MerchantShippingGroupName',
                                  'ShippingTime',
                                  'variation_theme',
+                                 'BopisStores',
                              ) as $sField) {
                         $aVariant[$sField] = $this->{'get'.$sField}();
                     }
@@ -240,7 +242,7 @@ class ML_Amazon_Helper_Model_Service_Product {
 
                 $this->checkBusinessFeature($aData);
 
-                $aData['Variations'] = $aApplyVariantsData;
+                $aData['Variations'] = $this->managingImages($aApplyVariantsData, $aData['Images']);
                 if (count($aData['Variations']) == 1 and count($aData['Variations'][0]['Variation']) == 0) {//only master
                     unset($aData['Variations']);
                 }
@@ -282,8 +284,7 @@ class ML_Amazon_Helper_Model_Service_Product {
 
     protected function getMasterEan($aVariants) {
         $sType = $this->getInternationalIdentifier();
-        $aData = $this->oPrepare->get('applydata');
-        $sEAN= isset($aData[$sType]) ? $aData[$sType] : $this->oPrepare->get('EAN');
+        $sEAN = $this->oPrepare->get('EAN');
         return (
             isset($sEAN) &&
             count($this->aVariants) == 1
@@ -295,14 +296,12 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     protected function getMasterItemTitle($aVariants) {
-        $aData = $this->oPrepare->get('applydata');
-        $sItemTitle= isset($aData['ItemTitle']) ? $aData['ItemTitle'] : $this->oPrepare->get('ItemTitle');
+        $sItemTitle = $this->oPrepare->get('ItemTitle');
         return isset($sItemTitle) ? $sItemTitle : $this->oProduct->getName();
     }
 
     protected function getMasterDescription($aVariants) {
-        $aData = $this->oPrepare->get('applydata');
-        $sDescription= isset($aData['Description']) ? $aData['Description'] : $this->oPrepare->get('Description');
+        $sDescription = $this->oPrepare->get('Description');
         return isset($sDescription) ? $sDescription : $this->getSanitizedProductDescription($this->oProduct->getDescription());
     }
 
@@ -337,8 +336,7 @@ class ML_Amazon_Helper_Model_Service_Product {
 
     protected function getProductType() {
         $sMainCategory = $this->getMainCategory();
-        $aData = $this->oPrepare->get('applydata');
-        $aProductType = isset($aData['ProductType']) ? $aData['ProductType'] : $this->oPrepare->get('ProductType');
+        $aProductType = $this->oPrepare->get('ProductType');
         if (!empty($aProductType[$sMainCategory])) {
             return $aProductType[$sMainCategory];
         }
@@ -357,8 +355,7 @@ class ML_Amazon_Helper_Model_Service_Product {
 
     protected function getBrowseNodes() {
         $sMainCategory = $this->getMainCategory();
-        $aData = $this->oPrepare->get('applydata');
-        $aBrowseNodes = isset($aData['BrowseNodes']) ? $aData['BrowseNodes'] : $this->oPrepare->get('BrowseNodes');
+        $aBrowseNodes = $this->oPrepare->get('BrowseNodes');
         $aBrowseNodesNew = isset($aBrowseNodes[$sMainCategory]) ? $aBrowseNodes[$sMainCategory] : null;
         $aBrowseNodesNew = isset($aBrowseNodes) && !isset($aBrowseNodesNew) ? $aBrowseNodes : $aBrowseNodesNew;
 
@@ -375,8 +372,7 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     protected function getItemTitle() {
-        $aData = $this->oPrepare->get('applydata');
-        $sItemTitle = isset($aData['ItemTitle']) ? $aData['ItemTitle'] : $this->oPrepare->get('ItemTitle');
+        $sItemTitle = $this->oPrepare->get('ItemTitle');
         return isset($sItemTitle) ? $sItemTitle : $this->oCurrentProduct->getName();
     }
 
@@ -397,14 +393,13 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     protected function getImageSize() {
-        $sSize = MLModul::gi()->getConfig('imagesize');
+        $sSize = MLModule::gi()->getConfig('imagesize');
         $iSize = $sSize == null ? 500 : (int)$sSize;
         return $iSize;
     }
 
     public function getBulletPoints() {
-        $aData = $this->oPrepare->get('applydata');
-        $aBulletPoints = isset($aData['BulletPoints']) ? $aData['BulletPoints'] : $this->oPrepare->get('BulletPoints');
+        $aBulletPoints = $this->oPrepare->get('BulletPoints');
         $aBulletPointsFromDB = $this->oPrepareDataHelper->stringToArray(
             $this->oCurrentProduct->getMetaDescription(),
             5,
@@ -416,8 +411,7 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     public function getDescription() {
-        $aData = $this->oPrepare->get('applydata');
-        $sDescription = isset($aData['Description']) ? $aData['Description'] : $this->oPrepare->get('Description');
+        $sDescription = $this->oPrepare->get('Description');
         return isset($sDescription) ? $sDescription : $this->getSanitizedProductDescription($this->oCurrentProduct->getDescription());
     }
 
@@ -425,8 +419,7 @@ class ML_Amazon_Helper_Model_Service_Product {
      * @return string
      */
     public function getKeywords() {
-        $aData = $this->oPrepare->get('applydata');
-        $mKeywords = isset($aData['Keywords']) ? $aData['Keywords'] : $this->oPrepare->get('Keywords');
+        $mKeywords = $this->oPrepare->get('Keywords');
         if (is_array($mKeywords)) {//compatibility with old 5 keywords
             foreach ($mKeywords as $sKey => $sKeywords) {
                 if (empty($sKeywords)) {
@@ -443,11 +436,6 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     protected function getAttributes() {
-        $aData = $this->oPrepare->get('applydata');
-
-        if (!empty($aData['Attributes'])) {
-            $aCatAttributes = $aData['Attributes'];
-        } else {
             /* @var $attributesMatchingService ML_Modul_Helper_Model_Service_AttributesMatching */
             $attributesMatchingService = MLHelper::gi('Model_Service_AttributesMatching');
 
@@ -456,29 +444,26 @@ class ML_Amazon_Helper_Model_Service_Product {
                 $this->oCurrentProduct,
                 $this->oProduct//If a value is matched only for main variant, this matching will be used for not matched variant in the product as default
             );
+
+        $sPreparedTemplate = $this->oPrepare->get('shippingtemplate');
+        $aTemplateName = MLModule::gi()->getConfig('shipping.template.name');
+
+        $sTemplateName = null;
+        if($sPreparedTemplate !== null && is_array($aTemplateName) && isset($aTemplateName[$sPreparedTemplate])){
+            $sTemplateName = $aTemplateName[$sPreparedTemplate];
+        }else if(is_array($aTemplateName)){
+            $aDefaultTemplateName = MLModule::gi()->getConfig('shipping.template');
+            foreach ($aDefaultTemplateName as $sKey => $sTemplate){
+                if($sTemplate['default'] == '1'){
+                    $sTemplateName = $aTemplateName[$sKey];
+                }
+            }
         }
-
-        if(MLModul::gi()->getConfig('shipping.template.active') == '1'){
-            $sPreparedTemplate = $this->oPrepare->get('shippingtemplate');
-            $aTemplateName = MLModul::gi()->getConfig('shipping.template.name');
-
-            $sTemplateName = null;
-            if($sPreparedTemplate !== null && is_array($aTemplateName) && isset($aTemplateName[$sPreparedTemplate])){
-                $sTemplateName = $aTemplateName[$sPreparedTemplate];
-            }else if(is_array($aTemplateName)){
-                $aDefaultTemplateName = MLModul::gi()->getConfig('shipping.template');
-                foreach ($aDefaultTemplateName as $sKey => $sTemplate){
-                    if($sTemplate['default'] == '1'){
-                        $sTemplateName = $aTemplateName[$sKey];
-                    }
-                }
+        if($sTemplateName !== null ){
+            if(!is_array($aCatAttributes)){
+               $aCatAttributes = array();
             }
-            if($sTemplateName !== null ){
-                if(!is_array($aCatAttributes)){
-                   $aCatAttributes = array();
-                }
-                $aCatAttributes['MerchantShippingGroupName'] = $sTemplateName;
-            }
+            $aCatAttributes['MerchantShippingGroupName'] = $sTemplateName;
         }
 
         return $aCatAttributes;
@@ -498,7 +483,7 @@ class ML_Amazon_Helper_Model_Service_Product {
         $sManufacturer = $this->oPrepare->get('Manufacturer');
 
         if (empty($sManufacturer)) {
-            $sManufacturer = $this->oCurrentProduct->getModulField('manufacturer');
+            $sManufacturer = $this->oCurrentProduct->getManufacturer();//get from product directly
             if (empty($sManufacturer)) {
                 $sManufacturer = $this->oMarketplace->getConfig('prepare.manufacturerfallback');
             }
@@ -508,8 +493,10 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     protected function getBrand() {
-        $aData = $this->oPrepare->get('applydata');
-        $sBrand = isset($aData['Brand']) ? $aData['Brand'] : $this->oPrepare->get('Brand');
+        $sBrand = $this->oPrepare->get('Brand');
+        if (empty($sBrand)) {
+            $sBrand = $this->oCurrentProduct->getManufacturer();//get from product directly
+        }
         return isset($sBrand) ? $sBrand : $this->getManufacturer();
     }
 
@@ -523,8 +510,7 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     protected function getMasterManufacturerPartNumber() {
-        $aData = $this->oPrepare->get('applydata');
-        $sManufacturerPartNumber = isset($aData['ManufacturerPartNumber']) ? $aData['ManufacturerPartNumber'] : $this->oPrepare->get('ManufacturerPartNumber');
+        $sManufacturerPartNumber = $this->oPrepare->get('ManufacturerPartNumber');
         return (
                (isset($sManufacturerPartNumber))
             // && count($this->aVariants) == 1
@@ -559,7 +545,7 @@ class ML_Amazon_Helper_Model_Service_Product {
         if ($this->oPrepare->get('price') !== null) {// @deprecated price comes only from mp-config
             return $this->oPrepare->get('price');
         } else {
-            return $this->oCurrentProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
+            return $this->oCurrentProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
         }
     }
 
@@ -592,7 +578,7 @@ class ML_Amazon_Helper_Model_Service_Product {
     }
 
     protected function getBusinessPrice() {
-        $dPrice = $this->oCurrentProduct->getSuggestedMarketplacePrice($this->getBusinessPriceObject());
+        $dPrice = $this->oCurrentProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject('b2b'));
 
         if (!isset($dPrice) || empty($dPrice) || $dPrice < 0) {
             $dPrice = $this->getPrice();
@@ -604,19 +590,18 @@ class ML_Amazon_Helper_Model_Service_Product {
     protected function getProductTaxCode() {
         // first check if there is a category specific settings
         $category = $this->getMainCategory();
-        $categorySpecificCategory = MLModul::gi()->getConfig('b2b.tax_code_category');
+        $categorySpecificCategory = MLModule::gi()->getConfig('b2b.tax_code_category');
         $aProductTaxCodeMatching = null;
-        if (is_array($categorySpecificCategory)) {
+        if (is_array($categorySpecificCategory) && $category) {
             $key = array_search($category, $categorySpecificCategory);
             if ($key !== false) {
-                $categorySpecificTaxMatching = MLModul::gi()->getConfig('b2b.tax_code_specific');
+                $categorySpecificTaxMatching = MLModule::gi()->getConfig('b2b.tax_code_specific');
                 $aProductTaxCodeMatching = $categorySpecificTaxMatching[$key];
             }
         }
 
-        $aProductTaxCodeMatching = $aProductTaxCodeMatching ? : MLModul::gi()->getConfig('b2b.tax_code');
+        $aProductTaxCodeMatching = $aProductTaxCodeMatching ?: MLModule::gi()->getConfig('b2b.tax_code');
         $sProductTaxCode = isset($aProductTaxCodeMatching[$this->oCurrentProduct->getTaxClassId()]) ? $aProductTaxCodeMatching[$this->oCurrentProduct->getTaxClassId()]:null;
-
         if (!isset($sProductTaxCode) || empty($sProductTaxCode)) {
             $sProductTaxCode = 'A_GEN_NOTAX';
         }
@@ -695,8 +680,8 @@ class ML_Amazon_Helper_Model_Service_Product {
         if ($this->oPrepare->get('quantity') !== null) {
             return $this->oPrepare->get('quantity');
         } else {
-            $aStockConf = MLModul::gi()->getStockConfig();
-            return $this->oCurrentProduct->getSuggestedMarketplaceStock($aStockConf['type'], $aStockConf['value']);
+            $aStockConf = MLModule::gi()->getStockConfig();
+            return $this->oCurrentProduct->getSuggestedMarketplaceStock($aStockConf['type'], $aStockConf['value'], $aStockConf['max']);
         }
     }
 
@@ -787,7 +772,8 @@ class ML_Amazon_Helper_Model_Service_Product {
 
     protected function getMasterImages() {
         $aImages = $this->oPrepare->get('Images');
-        $aImages = isset($aImages) ? $aImages : $this->oCurrentProduct->getImages();
+        $oParent = $this->oCurrentProduct->get('ParentId') === '0' ? $this->oCurrentProduct : $this->oCurrentProduct->getParent();
+        $aImages = isset($aImages) ? $aImages : $oParent->getImages();
         $aOut = array();
         $iSize = $this->getImageSize();
         foreach ($aImages as $mKey => $mValue) {
@@ -836,18 +822,16 @@ class ML_Amazon_Helper_Model_Service_Product {
     protected function getMerchantShippingGroupName() {
         $mShippingTemplate = null;
 
-        if (MLModul::gi()->getConfig('shipping.template.active') == '1') {
-            $aTemplateName = MLModul::gi()->getConfig('shipping.template.name');
+        $aTemplateName = MLModule::gi()->getConfig('shipping.template.name');
 
-            if ($this->oPrepare->get('ShippingTemplate') !== null) {
-                $mShippingTemplate = $aTemplateName[$this->oPrepare->get('ShippingTemplate')];
-            } else {
-                $aTemplates = MLModul::gi()->getConfig('shipping.template');
-                foreach ($aTemplates as $iKey => $aValue) {
-                    if ($aValue['default'] == '1') {
-                        $mShippingTemplate = $aTemplateName[$iKey];
-                        break;
-                    }
+        if ($this->oPrepare->get('ShippingTemplate') !== null) {
+            $mShippingTemplate = $aTemplateName[$this->oPrepare->get('ShippingTemplate')];
+        } else {
+            $aTemplates = MLModule::gi()->getConfig('shipping.template');
+            foreach ($aTemplates as $iKey => $aValue) {
+                if ($aValue['default'] == '1') {
+                    $mShippingTemplate = $aTemplateName[$iKey];
+                    break;
                 }
             }
         }
@@ -855,15 +839,22 @@ class ML_Amazon_Helper_Model_Service_Product {
         return $mShippingTemplate;
     }
 
+    /**
+     * Shipping Time: use from config, leave empty or an int value (starting from 0)
+     *
+     * @return array|mixed|string|null
+     */
     protected function getShippingTime() {
-        if ($this->oPrepare->get('shippingtime') !== null) {
-            $mShippingTime = $this->oPrepare->get('shippingtime');
-        } else {
+        $mShippingTime = $this->oPrepare->get('shippingtime');
+        if ($mShippingTime === 'config' || $mShippingTime === null) {
             $mShippingTime = $this->oMarketplace->getConfig('leadtimetoship');
+        } else {
+            $mShippingTime = $this->oPrepare->get('shippingtime');
         }
 
-        if ($mShippingTime == 0) {
-            $mShippingTime = null;
+        // use amazon value
+        if ($mShippingTime == '-') {
+            $mShippingTime = '';
         }
 
         return $mShippingTime;
@@ -907,13 +898,17 @@ class ML_Amazon_Helper_Model_Service_Product {
             return $this->oMarketplace->getConfig('internationalshipping');
         }
     }
+
+    protected function getBopisStores() {
+        return $this->oPrepare->get('bopisstores');
+    }
     
     protected function getId() {
         return $this->oCurrentProduct->get('id');
     }
 
     private function getInternationalIdentifier() {
-        $sSite = MLModul::gi()->getConfig('site');
+        $sSite = MLModule::gi()->getConfig('site');
         if ($sSite === 'US') {
             return 'UPC';
         }
@@ -949,26 +944,6 @@ class ML_Amazon_Helper_Model_Service_Product {
         }
     }
 
-    /**
-     * Configures price-object
-     * @return ML_Shop_Model_Price_Interface
-     */
-    private function getBusinessPriceObject() {
-        $sKind = $this->oMarketplace->getConfig('b2b.price.addkind');
-        if (!isset($sKind)) {
-            return MLModul::gi()->getPriceObject();
-        }
-
-        $fFactor = (float)$this->oMarketplace->getConfig('b2b.price.factor');
-        $iSignal = $this->oMarketplace->getConfig('b2b.price.signal');
-        $iSignal = $iSignal === '' ? null : (int)$iSignal;
-        $blSpecial = (boolean)$this->oMarketplace->getConfig('b2b.price.usespecialoffer');
-        $sGroup = $this->oMarketplace->getConfig('b2b.price.group');
-        $oPrice = MLPrice::factory()->setPriceConfig($sKind, $fFactor, $iSignal, $sGroup, $blSpecial);
-
-        return $oPrice;
-    }
-
     protected function stringToArray($sString,$iCount,$iMaxChars){
         $aArray = explode(',', $sString);
         array_walk($aArray, array($this, 'trim'));
@@ -997,6 +972,18 @@ class ML_Amazon_Helper_Model_Service_Product {
             }
         }
         return $blReturn;
+    }
+
+    protected function managingImages($aApplyVariantsData, $images) {
+        $aVariationImages = array();
+        foreach (array_column($aApplyVariantsData, 'Images') as $aImages) {
+            $aVariationImages[] = current($aImages);
+        }
+        $aVariationImages = array_diff($images, $aVariationImages);
+        foreach ($aApplyVariantsData as &$aVariant) {
+            $aVariant['Images'] = array_unique(array_merge($aVariant['Images'], $aVariationImages));
+        }
+        return $aApplyVariantsData;
     }
 
 }

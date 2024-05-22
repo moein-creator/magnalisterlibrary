@@ -1,5 +1,6 @@
-<?php class_exists('ML', false) or die() ?>
-<?php  $this->includeView('widget_form_type_select', get_defined_vars()); ?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
+<?php $this->includeView('widget_form_type_select', get_defined_vars()); ?>
 
 <div id="infoDialogSyncZeroStock" class="dialog2" title="<?php echo MLI18n::gi()->etsy_configform_sync_zerostock_popup_label ?>"></div>
 <span id="textSyncZeroStock" style="display: none"><?php echo MLI18n::gi()->etsy_configform_sync_zerostock_popup_text ?></span>
@@ -8,7 +9,7 @@
 <span id="textSyncNoZeroStock" style="display: none"><?php echo MLI18n::gi()->etsy_configform_sync_nozerostock_popup_text ?></span>
 
 <script type="text/javascript">
-    (function($) {
+    (function ($) {
         $(document).ready(function() {
             var $stockSync = $('#etsy_config_sync_field_stocksync_tomarketplace');
             $stockSync.change(function(){

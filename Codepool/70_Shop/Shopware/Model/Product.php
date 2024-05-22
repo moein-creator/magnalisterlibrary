@@ -7,14 +7,13 @@
  * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
  * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
- *                            m a g n a l i s t e r
- *                                        boost your Online-Shop
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
  *
- *   -----------------------------------------------------------------------------
- *   @author magnalister
- *   @copyright 2010-2022 RedGecko GmbH -- http://www.redgecko.de
- *   @license Released under the MIT License (Expat)
- *   -----------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
  */
 
 class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
@@ -50,24 +49,8 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @throws Exception
      */
     protected function loadShopProduct() {
-        // Shopware 5.7 compatiblity
-        if (version_compare(MLSHOPWAREVERSION, '5.7', '>=')) {
-            if (!Shopware()->Container()->initialized('shop')) {
-                // marketplace language
-                $aConfig = MLModule::gi()->getConfig();
-                $iLangId = $aConfig['lang'];
-                $oShop = $this->getShopRepository()->find($iLangId);
-                Shopware()->Container()->set('shop', $oShop);
-            }
-        } else {
-            if (!Shopware()->Bootstrap()->issetResource('Shop')) {
-                // marketplace language
-                $aConfig = MLModule::gi()->getConfig();
-                $iLangId = $aConfig['lang'];
-                $oShop = $this->getShopRepository()->find($iLangId);
-                Shopware()->Bootstrap()->registerResource('Shop', $oShop);
-            }
-        }
+
+        MLShop::gi()->setShop();
 
         if ($this->oProduct === null) {//not loaded
             $this->oProduct = false; //not null
@@ -241,6 +224,11 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
                 }
                 if (isset(self::$createdObjectCache[$iShopProductId]['variants'][$sSku])) {
                     $aOut['variant'] = self::$createdObjectCache[$iShopProductId]['variants'][$sSku];
+                } else if (
+                    $sIdent === 'marketplaceidentid' &&
+                    count(self::$createdObjectCache[$iShopProductId]['variants']) === 1
+                ) {//fix the problem with searching id of a single product
+                    $aOut['variant'] = current(self::$createdObjectCache[$iShopProductId]['variants']);
                 }
             }
         } catch (Exception $ex) {
@@ -281,7 +269,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getDescription() {
         $this->load();
-        $aDesc = MLHelper::gi('model_product')->getTranslatedInfo($this->oProduct->getId());
+        $aDesc = MLShopwareAlias::getProductHelper()->getTranslatedInfo($this->oProduct->getId());
         $callback = array(Shopware()->Plugins()->Core()->PostFilter(),'rewriteSrc');
         $sDescription = preg_replace_callback('#<(link|img|script|input|a|form|iframe|td)[^<>]*(href|src|action|background)="([^"]*)".*>#Umsi', $callback, $aDesc['description_long']);
 //      alternative replacing: normal replacing doesn't work correct for some older version of shopware 4.3.7
@@ -312,20 +300,30 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getFrontendLink() {
         $oModule = Shopware()->Models();
-        $aConf = MLModul::gi()->getConfig();
+        $aConf = MLModule::gi()->getConfig();
         $oShop = $oModule->getRepository('\Shopware\Models\Shop\Shop')->find($aConf['lang']);
         $aUrl = array();
-        $aUrl[] = ($oShop->getSecure() ? 'https' : 'http' ) . '://'; //http protocol
+        $aUrl[] = ($oShop->getSecure() ? 'https' : 'http') . '://'; //http protocol
         $sHost = trim((method_exists($oShop, 'getSecureHost') && $oShop->getSecure() ? $oShop->getSecureHost() : $oShop->getHost()));
         $aUrl[] = empty($sHost) ? Shopware()->Front()->Request()->getHttpHost() : $sHost; //domain or host name
         $sBasePath = trim($oShop->getBaseUrl());
-        $aUrl[] = (empty($sBasePath) ? Shopware()->Front()->Request()->getBaseUrl() : $sBasePath).'/'; // path to shop
+        $aUrl[] = (empty($sBasePath) ? Shopware()->Front()->Request()->getBaseUrl() : $sBasePath) . '/'; // path to shop
         $sFrontBaseUrl = implode('', $aUrl);
-        $this->load();
-        if ($this->get('parentid') == 0) {
-            return $sFrontBaseUrl . Shopware()->Modules()->System()->sSYSTEM->sCONFIG['sBASEFILE'] . '?sViewport=detail&sArticle=' . $this->getLoadedProduct()->getId();
+        $sql = "SELECT path FROM s_core_rewrite_urls WHERE org_path = ? AND subshopID = ? LIMIT 1";
+        $path = Shopware()->Db()->fetchOne($sql, array('sViewport=detail&sArticle=' . $this->getLoadedProduct()->getId(), Shopware()->Shop()->getId()));
+        if (empty($path)) {
+            $this->load();
+            if ($this->get('parentid') == 0) {
+                return $sFrontBaseUrl . Shopware()->Modules()->System()->sSYSTEM->sCONFIG['sBASEFILE'] . '?sViewport=detail&sArticle=' . $this->getLoadedProduct()->getId();
+            } else {
+                return $sFrontBaseUrl . Shopware()->Modules()->System()->sSYSTEM->sCONFIG['sBASEFILE'] . '?sViewport=detail&sArticle=' . $this->getLoadedProduct()->getId() . '&number=' . $this->get('productssku');
+            }
         } else {
-            return $sFrontBaseUrl . Shopware()->Modules()->System()->sSYSTEM->sCONFIG['sBASEFILE'] . '?sViewport=detail&sArticle=' . $this->getLoadedProduct()->getId() . '&number=' . $this->get('productssku');
+            if ($this->get('parentid') == 0) {
+                return $sFrontBaseUrl . $path;
+            } else {
+                return $sFrontBaseUrl . $path . '?number=' . $this->get('productssku');
+            }
         }
     }
 
@@ -494,12 +492,12 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @return \Doctrine\ORM\PersistentCollection|int|string|null
      * @throws Exception
      */
-    public function getModulField($sFieldName, $blGeneral = false) {
+    public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false) {
         $this->load();
         if ($blGeneral) {
             $sField = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', $sFieldName)->get('value');
         } else {
-            $sField = MLModul::gi()->getConfig($sFieldName);
+            $sField = MLModule::gi()->getConfig($sFieldName);
         }
         $sField = empty($sField) ? $sFieldName : $sField;
         return $this->getProductField($sField);
@@ -597,10 +595,10 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
         } else {
             $sMarketplace = MLModule::gi()->getModuleBaseUrl();
             $sController = MLRequest::gi()->get('controller');
-            if (strpos($sController, $sMarketplace) !== false) {
-                MLHttp::gi()->redirect(MLHttp::gi()->getUrl(array('controller' => $sMarketplace.'_config'.MLModule::gi()->getPriceConfigurationUrlPostfix())));
+            if (strpos($sController, $sMarketplace) !== false && !MLHttp::gi()->isAjax()) {
+                MLHttp::gi()->redirect(MLHttp::gi()->getUrl(array('controller' => $sMarketplace . '_config' . MLModule::gi()->getPriceConfigurationUrlPostfix())));
             } else {
-                throw new Exception('Customer-group should be configured again:'.MLHttp::gi()->getUrl(array('controller' => $sMarketplace.'_config'.MLModule::gi()->getPriceConfigurationUrlPostfix())));
+                throw new Exception('Customer-group should be configured again:' . MLHttp::gi()->getUrl(array('controller' => $sMarketplace . '_config' . MLModule::gi()->getPriceConfigurationUrlPostfix())));
             }
         }
 
@@ -637,13 +635,13 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
             $fPercent = $this->getTax();
             $oTax = $this->oProduct->getTax();
         }
-
+        
         //initialize the right shop and customer group in order to get correct tax
         try {
             Shopware()->Container()->get('shopware_storefront.context_service')->initializeShopContext();
         } catch (Exception $e) {
         }
-
+        
         $fBrutPrice = Shopware()->Modules()->Articles()->sCalculatingPriceNum($fNet, $fPercent, false, false, $oTax->getId());
         $oPrice = MLPrice::factory();
         //check user group tax if it is disabled we include tax manually
@@ -736,7 +734,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
             $oProductTax = $this->getLoadedProduct()->getTax();
             //its possible that products has not tax set (#2020111210003559) then $oProductTax is not an object
             if (!is_object($oProductTax)) {
-                return MLModul::gi()->getConfig('mwstfallback');
+                return MLModule::gi()->getConfig('mwstfallback');
             }
 
             $mTaxRate = $this->getTaxRateByConditions(
@@ -756,7 +754,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
             $fTax = $this->getLoadedProduct()->getTax()->getTax();
         } catch (Exception $oEx) {
             // its possible that products has not tax set (#2016091510000747)
-            $fTax = MLModul::gi()->getConfig('mwstfallback');
+            $fTax = MLModule::gi()->getConfig('mwstfallback');
         }
 
         return $fTax;
@@ -808,7 +806,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getStock() {
         if($this->get('parentid') == '0'){
-            return MLHelper::gi('model_product')->getTotalCount($this->getLoadedProduct());
+            return MLShopwareAlias::getProductHelper()->getTotalCount($this->getLoadedProduct());
         }else{
             return $this->getArticleDetail()->getInStock();
         }
@@ -823,7 +821,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getSuggestedMarketplaceStock($sType, $fValue, $iMax = null) {
         if(
-            MLModul::gi()->getConfig('inventar.productstatus') == 'true'
+            MLModule::gi()->getConfig('inventar.productstatus') == 'true'
             && !$this->isActive()
         ) {
             return 0;
@@ -1237,7 +1235,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
         if (empty($aBasePrice)) {
             return '';
         } else {
-
+            
             $sBasePrice = str_replace('&euro;', '€', MLHelper::gi('model_price')->getPriceByCurrency(($fPrice / $aBasePrice['Value']), null, true));
             return
                 round($aBasePrice['ShopwareDefaults']['$fPurchaseUnit'], 2).' '
@@ -1286,6 +1284,49 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
     }
 
     /**
+     * @return array
+     * @throws Exception
+     */
+    public function getDimension($dimension) {
+        $oDetail = $this->getArticleDetail();
+        if (!is_object($oDetail)) {
+            return array();
+        }
+        try {
+            switch ($dimension) {
+                case 'width':
+                    $sValue = $oDetail->getWidth();
+                    break;
+                case 'height':
+                    $sValue = $oDetail->getHeight();
+                    break;
+                case 'length':
+                    $sValue = $oDetail->getLen();
+                    break;
+            }
+
+        } catch (Exception $oEx) {
+            return array();
+        }
+        if (empty($sValue)) {//not configured
+            return array();
+        }
+
+        $sValue = $sValue <= 0 ? 1 : $sValue;
+        $sValue = (float)$sValue;
+        if (MLSetting::gi()->dimensionUnit !== null) {
+            return array(
+                'Unit'      => MLSetting::gi()->dimensionUnit,
+                'UnitShort' => (string)$sValue.' '.MLSetting::gi()->dimensionUnit,
+                'Value'     => (string)$sValue,
+            );
+        }
+        return array(
+            'Value' => (string)$sValue,
+        );
+    }
+
+    /**
      * return html list, that contain property name and values
      * @return string
      */
@@ -1326,7 +1367,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
         $oProductHelper = MLHelper::gi('model_product');
         $aFields = $oProductHelper->getAttributeFields();
         foreach ($aFields as $aField) {
-            if (!in_array($aField['type'], array('boolean')) && $aField['configured']  ) {
+            if (!in_array($aField['type'], array('boolean')) && $aField['configured']) {
                 $aAttribute = $oProductHelper->getFreeTextFieldValue($this->getArticleDetail(), $aField);
                 if($aAttribute['value'] != ''){
                     $aAttributes[$aField['position']] = $aAttribute;
@@ -1347,6 +1388,18 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
         }
         $aReplace['#PROPERTIES#'] = $this->getProperties();
         return $aReplace;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReplacePropertyCountingKeys() {
+        return array(
+            'Freetextfield',
+            'Freitextfeld',
+            'Description',
+            'Bezeichnung',
+        );
     }
 
     protected $oDetail = null;
@@ -1508,18 +1561,6 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
         $sAttributeCode = $aAttribute[1];
         $mAttributeValue = null;
 
-        try {
-            // Overwrite getAttributeValue by Marketplace
-            $moduleValue =  MLModule::gi()->shopProductGetAttributeValue($this, $mAttributeCode);
-
-            // only if returned value is not null continue checking default behavior
-            if ($moduleValue !== null) {
-                return $moduleValue;
-            }
-        } catch (Exception $e) {
-            // check default behavior
-        }
-
         if ($aAttribute[0] === 'c') {
             $aOption = $this->getArticleDetail()->getConfiguratorOptions();
             if ($aOption->count() > 0) {
@@ -1533,13 +1574,13 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
             $aDesc = MLHelper::gi('model_product')->getTranslatedInfo($this->getLoadedProduct()->getId());
             $mAttributeValue = $aDesc[$sAttributeCode];
         } else if ($aAttribute[0] === 'pd') {
-            $mAttributeValue = MLHelper::gi('model_product')->getProductDefaultFieldValue($this, $sAttributeCode);
+            $mAttributeValue = MLShopwareAlias::getProductHelper()->getProductDefaultFieldValue($this, $sAttributeCode);
         } else if ($aAttribute[0] === 'a') {
-            $aAttribute = MLHelper::gi('model_product')->getFreeTextFieldValue($this->getArticleDetail(), array('name' => $sAttributeCode));
+            $aAttribute = MLShopwareAlias::getProductHelper()->getFreeTextFieldValue($this->getArticleDetail(), array('name' => $sAttributeCode));
             $mAttributeValue = $aAttribute['value'];
         } else if ($aAttribute[0] === 'pp') {
-            $mAttributeValue = MLHelper::gi('model_product')->getPropertyValuesFor($this->getLoadedProduct()->getId(), (int) $sAttributeCode);
-        }
+            $mAttributeValue = MLShopwareAlias::getProductHelper()->getPropertyValuesFor($this->getLoadedProduct()->getId(), (int) $sAttributeCode);
+        } 
         else if ($aAttribute[0] === 'sp') {
             $mAttributeValue = $this->getLoadedProduct()->getSupplier()->getName();
         }
@@ -1581,7 +1622,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getEanDefaultField()
     {
-        $globalEan = MLModul::gi()->getConfig('ean');
+        $globalEan = MLModule::gi()->getConfig('ean');
         $matchingAttributeGroups = MLFormHelper::getShopInstance()->getGroupedAttributesForMatching();
 
         if (isset($globalEan)) {
@@ -1605,7 +1646,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getManufacturerDefaultField()
     {
-        $globalManufacturer = MLModul::gi()->getConfig('manufacturer');
+        $globalManufacturer = MLModule::gi()->getConfig('manufacturer');
         $matchingAttributeGroups = MLFormHelper::getShopInstance()->getGroupedAttributesForMatching();
         if (isset($globalManufacturer)) {
             $result = '';
@@ -1628,7 +1669,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getManufacturerPartNumberDefaultField()
     {
-        $globalManPartNumber = MLModul::gi()->getConfig('manufacturerpartnumber');
+        $globalManPartNumber = MLModule::gi()->getConfig('manufacturerpartnumber');
         $matchingAttributeGroups = MLFormHelper::getShopInstance()->getGroupedAttributesForMatching();
         if (isset($globalManPartNumber)) {
             $result = '';
@@ -1651,7 +1692,7 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getBrandDefaultField()
     {
-        $globalManufacturer = MLModul::gi()->getConfig('manufacturer');
+        $globalManufacturer = MLModule::gi()->getConfig('manufacturer');
         $matchingAttributeGroups = MLFormHelper::getShopInstance()->getGroupedAttributesForMatching();
         if (isset($globalManufacturer)) {
             $result = '';
@@ -1671,8 +1712,50 @@ class ML_Shopware_Model_Product extends ML_Shop_Model_Product_Abstract {
         return $result;
     }
 
-    public function getSuggestedRetailPriceDefaultField()
-    {
+    public function getSuggestedRetailPriceDefaultField() {
         return '';
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getVolumePrices($sGroup, $blGross = true, $sPriceKind = '', $fPriceFactor = 0.0, $iPriceSignal = null) {
+        $oGroup = $this->getGroupRepository()->find($sGroup);
+        $oPHelper = MLHelper::gi('model_product');
+        /* @var $oPHelper ML_Shopware_Helper_Model_Product */
+        $aShopwareVolumePrices = $oPHelper->getVolumePrices($this->getArticleDetail()->getId(), $oGroup->getKey());
+        $aVolumePrices = [];
+        $fTaxPercent = $this->getTax();
+        foreach ($aShopwareVolumePrices as $aProductPrice) {
+            if ($aProductPrice['from'] > 1) {
+                $fGrossPrice = MLPrice::factory()->calcPercentages(null, $aProductPrice['price'], $fTaxPercent);
+
+                // Price kind
+                if ($sPriceKind == 'percent') {
+                    $fGrossPrice = MLPrice::factory()->calcPercentages(null, $fGrossPrice, $fPriceFactor);
+                } elseif ($sPriceKind == 'addition') {
+                    $fGrossPrice = $fGrossPrice + $fPriceFactor;
+                }
+
+                // Price signal
+                if ($iPriceSignal !== null) {
+                    //If price signal is single digit then just add price signal as last digit
+                    if (strlen((string)$iPriceSignal) == 1) {
+                        $fGrossPrice = (0.1 * (int)($fGrossPrice * 10)) + ((int)$iPriceSignal / 100);
+                    } else {
+                        $fGrossPrice = ((int)$fGrossPrice) + ((int)$iPriceSignal / 100);
+                    }
+                }
+
+                if ($blGross) {
+                    $aVolumePrices[$aProductPrice['from']] = $fGrossPrice;
+                } else {
+                    $aVolumePrices[$aProductPrice['from']] = MLPrice::factory()->calcPercentages($fGrossPrice, null, $fTaxPercent);
+                }
+            }
+        }
+
+        return $aVolumePrices;
+    }
+
 }

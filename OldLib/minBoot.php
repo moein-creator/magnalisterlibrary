@@ -112,11 +112,6 @@ magnaFixRamSize();
 require_once(DIR_MAGNALISTER_INCLUDES . 'config.php');
 loadDBConfig();    /* Load configuration from database */
 
-require_once(DIR_MAGNALISTER_INCLUDES . 'lib/MagnaException.php');
-require_once(DIR_MAGNALISTER_INCLUDES . 'lib/MagnaError.php');
-require_once(DIR_MAGNALISTER_INCLUDES . 'lib/MagnaConnector.php');
-$_mConnect = MagnaConnector::gi();
-
 $requiredConfigKeys = array(
     'general.passphrase',
     'general.keytype',

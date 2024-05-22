@@ -19,49 +19,35 @@
  */
 if (!class_exists('ML', false))
     throw new Exception();
-MLSetting::gi()->add('aCss', array('magnalister.form.action.css'), true);
+MLSetting::gi()->add('aCss', array('magnalister.form.action.css?%s'), true);
 ?>
 <tr class="action">
     <td colspan="4">
-        <table>
-            <tr>
-                <?php foreach (array('left', 'center', 'right') as $sPosition) { ?>
-                    <td class="ml-form-action-<?php echo $sPosition; ?>">
-                        <table>
-                            <?php foreach ($aFields as $iField => $aField) { ?>
-                                <?php if (
-                                    (
-                                        isset($aField['position'])
-                                        && $aField['position'] == $sPosition
-                                    )
-                                    || 
-                                    (
-                                        !isset($aField['position'])
-                                        && $sPosition == 'right'
-                                    )
-                                ) {
-                                    $translationData = array();
-                                    if(MLI18n::gi()->isTranslationActive()) {
-                                        $translationData = MLI18n::gi()->getTranslationData($aField['translation_key']);
-                                    }
-                                    ?>
-                                    <tr><td class="ml-translate-toolbar-wrapper <?php echo !empty($translationData['missing_key']) ? 'missing_translation' : ''?>">
-                                        <?php $this->includeType($aField) ?>
-                                        <?php if (MLI18n::gi()->isTranslationActive()) { ?>
-                                            <div class="ml-translate-toolbar">
-                                                <a href="#" title="Translate label" class="translate-label abutton" <?php echo 'data-ml-translate-modal="#modal-tr-' . str_replace('.', '\\.', $aField['translation_key']) . '"'; ?>>&nbsp;</a>
-                                                <div class="ml-modal-translate dialog2" id="modal-tr-<?php echo str_replace('.', '\\.', $aField['translation_key']) ?>">
-                                                    <script type="text/plain" class="data"><?php echo json_encode($translationData); ?></script>
-                                                </div>
-                                            </div>
-                                        <?php } ?>
-                                    </td></tr>
-                                <?php } ?>
-                            <?php } ?>
-                        </table>
-                    </td>
+        <div class="ml-row-action">
+            <div class="ml-row-container ml-row-container-md">
+                <?php foreach ($aFields as $iField => $aField) { ?>
+                    <?php if (
+                        (
+                            isset($aField['position'])
+                            && $aField['position'] == 'left'
+                        )
+                    ) {
+                        $this->includeView('widget_form_row_actionrowrowrow_button-with-popup', array('aField' => $aField));
+                    }
+                } ?>
+            </div>
+            <div class="ml-row-container ml-row-container-md">
+                <?php foreach ($aFields as $iField => $aField) { ?>
+                    <?php if (
+                        (
+                            isset($aField['position'])
+                            && $aField['position'] != 'left'
+                        )
+                    ) {
+                        $this->includeView('widget_form_row_actionrowrowrow_button-with-popup', array('aField' => $aField));
+                    } ?>
                 <?php } ?>
-            </tr>
-        </table>
+            </div>
+        </div>
     </td>
 </tr>

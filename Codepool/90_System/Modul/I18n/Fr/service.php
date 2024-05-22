@@ -4,3 +4,6 @@
 MLI18n::gi()->{'sInventorySyncByService'} = 'Les prix et les stocks ont été synchronisés pour les places de marché suivantes:';
 MLI18n::gi()->{'sOrderStatusSyncByService'} = 'Les statuts de commandes ont été synchronisés pour les places de marché suivantes:';
 MLI18n::gi()->{'sAddItemProductWithZeroQuantity'} = 'Les articles avec un stock de "0" ont été omis.';
+MLI18n::gi()->{'sInventorySyncByService'} = 'Les prix et les stocks ont été synchronisés pour les places de marché suivantes:';
+MLI18n::gi()->{'sOrderStatusSyncByService'} = 'Les statuts de commandes ont été synchronisés pour les places de marché suivantes:';
+MLI18n::gi()->{'sAddItemProductWithZeroQuantity'} = 'Les articles avec un stock de "0" ont été omis.';

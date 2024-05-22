@@ -17,11 +17,12 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML',false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 if (MLHttp::gi()->isAjax()) {
-    MLSetting::gi()->add('aAjaxPlugin', array('dom' => array( '#selectedArticlesCountInfo' => $sName)));
-}else {
+    MLSetting::gi()->add('aAjaxPlugin', array('dom' => array('#selectedArticlesCountInfo' => $sName)));
+} else {
     ?>
-        <option id="selectedArticlesCountInfo" value="<?php echo $sValue ?>" /><?php echo $sName ?></option>
+    <option id="selectedArticlesCountInfo" value="<?php echo $sValue ?>" /><?php echo $sName ?></option>
     <?php
 }

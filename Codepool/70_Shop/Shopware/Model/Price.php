@@ -8,6 +8,9 @@ class ML_Shopware_Model_Price extends ML_Shop_Model_Price_Abstract implements ML
          }
         if ($blConvert) {            
                 $oCurrency = Shopware()->Models()->getRepository('\Shopware\Models\Shop\Currency')->findOneBy(array("currency" => $sCode));
+                if (is_null($oCurrency)) {
+                    throw new Exception("Please add the currency '".$sCode."' to your shopware shop");
+                }
                 if ($oCurrency->getFactor()) {
                     $fPrice = floatval($fPrice) * floatval($oCurrency->getFactor());
                 }            

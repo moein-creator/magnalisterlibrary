@@ -38,38 +38,67 @@ MLI18n::gi()->add('formfields__stocksync.tomarketplace', array('help' => '
 '));
 
 MLI18n::gi()->add('formfields_etsy', array(
-    'shippingtemplatetitle' => array(
-        'label' => 'Versandgruppen Titel',
+    'shippingprofiletitle'             => array(
+        'label' => 'Versandgruppen Titel<span class="bull">&bull;</span>',
     ),
-    'shippingtemplatecountry' => array(
-        'label' => 'Herkunftsland',
-        'help' => 'Land, aus dem das Produkt versendet wird',
+    'shippingprofileorigincountry'           => array(
+        'label' => 'Herkunftsland<span class="bull">&bull;</span>',
+        'help'  => 'Land, aus dem das Produkt versendet wird',
     ),
-    'shippingtemplateprimarycost' => array(
-        'label' => 'Primärkosten',
-        'help' => 'Die Versandkosten für diesen Artikel, wenn er allein versandt wird.',
+    'shippingprofiledestinationcountry'           => array(
+        'label' => 'Destination country',
+        'help'  => 'Country where the listing is shipped',
     ),
-    'shippingtemplatesecondarycost' => array(
-        'label' => 'Sekundäre Kosten',
-        'help' => 'Die Versandkosten für diesen Artikel, wenn er mit einem anderen Artikel verschickt wird.',
+    'shippingprofiledestinationregion'           => array(
+        'label' => 'Destination region',
+        'help'  => 'Region where the listing is shipped available values (inside EU, Outside EU and none)',
     ),
-    'shippingtemplatesend' => array(
+    'shippingprofileprimarycost'       => array(
+        'label' => 'Primärkosten<span class="bull">&bull;</span>',
+        'help'  => 'Die Versandkosten für diesen Artikel, wenn er allein versandt wird.',
+    ),
+    'shippingprofilesecondarycost'     => array(
+        'label' => 'Sekundäre Kosten<span class="bull">&bull;</span>',
+        'help'  => 'Die Versandkosten für diesen Artikel, wenn er mit einem anderen Artikel verschickt wird.',
+    ),
+    'shippingprofileminprocessingtime' => array(
+        'label' => 'Mindestdauer der Bearbeitung<span class="bull">&bull;</span>',
+        'help'  => 'Die Mindestdauer für die Bearbeitung des Angebots.',
+    ),
+    'shippingprofilemaxprocessingtime' => array(
+        'label' => 'Höchstdauer der Bearbeitung<span class="bull">&bull;</span>',
+        'help'  => 'Die Höchstdauer der Bearbeitung des Angebots.',
+    ),
+    'shippingprofilemindeliverydays'   => array(
+        'label' => 'Mindestdauer der Lieferung<span class="bull">&bull;</span>',
+        'help'  => 'Die Mindestdauer für die Zustellung der Ware.',
+    ),
+    'shippingprofilemaxdeliverydays'   => array(
+        'label' => 'Höchstdauer der Lieferung<span class="bull">&bull;</span>',
+        'help'  => 'Die Höchstdauer für die Lieferung in Tagen.',
+    ),
+    'shippingprofileoriginpostalcode'  => array(
+        'label' => 'Postleitzahl des Versandortes<span class="bull">&bull;</span>',
+        'help'  => 'Die Postleitzahl des Ortes, von dem aus das Angebot versandt wird (nicht unbedingt eine Zahl)',
+    ),
+    'shippingprofilesend'              => array(
         'label' => 'Versandgruppe erstellen',
     ),
-    'whomade' => array(
+    'whomade'                           => array(
         'values' => array(
-            'i_did' => 'Ich war\'s',
-            'collective' => 'Ein Mitglied meines Shops',
+            'i_did'        => 'Ich war\'s',
+            'collective'   => 'Ein Mitglied meines Shops',
             'someone_else' => 'Eine andere Firma oder Person',
         ),
     ),
-    'whenmade' => array(
+    'whenmade'                          => array(
         'values' => array(
             'made_to_order' => 'Produktion auf Bestellung',
-            '2020_2021' => '2020-2021',
+            '2020_'.date('Y') => '2020-'.date('Y'),
             '2010_2019' => '2010-2019',
-            '2002_2009' => '2002-2009',
-            'before_2002' => 'Vor 2002',
+            '2004_2009' => '2004-2009',
+            'before_2004' => 'Vor 2004',
+            '2000_2003' => '2000-2003',
             '1990s' => '1990ern',
             '1980s' => '1980ern',
             '1970s' => '1970ern',
@@ -90,12 +119,6 @@ MLI18n::gi()->add('formfields_etsy', array(
             'false' => 'Ein fertiges Produkt',
             'true' => 'Zubehör oder ein Werkzeug, um etwas herzustellen',
         ),
-    ),
-    'access.username' => array(
-        'label' => 'Etsy Username',
-    ),
-    'access.password' => array(
-        'label' => 'Etsy Passwort',
     ),
     'access.token' => array(
         'label' => 'Etsy Token',
@@ -163,7 +186,7 @@ MLI18n::gi()->add('formfields_etsy', array(
         'label' => 'Nachkommastelle',
         'hint' => 'Nachkommastelle',
         'help' => '
-                Dieses Textfeld wird beim &Uuml;bermitteln der Daten zu ebay als Nachkommastelle an Ihrem Preis &uuml;bernommen.<br/><br/>
+                Dieses Textfeld wird beim &Uuml;bermitteln der Daten zu Etsy als Nachkommastelle an Ihrem Preis &uuml;bernommen.<br/><br/>
                 <strong>Beispiel:</strong> <br />
                 Wert im Textfeld: 99 <br />
                 Preis-Ursprung: 5.58 <br />
@@ -176,9 +199,9 @@ MLI18n::gi()->add('formfields_etsy', array(
     'prepare.language' => array(
         'label' => 'Sprache',
     ),
-    'shippingtemplate' => array(
+    'shippingprofile' => array(
         'label' => 'Standard Versandgruppe',
-        'hint' => '<button id="shippingtemplateajax" class="mlbtn action add-matching" value="Secondary_color" style="display: inline-block;">+</button>',
+        'hint' => '<button id="shippingprofileajax" class="mlbtn action add-matching" value="Secondary_color" style="display: inline-block; width: 45px;">+</button>',
     ),
     'prepare_title' => array(
         'label' => 'Titel',
@@ -200,7 +223,12 @@ MLI18n::gi()->add('formfields_etsy', array(
     'prepare_image' => array(
         'label' => 'Produktbilder',
         'help' => 'Maximal können 10 Bilder eingestellt werden.<br/>Maximal zulässige Bildgröße ist 3000 x 3000 px.',
-        'hint' => 'Maximal 10 Bilder'
+        'hint' => 'Maximal 10 Bilder',
+        'optional' => array(
+            'checkbox' => array(
+                'labelNegativ' => 'Bilder immer aktuell aus Web-Shop verwenden',
+            )
+        ),
     ),
     'category' => array(
         'label' => 'Kategorie',

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -38,15 +38,15 @@ class ML_Ebay_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
 
         # Ensure that $_MagnaSession contains needed data
         if (!isset($_MagnaSession) || !is_array($_MagnaSession)) {
-            $_MagnaSession = array('mpID' => MLModul::gi()->getMarketPlaceId(),
-                'currentPlatform' => MLModul::gi()->getMarketplaceName());
+            $_MagnaSession = array('mpID' => MLModule::gi()->getMarketPlaceId(),
+                'currentPlatform' => MLModule::gi()->getMarketplaceName());
         } else {
-            $_MagnaSession['mpID'] = MLModul::gi()->getMarketPlaceId();
-            $_MagnaSession['currentPlatform'] = MLModul::gi()->getMarketplaceName();
+            $_MagnaSession['mpID'] = MLModule::gi()->getMarketPlaceId();
+            $_MagnaSession['currentPlatform'] = MLModule::gi()->getMarketplaceName();
         }
 
-        parent::__construct(MLModul::gi()->getMarketPlaceId(), MLModul::gi()->getMarketplaceName(), 100);
-        $iConfigTimeout = MLModul::gi()->getConfig('updateitems.timeout');
+        parent::__construct(MLModule::gi()->getMarketPlaceId(), MLModule::gi()->getMarketplaceName(), 100);
+        $iConfigTimeout = MLModule::gi()->getConfig('updateitems.timeout');
         $this->timeouts['UpdateItems'] = $iConfigTimeout == null ? 1 : (int) $iConfigTimeout;
         $this->timeouts['GetInventory'] = 1200;
 
@@ -218,6 +218,7 @@ class ML_Ebay_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
                 'StrikePrice' => array('optional' => array('active' => true)),
                 'StrikePriceForUpload' => array('optional' => array('active' => true)),
                 'SKU' => array('optional' => array('active' => true)),
+                'ListingType' => array('optional' => array('active' => true)),
                 'Quantity' => array('optional' => array('active' => true)),
                 'Variation' => array('optional' => array('active' => true)),
                 'ShortBasePriceString'  => array('optional' => array('active' => true)),
@@ -244,7 +245,10 @@ class ML_Ebay_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
                 
                 if (!$oVariant->exists() || ($this->config['StatusMode'] === 'true') && !$oVariant->isActive()) {
                     $aVariation['Quantity'] = 0;
+                } else if (strpos($oVariant->get('ListingType'), $this->cItem['ListingType']) === false) {
+                  $aVariation['StartPrice'] = $oVariant->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($this->cItem['ListingType'] == 'Chinese'? 'chinese' : 'fixedpriceitem'));
                 }
+                unset($aVariation['ListingType']);
                 $aMasterData['Variations'][] = $aVariation;
             }
             
@@ -332,11 +336,11 @@ class ML_Ebay_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
             $sStrikePriceLog .= "\n\teBay ManufacturersPrice: ".$this->cItem['ManufacturersPrice'];
         }
         if (array_key_exists('StrikePriceForUpload', $aReturn) && $aReturn['StrikePriceForUpload'] > $fCurrenVariantPrice) {
-            $aReturn['StrikePriceKind'] = MLModul::gi()->getConfig('strikeprice.kind');
+            $aReturn['StrikePriceKind'] = MLModule::gi()->getConfig('strikeprice.kind');
             $sStrikePriceLog .= "\n\tShop ".$aReturn['StrikePriceKind'].": ".$aReturn['StrikePriceForUpload'];
             $aReturn['DEBUG']['product']['products_strike_price'] = $aReturn['StrikePriceForUpload'];
         } else if (isset($fCurrentVariantStrikePrice) && $fCurrentVariantStrikePrice > $fCurrenVariantPrice) {
-            $aReturn['StrikePriceKind'] = MLModul::gi()->getConfig('strikeprice.kind');
+            $aReturn['StrikePriceKind'] = MLModule::gi()->getConfig('strikeprice.kind');
             $sStrikePriceLog .= "\n\tShop ".$aReturn['StrikePriceKind'].": ".$fCurrentVariantStrikePrice;
             $aReturn['DEBUG']['product']['products_strike_price'] = $fCurrentVariantStrikePrice;
         }
@@ -467,7 +471,7 @@ class ML_Ebay_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
                 )
         ) {
             if (isset($fCurrentVariantStrikePrice)) {
-                if (!isset($aMasterData['StrikePriceKind'])) $aMasterData['StrikePriceKind'] = MLModul::gi()->getConfig('strikeprice.kind');
+                if (!isset($aMasterData['StrikePriceKind'])) $aMasterData['StrikePriceKind'] = MLModule::gi()->getConfig('strikeprice.kind');
                 if (isset($aMasterData['Variations'])) {
                     foreach ($aMasterData['Variations'] as $vNo => $vVar) {
                         if (isset($vVar['StrikePriceForUpload'])) {
@@ -532,11 +536,11 @@ class ML_Ebay_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
 
     protected function getPriceObject() {
         //$oProduct=$this->oProduct;// amazon dont need it
-        return MLModul::gi()->getPriceObject();
+        return MLModule::gi()->getPriceObject($this->cItem['ListingType'] == 'Chinese'? 'chinese' : 'fixedpriceitem');
     }
 
     protected function getStockConfig() {
-        return MLModul::gi()->getStockConfig();
+        return MLModule::gi()->getStockConfig();
     }
 
 }

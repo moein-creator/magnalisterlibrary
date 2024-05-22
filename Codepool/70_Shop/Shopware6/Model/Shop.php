@@ -98,7 +98,7 @@ class ML_Shopware6_Model_Shop extends ML_Shop_Model_Shop_Abstract {
      */
     public function getPluginVersion(){
         $path = MagnalisterController::getShopwareMyContainer()->get('kernel')->locateResource('@RedMagnalisterSW6');
-        $composerFile = realpath($path.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'composer.json');
+        $composerFile = realpath($path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'composer.json');
 
         if (file_exists($composerFile)) {
             $jsonString = file_get_contents($composerFile);
@@ -106,7 +106,17 @@ class ML_Shopware6_Model_Shop extends ML_Shop_Model_Shop_Abstract {
             return str_replace('v', '', $jsonObject->version);
         }
 
-       return parent::getPluginVersion();
+        return parent::getPluginVersion();
     }
 
+    /**
+     * @return ML_Shopware6_Helper_Model_Cache_Filesystem|Object
+     */
+    public function getCacheObject() {
+        return MLHelper::gi('model_cache_filesystem');
+    }
+
+    public function getShopVersion() {
+        return MLSHOPWAREVERSION;
+    }
 }

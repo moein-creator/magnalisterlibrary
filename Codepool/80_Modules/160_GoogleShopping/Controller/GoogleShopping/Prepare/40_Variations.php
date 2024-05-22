@@ -26,8 +26,8 @@ class ML_GoogleShopping_Controller_GoogleShopping_Prepare_Variations extends ML_
     public function __construct()
     {
         parent::__construct();
-        $this->language = MLModul::gi()->getConfig('shop.language');
-        $this->targetCountry = MLModul::gi()->getConfig('targetcountry');
+        $this->language = MLModule::gi()->getConfig('shop.language');
+        $this->targetCountry = MLModule::gi()->getConfig('targetcountry');
     }
 
     /**

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -23,7 +23,7 @@ function geteBayShippingDetails() {
 	global $_MagnaSession;
 
 	$mpID = $_MagnaSession['mpID'];
-	$site = MLModul::gi()->getConfig('site');
+    $site = MLModule::gi()->getConfig('site');
 	
 	initArrayIfNecessary($_MagnaSession, array($mpID, $site, 'eBayShippingDetails'));
 	
@@ -88,12 +88,12 @@ function VariationsEnabled($cID) {
 }
 
 function geteBayCategoryPath($CategoryID, $StoreCategory = false) {
-    $aCachedPaths = MLModul::gi()->getConfig('toptenCategoryPaths');
+    $aCachedPaths = MLModule::gi()->getConfig('toptenCategoryPaths');
     if (is_array($aCachedPaths)) {
         foreach ($aCachedPaths as $aCachedPath) {
             if ($aCachedPath['categoryid'] == $CategoryID
                 && $aCachedPath['storecategory'] == (int)$StoreCategory
-                && $aCachedPath['siteid'] == MLModul::gi()->getConfig('site')) {
+                && $aCachedPath['siteid'] == MLModule::gi()->getConfig('site')) {
                 return $aCachedPath['path'];
             }
         }
@@ -105,10 +105,10 @@ function geteBayCategoryPath($CategoryID, $StoreCategory = false) {
     $aCachedPaths[] = array(
         'categoryid'    => $CategoryID,
         'storecategory' => (int)$StoreCategory,
-        'siteid'        => MLModul::gi()->getConfig('site'),
+        'siteid' => MLModule::gi()->getConfig('site'),
         'path' => $path
     );
-    MLModul::gi()->setConfig('toptenCategoryPaths', $aCachedPaths, true);
+    MLModule::gi()->setConfig('toptenCategoryPaths', $aCachedPaths, true);
     return $path;
 }
 

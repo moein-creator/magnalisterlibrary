@@ -75,10 +75,6 @@ class ML_Amazon_Model_List_Amazon_Order_Summary {
         $aHead['ShippingServiceName'] = array(
             'title' => MLI18n::gi()->get('ML_LABEL_MARKETPLACE_SHIPPING_METHOD'),
         );
-        $aHead['UnitPrice'] = array(
-            'title' => MLI18n::gi()->get('ML_Amazon_Shippinglabel_UnitPrice'),
-        );
-
         $aHead['TotalPrice'] = array(
             'title' => MLI18n::gi()->get('ML_Amazon_Shippinglabel_TotalPrice'),
         );

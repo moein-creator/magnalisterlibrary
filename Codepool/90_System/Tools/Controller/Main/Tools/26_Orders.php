@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -72,7 +72,8 @@ class ML_Tools_Controller_Main_Tools_Orders extends ML_Core_Controller_Abstract 
                             '$oOrder->getShopOrderCarrierOrShippingMethod()' => $oOrder->getShopOrderCarrierOrShippingMethod(),
                             '$oOrder->getShippingTrackingCode()'             => $oOrder->getShippingTrackingCode(),
                             '$oOrder->getShopOrderTotalAmount()'             => $oOrder->getShopOrderTotalAmount(),
-                            '$oOrder->getShopOrderTotalTax()'                => $oOrder->getShopOrderTotalTax()
+                            '$oOrder->getShopOrderTotalTax()'                => $oOrder->getShopOrderTotalTax(),
+                            '$oOrder->getShopAlternativeOrderId()'           => $oOrder->getShopAlternativeOrderId()
                         );
                         if (method_exists($oOrder, 'getShopPaymentStatus')) {
                             $aShop['$oOrder->getShopPaymentStatus()'] = $oOrder->getShopPaymentStatus();
@@ -92,15 +93,15 @@ class ML_Tools_Controller_Main_Tools_Orders extends ML_Core_Controller_Abstract 
                                 MLMessage::gi()->addDebug($ex);
                             }
 
-                            if (MLModul::gi()->getConfig('amazonvcsinvoice.invoicenumberoption') === 'matching') {
+                            if (MLModule::gi()->getConfig('amazonvcsinvoice.invoicenumberoption') === 'matching') {
                                 $aShop += array(
-                                    '$oOrder->getAttributeValue('.MLModul::gi()->getConfig('amazonvcsinvoice.invoicenumber.matching').')' => $oOrder->getAttributeValue(MLModul::gi()->getConfig('amazonvcsinvoice.invoicenumber.matching'))
+                                    '$oOrder->getAttributeValue(' . MLModule::gi()->getConfig('amazonvcsinvoice.invoicenumber.matching') . ')' => $oOrder->getAttributeValue(MLModule::gi()->getConfig('amazonvcsinvoice.invoicenumber.matching'))
                                 );
                             }
-                            if (MLModul::gi()->getConfig('amazonvcsinvoice.reversalinvoicenumberoption') === 'matching') {
+                            if (MLModule::gi()->getConfig('amazonvcsinvoice.reversalinvoicenumberoption') === 'matching') {
 
                                 $aShop += array(
-                                    '$oOrder->getAttributeValue('.MLModul::gi()->getConfig('amazonvcsinvoice.reversalinvoicenumber.matching').')' => $oOrder->getAttributeValue(MLModul::gi()->getConfig('amazonvcsinvoice.invoicenumber.matching'))
+                                    '$oOrder->getAttributeValue(' . MLModule::gi()->getConfig('amazonvcsinvoice.reversalinvoicenumber.matching') . ')' => $oOrder->getAttributeValue(MLModule::gi()->getConfig('amazonvcsinvoice.invoicenumber.matching'))
                                 );
                             }
                         }

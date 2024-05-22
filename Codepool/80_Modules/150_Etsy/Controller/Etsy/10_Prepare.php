@@ -32,4 +32,37 @@ class ML_Etsy_Controller_Etsy_Prepare extends ML_Tabs_Controller_Widget_Tabs_Fil
         return true;
     }
     
+    public function __construct() {
+        parent::__construct();
+        try {
+            $mExecute = $this->oRequest->get('view');
+            if ($mExecute == 'unprepare') {
+                $oModel = MLDatabase::factory('etsy_prepare');
+                $oList = MLDatabase::factory('selection')->set('selectionname', 'apply')->getList();
+                foreach ($oList->get('pid') as $iPid) {
+                    $oModel->init()->set('products_id', $iPid)->delete();
+                }
+            } elseif (
+                is_array($mExecute)
+                && !empty($mExecute)
+                && (
+                    in_array('reset_whenmade', $mExecute)
+                )
+            ) {
+                $oModel = MLDatabase::factory('etsy_prepare');
+                $oList = MLDatabase::factory('selection')->set('selectionname', 'apply')->getList();
+                foreach ($oList->get('pid') as $iPid) {
+                    $oModel->init()->set('products_id', $iPid);
+                    if (in_array('reset_whenmade', $mExecute)) {
+                        $oModel->set('whenmade', MLDatabase::factory('preparedefaults')->getValue('whenmade'));
+                    }
+                    $oModel->save();
+                }
+            }
+        } catch (Exception $oEx) {
+            //            echo $oEx->getMessage();
+        }
+    }
+
+
 }

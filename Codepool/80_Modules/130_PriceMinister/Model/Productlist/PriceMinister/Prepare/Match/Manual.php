@@ -66,7 +66,7 @@ class ML_PriceMinister_Model_ProductList_PriceMinister_Prepare_Match_Manual exte
             'type'=>'priceshop'
         );
         $aHead['pricemarketplace']=array(
-            'title'=> sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModul::gi()->getMarketPlaceName(false)),
+            'title' => sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModule::gi()->getMarketPlaceName(false)),
             'type'=>'pricemarketplace'
         );
         return $aHead;
@@ -89,7 +89,7 @@ class ML_PriceMinister_Model_ProductList_PriceMinister_Prepare_Match_Manual exte
                     and
                     s.selectionname='match'
                     and
-                    mpid='".MLModul::gi()->getMarketPlaceId()."'
+                    mpid='" . MLModule::gi()->getMarketPlaceId() . "'
             ";
             $this->iCountTotal= MLDatabase::getDbInstance()->fetchOne(sprintf($sSql,' distinct count(p.ParentId) '));
             foreach(MLDatabase::getDbInstance()->fetchArray(sprintf($sSql,' distinct p.ParentId ')." limit ".$iFrom.", ".$iCount) as $aRow){

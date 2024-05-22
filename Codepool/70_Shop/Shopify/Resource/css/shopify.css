@@ -10,3 +10,300 @@ body.shopify div.magna form{
 html{
     overflow:auto;
 }
+#check24_config_price_fieldset_price > tr:nth-child(3) > td:nth-child(3) ,
+#hood_config_price_fieldset_fixedprice > tr:nth-child(2) > td:nth-child(3),
+#hood_config_price_fieldset_chineseprice > tr:nth-child(2) > td:nth-child(3),
+#hood_config_price_fieldset_chineseprice > tr:nth-child(3) > td:nth-child(3),
+#hitmeister_config_price_fieldset_pricetr.js-field:nth-child(3) > td:nth-child(3),
+#amazon_config_price_fieldset_price tr.js-field:nth-child(3) > td:nth-child(3) {
+    border-bottom: 1px solid #dadada;
+}
+
+.ml-tablescroll {
+    overflow-y: scroll;
+    width: 97.7vw;
+}
+
+.ml-tablescroll table.ml-plist-table thead tr th,
+.ml-tablescroll table.ml-plist-table tbody tr th {
+    font-size: 13px !important;
+    padding: 0.5em 17px 0.5em 1.5em !important;
+}
+
+
+
+@media screen and (max-width: 2065px) {
+    table tbody#amazon_config_bopis_fieldset_products tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_bopis_fieldset_products tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_bopis_fieldset_products tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 2003px) {
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1980px) {
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1950px) {
+    table tbody#configuration_fieldset_orderimport tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#configuration_fieldset_orderimport tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#configuration_fieldset_orderimport tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+
+}
+
+@media screen and (max-width: 1800px) {
+    .ml-tablescroll {
+        width: 96.7vw !important;
+    }
+}
+
+@media screen and (max-width: 1789px) {
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1767px) {
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(7) div.duplicate div,
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(7) div.duplicate div > div,
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(7) div.duplicate div > span,
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1731px) {
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+
+@media screen and (max-width: 1709px) {
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1659px) {
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1689px) {
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > div,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > span,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1597px) {
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1698px) {
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1550px) {
+    table tbody#cdiscount_config_orderimport_fieldset_orderstatus tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#cdiscount_config_orderimport_fieldset_orderstatus tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#cdiscount_config_orderimport_fieldset_orderstatus tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1300px) {
+    .ml-tablescroll {
+        width: 96.7vw !important;
+    }
+}
+@media screen and (max-width: 1220px) {
+    div.magnamain table,
+    table.attributesTable td select,
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        font-size: 12px !important;
+    }
+    table.attributesTable > tbody > tr > td, table.attributesTable th {
+        padding: 6px !important;
+    }
+}
+
+@media screen and (max-width: 1107px) {
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1093px) {
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1065px) {
+    div.magnamain table,
+    table.attributesTable td select,
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        font-size: 10px !important;
+    }
+    table.attributesTable > tbody > tr > td, table.attributesTable th {
+        padding: 3px !important;
+    }
+}
+
+@media screen and (max-width: 1046px) {
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div > div {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .ml-tablescroll {
+        width: 95.7vw !important;
+    }
+}
+
+
+

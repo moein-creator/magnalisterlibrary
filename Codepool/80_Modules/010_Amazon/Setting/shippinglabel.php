@@ -1,2 +1,2 @@
 <?php
-MLSetting::gi()->add('aCss', 'magnalister.amazon.shippinglabel.css');
+MLSetting::gi()->add('aCss', 'magnalister.amazon.shippinglabel.css?%s');

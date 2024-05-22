@@ -1,5 +1,6 @@
 <?php
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 $aField['type'] = 'wysiwyg';
 // mobile shoul be a little thinner
 ?><div style="display:table-cell;width:85%;"><?php 

@@ -37,4 +37,12 @@ class ML_Hitmeister_Model_Service_AddItems extends ML_Modul_Model_Service_AddIte
 
         return $aMasterProducts;
     }
+
+    /**
+     * kaufland can add item with quantity <= 0
+     * @return boolean
+     */
+    protected function checkQuantity() {
+        return true;
+    }
 }

@@ -30,3 +30,5 @@ MLI18n::gi()->{'AMAZON_BUSINESS_ALL'} = 'Filtre : (fonction Business)';
 MLI18n::gi()->{'AMAZON_BUSINESS_STANDARD'} = 'Standard';
 MLI18n::gi()->{'AMAZON_BUSINESS_B2B'} = 'B2B';
 MLI18n::gi()->{'AMAZON_BUSINESS_B2B_B2C'} = 'B2B et B2C';
+MLI18n::gi()->{'Amazon_Productlist_Itemsearch_Search_Field'} = 'ex. ipad';
+MLI18n::gi()->{'Amazon_Productlist_Itemsearch_SearchAsin_Field'} = 'ex. B07NQDHC7S';

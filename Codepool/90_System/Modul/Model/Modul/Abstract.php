@@ -11,13 +11,15 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 abstract class ML_Modul_Model_Modul_Abstract {
 
+    protected static $aListOfConfigurationKeysNeedShopValidationOnlyActive;
+    protected static $aListOfConfigurationKeysNeedShopValidation;
     /**
      * prepareConfig-array cache
      * @var array $aPrepareDefaultConfig
@@ -72,16 +74,16 @@ abstract class ML_Modul_Model_Modul_Abstract {
      */
     public function isConfigured() {
         if (MLShop::gi()->isCurrencyMatchingNeeded()) {
-            $mpDBCurrency = MLModul::gi()->getConfig('currency');
+            $mpDBCurrency = MLModule::gi()->getConfig('currency');
             $shopCurrency = MLHelper::gi('model_price')->getShopCurrency();
-            $mpCurrency = (empty($mpDBCurrency)) ? getCurrencyFromMarketplace(MLModul::gi()->getMarketPlaceId()) : $mpDBCurrency;
+            $mpCurrency = (empty($mpDBCurrency)) ? getCurrencyFromMarketplace(MLModule::gi()->getMarketPlaceId()) : $mpDBCurrency;
 
             if (!empty($mpCurrency) && (strtolower($mpCurrency) !== strtolower($shopCurrency))) {
-                if (!MLModul::gi()->getConfig('exchangerate_update')) {
+                if (!MLModule::gi()->getConfig('exchangerate_update')) {
                     return false;
                 }
             } else {
-                MLModul::gi()->setConfig('exchangerate_update', '0');
+                MLModule::gi()->setConfig('exchangerate_update', '0');
             }
         }
 
@@ -89,51 +91,54 @@ abstract class ML_Modul_Model_Modul_Abstract {
             return false;
         }
         $aSettings = MLSetting::gi()->get('aModules');
-        $aRequiredConfig = (MLModul::gi()->isAuthed() ? $aSettings[MLModul::gi()->getMarketPlaceName()]['requiredConfigKeys'] : array());
+        $aRequiredConfig = (MLModule::gi()->isAuthed() ? $aSettings[MLModule::gi()->getMarketPlaceName()]['requiredConfigKeys'] : array());
         $aRequiredConfig = array_merge(
             array_keys($this->getAuthKeys($aSettings)),
             $aRequiredConfig
         );
-        $aRequiredConfig = MLModul::gi()->addRequiredConfigurationKeys($aRequiredConfig);
+        $aRequiredConfig = MLModule::gi()->addRequiredConfigurationKeys($aRequiredConfig);
         $aMissingConfigKeys = array();
         foreach ($aRequiredConfig as $sName) {
-            if (    (
-                        ($this->getConfig($sName) === null)
-                     || ($this->getConfig($sName) === '')
-                )
+            $mValue = $this->getConfigAndDefaultConfig($sName);
+            if (
+                ($mValue === null || $mValue === '')
                 && !in_array($sName, $aMissingConfigKeys)
             ) {
                 $aMissingConfigKeys[] = $sName;
             }
         }
+
         if (count($aMissingConfigKeys) != 0) {
-            MLMessage::gi()->addDebug(MLModule::gi()->getMarketPlaceName().'('.MLModule::gi()->getMarketPlaceId().') missing '.(count($aMissingConfigKeys)).' config-keys.', $aMissingConfigKeys);
-            return false;
+            MLMessage::gi()->addDebug(MLModule::gi()->getMarketPlaceName() . '(' . MLModule::gi()->getMarketPlaceId() . ') missing ' . (count($aMissingConfigKeys)) . ' config-keys.', $aMissingConfigKeys);
+            $blReturn = false;
         } else {
-            return $this->isAuthed();
+            $blReturn = $this->isAuthed();
         }
+        if ($blReturn) {
+            $blReturn = MLShop::gi()->isConfiguredKeysValid();
+        }
+        return $blReturn;
     }
 
     /**
      * prevent to check authentication of marketplace if credential is wrong
-     * @var type
+     * @var type 
      */
-    protected static $aIsAuthedErrorCaches = array();
-
+    protected static $aIsAuthedErrorCaches = array(); 
+    
     /**
      * cache could be reset if crendential is changed in configuration
      */
     public function resetIsAuthedErrorCaches(){
         self::$aIsAuthedErrorCaches = array();
     }
-
+    
     /**
      * check if auth-data for mp is correct
      * @todo check auth keys and no api-request
      * @return bool
      */
     public function isAuthed($blResetCache = false) {
-        return true;
         $aSettings = MLSetting::gi()->get('aModules');
         foreach (array_keys($this->getAuthKeys($aSettings)) as $sAuthkey) {
             if ($this->getConfig($sAuthkey) === null) {
@@ -159,8 +164,8 @@ abstract class ML_Modul_Model_Modul_Abstract {
                 $oEx->setCriticalStatus(false);
                 MLMessage::gi()->addDebug($oEx);
                 MLMessage::gi()->addError(
-                    sprintf(MLI18n::gi()->get('ML_MAGNACOMPAT_ERROR_ACCESS_DENIED'), MLModul::gi()->getMarketPlaceName(false)),
-                    array('md5' => 'authError_'.get_class($this))
+                    sprintf(MLI18n::gi()->get('ML_MAGNACOMPAT_ERROR_ACCESS_DENIED'), MLModule::gi()->getMarketPlaceName(false)),
+                    array('md5' => 'authError_' . get_class($this))
                 );
                 return false;
             } catch (Exception $oEx) {
@@ -169,8 +174,8 @@ abstract class ML_Modul_Model_Modul_Abstract {
         }
         return true;
     }
-
-
+    
+    
     public function getStockConfig($sType = null) {
         return array('type' => null, 'value' => null);
     }
@@ -226,7 +231,7 @@ abstract class ML_Modul_Model_Modul_Abstract {
         }
         return $mReturnValue;
     }
-
+    
     /**
      * get preparedefaultconfig array
      * @param string $sName
@@ -246,14 +251,26 @@ abstract class ML_Modul_Model_Modul_Abstract {
         if ($sName == null) {
             return $this->aPrepareDefaultConfig;
         } elseif (array_key_exists($sName, $this->aPrepareDefaultConfig)) {
-            return $this->replaceConfig($sName , $this->aPrepareDefaultConfig[$sName]);
+            return $this->replaceConfig($sName, $this->aPrepareDefaultConfig[$sName]);
         } else {
             return null;
         }
     }
 
-    protected function replaceConfig($sName , $sValue){
-        if(in_array( $sName , array('mwstfallback', 'mwst.fallback'))){
+    public function getConfigAndDefaultConfig($sName = null) {
+        if ($sName == null) {
+            $mValue = $this->getConfig() + $this->getPrepareDefaultConfig();
+        } else {
+            $mValue = $this->getConfig($sName);
+            if ($mValue === null) {
+                $mValue = $this->getPrepareDefaultConfig($sName);
+            }
+        }
+        return $mValue;
+    }
+
+    protected function replaceConfig($sName, $sValue) {
+        if (in_array($sName, array('mwstfallback', 'mwst.fallback'))) {
             $sValue = str_replace(array('%', ','), array('', '.'), $sValue);
         }
         return $sValue;
@@ -265,7 +282,7 @@ abstract class ML_Modul_Model_Modul_Abstract {
         }
         $this->aConfig[$sName] = $mValue;
         if ($blSave) {
-            MLDatabase::factory('config')->set('mpId', MLModul::gi()->getMarketPlaceId())->set('mkey', $sName)->set('value', $mValue)->save();
+            MLDatabase::factory('config')->set('mpId', MLModule::gi()->getMarketPlaceId())->set('mkey', $sName)->set('value', $mValue)->save();
         }
         return $this;
     }
@@ -276,7 +293,7 @@ abstract class ML_Modul_Model_Modul_Abstract {
         foreach ($this->getConfigApiKeysTranslation() as $sKey => $aApi) {
             $aSend[$aApi['api']] = $aApi['value'];
         }
-        $aSend['PlugIn.Label'] = getDBConfigValue(array('general.tabident', MLModul::gi()->getMarketPlaceId()), '0', '');
+        $aSend['PlugIn.Label'] = getDBConfigValue(array('general.tabident', MLModule::gi()->getMarketPlaceId()), '0', '');
         try {
             MagnaConnector::gi()->submitRequest(array(
                 'ACTION' => 'SetConfigValues',
@@ -299,7 +316,7 @@ abstract class ML_Modul_Model_Modul_Abstract {
         }
 
         if ($blFlushCache) {
-            MLCache::gi()->flush('*' . MLModul::gi()->getMarketPlaceName() . '_' . MLModul::gi()->getMarketPlaceId() . '*.json');
+            MLCache::gi()->flush('*' . MLModule::gi()->getMarketPlaceName() . '_' . MLModule::gi()->getMarketPlaceId() . '*.json');
         }
 
         MagnaConnector::gi()->resetTimeOut();
@@ -338,9 +355,9 @@ abstract class ML_Modul_Model_Modul_Abstract {
             return $iStartTime;
         }
     }
-
+    
     /**
-     * to get specific configuration that can have several option and user can select one of them as a default
+     * to get specific configuration that can have several option and user can select one of them as a default 
      * @param string $sName
      * @param int $iSelected
      * @return array
@@ -366,7 +383,7 @@ abstract class ML_Modul_Model_Modul_Abstract {
         }
         return $aData;
     }
-
+    
      /**
      * @var string $sType defines price type, if marketplace supports multiple prices
      * @return ML_Shop_Model_Price_Interface
@@ -384,7 +401,7 @@ abstract class ML_Modul_Model_Modul_Abstract {
         }
         return $this->oPrice;
     }
-
+    
     /**
      * get array of price group config key
      * some of marketplace have different keys
@@ -393,7 +410,7 @@ abstract class ML_Modul_Model_Modul_Abstract {
     public function getPriceGroupKeys(){
         return array('price.group');
     }
-
+    
     /**
      * return true if marketplace support more than one type of preparation(e.g. amazon, ebay, Real.de and ...)
      * @return boolean
@@ -492,15 +509,6 @@ abstract class ML_Modul_Model_Modul_Abstract {
         return false;
     }
 
-    /**
-     * @param $oShop
-     * @param $mAttributeCode
-     * @return null
-     */
-    public function shopProductGetAttributeValue($oShop, $mAttributeCode) {
-        return null;
-    }
-
     public function addRequiredConfigurationKeys($aRequiredConfig) {
         return $aRequiredConfig;
     }
@@ -533,6 +541,22 @@ abstract class ML_Modul_Model_Modul_Abstract {
         }
     }
 
+    public function getListOfConfigurationKeysNeedShopValidationOnlyActive() {
+        return array();
+    }
+
+    public function getListOfConfigurationKeysNeedShopValidation() {
+        if (self::$aListOfConfigurationKeysNeedShopValidation === null) {
+            $isAuthenticated = $this->isAuthed();
+            $aSettings = MLSetting::gi()->get('aModules');
+            if (!isset($aSettings[$this->getMarketPlaceName()]['configKeysNeedsShopValidation'])) {
+                $aSettings[$this->getMarketPlaceName()]['configKeysNeedsShopValidation'] = array();
+            }
+            self::$aListOfConfigurationKeysNeedShopValidation = ($isAuthenticated ? array_unique($aSettings[$this->getMarketPlaceName()]['configKeysNeedsShopValidation']) : array());
+        }
+        return self::$aListOfConfigurationKeysNeedShopValidation;
+    }
+
     /**
      * Pull all Invoice API Config Parameters
      *
@@ -540,9 +564,9 @@ abstract class ML_Modul_Model_Modul_Abstract {
      */
     protected function getInvoiceAPIConfigParameter() {
         return array(
-            'invoice.option'                      => array('api' => 'Invoice.Option', 'value' => $this->getConfig('invoice.option')),
-            'invoice.mailcopy'                    => array('api' => 'Invoice.MailCopy', 'value' => $this->getConfig('invoice.mailcopy')),
-            'invoice.invoicenumberoption'         => array('api' => 'Invoice.InvoiceNumberOption', 'value' => $this->getConfig('invoice.invoicenumberoption')),
+            'invoice.option' => array('api' => 'Invoice.Option', 'value' => $this->getConfig('invoice.option')),
+            'invoice.mailcopy' => array('api' => 'Invoice.MailCopy', 'value' => $this->getConfig('invoice.mailcopy')),
+            'invoice.invoicenumberoption' => array('api' => 'Invoice.InvoiceNumberOption', 'value' => $this->getConfig('invoice.invoicenumberoption')),
             'invoice.invoicenumberprefix'         => array('api' => 'Invoice.InvoiceNumberPrefix', 'value' => $this->getConfig('invoice.invoicenumberprefix')),
             'invoice.reversalinvoicenumberprefix' => array('api' => 'Invoice.ReversalInvoiceNumberPrefix', 'value' => $this->getConfig('invoice.reversalinvoicenumberprefix')),
             'invoice.reversalinvoicenumberoption' => array('api' => 'Invoice.ReversalInvoiceNumberOption', 'value' => $this->getConfig('invoice.reversalinvoicenumberoption')),

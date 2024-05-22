@@ -28,21 +28,5 @@ class ML_Hood_Controller_Hood_Config_Account extends ML_Form_Controller_Widget_F
         return self::calcConfigTabActive(__class__, true);
     }
 
-    public function renderAjax() {
-        if ($this->getRequest('what') === 'GetTokenCreationLink') {
-            try {
-                $result = MagnaConnector::gi()->submitRequest(array(
-                    'ACTION' => 'GetTokenCreationLink'
-                ));
-                $iframeURL = $result['DATA']['tokenCreationLink'];
-            } catch (MagnaException $e) {
-                $iframeURL = 'error';
-            }
-            echo $iframeURL;
-            die();
-        } else {
-            parent::renderAjax();
-        }
-    }
 
 }

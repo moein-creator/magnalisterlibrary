@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -168,7 +168,6 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
         try {
             $storeID = $this->getStoreId();
             $aData = $this->aNewData;
-            echo print_m($aData['Order']['DatePurchased']);
             $aAddresses = $aData['AddressSets'];
 
             if (empty($aAddresses['Main'])) {// add new order when Main address is filled
@@ -201,7 +200,7 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
 
             //show in order detail and invoice pdf
             $sPaymentInfo = '';
-            if (MLModul::gi()->getConfig('order.information')) {
+            if (MLModule::gi()->getConfig('order.information')) {
                 $sPaymentInfo= isset($aData['MPSpecific']['InternalComment']) ? $aData['MPSpecific']['InternalComment'] : '';
             }
 
@@ -210,7 +209,7 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
             $oPayment = $this->getPaymentMethod($sPaymentInfo);
             $aBillingAddress = $this->getAddress($aData['AddressSets']['Billing']);
             $aShippingAddress = $this->getAddress($aData['AddressSets']['Shipping']);
-            $createCustomer = $customerGroupId = MLModul::gi()->getConfig('customergroup');
+            $createCustomer = $customerGroupId = MLModule::gi()->getConfig('customergroup');
             $orderStatus = $aData['Order']['Status'];
             $orderState = $this->getOrderState($orderStatus);
             //think this is not needed since we set the tax on product level and shipment
@@ -230,6 +229,7 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
             // possible setShippingDescription
             $this->oCurrentShopOrder->setPayment($oPayment);
 
+            $this->oCurrentShopOrder->setExtOrderId($aData['MPSpecific']['MOrderID']);
             $this->oCurrentShopOrder->setBaseCurrencyCode($oBaseCurrency->getCode());       // base - currency which is set for current website.
             $this->oCurrentShopOrder->setGlobalCurrencyCode($oDefaultCurrency->getCode());  // default - currency which is set for default in backend
             $this->oCurrentShopOrder->setOrderCurrencyCode($aData['Order']['Currency']);   // order - currency which was selected by customer
@@ -284,7 +284,6 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
             $this->oCurrentShopOrder->setSubtotal($this->fTotalProductAmountNet);
             $this->oCurrentShopOrder->setSubtotalInclTax($this->fTotalProductAmount);
             $this->oCurrentShopOrder->setTaxAmount($this->fTotalAmountTax);
-
             // adding order total prices for the base currency
             $this->setBaseValues($this->oCurrentShopOrder, array('Subtotal', 'SubtotalInclTax', 'GrandTotal', 'TaxAmount'));
             $oTransaction = MLMagento2Alias::CreateObjectManagerProvider('\Magento\Framework\DB\Transaction');
@@ -311,11 +310,8 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
                 $order->setState('new');// set the "new" state to get all option such as "Create Invoices" , "Create Shipped" and ... in order detail of new order
             }
             $order->setStatus($orderStatus);// set the configured status to the order
-            $order->setCreatedAt($aData['Order']['DatePurchased']);
+            $order->setCreatedAt($aData['Order']['DatePurchased']);// set Order Date as Purchase date
             $order->save();
-
-
-
 
             //adding new status comment history for order
             $orderHistoryStatus = MLMagento2Alias::CreateObjectManagerProvider('Magento\Sales\Model\Order\Status\HistoryFactory');
@@ -568,7 +564,7 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
             if ($oProduct->exists()) {
                 // Stock reduction is done by Magento 2 automatically after creating Shipment
                 $oShopProduct = $oProduct->getCorrespondingProductEntity();
-                $fProductTaxRate = $mMarketplaceTax ? $mMarketplaceTax : $oProduct->getTax($this->aNewData['AddressSets']);
+                $fProductTaxRate = isset($mMarketplaceTax) ? $mMarketplaceTax : $oProduct->getTax($this->aNewData['AddressSets']);
 
                 // Stock reduction will be done based on magnalister configuration
                 // we will not consider Stock management configuration in Magento 2
@@ -640,7 +636,7 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
                         ->setProductType($oShopProduct->getTypeId());
                 }
             } else {
-                $fProductTaxRate = $mMarketplaceTax ? $mMarketplaceTax : $this->getTaxRate();
+                $fProductTaxRate = isset($mMarketplaceTax) ? $mMarketplaceTax : $this->getTaxRate();
                 $oOrderItem->setProductType('simple');
                 $oOrderItem->setName($aProduct['ItemTitle']);
             }
@@ -730,9 +726,9 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
      * @return array|mixed|null
      */
     protected function getFallbackTax() {
-        $fDefaultProductTax = MLModul::gi()->getConfig('mwst.fallback');
+        $fDefaultProductTax = MLModule::gi()->getConfig('mwst.fallback');
         if ($fDefaultProductTax === null) {
-            $fDefaultProductTax = MLModul::gi()->getConfig('mwstfallback'); // some modules have this, other that
+            $fDefaultProductTax = MLModule::gi()->getConfig('mwstfallback'); // some modules have this, other that
         }
         return $fDefaultProductTax;
     }
@@ -883,7 +879,7 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
                 break;
             }
         }
-        $carrierCodeConfig = MLModul::gi()->getConfig('orderimport.shippingmethod');
+        $carrierCodeConfig = MLModule::gi()->getConfig('orderimport.shippingmethod');
         $storeID = $this->getStoreId();
         $activeShipping = MLMagento2Alias::CreateObjectManagerProvider('Magento\Shipping\Model\Config')
             ->getActiveCarriers($storeID);
@@ -968,7 +964,7 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
         if($this->oExistingOrder !== null && !$this->oExistingOrder->getPayment()) {
             $payment = $this->oExistingOrder->getPayment();
         } else {
-            $sPaymentId = MLModul::gi()->getConfig('orderimport.paymentmethod');
+            $sPaymentId = MLModule::gi()->getConfig('orderimport.paymentmethod');
             if (empty($sPaymentId)) {
                 $aPaymentMethodIds = MLFormHelper::getShopInstance()->getPaymentMethodValues();
                 $sPaymentId = key($aPaymentMethodIds);
@@ -1075,7 +1071,7 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
     }
 
     protected function getStoreId() {
-        return MLModule::gi()->getConfig('lang');
+        return MLModule::gi()->getConfig('orderimport.shop');
     }
 
     /**
@@ -1096,12 +1092,23 @@ class ML_Magento2_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_
         if ($aAddress['Company'] == false) {
             $aAddress['Company'] = null;
         }
+        $oCustomer = MLMagento2Alias::ObjectManagerProvider('\Magento\Customer\Model\CustomerFactory')->create();
+        $oCustomer->setFirstname($aAddress['Firstname'])->setLastname($aAddress['Lastname']);
 
-        // Negated regex from here: \Magento\Customer\Model\Validator\Name
-        $re = '/[^(?:\p{L}\p{M}\,\-\_\.\'\s\d){1,255}]/u';
+        // fallback in magento 2.3 class does not exist
+        try {
+            $isValid = MLMagento2Alias::CreateObjectManagerProvider('\Magento\Customer\Model\Validator\Name')->isValid($oCustomer);
+        } catch (Exception $ex) {
+            $isValid = false;
+        }
 
-        $aAddress['Firstname'] = preg_replace($re, '_', $aAddress['Firstname'], 1);
-        $aAddress['Lastname'] = preg_replace($re, '_', $aAddress['Lastname'], 1);
+        if (!$isValid) {
+            // Negated regex from here: \Magento\Customer\Model\Validator\Name
+            $re = '/[^?:\p{L}\p{M}\,\-\_\.\'\s\d{1,255}]/u';
+
+            $aAddress['Firstname'] = preg_replace($re, '_', $aAddress['Firstname']);
+            $aAddress['Lastname'] = preg_replace($re, '_', $aAddress['Lastname']);
+        }
     }
 }
 

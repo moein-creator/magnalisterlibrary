@@ -69,7 +69,7 @@ Please confirm that you read and understand this information by clicking “acce
 ';
 MLI18n::gi()->{'ricardo_config_error_price_signal'} = 'Prices on Ricardo must be specified in Swiss franc. Please also adapt the price (last decimal number) so that it is 0 (eg. 12.40) or 5 (eg. 12.45). The lowest amount possible is 5 Rappen (0.00 CHF). Click the info-icon "number after decimal point" for more details.';
 MLI18n::gi()->{'ricardo_config_account__legend__account'} = 'Login Details';
-MLI18n::gi()->{'ricardo_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'ricardo_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'ricardo_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'ricardo_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'ricardo_config_account__field__mpusername__label'} = 'Username';
@@ -134,9 +134,9 @@ MLI18n::gi()->{'ricardo_config_prepare__field__cumulative__valuehint'} = 'sepera
 MLI18n::gi()->{'ricardo_config_prepare__field__availabilityfield__label'} = 'Shipping Time';
 MLI18n::gi()->{'ricardo_config_prepare__field__availability__label'} = 'Article availability after payment receipt';
 MLI18n::gi()->{'ricardo_config_prepare__field__firstpromotion__label'} = 'Promotion Package';
-MLI18n::gi()->{'ricardo_config_prepare__field__firstpromotion__hint'} = '<span style="color:red;">Promotions are not for free. Please check prices on Ricardo.</span>';
+MLI18n::gi()->{'ricardo_config_prepare__field__firstpromotion__hint'} = '<span style="color:#e31a1c;">Promotions are not for free. Please check prices on Ricardo.</span>';
 MLI18n::gi()->{'ricardo_config_prepare__field__secondpromotion__label'} = 'Homepage';
-MLI18n::gi()->{'ricardo_config_prepare__field__secondpromotion__hint'} = '<span style="color:red;">Promotions are not for free. Please check prices on Ricardo.</span>';
+MLI18n::gi()->{'ricardo_config_prepare__field__secondpromotion__hint'} = '<span style="color:#e31a1c;">Promotions are not for free. Please check prices on Ricardo.</span>';
 MLI18n::gi()->{'ricardo_config_prepare__field__checkin.showlimitationwarning__label'} = 'Show Ricardo offer limit prior to uploading';
 MLI18n::gi()->{'ricardo_config_prepare__field__checkin.showlimitationwarning__help'} = 'Please note that Ricardo has generally limited every merchant to 100 simultaneous offers, however, Ricardo can customize this limit individually for every merchant. Prior to uploading, please check whether your products are exceeding this limit. At the earliest, you can check your error log 30 minutes after uploading.<br>If you activate this option, you will receive an information regarding Ricardo’s offer limit each time you upload a product.';
 MLI18n::gi()->{'ricardo_config_price__legend__price'} = 'Price Calculation';
@@ -236,7 +236,7 @@ MLI18n::gi()->{'ricardo_config_producttemplate__field__template.name__help'} = '
                  <dd>Since the base price is a fix value in the titel that can not be updated, the price shouldn’t be changed. This would lead to wrong prices.<br />
                     You can use this placeholder on your own risk. In this case we suggest to  <b>turn off the price sync.</b> (Configuration in the magnalister Ricardo synchronization).</dd>
                 <dt>Important:</dt>
-                 <dd>Please note that Ricardo limits the length for the title to 40 signs. magnalister cuts the title while the product upload to the maximum length.</dd>
+                 <dd>Please note that Ricardo limits the length for the title to 60 signs. magnalister cuts the title while the product upload to the maximum length.</dd>
             </dl>';
 MLI18n::gi()->{'ricardo_config_producttemplate__field__template.content__label'} = 'Product Description Template';
 MLI18n::gi()->{'ricardo_config_producttemplate__field__template.content__hint'} = 'List of available place holders for product description:<dl><dt>#TITLE#</dt><dd>Product name (Titel)</dd><dt>#ARTNR#</dt><dd>Article number from the shop</dd><dt>#PID#</dt><dd>Products ID</dd><!--<dt>#PRICE#</dt><dd>Price</dd><dt>#VPE#</dt><dd>Price per packaging unit</dd>--><dt>#SHORTDESCRIPTION#</dt><dd>Short Description from Shop</dd><dt>#DESCRIPTION#</dt><dd>Description from Shop</dd><dt>#WEIGHT#</dt><dd>Products weight</dd><dt>#PICTURE1#</dt><dd>First Product-Image</dd><dt>#PICTURE2# etc.</dt><dd>Second Product-Image; with #PICTURE3#, #PICTURE4# etc. More Images can be sent, as many as available in the shop.</dd></dl>#SHORTDESCRIPTION#';

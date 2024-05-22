@@ -301,7 +301,7 @@ class ML_Otto_Helper_Model_Table_Otto_ConfigData extends ML_Form_Helper_Model_Ta
     }
 
     /**
-     * Validates matching case for carrier and shipping address options options
+     * Returns available images sizes
      *
      * @param $aField
      */
@@ -310,7 +310,6 @@ class ML_Otto_Helper_Model_Table_Otto_ConfigData extends ML_Form_Helper_Model_Ta
 
         for ($i = 1000; $i <= 4500; $i += 100) {
             $aField['values'][(string)$i] = $i."px";
-
         }
     }
 }

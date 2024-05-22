@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -21,3 +21,42 @@ MLI18n::gi()->{'cdiscount_config_orderimport__field__orderimport.paymentstatus__
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderimport.paymentstatus__hint'} = '';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
 MLI18n::gi()->{'sCdiscount_automatically'} = '-- attribution automatique --';
+MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.carrier__help'} = '
+Sélectionnez le transporteur qui sera utilisé pour les commandes Cdiscount.<br>
+<br>
+Les options suivantes s’offrent à vous :<br>
+<ul>
+    <li>
+        <span class="bold underline">Société de livraison Cdiscount</span>
+        <p>Sélectionnez un transporteurs dans le menu déroulant. Les sociétés recommandées par Cdiscount y sont affichées.<br>
+            <br>
+            Cette option est idéale si vous souhaitez <strong>toujours utiliser le même transporteur</strong> pour les commandes Cdiscount.
+        </p>
+    </li>
+    <li>
+        <span class="bold underline">Apparier les sociétés de livraison Cdiscount avec les sociétés de livraison de votre boutique</span>
+        <p>Vous pouvez faire correspondre les transporteurs proposés par Cdiscount avec les transporteurs créés dans le module d\'expédition de Shopify. Pour ajouter un nouvel appariement, cliquez sur le symbole "+".<br>
+            <br>
+            Pour savoir quelle entrée du module d\'expédition de Shopify est utilisée pour l\'importation des commandes Cdiscount, veuillez vous référer à l\'icône info sous "Importation des commandes" -> "Service d\'expédition des commandes".<br>
+            <br>
+            Choisissez cette option si vous souhaitez <strong>utiliser les sociétés de livraisons existantes du module d\'expédition de Shopify.</strong><br>
+        </p>
+    </li>
+    <li>
+        <span class="bold underline">magnalister ajoute un champ de texte dans les commandes sous “Informations supplémentaires”</span>
+        <p>Si vous sélectionnez cette option, un champ sera ajouté dans l’aperçu de la commande dans la rubrique “Informations supplémentaires” dans Shopify dans lequel vous pouvez renseigner la société de livraison.<br>
+            <br>
+            Choisissez cette option si vous souhaitez <strong>utiliser différents transporteurs</strong> pour les commandes Cdiscount.<br>
+        </p>
+    </li>
+    <li>
+        <span class="bold underline">Saisir manuellement le nom de la société de transport pour toutes les commande</span><br>
+        <p>Sélectionnez cette option, si vous souhaitez <strong>définir une société de livraison qui sera utilisée pour toutes les commandes Cdiscount.</strong><br></p>
+    </li>
+</ul>
+<span class="bold underline">Important :</span>
+<ul>
+    <li>La société de livraison doit obligatoirement être renseignée pour que l’expédition de la commande puisse être confirmée sur Cdiscount.<br><br></li>
+    <li>Le non-renseignement de la société de livraison lors de la confirmation de l’expédition sur Cdiscount peut entrainer la suspension de votre compte vendeur.</li>
+</ul>
+';

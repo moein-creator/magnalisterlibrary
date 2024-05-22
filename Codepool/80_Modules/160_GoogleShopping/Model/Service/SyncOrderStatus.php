@@ -80,6 +80,9 @@ class ML_GoogleShopping_Model_Service_SyncOrderStatus extends ML_Modul_Model_Ser
                         }
                     }
                 }
+
+                $oOrder->set('order_status_sync_last_check_date', 'NOW()'); // update date when last check happened
+                $oOrder->save();
             }
 
             $this->submitRequestAndProcessResult('ConfirmShipment', $aShippedRequest, $aShippedModels);

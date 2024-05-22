@@ -65,4 +65,15 @@ class ML_Etsy_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncO
         }
         return $carrierValue;
     }
+
+    /**
+     * We want to ignore the configuration of cancellation because
+     * there is no functionality on Etsy API to cancel the order
+     *
+     * @param $sShopStatus
+     * @return false
+     */
+    protected function isCancelled($sShopStatus) {
+        return false;
+    }
 }

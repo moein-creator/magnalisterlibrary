@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -24,14 +24,6 @@ class ML_Idealo_Controller_Idealo_Config_Prepare extends ML_Form_Controller_Widg
     
     public static function getTabActive() {
         return self::calcConfigTabActive(__class__, false);
-    }
-    
-    public function callAjaxGetField() {
-        MLSetting::gi()->set('idealo.activatedirectbuyconfigurl', $this->getUrl(array(
-            'controller' => substr($this->getRequest('controller'), 0, strpos($this->getRequest('controller'), '_')).'_config_account')
-        ));
-        parent::callAjaxGetField();
-        
     }
     
 }

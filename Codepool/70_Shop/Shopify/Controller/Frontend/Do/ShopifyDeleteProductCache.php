@@ -11,12 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
-use Magna\Service\MailService;
 use Shopify\API\Application\Application;
 use Shopify\API\Application\Request\Products\NotExistingProducts\NotExistingProductParams;
 
@@ -82,22 +81,28 @@ class ML_Shopify_Controller_Frontend_Do_ShopifyDeleteProductCache extends ML_Sho
             $this->showHeaderAndFooter('Shopify deleting product cache');
             try {
                 $aProducts = $this->getUpdatedProductsData();
-                $blAnyProduct = false;
+                $aMLIds = array();
                 foreach ($aProducts as $sKey => $mValue) {
-                    $blAnyProduct = true;
-                    $iMLId = substr($sKey, 1);
+                    $aMLIds[] = substr($sKey, 1);
+                }
+                if (count($aMLIds) > 0) {
                     try {
-                        MLShopifyAlias::getProductModel()->set('id', $iMLId)->delete();
-                        $this->out(' magnalister Product id: '.$iMLId." is deleted\n");
+                        MLDatabase::getDbInstance()->query(
+                            '
+DELETE PCR,P
+FROM `magnalister_products` P 
+LEFT JOIN `magnalister_shopify_product_collection_relation` PCR  ON PCR.ShopifyProductID = P.MarketplaceIdentId  WHERE P.ID IN('.implode(',', $aMLIds).')'
+                        );
+
+                        $this->out(' magnalister Product ids: '.implode(',', $aMLIds)." are deleted\n");
                     } catch (\Exception $oEx) {
-                        $this->out(' A problem occurred by deleting magnalister product id: '.$iMLId."\n".$oEx->getMessage()."\n".$oEx->getTraceAsString());
+                        $this->out(' A problem occurred by deleting magnalister product ids: '.implode(',', $aMLIds)."\n".$oEx->getMessage()."\n".$oEx->getTraceAsString());
                         MLMessage::gi()->addDebug($oEx);
                     }
-                }
-                if (!$blAnyProduct) {
+                } else {
                     $this->out(' There is no product to be deleted'."\n");
-                }
 
+                }
                 if ($this->iStart + $this->iLimit > $this->iCount) {
                     $this->showHeaderAndFooter('Shopify deleting process is done');
                     MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyDeleteProductPage')->set('value', 0)->save();
@@ -114,7 +119,8 @@ class ML_Shopify_Controller_Frontend_Do_ShopifyDeleteProductCache extends ML_Sho
             $this->iNumberOfRepeat++;
         }
 
-        $this->removeOrphanedVariant();
+        $this->removeOrphanedVariants();
+        $this->removeOrphanedCollections();
         $this->removeDuplicatedProduct();
 
         $this->out("\n\nComplete (".microtime2human(microtime(true) - $iStartTime).").\n");
@@ -131,15 +137,46 @@ class ML_Shopify_Controller_Frontend_Do_ShopifyDeleteProductCache extends ML_Sho
 
     /**
      * By deleting product, variant should be also deleted automatically,
-     * it seems, always it doesn't work , so here it checks variant without parent and it delete them
+     * it seems, always it doesn't work , so here it checks variant without parent, and it deletes them
+     * It should be checked more later
      */
-    protected function removeOrphanedVariant() {
+    protected function removeOrphanedVariants() {
         MLDatabase::getDbInstance()->query("
             DELETE v
             FROM `magnalister_products` v
             LEFT JOIN `magnalister_products` p ON v.ParentID=p.ID
             WHERE  v.ParentID != '0' AND p.ID IS NULL");
-        $this->showHeaderAndFooter(' Deleting orphaned variant: '.MLDatabase::getDbInstance()->affectedRows());
+        $this->showHeaderAndFooter('Number of deleted variants: '.MLDatabase::getDbInstance()->affectedRows());
+    }
+
+    /**
+     * By deleting product, collection with no relation with products should be also deleted automatically
+     */
+    protected function removeOrphanedCollections() {
+
+        $existingCollection = MLDatabase::getDbInstance()->fetchArray("
+            SELECT c.`ShopifyCollectionID`
+            FROM `" . MLShopifyAlias::getCollectionModel()->getTableName() . "` c
+            LEFT JOIN `" . MLShopifyAlias::getProductCollectionRelationModel()->getTableName() . "` pcr ON pcr.`ShopifyCollectionID`=c.`ShopifyCollectionID`
+            LEFT JOIN `magnalister_products` p ON p.`ProductsId`= pcr.`ShopifyProductID`
+            WHERE  p.`ProductsId` IS NOT NULL", true);
+        $probablyDeletedCollection = MLDatabase::getDbInstance()->fetchArray("
+            SELECT c.`ShopifyCollectionID`
+            FROM `" . MLShopifyAlias::getCollectionModel()->getTableName() . "` c
+            LEFT JOIN `" . MLShopifyAlias::getProductCollectionRelationModel()->getTableName() . "` pcr ON pcr.`ShopifyCollectionID`=c.`ShopifyCollectionID`
+            LEFT JOIN `magnalister_products` p ON p.`ProductsId`= pcr.`ShopifyProductID`
+            WHERE  p.`ProductsId` IS NULL", true);
+        $diff = array_unique(array_diff($probablyDeletedCollection, $existingCollection));
+        if (count($diff) > 0) {
+            MLDatabase::getDbInstance()->query("
+            DELETE c
+            FROM `" . MLShopifyAlias::getCollectionModel()->getTableName() . "` c
+            WHERE  c.`ShopifyCollectionID` IN ('" . implode("', '", $diff) . "')", true);
+        }
+        $this->showHeaderAndFooter('$probablyDeletedCollection: ' . json_encode($probablyDeletedCollection, true));
+        $this->showHeaderAndFooter('$existingCollection: ' . json_encode($existingCollection, true));
+        $this->showHeaderAndFooter('Diff: ' . json_encode($diff, true));
+        $this->showHeaderAndFooter('Number of deleted collections: ' . MLDatabase::getDbInstance()->affectedRows());
     }
 
     /**
@@ -228,9 +265,14 @@ DESC
                 $this->outLabel('Deleted');
                 $this->out(json_indent(json_encode($this->aDeleted)));
             }
-            //            if (count($this->aCannotBeDeleted) > 0) {
-            $this->developerNotification();
-            //            }
+            if (count($this->aCannotBeDeleted) > 0) {
+                $this->outLabel('Cannot be deleted');
+                $this->out(json_indent(json_encode($this->aCannotBeDeleted)));
+                $this->developerNotification('Removing duplicated product',
+                    'Shop URL: '.MLHttp::gi()->getBaseUrl().'<br>'.
+                    'Deleted: <br>'.json_indent(json_encode($this->aDeleted)).
+                    '<br><br>Cannot be deleted Deleted: <br>'.json_indent(json_encode($this->aCannotBeDeleted)));
+            }
         }
     }
 
@@ -281,18 +323,6 @@ DESC
 
     protected function outLabel($sLabel) {
         $this->out("\n\n$sLabel\n");
-    }
-
-    protected function developerNotification(): void {
-        $this->outLabel('Cannot be deleted');
-        $this->out(json_indent(json_encode($this->aCannotBeDeleted)));
-        $oMail = new MailService();
-        $oMail->from('no-reply@magnalister.com', ' magnalister Shopify Server')
-            ->addTo('masoud.khodaparast@magnalister.com')
-            ->subject('Removing duplicated product')
-            ->content("Deleted: \n".json_indent(json_encode($this->aDeleted)).
-                "\n\nCannot be deleted Deleted: \n".json_indent(json_encode($this->aCannotBeDeleted)));
-        $success = $oMail->send();
     }
 
     /**

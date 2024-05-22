@@ -43,7 +43,7 @@ class ML_Otto_Controller_Otto_Prepare_Variations extends ML_Form_Controller_Widg
             if ($aCategory['LeafCategory'] == 1) {
                 $aFinalCategories[] = array(
                     'id'   => $aCategory['CategoryID'],
-                    'text' => html_entity_decode($aCategory['CategoryName'], null, 'UTF-8'),
+                    'text' => html_entity_decode($aCategory['CategoryName'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8'),
                 );
             }
         }
@@ -77,6 +77,7 @@ class ML_Otto_Controller_Otto_Prepare_Variations extends ML_Form_Controller_Widg
         $aNewArray = array();
         $brands = array();
         $aFinalBrands = array();
+        $excludeAuto = MLRequest::gi()->data('brandmatchingExcludeAuto');
         if (MLRequest::gi()->data('brandmatching') == 'PreloadBrandCache') {
             $this->getCategoryIndependentAttributes();
         }
@@ -99,9 +100,7 @@ class ML_Otto_Controller_Otto_Prepare_Variations extends ML_Form_Controller_Widg
                 }
             }
             $aNewArray = array(
-                // 'noselection' => MLI18n::gi()->get('form_type_matching_select_optional'),
                 'all' => MLI18n::gi()->get('form_type_matching_select_all'),
-                // 'separator_line_3' => MLI18n::gi()->get(MLModul::gi()->getMarketPlaceName() . '_prepare_variations_separator_line_label'),
             );
         }
 
@@ -109,22 +108,31 @@ class ML_Otto_Controller_Otto_Prepare_Variations extends ML_Form_Controller_Widg
         if (MLRequest::gi()->data('brandmatching') == 'GetBrands' && $matchingValue == '') {
             $results = $this->getCategoryIndependentAttributes();
             $brands = $results['DATA']['attributes'][current(unpack('H*', 'Brand'))]['values'];
-
-            $aNewArray = array(
-                // 'noselection' => MLI18n::gi()->get('form_type_matching_select_optional'),
-                'auto' => MLI18n::gi()->get('form_type_matching_select_auto'),
-                'reset' => MLI18n::gi()->get('form_type_matching_select_reset'),
-                // 'separator_line_3' => MLI18n::gi()->get(MLModul::gi()->getMarketPlaceName().'_prepare_variations_separator_line_label'),
-            );
+            //exclude auto match options
+            if(!$excludeAuto) {
+                $aNewArray = array(
+                    'auto' => MLI18n::gi()->get('form_type_matching_select_auto'),
+                    'reset' => MLI18n::gi()->get('form_type_matching_select_reset'),
+                );
+            }
         }
 
-        if (!empty($brands) && !empty($aNewArray)) {
+        if (!empty($brands)) {
             $brands = $aNewArray + $brands;
-
-            $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_options')], ['text' => MLI18n::gi()->get('otto_config_matching_shop_values')]];
+            //exclude auto match options
+            if (!$excludeAuto) {
+                $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_options')], ['text' => MLI18n::gi()->get('otto_config_matching_shop_values')]];
+            } else {
+                $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_shop_values')]];
+            }
             if (MLRequest::gi()->data('brandmatching') == 'GetBrands' && $matchingValue == '') {
-                $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_options')], ['text' => MLI18n::gi()->get('otto_config_matching_otto_values')]];
-            } 
+                //exclude auto match options
+                if (!$excludeAuto) {
+                    $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_options')], ['text' => MLI18n::gi()->get('otto_config_matching_otto_values')]];
+                } else {
+                    $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_otto_values')]];
+                }
+            }
 
             foreach ($brands as $id => $text) {
                 if (in_array($id, ['all', 'auto', 'reset'])) {
@@ -142,9 +150,9 @@ class ML_Otto_Controller_Otto_Prepare_Variations extends ML_Form_Controller_Widg
 
             $sSearch = MLRequest::gi()->data('brandmatchingSearch');
             if (!empty($sSearch)) {
-                foreach ($aFinalBrands as $sKey => &$aCategory) {
-                    if (stripos($aCategory['text'], $sSearch) === false) {
-                        unset($aFinalBrands[$sKey]);
+                foreach ($aFinalBrands[1]['children'] as $sKey => $aBrand) {
+                    if (stripos($aBrand['text'], $sSearch) === false) {
+                        unset($aFinalBrands[1]['children'][$sKey]);
                     }
                 }
             }
@@ -153,12 +161,21 @@ class ML_Otto_Controller_Otto_Prepare_Variations extends ML_Form_Controller_Widg
             $iLength = 50;
             $iPageLength = (int)MLRequest::gi()->data('brandmatchingPage') * $iLength;
             $iOffset = (($iPageLength) - $iLength);
+            $aBrandCount = count($aFinalBrands[1]['children']);
+            $aFinalBrands[1]['children'] = array_slice($aFinalBrands[1]['children'], $iOffset, $iLength);
+
+            if((int)MLRequest::gi()->data('brandmatchingPage') !== 1) {
+                $aBrandPage = [['text' => MLI18n::gi()->get('otto_config_matching_otto_values')]];
+                $aBrandPage[0]['children'] = $aFinalBrands[1]['children'];
+
+                $aFinalBrands = $aBrandPage;
+            }
 
             // response
             MLSetting::gi()->add('aAjax', array(
-                'results' => array_slice($aFinalBrands, $iOffset, $iLength),
+                'results' => $aFinalBrands,
                 'pagination' => array(
-                    'more' => (count($aFinalBrands) > $iPageLength) ? true : false,
+                    'more' => ($aBrandCount > $iPageLength) ? true : false,
                 )
             ));
         }
@@ -198,6 +215,7 @@ class ML_Otto_Controller_Otto_Prepare_Variations extends ML_Form_Controller_Widg
                     'help' => isset($value['help']) ? $value['help'] : null,
                     'values' => !empty($value['values']) ? $value['values'] : array(),
                     'dataType' => !empty($value['type']) ? $value['type'] : 'text',
+                    'isbrand' => $value['name'] === 'Brand' ? 1 : 0,
                 );
             }
         }

@@ -21,7 +21,7 @@ MLSetting::gi()->add('aModules', array(
         'title' => '{#i18n:sModuleNameEbay#}',
         'logo' => 'ebay',
         'displayAlways' => true,
-        'requiredConfigKeys' => array(
+        'requiredConfigKeys'            => array(
             'username',
             'token',
             'site',
@@ -40,15 +40,20 @@ MLSetting::gi()->add('aModules', array(
             'orderimport.shop',
             'stocksync.tomarketplace'
         ),
-        'authKeys' => array(
+        'authKeys'                      => array(
             'username' => 'USERNAME',
         ),
-        'settings' => array(
-            'defaultpage' => 'prepare',
-            'subsystem' => 'eBay',
-            'currency' => '__depends__',
+        'configKeysNeedsShopValidation' => array(
+            'fixed.price.group',
+            'strikeprice.group',
+            'chinese.price.group',
+        ),
+        'settings'                      => array(
+            'defaultpage'    => 'prepare',
+            'subsystem'      => 'eBay',
+            'currency'       => '__depends__',
             'hasOrderImport' => true,
         ),
-        'type' => 'marketplace',
+        'type'                          => 'marketplace',
     )
 ));

@@ -18,7 +18,8 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 $marketplaceName = MLModul::gi()->getMarketPlaceName();
 
 $sName = str_replace('field', '', $aField['name']);
@@ -43,8 +44,8 @@ $brandCurrentPage = 1;
     <table style="width:100%;margin-top: 15px">
         <tbody>
             <tr>
-                <td style="border: 1px solid #747474"><strong><?php echo addslashes(MLI18n::gi()->get($marketplaceName . '_prepare_variations_shop_value')) ?></strong></td>
-                <td style="border: 1px solid #747474"><strong><?php echo addslashes(MLI18n::gi()->get($marketplaceName . '_prepare_variations_otto_value')) ?></strong></td>
+                <td style="border: 1px solid #dadada"><strong><?php echo addslashes(MLI18n::gi()->get($marketplaceName . '_prepare_variations_shop_value')) ?></strong></td>
+                <td style="border: 1px solid #dadada"><strong><?php echo addslashes(MLI18n::gi()->get($marketplaceName . '_prepare_variations_otto_value')) ?></strong></td>
                 <td style="border: none; display: none;"></td>
                 <td style="border: none; display: none;"></td>
             </tr>

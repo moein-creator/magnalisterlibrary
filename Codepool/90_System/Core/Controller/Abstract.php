@@ -1,11 +1,11 @@
 <?php
 /**
- * 888888ba                 dP  .88888.                    dP
- * 88    `8b                88 d8'   `88                   88
- * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
- * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
- * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
- * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ * 888888ba                 dP  .88888.                    dP                
+ * 88    `8b                88 d8'   `88                   88                
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b. 
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88 
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88 
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P' 
  *
  *                          m a g n a l i s t e r
  *                                      boost your Online-Shop
@@ -22,11 +22,11 @@
  * base controller nearly all concrete controllers extend it
  */
 class ML_Core_Controller_Abstract{
-
+    
     protected $aParameters = array();
     protected $oShop = null;
     /**
-     * @var ML_Database_Model_Db
+     * @var ML_Database_Model_Db 
      */
     protected $oDB = null;
     protected $oRequest = null;
@@ -41,12 +41,8 @@ class ML_Core_Controller_Abstract{
         if(ML::isInstalled()){
             $this->oDB = MLDatabase::getDbInstance();
         }
-        if(MLSetting::gi()->get('blTemplateDebug')){
-            MLSettingRegistry::gi()->addJs('jquery.magnalister.templateDebug.js');
-            MLSetting::gi()->add('aCss', array('jquery.magnalister.templateDebug.css'), true);
-        }
     }
-
+    
     /**
      * Returns true if this controller is the one requested by the controller
      * request parameter (eg. ml[controller]=marketplace:12345_checkin).
@@ -61,7 +57,7 @@ class ML_Core_Controller_Abstract{
         }
         return (strlen($sController) < strlen($sIdent)) || ($sIdent == $sController);
     }
-
+    
     /**
      * Call method self::{'callAjax'.MLRequest::gi()->get('method')};
      */
@@ -73,7 +69,7 @@ class ML_Core_Controller_Abstract{
             } else {
                 throw new Exception('unknown command');
             }
-        } catch( Exception $oEx){// no method
+        } catch( MLRequest_Exception $oEx){// no method
             MLSetting::gi()->add('aAjax', array('success' => true));
         } catch (Exception $oEx) {
               MLSetting::gi()->add('aAjax', array('success' => false));
@@ -82,7 +78,7 @@ class ML_Core_Controller_Abstract{
         }
         $this->finalizeAjax();
     }
-
+    
     /**
      * adding messages, debug to ajaxJson
      */
@@ -121,7 +117,7 @@ class ML_Core_Controller_Abstract{
         }
         MagnalisterFunctions::stop();
     }
-
+    
     /**
      * finds a controller who is in filesystem deeper (a child) than current controller
      * @param string $sChild
@@ -130,7 +126,7 @@ class ML_Core_Controller_Abstract{
     protected function getChildController($sChild){
         return MLController::gi($this->getIdent().'_'.$sChild);
     }
-
+    
     /**
      * finds a controller who is in filesystem deeper (a child) than current controller and return its name
      * @param bool $blFullIdent
@@ -139,7 +135,7 @@ class ML_Core_Controller_Abstract{
     protected function getChildControllersNames($blFullIdent=false){
         return ML::gi()->getChildClassesNames('controller_'.$this->getIdent(), $blFullIdent);
     }
-
+    
     /**
      * calculate ident of controller
      * @return string
@@ -147,9 +143,9 @@ class ML_Core_Controller_Abstract{
     protected function getIdent(){
         return substr(MLFilesystem::getIdent($this),11);
     }
-
+    
     /**
-     * alias method for http-class
+     * alias method for http-class 
      * @param string $sFile
      * @param bool $blAbsolute
      * @return string
@@ -157,7 +153,7 @@ class ML_Core_Controller_Abstract{
     public function getResourceUrl($sFile='',$blAbsolute=true){
         return MLHttp::gi()->getResourceUrl($sFile,$blAbsolute);
     }
-
+    
     /**
      * return url from magnalister-plugin
      * @param array $aParams
@@ -166,16 +162,16 @@ class ML_Core_Controller_Abstract{
     public function getUrl($aParams=array()){
         return MLHttp::gi()->getUrl($aParams);
     }
-
+    
     /**
-     * return frontend-do-url
+     * return frontend-do-url 
      * @param array $aParams
      * @return string
      */
     public function getFrontendDoUrl($aParams=array()){
         return MLHttp::gi()->getFrontendDoUrl($aParams);
     }
-
+    
     /**
      * return url of parent controller
      * @param array $aParams
@@ -197,7 +193,7 @@ class ML_Core_Controller_Abstract{
         }
         return $this->getUrl($aParams);
     }
-
+    
     /**
      * return current url
      * @param array $aParams
@@ -214,7 +210,7 @@ class ML_Core_Controller_Abstract{
         $aParams = array_merge($aDefault,$aParams);
         return $this->getUrl($aParams);
     }
-
+    
     /**
      * returns current request-parameters
      * @param string $sName
@@ -223,7 +219,7 @@ class ML_Core_Controller_Abstract{
     public function getRequest($sName=null){
         return $this->oRequest->data($sName);
     }
-
+    
     /**
      * translate a ident
      * @param string $sName
@@ -232,7 +228,7 @@ class ML_Core_Controller_Abstract{
     public function i18n($sName){
         return $this->__($sName);
     }
-
+    
     /**
      * translate a ident
      * @param string $sName
@@ -241,7 +237,7 @@ class ML_Core_Controller_Abstract{
     public function __($sName){
         return MLI18n::gi()->{$sName};
     }
-
+    
     /**
      * translate a ident and skip charectors if needed
      * @param string $sName
@@ -264,7 +260,7 @@ class ML_Core_Controller_Abstract{
         $this->includeView();
         return $this;
     }
-
+    
     /**
      * no variables in scope
      * @return \ML_Core_Controller_Abstract
@@ -275,18 +271,18 @@ class ML_Core_Controller_Abstract{
         return $this;
     }
 
-
+    
     /**
      * if starts with "widget_" use (explode) $this->getIdent() to find template
      * if ends witch "_snippet" dont use debug
-     *
+     * 
      * widget = complex global structure (productlist)
      * snippet = small stuff (formfield)
-     *
+     * 
      * @param array $aViewNames array of view idents
      * @param string $aViewNames string of view ident
      * @param array $aVars vars for assign
-     * @param bool $blAddFileErrorToMessage
+     * @param bool $blAddFileErrorToMessage 
      * @return \ML_Core_Controller_Abstract
      */
     public function includeView( $aViewNames=array(), $aVars=array(), $blAddFileErrorToMessage=true){
@@ -340,7 +336,7 @@ class ML_Core_Controller_Abstract{
         }
         return $this;
     }
-
+    
     /**
      * calls self::includeView(), but returns output instead echo
      * @param array $aViewNames
@@ -354,5 +350,15 @@ class ML_Core_Controller_Abstract{
         $sOut = ob_get_contents();
         ob_end_clean();
         return $sOut;
+    }
+
+
+    /**
+     * It is useful when we are show a progress bar with magnalisterRecursiveAjax and we want to show error message in pop up dialog box
+     * @param $sMessage
+     * @return void
+     */
+    protected function showErrorInPopupProgressBar($sMessage) {
+        MLSetting::gi()->add('aAjaxPlugin', array('dom' => array('#recursiveAjaxDialog .errorBox' => array('action' => 'append', 'content' => $sMessage))));
     }
 }

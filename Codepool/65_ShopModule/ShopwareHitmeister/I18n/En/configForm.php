@@ -15,6 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+MLI18n::gi()->{'hitmeister_config_carrier_option_group_shopfreetextfield_option_carrier'} = 'Shipping Carriers from webshop custom fields for orders';
+MLI18n::gi()->{'hitmeister_config_carrier_option_group_marketplace_carrier'} = 'Shipping Carriers suggested by Kaufland';
 
 MLI18n::gi()->{'hitmeister_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
 MLI18n::gi()->{'hitmeister_config_orderimport__field__orderimport.paymentmethod__label'} = 'Payment Methods';
@@ -31,3 +33,15 @@ MLI18n::gi()->{'hitmeister_config_orderimport__field__orderimport.shippingmethod
 MLI18n::gi()->{'hitmeister_config_orderimport__field__orderimport.shippingmethod__hint'} = '';
 MLI18n::gi()->{'hitmeister_config_orderimport__field__orderimport.paymentstatus__label'} = 'Payment Status in Shop';
 MLI18n::gi()->{'hitmeister_config_orderimport__field__orderimport.paymentstatus__hint'} = '';
+MLI18n::gi()->{'hitmeister_config_price__field__priceoptions__help'} = '<p>With this function you can transfer different prices to the marketplace and synchronize them automatically.<br />
+<br />
+Select a customer group from your webshop using the dropdown on the right.<br />
+<br />
+If you do not enter a price in the new customer group, the default price from the webshop will be used automatically. This makes it very easy to enter a different price even for just a few items. The other price configurations are also applied.<br />
+<br />
+<b>Example:</b></p>
+<ul>
+<li>Create a customer group in your webshop, e.g. "{#setting:currentMarketplaceName#} customers".</li>
+<li>In your webshop, add the wanted prices to the new customer group\'s items.</li>
+</ul>
+<p>The discount mode of the customer groups can also be used. You can enter a  discount there (in percent). If the discount mode is activated in the Shopware item, the discounted price is transferred to the marketplace via magnalister. Important: the marketplace price is not displayed as a strike price.</p>';

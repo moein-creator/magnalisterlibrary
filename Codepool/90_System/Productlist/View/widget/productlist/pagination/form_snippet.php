@@ -2,10 +2,13 @@
 /* @var $this  ML_Productlist_Controller_Widget_ProductList_Abstract */
 /* @var $oList ML_Productlist_Model_ProductList_Abstract */
 /* @var $aStatistic array */
-/* @var iLinkedPage int */
-/* @var sLabel string */
+/* @var $iLinkedPage int */
+/* @var $sLabel string */
 if (!class_exists('ML', false))
     throw new Exception();
+
+$activeButton = ($aStatistic['iCurrentPage'] == $iLinkedPage) | ($sLabel == '...');
+
 ?>
 <?php if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) { ?>
     <form action="<?php echo $this->getCurrentUrl() ?>" method="post">
@@ -18,6 +21,6 @@ if (!class_exists('ML', false))
             /** @deprecated array | productlist-depenendcies */ ?>
             <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName('filter['.$sFilterName.']') ?>" value="<?php echo is_object($mFilter) ? $mFilter->getFilterValue() : $mFilter['value'] ?>"/>
         <?php } ?>
-        <input class="noButton" type="submit" value="<?php echo $sLabel ?>"<?php echo $aStatistic['iCurrentPage'] == $iLinkedPage ? ' disabled="disabled"' : '' ?> />
+        <input class="ml-pagButton<?php echo $activeButton ? ' ml-active' : ''; ?>" style="" type="submit" value="<?php echo $sLabel ?>"<?php echo $activeButton ? ' disabled="disabled"' : '' ?> />
     </form>
 <?php } ?>

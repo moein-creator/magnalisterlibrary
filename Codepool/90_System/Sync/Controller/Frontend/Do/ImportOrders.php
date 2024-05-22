@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -36,15 +36,14 @@ class ML_Sync_Controller_Frontend_Do_ImportOrders extends ML_Core_Controller_Abs
             $sMessage = '';
             $iRequestMp = MLRequest::gi()->data('mpid');
             $aTabIdents = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.tabident')->get('value');
-            foreach (magnaGetInvolvedMarketplaces() as $sMarketPlace) {
-                foreach (magnaGetInvolvedMPIDs($sMarketPlace) as $iMarketPlace) {
-
+            foreach (MLHelper::gi('Marketplace')->magnaGetInvolvedMarketplaces() as $sMarketPlace) {
+                foreach (MLHelper::gi('Marketplace')->magnaGetInvolvedMPIDs($sMarketPlace) as $iMarketPlace) {
                     if ($iRequestMp === null || $iRequestMp == $iMarketPlace) {
                         ML::gi()->init(array('mp' => $iMarketPlace));
                         $sMarketPlaceText = 'Marketplace: '.$sMarketPlace.' ('.(isset($aTabIdents[$iMarketPlace]) && $aTabIdents[$iMarketPlace] != '' ? $aTabIdents[$iMarketPlace].' - ' : '').$iMarketPlace.')';
                         MLHelper::gi('stream')->deeper($sMarketPlaceText.' -> start sync');
                         try {
-                            if (MLModul::gi()->isConfigured()) {
+                            if (MLModule::gi()->isConfigured()) {
                                 try {
                                     $oService = $this->getService();
                                     $oService->execute();

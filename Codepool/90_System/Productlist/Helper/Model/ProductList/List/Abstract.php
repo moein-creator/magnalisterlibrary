@@ -7,7 +7,7 @@ abstract class ML_Productlist_Helper_Model_ProductList_List_Abstract {
     abstract public function shopSystemAttribute($sCode, $blUse = true, $sTitle = null, $sTypeVariant = null);
 
     public function __call($name, $aData) {
-        $sValue = MLModul::gi()->getConfig($name);
+        $sValue = MLModule::gi()->getConfig($name);
         if (!empty($sValue)) {
             $sI18N = is_array($aData) && isset($aData[0]['title']) ? MLI18n::gi()->get($aData[0]['title']) : null;
             return $this->shopSystemAttribute($sValue, true, $sI18N);
@@ -33,7 +33,7 @@ abstract class ML_Productlist_Helper_Model_ProductList_List_Abstract {
             if (!in_array(__function__, $this->aFields)) {
                 $this->aFields[] = __function__;
                 $this->aHeader[__function__] = array(
-                    'title' => sprintf(MLI18n::gi()->get('Productlist_Header_sStockMarketplace'), MLModul::gi()->getMarketPlaceName(false)),
+                    'title' => sprintf(MLI18n::gi()->get('Productlist_Header_sStockMarketplace'), MLModule::gi()->getMarketPlaceName(false)),
                     'type' => 'quantityMarketplace',
                     'type_variant' => $sTypeVariant === null ? 'quantityMarketplace' : $sTypeVariant
                 );
@@ -51,7 +51,7 @@ abstract class ML_Productlist_Helper_Model_ProductList_List_Abstract {
             if (!in_array(__function__, $this->aFields)) {
                 $this->aFields[] = __function__;
                 $this->aHeader[__function__] = array(
-                    'title' => sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModul::gi()->getMarketPlaceName(false)),
+                    'title' => sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModule::gi()->getMarketPlaceName(false)),
                     'type' => 'priceMarketplace',
                     'type_variant' => $sTypeVariant === null ? 'priceMarketplace' : $sTypeVariant
                 );
@@ -89,8 +89,8 @@ abstract class ML_Productlist_Helper_Model_ProductList_List_Abstract {
 
     public function preparedType($sTypeVariant = null) {
         if ($this->oLoadedProduct === null) {
-            $sTitle = MLI18n::gi()->get(ucfirst(MLModul::gi()->getMarketPlaceName()) . '_Productlist_Header_sPreparedType');
-            if ($sTitle == ucfirst(MLModul::gi()->getMarketPlaceName()) . '_Productlist_Header_sPreparedType') {
+            $sTitle = MLI18n::gi()->get(ucfirst(MLModule::gi()->getMarketPlaceName()) . '_Productlist_Header_sPreparedType');
+            if ($sTitle == ucfirst(MLModule::gi()->getMarketPlaceName()) . '_Productlist_Header_sPreparedType') {
                 $sTitle = MLI18n::gi()->get('Productlist_Header_sPreparedType');
             }
             $this->aFields[] = __function__;

@@ -704,4 +704,20 @@ class MLI18n extends MLRegistry_Abstract {
         return $sCallingPath;
     }
 
+    public function get($sName, $aReplace = array()) {
+        $value = parent::get($sName, $aReplace);
+        if (MLSetting::gi()->blShowTranslationKeys) {
+            if (is_array($value)) {
+                $aFlat = array();
+                foreach (MLHelper::getArrayInstance()->nested2Flat($value) as $k => $v) {
+                    $aFlat[$k] = $sName . '__' . $k;
+                }
+                return MLHelper::getArrayInstance()->flat2Nested($aFlat);
+            } else {
+                return $sName;
+            }
+        } else {
+            return $value;
+        }
+    }
 }

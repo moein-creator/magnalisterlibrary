@@ -25,8 +25,6 @@ MLSetting::gi()->add('formgroups_etsy', array(
     'account' => array(
         'legend' => array('i18n' => '{#i18n:formgroups_etsy__account#}',),
         'fields' => array(
-            'access.username' => '{#setting:formfields_etsy__access.username#}',
-            'access.password' => '{#setting:formfields_etsy__access.password#}',
             'access.token' => '{#setting:formfields_etsy__access.token#}',
             'shop.language' => '{#setting:formfields_etsy__shop.language#}',
             'shop.currency' => '{#setting:formfields_etsy__shop.currency#}',
@@ -45,7 +43,7 @@ MLSetting::gi()->add('formgroups_etsy', array(
     'shipping' => array(
         'legend' => array('i18n' => '{#i18n:formgroups_etsy__shipping#}'),
         'fields' => array(
-            'shippingtemplate' => '{#setting:formfields_etsy__shippingtemplate#}',
+            'shippingprofile' => '{#setting:formfields_etsy__shippingprofile#}',
         ),
     ),
     'upload' => array(
@@ -55,14 +53,22 @@ MLSetting::gi()->add('formgroups_etsy', array(
             'maxquantity' => '{#setting:formfields__maxquantity#}',
         ),
     ),
-    'shippingtemplate' => array(
-        'legend' => array('i18n' => '{#i18n:formgroups_etsy__shippingtemplate#}'),
+    'shippingprofile' => array(
+        'legend' => array('i18n' => '{#i18n:formgroups_etsy__shippingprofile#}'),
         'fields' => array(
-            'shippingtemplatetitle' => '{#setting:formfields_etsy__shippingtemplatetitle#}',
-            'shippingtemplatecountry' => '{#setting:formfields_etsy__shippingtemplatecountry#}',
-            'shippingtemplateprimarycost' => '{#setting:formfields_etsy__shippingtemplateprimarycost#}',
-            'shippingtemplatesecondarycost' => '{#setting:formfields_etsy__shippingtemplatesecondarycost#}',
-            'shippingtemplatesend' => '{#setting:formfields_etsy__shippingtemplatesend#}',
+            'shippingprofiletitle'             => '{#setting:formfields_etsy__shippingprofiletitle#}',
+            'shippingprofileorigincountry'     => '{#setting:formfields_etsy__shippingprofileorigincountry#}',
+            'shippingprofiledestinationcountry'=> '{#setting:formfields_etsy__shippingprofiledestinationcountry#}',
+//             Removed because we can provide destination country or destination region not both (we can later implement with disabling)
+//            'shippingprofiledestinationregion'=> '{#setting:formfields_etsy__shippingprofiledestinationregion#}',
+            'shippingprofileprimarycost'       => '{#setting:formfields_etsy__shippingprofileprimarycost#}',
+            'shippingprofilesecondarycost'     => '{#setting:formfields_etsy__shippingprofilesecondarycost#}',
+            'shippingprofileminprocessingtime' => '{#setting:formfields_etsy__shippingprofileminprocessingtime#}',
+            'shippingprofilemaxprocessingtime' => '{#setting:formfields_etsy__shippingprofilemaxprocessingtime#}',
+            'shippingprofilemindeliverydays'   => '{#setting:formfields_etsy__shippingprofilemindeliverydays#}',
+            'shippingprofilemaxdeliverydays'   => '{#setting:formfields_etsy__shippingprofilemaxdeliverydays#}',
+            'shippingprofileoriginpostalcode'  => '{#setting:formfields_etsy__shippingprofileoriginpostalcode#}',
+            'shippingprofilesend'              => '{#setting:formfields_etsy__shippingprofilesend#}',
         ),
     ),
     'orderstatus' => array(
@@ -71,7 +77,6 @@ MLSetting::gi()->add('formgroups_etsy', array(
             'orderstatus.sync' => '{#setting:formfields__orderstatus.sync#}',
             'orderstatus.shipping' => '{#setting:formfields_etsy__orderstatus.shipping#}',
             'orderstatus.shipped' => '{#setting:formfields__orderstatus.shipped#}',
-            'orderstatus.canceled' => '{#setting:formfields__orderstatus.canceled#}',
         ),
     ),
     'comparisonprice' => array(
@@ -97,17 +102,25 @@ MLSetting::gi()->add('formgroups_etsy', array(
             'issupply' => '{#setting:formfields_etsy__prepare.issupply#}',
             'price' => '{#setting:formfields_etsy__prepare_price#}',
             'quantity' => '{#setting:formfields_etsy__prepare_quantity#}',
-            'shippingtemplate' => '{#setting:formfields_etsy__shippingtemplate#}',
+            'shippingprofile' => '{#setting:formfields_etsy__shippingprofile#}',
         ),
     ),
-    'prepare_shippingtemplate' => array(
-        'legend' => array('i18n' => '{#i18n:formgroups_etsy__shippingtemplate#}'),
+    'prepare_shippingprofile' => array(
+        'legend' => array('i18n' => '{#i18n:formgroups_etsy__shippingprofile#}'),
         'fields' => array(
-            'shippingtemplatetitle' => '{#setting:formfields_etsy__shippingtemplatetitle#}',
-            'shippingtemplatecountry' => '{#setting:formfields_etsy__shippingtemplatecountry#}',
-            'shippingtemplateprimarycost' => '{#setting:formfields_etsy__shippingtemplateprimarycost#}',
-            'shippingtemplatesecondarycost' => '{#setting:formfields_etsy__shippingtemplatesecondarycost#}',
-            'shippingtemplatesend' => '{#setting:formfields_etsy__shippingtemplatesend#}',
+            'shippingprofiletitle'             => '{#setting:formfields_etsy__shippingprofiletitle#}',
+            'shippingprofileorigincountry'     => '{#setting:formfields_etsy__shippingprofileorigincountry#}',
+            'shippingprofiledestinationcountry'=> '{#setting:formfields_etsy__shippingprofiledestinationcountry#}',
+//            Removed because we can provide destination country or destination region not both (we can later implement with disabling)
+//            'shippingprofiledestinationregion'=> '{#setting:formfields_etsy__shippingprofiledestinationregion#}',
+            'shippingprofileprimarycost'       => '{#setting:formfields_etsy__shippingprofileprimarycost#}',
+            'shippingprofilesecondarycost'     => '{#setting:formfields_etsy__shippingprofilesecondarycost#}',
+            'shippingprofileminprocessingtime' => '{#setting:formfields_etsy__shippingprofileminprocessingtime#}',
+            'shippingprofilemaxprocessingtime' => '{#setting:formfields_etsy__shippingprofilemaxprocessingtime#}',
+            'shippingprofilemindeliverydays'   => '{#setting:formfields_etsy__shippingprofilemindeliverydays#}',
+            'shippingprofilemaxdeliverydays'   => '{#setting:formfields_etsy__shippingprofilemaxdeliverydays#}',
+            'shippingprofileoriginpostalcode'  => '{#setting:formfields_etsy__shippingprofileoriginpostalcode#}',
+            'shippingprofilesend'              => '{#setting:formfields_etsy__shippingprofilesend#}',
         ),
     ),
     'prepare_variations' => array(
@@ -127,7 +140,7 @@ MLSetting::gi()->add('formgroups_etsy', array(
     'prepare_action' => array(
         'legend' => array(
             'classes' => array(
-                'mlhidden',
+              /*  'mlhidden',*/
             ),
         ),
         'row' => array(

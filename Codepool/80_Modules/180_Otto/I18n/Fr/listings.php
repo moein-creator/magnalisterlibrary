@@ -17,8 +17,7 @@
  */
 
 MLI18n::gi()->Otto_listings_popup_after_addItem_content = '
-    Für die Verarbeitung eines Artikels benötigt otto ca. 2-5 Sekunden.<br />
-    Bei Aktivierung des otto Bilderpakets muss man dieselbe Zeit zusätzlich pro Bild berücksichtigen.<br />
+    Für die Verarbeitung eines Artikels benötigt OTTO Market ca. 2-5 Sekunden.<br />
     <br />
     Sie können den Verarbeitungs-Status jederzeit im Reiter „Inventar“ einsehen.
 ';

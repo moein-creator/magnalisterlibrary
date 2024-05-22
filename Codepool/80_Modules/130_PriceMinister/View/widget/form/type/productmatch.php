@@ -1,4 +1,5 @@
-<?php class_exists('ML', false) or die(); ?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
     <input type="hidden" name="<?php echo MLHTTP::gi()->parseFormFieldName('matching_nextpage'); ?>"
            value="<?= $this->oPrepareHelper->currentPage == $this->oPrepareHelper->totalPages ? 'null' : $this->oPrepareHelper->currentPage + 1 ?>"/>
     <input type="hidden" name="<?php echo MLHTTP::gi()->parseFormFieldName('matching_totalpages'); ?>" value="<?= $this->oPrepareHelper->totalPages ?>"/>
@@ -12,8 +13,8 @@
                     <span class="darker"><?= ML_LABEL_SHOP_TITLE ?>:</span>
                     <?= $aProduct['Title'] ?>&nbsp;&nbsp;
                     <span>
-                        [<span style="color: #ddd;"><?= ML_LABEL_ARTICLE_NUMBER ?></span>: <?= $aProduct['Model'] ?>,
-                        <span style="color: #ddd;"><?= ML_LABEL_SHOP_PRICE_BRUTTO ?></span>: <?= $aProduct['Price'] ?>]
+                        [<span style="color: #000;"><?= ML_LABEL_ARTICLE_NUMBER ?></span>: <?= $aProduct['Model'] ?>,
+                        <span style="color: #000;"><?= ML_LABEL_SHOP_PRICE_BRUTTO ?></span>: <?= $aProduct['Price'] ?>]
                     </span>
                 </div>
                 <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName('matching') ?>[<?= $aProduct['Id'] ?>][title]"
@@ -47,20 +48,29 @@
         <tbody class="func">
         <tr>
             <td colspan="5">
-                <div><?= MLI18n::gi()->priceminister_search_by_keywords ?>: <input type="text"
-                                                                                   id="newSearch_<?= $aProduct['Id'] ?>"
-                                                                                   value="<?= isset($aProduct['SearchCriteria']) && $aProduct['SearchCriteria'] === 'KW' ? $aProduct['Title'] : ''; ?>">
-                    <input type="button" value="OK" id="newSearchGo_<?= $aProduct['Id'] ?>"></div>
-                <div><?= MLI18n::gi()->priceminister_search_by_ean ?>: <input type="text"
-                                                                              id="newEAN_<?= $aProduct['Id'] ?>"
-                                                                              value="<?= isset($aProduct['SearchCriteria']) && $aProduct['SearchCriteria'] === 'EAN' ? $aProduct['EAN'] : ''; ?>">
-                    <input type="button" value="OK" id="newEANGo_<?= $aProduct['Id'] ?>"></div>
-                <div><?= MLI18n::gi()->priceminister_search_by_category ?>: <input type="text"
-                                                                                   id="newCat_<?= $aProduct['Id'] ?>">
-                    <input type="button" value="OK" id="newCatGo_<?= $aProduct['Id'] ?>"></div>
-                <div><?= MLI18n::gi()->priceminister_search_by_pm_productid ?>: <input type="text"
-                                                                                       id="newPMpId_<?= $aProduct['Id'] ?>">
-                    <input type="button" value="OK" id="newPMpIdGo_<?= $aProduct['Id'] ?>"></div>
+                <div class="ml-product-match">
+                    <div>
+                        <div><?= MLI18n::gi()->priceminister_search_by_keywords ?>: <input type="text"
+                                                                                           id="newSearch_<?= $aProduct['Id'] ?>"
+                                                                                           value="<?= isset($aProduct['SearchCriteria']) && $aProduct['SearchCriteria'] === 'KW' ? $aProduct['Title'] : ''; ?>">
+                            <input type="button" value="OK" id="newSearchGo_<?= $aProduct['Id'] ?>"></div>
+                        <div><?= MLI18n::gi()->priceminister_search_by_ean ?>: <input type="text"
+                                                                                      id="newEAN_<?= $aProduct['Id'] ?>"
+                                                                                      value="<?= isset($aProduct['SearchCriteria']) && $aProduct['SearchCriteria'] === 'EAN' ? $aProduct['EAN'] : ''; ?>">
+                            <input type="button" value="OK" id="newEANGo_<?= $aProduct['Id'] ?>"></div>
+                    </div>
+                    <div>
+                        <div><?= MLI18n::gi()->priceminister_search_by_category ?>: <input type="text"
+                                                                                           id="newCat_<?= $aProduct['Id'] ?>">
+                            <input type="button" value="OK" id="newCatGo_<?= $aProduct['Id'] ?>"></div>
+                        <div><?= MLI18n::gi()->priceminister_search_by_pm_productid ?>: <input type="text"
+                                                                                               id="newPMpId_<?= $aProduct['Id'] ?>">
+                            <input type="button" value="OK" id="newPMpIdGo_<?= $aProduct['Id'] ?>"></div>
+                    </div>
+
+
+                </div>
+
             </td>
         </tr>
         </tbody>

@@ -9,13 +9,14 @@ MLI18n::gi()->{'WooCommerce_Productlist_Filter_sManufacturerId'} = 'Manufacturer
 MLI18n::gi()->{'WooCommerce_Productlist_Filter_sEan'} = 'EAN';
 MLI18n::gi()->{'WooCommerce_Productlist_Filter_sCategory'} = 'Category';
 
-
 MLI18n::gi()->WooCommerce_Product_Attributes_Title = 'Product title';
 MLI18n::gi()->WooCommerce_Product_Attributes_ItemNumber = 'SKU';
 MLI18n::gi()->WooCommerce_Product_Attributes_Description = 'Product description';
 MLI18n::gi()->WooCommerce_Product_Attributes_Short_Description = 'Product short description';
 MLI18n::gi()->WooCommerce_Product_Attributes_Weight = 'Weight';
+
 MLI18n::gi()->WooCommerce_Product_Attributes_Length = 'Length';
 MLI18n::gi()->WooCommerce_Product_Attributes_Width = 'Width';
 MLI18n::gi()->WooCommerce_Product_Attributes_Height = 'Height';
+
 MLI18n::gi()->WooCommerce_Product_Attributes_Keywords = 'Product tags';

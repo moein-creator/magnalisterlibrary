@@ -41,16 +41,20 @@ MLSetting::gi()->check24_prepare_form=array(
                                 'title' => '-',
                                 'textoption' => false
                             ),
-                            'Spedition' => array(
-                                'title' => '{#i18n:check24_deliverymode_spedition#}',
-                                'textoption' => false
-                            ),
                             'Paket' => array(
                                 'title' => '{#i18n:check24_deliverymode_paket#}',
                                 'textoption' => false
                             ),
                             'Warensendung' => array(
                                 'title' => '{#i18n:check24_deliverymode_warensendung#}',
+                                'textoption' => false
+                            ),
+                            'Spedition' => array(
+                                'title' => '{#i18n:check24_deliverymode_spedition#}',
+                                'textoption' => false
+                            ),
+                            'Sperrgut' => array(
+                                'title' => '{#i18n:check24_deliverymode_sperrgut#}',
                                 'textoption' => false
                             ),
                             'EigeneAngaben' => array(

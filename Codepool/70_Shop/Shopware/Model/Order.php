@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -99,8 +99,7 @@ class ML_Shopware_Model_Order extends ML_Shop_Model_Order_Abstract {
     }
 
     public function getShippingCarrier() {
-        $sDefaultCarrier = MLModul::gi()->getConfig('orderstatus.carrier.default');
-        $sDefaultCarrier = $sDefaultCarrier === null ? MLModul::gi()->getConfig('orderstatus.carrier') : $sDefaultCarrier;
+        $sDefaultCarrier = $this->getDefaultCarrier();
         if ($sDefaultCarrier == '-1') {
             return $this->getShopOrderCarrierOrShippingMethod();
         } elseif (in_array($sDefaultCarrier, array('--', ''))) {
@@ -222,7 +221,7 @@ class ML_Shopware_Model_Order extends ML_Shop_Model_Order_Abstract {
     }
 
     public function getRetrunCarrier() {
-        $oModule = MLModul::gi();
+        $oModule = MLModule::gi();
         return $oModule->getConfig('customfieldcarrier');
     }
 
@@ -230,7 +229,7 @@ class ML_Shopware_Model_Order extends ML_Shop_Model_Order_Abstract {
         $oQueryBuilder = MLDatabase::factorySelectClass()->select('id')
             ->from(Shopware()->Models()->getClassMetadata('Shopware\Models\Order\Order')->getTableName(), 'so')
             ->join(array('magnalister_orders', 'mo', 'so.id = mo.current_orders_id'), ML_Database_Model_Query_Select::JOIN_TYPE_LEFT)
-            ->where("so.status != mo.status AND mo.mpID='".MLModul::gi()->getMarketPlaceId()."'");
+            ->where("so.status != mo.status AND mo.mpID='" . MLModule::gi()->getMarketPlaceId() . "'");
 
         if ($blCount) {
             return $oQueryBuilder->getCount();
@@ -434,7 +433,18 @@ class ML_Shopware_Model_Order extends ML_Shop_Model_Order_Abstract {
             if (method_exists($this->getShopOrderObject()->getAttribute(), $function)) {
                 $sReturn = $this->getShopOrderObject()->getAttribute()->{$function}();
             }
+            if ($sReturn === null) {
+                $sTableName = Shopware()->Models()->getClassMetadata('Shopware\Models\Attribute\Order')->getTableName();
+                if (MLDatabase::getDbInstance()->columnExistsInTable($sKey, $sTableName)) {
+                    $sReturn = Shopware()->Db()
+                        ->fetchOne('select `'.$sKey.'` from '.$sTableName.' where orderID='.$this->getShopOrderObject()->getId());
+                }
+            }
         }
         return $sReturn;
+    }
+
+    public function getShopOrderProducts() {
+        return array();
     }
 }

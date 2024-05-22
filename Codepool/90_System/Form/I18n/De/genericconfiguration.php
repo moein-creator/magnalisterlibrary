@@ -27,5 +27,5 @@ Die H&ouml;he wird automatisch dem urspr&uuml;nglichen Seitenverh&auml;ltnis nac
 Die Quelldateien werden aus dem Bildordner {#setting:sSourceImagePath#} verarbeitet und mit der hier gew&auml;hlten Pixelbreite im Ordner {#setting:sImagePath#}  f&uuml;r die &Uuml;bermittlung zum Marktplatz abgelegt.</p>';
 MLI18n::gi()->form_config_orderimport_imagesize_hint = 'Gespeichert unter: {#setting:sImagePath#}';
 
-MLI18n::gi()->form_config_send_mailcontentcontailner_testmail = 'TESTMAIL';
+MLI18n::gi()->form_config_send_mailcontentcontailner_testmail = 'Testmail';
 MLI18n::gi()->form_orderimport_paymentandshipping_values_textfield_title = 'Aus Textfeld';

@@ -26,12 +26,6 @@ MLI18n::gi()->ebay_config_account_orderimport = 'Bestellimport';
 MLI18n::gi()->ebay_config_account_emailtemplate = '{#i18n:configform_emailtemplate_legend#}';
 MLI18n::gi()->ebay_config_account_producttemplate = 'Produkt Template';
 
-MLI18n::gi()->ebay_configform_prepare_hitcounter_values = array(
-    'NoHitCounter' => 'keiner',
-    'BasicStyle' => 'einfach',
-    'RetroStyle' => 'Retro-Style',
-    'HiddenStyle' => 'versteckt',
-);
 MLI18n::gi()->ebay_configform_prepare_gallerytype_values = array(
     'None' => 'Kein Bild',
     'Gallery' => 'Standard',
@@ -46,29 +40,11 @@ MLI18n::gi()->ebay_configform_prepare_dispatchtimemax_values = array(
     '5' => '5 Tage',
     '6' => '6 Tage',
     '7' => '7 Tage',
-    '8' => '8 Tage',
-    '9' => '9 Tage',
     '10' => '10 Tage',
-    '11' => '11 Tage',
-    '12' => '12 Tage',
-    '13' => '13 Tage',
-    '14' => '14 Tage',
     '15' => '15 Tage',
-    '16' => '16 Tage',
-    '17' => '17 Tage',
-    '18' => '18 Tage',
-    '19' => '19 Tage',
     '20' => '20 Tage',
-    '21' => '21 Tage',
-    '22' => '22 Tage',
-    '23' => '23 Tage',
-    '24' => '24 Tage',
-    '25' => '25 Tage',
-    '26' => '26 Tage',
-    '27' => '27 Tage',
-    '28' => '28 Tage',
-    '29' => '29 Tage',
     '30' => '30 Tage',
+    '40' => '40 Tage',
 );
 MLI18n::gi()->ebay_configform_price_chinese_quantityinfo = 'Bei Steigerungsauktionen kann die St&uuml;ckzahl nur genau 1 betragen.';
 MLI18n::gi()->ebay_configform_account_sitenotselected = 'Bitte erst eBay-Site w&auml;hlen';
@@ -112,11 +88,6 @@ MLI18n::gi()->ebay_configform_orderimport_shipping_values = array(
     'matching' => array(
         'title' => 'Automatische Zuordnung',
     ),
-);
-
-MLI18n::gi()->ebay_config_sync_inventory_import = array(
-    'true' => 'Ja',
-    'false' => 'Nein'
 );
 
 MLI18n::gi()->{'ebay_configform_refund_reasons_values__BUYER_CANCEL'} = 'Der Käufer hat die Bestellung storniert.';
@@ -196,7 +167,7 @@ MLI18n::gi()->configform_strikeprice_kind_values = array(
 MLI18n::gi()->add('ebay_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
@@ -271,6 +242,10 @@ MLI18n::gi()->add('ebay_config_prepare', array(
                         <p><b>Wichtig:</b><br/>Bitte füllen Sie dieses Feld nur aus, wenn Sie umsatzsteuerpflichtig sind (schließt z.B. Kleinunternehmer nach § 19 UstG aus).</p>',
             'hint' => 'Mehrwertsteuersatz in %',
         ),
+        'mwst.always' => array(
+            'label' => '&quot;inkl. MwSt.&quot; immer anzeigen'
+        ),
+
         'conditionid' => array(
             'label' => 'Artikelzustand',
             'help' => 'Voreinstellung f&uuml den Artikelzustand (f&uuml;r eBay-Kategorien wo dieser angegeben werden kann oder mu&szlig;). Nicht alle Werte sind f&uuml;r jede Kategorie zul&auml;ssig, ggf. mu&szlig; nach der Wahl der Kategorie in der Produktvorbereitung der Zustand noch mal korrigiert werden.',
@@ -307,13 +282,13 @@ MLI18n::gi()->add('ebay_config_prepare', array(
                 <br>
 				<b>eBay-Gebühren</b><br>
                 <br>
-				Durch Nutzung von "Galerie Plus" können im Hintergrund <span style="color:red">zusätzliche Gebühren von eBay</span> erhoben werden! RedGecko GmbH übernimmt für die anfallenden Gebühren keine Haftung.<br>
+				Durch Nutzung von "Galerie Plus" können im Hintergrund <span style="color:#e31a1c">zusätzliche Gebühren von eBay</span> erhoben werden! RedGecko GmbH übernimmt für die anfallenden Gebühren keine Haftung.<br>
                 <br>
 				<b>Weitere Infos</b><br>
                 <br>
 				Besuchen Sie für weitere Infos zu dem Thema die <a href="http://pages.ebay.de/help/sell/gallery-upgrade.html" target="_blank">eBay Hilfeseiten</a>.
             ',
-            'hint' => 'Galerie-Einstellung<br />("Plus" in einigen Kategorien <span style="color:red">kostenpflichtig</span>)',
+            'hint' => 'Galerie-Einstellung<br />("Plus" in einigen Kategorien <span style="color:#e31a1c">kostenpflichtig</span>)',
             'alert' => array(
                 'Plus' => array(
                     'title' => 'Bitte beachten',
@@ -322,7 +297,7 @@ MLI18n::gi()->add('ebay_config_prepare', array(
                         <br>
                         Die hochgeladenen Fotos müssen mindestens 800 x 800 Pixel groß sein.<br>
                         <br>
-                        Dadurch können im Hintergrund  <span style="color:red;">zusätzliche Gebühren</span> von eBay erhoben werden!<br>
+                        Dadurch können im Hintergrund  <span style="color:#e31a1c;">zusätzliche Gebühren</span> von eBay erhoben werden!<br>
                         <br>Weitere Infos dazu finden Sie auf den <a href="http://pages.ebay.de/help/sell/gallery-upgrade.html" target="_blank">eBay Hilfeseiten</a>.<br>
                         <br>
                         RedGecko GmbH übernimmt für die anfallenden Gebühren keine Haftung.<br>
@@ -480,13 +455,9 @@ Auswahl des Profils f&uuml;r Versandrabatte. Die Profile k&ouml;nnen Sie anlegen
         ),
         'privatelisting' => array(
             'label' => 'Privat-Listings',
-            'help' => 'Funktion aktiviert: Listings werden als \'privat\' gekennzeichnet, das hei&szlig;t, die K&auml;ufer- bzw. Bieterliste ist nicht &ouml;ffentlich einsehbar. <span style="color:red">kostenpflichtig</span>.',
+            'help' => 'Funktion aktiviert: Listings werden als \'privat\' gekennzeichnet, das hei&szlig;t, die K&auml;ufer- bzw. Bieterliste ist nicht &ouml;ffentlich einsehbar. <span style="color:#e31a1c">kostenpflichtig</span>.',
             'hint' => '{#i18n:ebay_prepare_apply_form__field__privatelisting__hint#}',
             'valuehint' => 'K&auml;ufer / Bieterliste nicht &ouml;ffentlich',
-        ),
-        'hitcounter' => array(
-            'label' => 'Besucherz&auml;hler',
-            'help' => 'Voreinstellung f&uuml den Besucherz&auml;hler f&uuml;r die Listings.',
         ),
         'restrictedtobusiness' => array(
             'label' => 'Nur Gesch&auml;ftskunden',
@@ -527,6 +498,14 @@ Die Quelldateien werden aus dem Bildordner {#setting:sSourceImagePath#} verarbei
         ),
         'productfield.brand' => array(
             'label' => 'Marke',
+        ),
+        'productfield.tecdocktype' => array(
+            'label' => 'TecDoc KType',
+            'help' => '<strong>Nur f&uuml;r KFZ- und Motorradteile</strong><br /><br />
+                Falls Sie den <strong>TecDoc KType</strong> in der Shop-Datenbank mitf&uuml;hren und bei den eBay Listings mit &uuml;bertragen m&ouml;chten,
+                geben Sie hier die Datenbank-Spalte ein, wo sich die Nummer befindet.<br /><br />
+                Diese wird dann (soweit bei dem gegebenen Artikel hinterlegt) an eBay mit&uuml;bertragen und der Artikel kann anhand der dazugeh&ouml;rigen Kompatibilit&auml;tsliste leichter gefunden werden.<br /><br />
+                Sie k&ouml;nnen diese Einstellung auch f&uuml;r <strong>ePID-Nummern</strong> (f&uuml;r Zweir&auml;der) nutzen. Der magnalister sieht anhand der eBay-Kategorie, ob es sich um Auto- oder Zweiradteile handelt, und gibt die Nummer entsprechend an eBay weiter.',
         ),
         'fixed.quantity' => array(
             'label' => 'St&uuml;ckzahl',
@@ -713,7 +692,7 @@ MLI18n::gi()->add('ebay_config_price', array(
         'strikeprice.active' => array(
             'label' => '',
             'valuehint' => 'Streichpreise &uuml;bertragen',
-            'alert' => '<span style="color:red;font-weight:bold">Streichpreise aktivieren</span><br /><br />Bitte beachten: Streichpreise sind bei eBay nur f&uuml;r H&auml;ndler mit <b>Premium-</b> oder <b>Platin-Shops</b> verf&uuml;gbar (weitere Details zu den verschiedenen eBay Shop-Varianten finden Sie auf den <a href="https://verkaeuferportal.ebay.de/vorteile-eBay-Shops#shop-vergleich" target="_blank">eBay Hilfeseiten</a>).<br /><br />Wenn Sie keinen eBay Tarif nutzen, der eBay Streichpreise zul&auml;sst und Sie dennoch versuchen, Angebote mit Streichpreisen hochzuladen, <b>lehnt eBay diese Angebote mit einer Fehlermeldung ab.</b>',
+            'alert' => '<span style="color:#e31a1c;font-weight:bold">Streichpreise aktivieren</span><br /><br />Bitte beachten: Streichpreise sind bei eBay nur f&uuml;r H&auml;ndler mit <b>Premium-</b> oder <b>Platin-Shops</b> verf&uuml;gbar (weitere Details zu den verschiedenen eBay Shop-Varianten finden Sie auf den <a href="https://verkaeuferportal.ebay.de/vorteile-eBay-Shops#shop-vergleich" target="_blank">eBay Hilfeseiten</a>).<br /><br />Wenn Sie keinen eBay Tarif nutzen, der eBay Streichpreise zul&auml;sst und Sie dennoch versuchen, Angebote mit Streichpreisen hochzuladen, <b>lehnt eBay diese Angebote mit einer Fehlermeldung ab.</b>',
         ),
         'strikepriceoptions' => array(
             'label' => '{#i18n:configform_price_field_strikeprice_label#}',
@@ -725,7 +704,7 @@ MLI18n::gi()->add('ebay_config_price', array(
         'strikeprice.kind' => array(
             'label' => '{#i18n:configform_price_field_priceoptions_kind_label#}',
             'hint' => '',
-            'help' => '<span style="color:red;font-weight:bold">'.'{#i18n:configform_price_field_priceoptions_kind_label#}'.'</span><br /><br />Wenn der durchgestrichene Preis der UVP des Herstellers entspricht und Sie diese Information auf eBay anzeigen lassen möchten, wählen Sie diese Option.',
+            'help' => '<span style="color:#e31a1c;font-weight:bold">'.'{#i18n:configform_price_field_priceoptions_kind_label#}'.'</span><br /><br />Wenn der durchgestrichene Preis der UVP des Herstellers entspricht und Sie diese Information auf eBay anzeigen lassen möchten, wählen Sie diese Option.',
         ),
     ),
 ), false);
@@ -839,17 +818,6 @@ magnalister sendet diese eBay-Platzhalter f&uuml;r Artikel, an denen keine EAN o
                 <br />
                 <strong>Hinweis:</strong> Die Einstellungen unter "Konfiguration" → "Preisberechnung" werden berücksichtigt.
             ',
-        ),
-        'inventory.import' => array(
-            'label' => 'Fremdartikel synchronisieren',
-            'help' => 'Sollen Artikel, die nicht &uuml;ber magnalister eingestellt wurden, mit angezeigt und synchronisiert werden? <br/><br/>'.
-                'Wenn die Funktion aktiviert ist, werden alle Artikel, die f&uuml;r diesen eBay Account bei eBay angeboten werden, jede Nacht in die magnalister Datenbank geladen und im Plugin unter \'Listings\' angezeigt.<br/><br/>'.
-                'Die Preis- und Lagersynchronisierung funktioniert f&uuml;r diese Artikel auch, soweit die SKU (Bestandseinheit) auf eBay mit einer Artikelnummer im Shop &uuml;bereinstimmt.<br/><br/>'.
-                'Ausserdem m&uuml;ssen Sie unter "Globaler Konfiguration" > "Synchronisation Nummernkreise" > "Artikelnummer (Shop) = SKU (Marketplace)" eingestellt haben.<br/>'.
-                'Bitte achten Sie darauf, dass wenn Sie die Nummernkreise &auml;ndern, diese auf den Marktpl&auml;tzen komplett erneuert werden m&uuml;ssen, um eine korrekte Synchronisation sicher zu stellen.<br/>'.
-                'Lassen Sie sich hier ggf. beraten.<br/><br/>'.
-                'Diese Funktionalit&auml;t ist momentan nicht f&uuml;r Fremdartikel mit Varianten verf&uuml;gbar.<br/><br/>'.
-                '<b>Achtung:</b> Artikel, die zwar &uuml;ber magnalister eingestellt, aber sp&auml;ter auf eBay ge-re-listed wurden, erkennt magnalister durch die Vergabe einer neuen eBay Angebotsnummer nur noch als Fremdartikel. Schalten Sie diese Funktion also nicht! aus, wenn Sie ge-re-listete Artikel auch automatisch synchronisieren lassen wollen!',
         ),
         'chinese.stocksync.tomarketplace' => array(
             'label' => 'Lagerver&auml;nderung Shop',
@@ -1193,6 +1161,7 @@ MLI18n::gi()->add('ebay_config_producttemplate', array(
     'field' => array(
         'template.name' => array(
             'label' => 'Template Produktname',
+            // For shopify this help is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyEbay/I18n/De/configForm.php
             'help' => '<dl>
 							<dt>Name des Produkts auf eBay</dt>
 							 <dd>Einstellung, wie das Produkt auf eBay hei&szlig;en soll.
@@ -1208,6 +1177,7 @@ MLI18n::gi()->add('ebay_config_producttemplate', array(
 							 <dd>Beispiel: <br />&nbsp;Variantengruppe: F&uuml;llmenge<ul><li>Variante: 0,33 l (3 EUR / Liter)</li><li>Variante: 0,5 l (2,50 EUR / Liter)</li><li>usw.</li></ul></dd>
 							<dd>In diesem Fall schalten Sie bitte ebenfalls <b>die Preissynchronisation ab</b>,  da Varianten-Titel bei eBay nicht ge&auml;ndert werden k&ouml;nnen.</dd>
 							</dl>',
+            // For shopify this hint is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyEbay/I18n/De/configForm.php
             'hint' => 'Platzhalter: #TITLE# - Produktname; #BASEPRICE# - Grundpreis',
         ),
         'template.mobile.active' => array(
@@ -1232,7 +1202,7 @@ MLI18n::gi()->add('ebay_config_producttemplate', array(
                     <dt>#WEIGHT#</dt><dd>Produktgewicht</dd>
                 </dl>
             ',
-            'hint2' => '<span style="color:red">Hinweise</span>:
+            'hint2' => '<span>Hinweise</span><span style="color: #000;">:</span>
                 <p>An HTML-Elementen sind nur Zeilenumbr&uuml;che und Listen erlaubt, alles andere wird herausgefiltert. Die maximale L&auml;nge der mobilen Kurzbeschreibung betr&auml;gt 800 Zeichen.</p>
                 <p>Die mobile Beschreibung wird in die Hauptbeschreibung integriert. 
                 Bitte verwenden Sie hier nicht dieselben Platzhalter wie in der Hauptbeschreibung, 

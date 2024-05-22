@@ -27,3 +27,10 @@ MLI18n::gi()->Metro_Productlist_Upload_ShippingFee_Notice_Title = "Information";
 MLI18n::gi()->Metro_Productlist_Upload_ShippingFee_Notice_Content = "Metro berechnet je nach Vertrag Gebühren pro Listing oder bei Verwendung von Zusatzfunktionen wie „Untertitel“.
 Das &Uuml;bermitteln der Produkte l&ouml;st solche Geb&uuml;hren aus.
 Pr&uuml;fen Sie Ihren Metro-Tarif, um ungewollte Geb&uuml;hren zu vermeiden.";
+MLI18n::gi()->{'Metro_Productlist_Cell_aPreparedStatus__OPEN__title'} = 'Préparés non vérifiés';
+MLI18n::gi()->{'Metro_Productlist_Upload_ShippingFee_Notice_Content'} = 'En fonction de votre abonnement, METRO facture des frais par insertion ou en cas d&apos;utilisation de fonctions supplémentaires telles que les sous-titres. En publiant vos produits vous vous exposé à de tels frais. Vérifiez votre abonnement METRO afin d&apos;éviter des frais non souhaités.';
+MLI18n::gi()->{'Metro_Productlist_Upload_ShippingFee_Notice_Title'} = 'Information';
+MLI18n::gi()->{'Metro_Productlist_Cell_aPreparedStatus__ERROR__title'} = 'Fehlerhaft vorbereitete';
+MLI18n::gi()->{'Metro_Productlist_Filter_aPreparedStatus__ERROR'} = 'Fehlerhaft vorbereitete';
+MLI18n::gi()->{'Metro_Productlist_Cell_aPreparedStatus__OK__title'} = 'Erfolgreich vorbereitete';
+MLI18n::gi()->{'Metro_Productlist_Filter_aPreparedStatus__OK'} = 'Erfolgreich vorbereitete';

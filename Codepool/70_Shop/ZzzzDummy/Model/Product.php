@@ -181,7 +181,7 @@ class ML_ZzzzDummy_Model_Product extends ML_Shop_Model_Product_Abstract {
     /**
      * @todo
      */
-    public function getModulField($sFieldName, $blGeneral = false) {
+    public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false) {
         return null;
     }
     

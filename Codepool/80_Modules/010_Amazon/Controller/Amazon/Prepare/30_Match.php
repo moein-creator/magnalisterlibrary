@@ -44,7 +44,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Match extends ML_Productlist_Controlle
                 }
             }
         } catch (Exception $oEx) {
-            //            echo $oEx->getMessage();
+            MLMessage::gi()->addDebug($oEx);
         }
     }
 
@@ -55,6 +55,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Match extends ML_Productlist_Controlle
         try {
             return $this->getChildController($sExecute)->render();
         } catch (Exception $oExc) {
+            MLMessage::gi()->addDebug($oExc);
             if ($oExc->getCode() == 1550742082) {
                 MLMessage::gi()->addFatal($oExc);
                 return $this;

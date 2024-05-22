@@ -25,11 +25,11 @@ MLI18n::gi()->add('formgroups_etsy', array(
         'title' => 'Shipping Methods',
         'info' => 'Select which shipping method should be used for shipping.',
     ),
-    'shippingtemplate' => 'Create New Shipping Template',
+    'shippingprofile' => 'Create New Delivery Profile',
     'upload' => 'Upload Items: Presets',
     'orderstatus' => 'Synchronization of Order Status from Shop to {#setting:currentMarketplaceName#}',
     'prepare_details' => 'Offer configurations',
     'prepare_general' => 'General configurations',
-    'prepare_shippingtemplate' => 'General configurations',
+    'prepare_shippingprofile' => 'General configurations',
     'prepare_variations' => 'Category',
 ));

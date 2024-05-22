@@ -16,11 +16,12 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 $aField['type'] = 'selectwithtextoption';
 foreach ($aField['subfields'] as &$aSubfield) {
-    $aSubfield['name'] = 'field[' . $aField['realname'] . '][' . substr($aSubfield['realname'], strlen($aField['realname'])) . ']';
-    If (isset($aField['value'][substr($aSubfield['realname'], strlen($aField['realname']))])) {
+    $aSubfield['name'] = 'field['.$aField['realname'].']['.substr($aSubfield['realname'], strlen($aField['realname'])).']';
+    if (isset($aField['value'][substr($aSubfield['realname'], strlen($aField['realname']))])) {
         $aSubfield['value'] = $aField['value'][substr($aSubfield['realname'], strlen($aField['realname']))];
     }
 }

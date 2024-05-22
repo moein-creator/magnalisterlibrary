@@ -31,7 +31,7 @@ MLI18n::gi()->{'attributes_matching_type_manually_matched'} = ' - (manuell zugeo
 MLI18n::gi()->{'attributes_matching_type_free_text'} = ' - (eigene Angaben)';
 
 // Messages
-MLI18n::gi()->{'attributes_matching_multi_select_hint'} = 'Drücke CMD und wählen alle zur Übermittlung gewünschten Attribute';
+MLI18n::gi()->{'attributes_matching_multi_select_hint'} = 'Drücke auf macOS die Befehlstaste (CMD) oder auf Windows die Strg-Taste und wähle alle gewünschten Werte zur Übermittlung aus.';
 MLI18n::gi()->{'attributes_matching_reset_matching_message'} = 'Wollen Sie das Matching wirklich aufheben?';
 MLI18n::gi()->{'attributes_matching_prepared_different_notice'} = 'Bitte beachten Sie, dass Sie einige Artikel der gew&auml;hlten Kategorie "{#category_name#}" abweichend unter „Produkte vorbereiten“ gematcht haben. Es werden die dort gespeicherten Werte zum Marktplatz &uuml;bermittelt.';
 MLI18n::gi()->{'attributes_matching_attribute_deleted_from_shop_message'} = 'Dieses Attribut wurde vom Shop gel&ouml;scht oder ge&auml;ndert. Matchings dazu wurden daher aufgehoben. Bitte matchen Sie bei Bedarf erneut auf ein geeignetes Shop Attribut.';

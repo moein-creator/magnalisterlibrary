@@ -1,23 +1,28 @@
-<?php 
-    /* @var $this  ML_Productlist_Controller_Widget_ProductList_Abstract */
-    /* @var $oProduct ML_Shop_Model_Product_Abstract */
-    /* @var $aAdditional array */
-    class_exists('ML',false) or die();
+<?php
+/* @var $this  ML_Productlist_Controller_Widget_ProductList_Abstract */
+/* @var $oProduct ML_Shop_Model_Product_Abstract */
+/* @var $aAdditional array */
+if (!class_exists('ML', false))
+    throw new Exception();
 ?>
-<?php if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) {?>
-    <?php $oI18n=  MLI18n::gi();?>
-    <?php if (isset($aAdditional['aHitmeisterResult']) &&  is_array($aAdditional['aHitmeisterResult'])){ ?>
-        <?php foreach($aAdditional['aHitmeisterResult'] as $iRow=>$aResult){?>
-            <?php $sInputId='hitmeisterItemSearch_'.$oProduct->get('id').'_'.$iRow ?>
+<?php if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) { ?>
+    <?php $oI18n = MLI18n::gi(); ?>
+    <?php if (isset($aAdditional['aHitmeisterResult']) && is_array($aAdditional['aHitmeisterResult'])) { ?>
+        <?php foreach ($aAdditional['aHitmeisterResult'] as $iRow => $aResult) { ?>
+            <?php $sInputId = 'hitmeisterItemSearch_'.$oProduct->get('id').'_'.$iRow ?>
             <tr>
                 <td class="select">
-                    
-                    <input id="<?php echo $sInputId ?>"<?php echo($iRow==0)?' checked="checked"':''?> type="radio" name="<?php echo MLHttp::gi()->parseFormFieldName('data')?>" value="<?php echo str_replace('"',"'",str_replace("'","\'",json_encode($aResult)))?>" />
+
+                    <input id="<?php echo $sInputId ?>"<?php echo ($iRow == 0) ? ' checked="checked"' : '' ?> type="radio" name="<?php echo MLHttp::gi()->parseFormFieldName('data') ?>" value="<?php echo str_replace('"', "'", str_replace("'", "\'", json_encode($aResult))) ?>"/>
                 </td>
-                <td class="title"><label for="<?php echo $sInputId ?>"><?php echo $aResult['Title']?></label></td>
-                <td class="category"><label for="<?php echo $sInputId ?>"><?php echo $aResult['CategoryName']?></label></td>
-                <td class="price"><label for="<?php echo $sInputId ?>"><?php echo $aResult['LowestPriceFormated']?></label></td>
-                <td class="asin ml-js-noBlockUi"><label for="<?php echo $sInputId ?>"><a href="<?php echo $aResult['URL']?>" target="_blank"><?php echo $aResult['ASIN']?></a></label></td>
+                <td class="title"><label for="<?php echo $sInputId ?>"><?php echo $aResult['Title'] ?></label></td>
+                <td class="category"><label for="<?php echo $sInputId ?>"><?php echo $aResult['CategoryName'] ?></label>
+                </td>
+                <td class="price">
+                    <label for="<?php echo $sInputId ?>"><?php echo $aResult['LowestPriceFormated'] ?></label></td>
+                <td class="asin ml-js-noBlockUi">
+                    <label for="<?php echo $sInputId ?>"><a href="<?php echo $aResult['URL'] ?>" target="_blank"><?php echo $aResult['ASIN'] ?></a></label>
+                </td>
             </tr>
         <?php }?>
         <tr class="notMatch">

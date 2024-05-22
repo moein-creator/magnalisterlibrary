@@ -50,7 +50,7 @@ class ML_ProductList_Model_ProductListDependency_LastPreparedFilter extends ML_P
             $sSql = "
                 SELECT DISTINCT DATE_FORMAT(".$sField.", '%Y-%m-%d %H:%i')
                 FROM ".MLDatabase::getPrepareTableInstance()->getTableName()."
-                WHERE ".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()."='".MLModul::gi()->getMarketPlaceId()."'
+                WHERE " . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . "='" . MLModule::gi()->getMarketPlaceId() . "'
                 ".($aField['Default'] !== null ? "AND ".$sField." != '".$aField['Default']."'" : '')."
                 ORDER BY ".$sField." DESC
                 LIMIT 100
@@ -70,7 +70,7 @@ class ML_ProductList_Model_ProductListDependency_LastPreparedFilter extends ML_P
     public function getMasterIdents() {
         $sValue = $this->getFilterValue();
         if ($sValue !== 'all' && in_array($sValue, array_keys($this->getFilterValues()))) {
-            $sProductTable = MLDatabase::getTableInstance('product')->getTableName();
+            $sProductTable = MLProduct::factory()->getTableName();
             // get masterarticles which have prepared variants
             $sSql = "
                 SELECT master.".(
@@ -108,7 +108,7 @@ class ML_ProductList_Model_ProductListDependency_LastPreparedFilter extends ML_P
             return MLDatabase::getDbInstance()->fetchOne("
                 SELECT COUNT(*)
                   FROM ".MLDatabase::getPrepareTableInstance()->getTableName()."
-                 WHERE     ".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()." = '".MLModul::gi()->getMarketPlaceId()."'
+                 WHERE     " . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . " = '" . MLModule::gi()->getMarketPlaceId() . "'
                        AND DATE_FORMAT(".MLDatabase::getPrepareTableInstance()->getPreparedTimestampFieldName().", '%Y-%m-%d %H:%i') = '".MLDatabase::getDbInstance()->escape($sValue)."'
                        AND ".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = '".(int)$oProduct->get('id')."'
             ") > 0 ? true : false;

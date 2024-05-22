@@ -30,14 +30,21 @@ $this->includeView('widget_listings_misc_listingbox');
                 <input type="checkbox" id="selectAll"/><label for="selectAll"><?php echo $this->__('ML_LABEL_CHOICE') ?></label>
             </td>
             <?php foreach ($this->getFields() as $aFiled) { ?>
-                <td> <?php
-                    echo $aFiled['Label'];
-                    if (isset($aFiled['Sorter'])) {
+                <td>
+                    <div class="ml-inventory-th">
+                        <div> <?php
+                        echo $aFiled['Label'];
+                        if (isset($aFiled['Sorter'])) {
                             if ($aFiled['Sorter'] != null) {
                                 ?>
-                                <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
-                                <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
-                        <?php } } ?>
+                        </div>
+                        <div style="min-width: 42px;">
+                            <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
+                            <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
+                        </div>
+                            <?php } } ?>
+                    </div>
+
                     </td>
                 <?php } ?>
             </tr>
@@ -60,13 +67,18 @@ $this->includeView('widget_listings_misc_listingbox');
                         'Price' => $item['Price'],
                         'Currency' => isset($item['Currency']) ? $item['Currency'] : '',
                     ))));
-                    $addStyle = (empty($item['ShopTitle'])) ? 'style="color:#900;"' : '';
+                    $blFound = MLProduct::factory()->getByMarketplaceSKU($item['SKU'])->exists();
+                    if(!$blFound){
+                        $blFound = MLProduct::factory()->getByMarketplaceSKU($item['SKU'], true)->exists();
+                    }
+                    $addStyle = !$blFound?'style="color:#e31e1c;"' : '';
+                    /* // METRO
+                    $addStyle = (empty($item['ShopTitle']) || $item['ShopTitle'] === '&mdash;') ? 'style="color:#e31e1c;"' : '';*/
                     ?>
-                    <tr class="<?php echo (($oddEven = !$oddEven) ? 'odd' : 'even') ?>" <?php echo $addStyle ?>>
+                    <tr <?php echo $addStyle ?>>
                         <td>
                             <input type="checkbox" name="<?php echo MLHttp::gi()->parseFormFieldName('SKUs[]') ?>" value="<?php echo $item[$this->sDeleteKey] ?>">
                             <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName("details[{$item['SKU']}]") ?>" value="<?php echo $sDetails ?>">
-                            <?php echo $this->getIcon($item)?>
                         </td>
                         <?php
                         foreach ($this->getFields() as $aField) {

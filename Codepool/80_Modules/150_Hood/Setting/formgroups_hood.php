@@ -40,6 +40,7 @@ MLSetting::gi()->add('formgroups_hood', array(
         'legend' => array('i18n' => '{#i18n:formgroups_hood__prepare#}'),
         'fields' => array(
             'mwst' => '{#setting:formfields_hood__mwst#}',
+            'forcefallback' => '{#setting:formfields_hood__forcefallback#}',
             'conditiontype' => '{#setting:formfields_hood__conditiontype#}',
             'lang' => '{#setting:formfields__lang#}',
             'shippingTime.min' => '{#setting:formfields_hood__shippingTime.min#}',

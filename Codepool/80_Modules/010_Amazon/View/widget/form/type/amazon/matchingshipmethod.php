@@ -16,7 +16,8 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 
 if (isset($aField['postname']) && isset($aField['ajax']['duplicated'])) {
     // this means filed is inside "duplicate" control and this is ajax call.

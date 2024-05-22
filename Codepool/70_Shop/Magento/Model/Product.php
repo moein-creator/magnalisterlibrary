@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -83,7 +83,7 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
         $aKey = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.keytype')->get('value') == 'pID' ? array('productsid', 'id') : array('productssku', 'sku')
         ;
         try {
-            $iLang = MLModul::gi()->getConfig('lang');
+            $iLang = MLModule::gi()->getConfig('lang');
         } catch (Exception $oEx) {
             $iLang = 0;
         }
@@ -358,7 +358,7 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getSuggestedMarketplaceStock($sType, $fValue, $iMax = null) {
         if(
-            MLModul::gi()->getConfig('inventar.productstatus') == 'true'
+            MLModule::gi()->getConfig('inventar.productstatus') == 'true'
             && !$this->isActive()
         ) {
             return 0;
@@ -412,7 +412,7 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     protected function prepareProductForMarketPlace() {
         try {
-            $aConf = MLModul::gi()->getConfig();
+            $aConf = MLModule::gi()->getConfig();
             if ($this->getMagentoProduct()->getStoreId() != $aConf['lang']) {
                 $this->getMagentoProduct()->setStoreId($aConf['lang'])->load($this->getMagentoProduct()->getId());
             }
@@ -463,11 +463,15 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
     }
 
     /**
-     * 
-     * @param Mage_Catalog_Model_Product $oProduct
-     * @param type $blGros
-     * @param type $blFormated
-     * @return type
+     *
+     * @param bool $blGros
+     * @param bool $blFormated - including currency and decimal points
+     * @param string $sPriceKind
+     * @param float $fPriceFactor
+     * @param null|int $iPriceSignal
+     * @param null|float $fTax
+     * @return float
+     * @throws Exception
      */
     protected function getPrice($blGros, $blFormated, $sPriceKind = '', $fPriceFactor = 0.0, $iPriceSignal = null, $fTax = null) {
         $aData = $this->get('shopdata');
@@ -485,18 +489,19 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
         /* @var $oCurrency Mage_Core_Helper_Data */
         $oCurrency = Mage::helper('core');
         $oPrice = MLPrice::factory();
-        // 1. calc brutprice
+        // 1. calc gross price
         $fBrutPrice = $oCurrency->currencyByStore($oTax->getPrice($oProduct, $oProduct->getFinalPrice(), true), $oProduct->getStore(), false, false);
         $fPercent = $oProduct->getTaxPercent();
         if ($fPercent === null) {
             $fPercent = 0;
         }
-        if($fTax !== null) {
+        // option to overwrite tax value
+        if ($fTax !== null) {
             $fNetOriginalPrice = $oPrice->calcPercentages($fBrutPrice, null, $fPercent);
             $fBrutPrice = $oPrice->calcPercentages(null, $fNetOriginalPrice, $fTax);
             $fPercent = $fTax;
         }
-        // 2. add modulprice to brut
+        // 2. add modul price to gross
         if ($sPriceKind == 'percent') {
             $fBrutPrice = $oPrice->calcPercentages(null, $fBrutPrice, $fPriceFactor);
         } elseif ($sPriceKind == 'addition') {
@@ -510,9 +515,9 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
                 $fBrutPrice = ((int)$fBrutPrice) + ((int)$iPriceSignal / 100);
             }
         }
-        // 3. calc netprice from modulprice
+        // 3. calc net price from modul price
         $fNetPrice = $oPrice->calcPercentages($fBrutPrice, null, $fPercent);
-        // 4. define out price (unformated price of current shop)
+        // 4. define out price (not formated price of current shop)
         $fUsePrice = $blGros ? $fBrutPrice : $fNetPrice;
         $oProduct->setPrice($fPriceBackup);
         if ($blFormated) {//recalc currency and format
@@ -522,7 +527,72 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
             return $fUsePrice;
         }
     }
-    
+
+    /**
+     * Return the volume prices of the webshop
+     *
+     * @param $sGroup
+     * @param $blGross
+     * @param $sPriceKind
+     * @param $fPriceFactor
+     * @param $iPriceSignal
+     * @return array
+     * @throws Exception
+     */
+    public function getVolumePrices($sGroup, $blGross = true, $sPriceKind = '', $fPriceFactor = 0.0, $iPriceSignal = null) {
+        $sCustomerGroup = $sGroup;
+        $this->getMagentoProduct()->setCustomerGroupId($sCustomerGroup);
+        $this->getRealProduct()->setCustomerGroupId($sCustomerGroup);
+        if (Mage::helper('core')->isModuleEnabled('OrganicInternet_SimpleConfigurableProducts') && class_exists('OrganicInternet_SimpleConfigurableProducts_Helper_Data')) {
+            $oProduct = $this->getRealProduct();
+        } else {
+            $oProduct = $this->getMagentoProduct();
+        }
+        /** @var array $aMagentoTierPrices - returns an array when no param is provided or null ->getTierPrice(null) */
+        $aMagentoTierPrices = $oProduct->getTierPrice();
+        /* @var $oTax Mage_Tax_Helper_Data */
+        $oTax = Mage::helper('tax');
+        /* @var $oCurrency Mage_Core_Helper_Data */
+        $oCurrency = Mage::helper('core');
+        $oPrice = MLPrice::factory();
+        $fPercent = $oProduct->getTaxPercent();
+        if ($fPercent === null) {
+            $fPercent = 0;
+        }
+
+        $aVolumePrices = array();
+        foreach ($aMagentoTierPrices as $aMagentoTierPrice) {
+
+            $fGrossPrice = $oTax->getPrice($oProduct, $aMagentoTierPrice['price'], true);
+            // price kind
+            if ($sPriceKind == 'percent') {
+                $fGrossPrice = $oPrice->calcPercentages(null, $fGrossPrice, $fPriceFactor);
+            } elseif ($sPriceKind == 'addition') {
+                $fGrossPrice = $fGrossPrice + $fPriceFactor;
+            }
+
+            // price signal
+            if ($iPriceSignal !== null) {
+                //If price signal is single digit then just add price signal as last digit
+                if (strlen((string)$iPriceSignal) == 1) {
+                    $fGrossPrice = (0.1 * (int)($fGrossPrice * 10)) + ((int)$iPriceSignal / 100);
+                } else {
+                    $fGrossPrice = ((int)$fGrossPrice) + ((int)$iPriceSignal / 100);
+                }
+            }
+
+            if ($blGross) {
+                $fPrice = $fGrossPrice;
+            } else {
+                $fPrice = $oPrice->calcPercentages($fGrossPrice, null, $fPercent);
+            }
+
+            $aVolumePrices[(int)$aMagentoTierPrice['price_qty']] = $oCurrency->currencyByStore($fPrice, $oProduct->getStore(), false, false);
+        }
+
+        return $aVolumePrices;
+    }
+
     /**
      * Gets the tax percentage of the item.
      * if $aAdressData is set, it try to locate tax for $aAddressData['Shipping'] and $aAddressData['Billing']
@@ -530,7 +600,7 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @param array $aAddressSets get tax for $aAddressData array('Main' => [], 'Billing' => [], 'Shipping' => []);
      * @return float
      */
-    public function getTax( $aAddressSets = null ) {
+    public function getTax($aAddressSets = null) {
         return MLHelper::gi('Model_Product_MagentoTax')->getTax($this->getMagentoProduct(), $aAddressSets);
     }
 
@@ -544,12 +614,12 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @param type $blGeneral
      * @return null
      */
-    public function getModulField($sFieldName, $blGeneral = false) {
+    public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false) {
         $this->load();
         if ($blGeneral) {
             $sValue = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', $sFieldName)->get('value');
         } else {
-            $sValue = MLModul::gi()->getConfig($sFieldName);
+            $sValue = MLModule::gi()->getConfig($sFieldName);
         }
         if ($sValue) {
             return $this->__get($sValue);
@@ -830,7 +900,7 @@ class ML_Magento_Model_Product extends ML_Shop_Model_Product_Abstract {
             ;
             // marketplace language
             try {
-                $aConfig = MLModul::gi()->getConfig();
+                $aConfig = MLModule::gi()->getConfig();
                 $iStoreId = $aConfig['lang'];
                 $oCollection->setStore($iStoreId);
             } catch (Exception $oEx) {//no-modul   

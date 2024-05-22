@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -103,6 +103,10 @@ class ML_Prestashop_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_
         return $this->getProductFields();
     }
 
+    public function getShopSystemAttributeList() {
+        return $this->getProductFields();
+    }
+
     public function getShippingTime() {
         return $this->getProductFields();
     }
@@ -160,20 +164,20 @@ class ML_Prestashop_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_
         return $aAttributes;
     }
 
-    /**
-     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
-     *
-     * @return array Collection of attributes with options
-     */
-    public function getAttributeListWithOptions() {
-        $aAttributes = array('' => MLI18n::gi()->get('ConfigFormPleaseSelect'));
-        foreach (AttributeGroup::getAttributesGroups(MLPrestashopAlias::getLanguageOfProductContent()) as $aRow) {
-            $aAttributes['a_'.$aRow['id_attribute_group']] = $aRow['name'];
-        }
-
-        //MLMessage::gi()->addDebug(__LINE__.__FUNCTION__.':'.microtime(true), array(  json_indent(json_encode(func_get_args())) ,  json_indent(json_encode($aAttributes))));
-        return $aAttributes;
-    }
+    //    /**
+    //     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
+    //     *
+    //     * @return array Collection of attributes with options
+    //     */
+    //    public function getAttributeListWithOptions() {
+    //        $aAttributes = array('' => MLI18n::gi()->get('ConfigFormPleaseSelect'));
+    //        foreach (AttributeGroup::getAttributesGroups(MLPrestashopAlias::getLanguageOfProductContent()) as $aRow) {
+    //            $aAttributes['a_'.$aRow['id_attribute_group']] = $aRow['name'];
+    //        }
+    //
+    //        // MLMessage::gi()->addDebug(__LINE__.__FUNCTION__.':'.microtime(true), array(  json_indent(json_encode(func_get_args())) ,  json_indent(json_encode($aAttributes))));
+    //        return $aAttributes;
+    //    }
 
     /**
      * Gets the list of product attribute values.
@@ -325,7 +329,7 @@ class ML_Prestashop_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_
     public function manipulateForm(&$aForm) {
         try {
             parent::manipulateForm($aForm);
-            MLModul::gi();//throw excepton if we are not in marketplace configuration
+            MLModule::gi();//throw excepton if we are not in marketplace configuration
 
             //                if(isset($aForm['account'])){
             //                    $aForm['account']['fields']['orderimport.shop'] =  array
@@ -358,9 +362,13 @@ class ML_Prestashop_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_
         return $aAttributes;
     }
 
+    /*
+     * same as getShopShippingModuleValues (was constrained to is_module=0, we don't need that)
+     */
     public function getShippingMethodValues() {
         $aCarriers = array();
-        foreach (Carrier::getCarriers(Context::getContext()->language->id) as $aCariers) {
+        #foreach (Carrier::getCarriers(Context::getContext()->language->id) as $aCariers) {
+        foreach (Carrier::getCarriers(Context::getContext()->language->id, false, false, false, null, 0) as $aCariers) {
             $aCarriers[$aCariers['id_carrier']] = $aCariers['name'];
         }
         return $aCarriers;
@@ -474,6 +482,7 @@ class ML_Prestashop_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_
         $aFields = array_merge(
             get_object_vars($oProduct), get_object_vars($oAttribute)
         );
+
         ksort($aFields);
 
         foreach ($aFields as $sField => &$sValue) {
@@ -502,6 +511,7 @@ class ML_Prestashop_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_
                 'type' => $sType
             );
         }
+        $aShopDefaultFieldsAttributes = $this->addDimensionAttributes($aShopDefaultFieldsAttributes);
 
         return $aShopDefaultFieldsAttributes;
     }
@@ -594,5 +604,37 @@ class ML_Prestashop_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_
 
     public function getDefaultCancelStatus() {
         return 6;
+    }
+
+    protected function addDimensionAttributes($aShopDefaultFieldsAttributes) {
+        foreach (array('width', 'height', 'weight') as $sField) {
+
+            $aShopDefaultFieldsAttributes[$sField] = array(
+                'name' => MLI18n::gi()->__get('Product_DefaultAttribute_'.ucfirst($sField).'Value'),
+                'type' => 'text'
+            );
+            $aShopDefaultFieldsAttributes[$sField.'_WithUnit'] = array(
+                'name' => MLI18n::gi()->__get('Product_DefaultAttribute_'.ucfirst($sField).'WithUnit'),
+                'type' => 'text'
+            );
+            $aShopDefaultFieldsAttributes[$sField.'_Unit'] = array(
+                'name' => MLI18n::gi()->__get('Product_DefaultAttribute_'.ucfirst($sField).'Unit'),
+                'type' => 'text'
+            );
+        }
+
+        $aShopDefaultFieldsAttributes['depth'] = array(
+            'name' => MLI18n::gi()->__get('Product_DefaultAttribute_LengthValue'),
+            'type' => 'text'
+        );
+        $aShopDefaultFieldsAttributes['depth_WithUnit'] = array(
+            'name' => MLI18n::gi()->__get('Product_DefaultAttribute_LengthWithUnit'),
+            'type' => 'text'
+        );
+        $aShopDefaultFieldsAttributes['depth_Unit'] = array(
+            'name' => MLI18n::gi()->__get('Product_DefaultAttribute_LengthUnit'),
+            'type' => 'text'
+        );
+        return $aShopDefaultFieldsAttributes;
     }
 }

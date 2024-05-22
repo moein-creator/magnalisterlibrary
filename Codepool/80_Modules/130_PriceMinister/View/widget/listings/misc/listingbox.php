@@ -37,9 +37,11 @@
         'available' => $magnaConfig['maranon']['IncludedListings']+(isset($aGet['a']) ? ($aGet['a']+1) : 0)
     );
 
+
     $define = 'ML_RATE_'.strtoupper($magnaConfig['maranon']['Tariff']);
-    $currentRate = defined($define) ? constant($define) : ML_LABEL_LISTINGSBASED;
-    
+$translate = MLI18n::gi()->data($define);
+$currentRate = !empty($translate) ? $translate : MLI18n::gi()->ML_LABEL_LISTINGSBASED;
+
     if ($magnaConfig['maranon']['Tariff'] == 'FreeTrial') {
         $contractends = $magnaConfig['maranon']['TestEnds'];
     } else {
@@ -56,7 +58,7 @@
     if(
                 isset($magnaConfig['maranon']['TestEnds']) && new DateTime() > new DateTime($magnaConfig['maranon']['TestEnds'])
         ){// last tariff was test he is countinuing with another tariff
-            $tarif = sprintf(ML_RATE_SWITCH_TRIAL, $magnaConfig['maranon']['TestEnds'], constant('ML_RATE_'.strtoupper($magnaConfig['maranon']['WishTariff'])));
+        $tarif = sprintf(MLI18n::gi()->ML_RATE_SWITCH_TRIAL, $magnaConfig['maranon']['TestEnds'], MLI18n::gi()->data('ML_RATE_' . strtoupper($magnaConfig['maranon']['WishTariff'])));
         
     } elseif ( 
                 ! isset($magnaConfig['maranon']['TestEnds']) 
@@ -67,26 +69,26 @@
                 )
                 && ($magnaConfig['maranon']['CancellationDate'] == '0000-00-00')
         ) {//he has psecific tariff(not test)
-            $tarif = sprintf(ML_RATE_CONTINUE, $currentRate, $contractends);
+        $tarif = sprintf(MLI18n::gi()->ML_RATE_CONTINUE, $currentRate, $contractends);
          
     } else if (
             ($magnaConfig['maranon']['WishTariff'] != $magnaConfig['maranon']['Tariff'])
             && ($magnaConfig['maranon']['CancellationDate'] == '0000-00-00')
             && ($magnaConfig['maranon']['TariffChangeDate'] != '0000-00-00') || new DateTime() < new DateTime($magnaConfig['maranon']['TestEnds'])
         ){//it is still in test priod
-            $tarif = sprintf(ML_RATE_SWITCH, $currentRate, 
+        $tarif = sprintf(MLI18n::gi()->ML_RATE_SWITCH, $currentRate,
                             ($contractends === 0)
                             ? date('d.m.Y', strtotime($magnaConfig['maranon']['TariffChangeDate']))
-                            : $contractends, constant('ML_RATE_'.strtoupper($magnaConfig['maranon']['WishTariff'])));
+                                : $contractends, MLI18n::gi()->data('ML_RATE_' . strtoupper($magnaConfig['maranon']['WishTariff'])));
             
     } else {//he canceld contract
-        $tarif = sprintf(ML_RATE_END, $currentRate, $contractends);
+        $tarif = sprintf(MLI18n::gi()->ML_RATE_END, $currentRate, $contractends);
         
     }
 
 	$tarif ='
 		<tr>
-			<th>'.ML_LABEL_RATE.':</th>
+			<th>' . MLI18n::gi()->ML_LABEL_RATE . ':</th>
 			<td>'.$tarif.'</td>
 		</tr>';
  
@@ -96,20 +98,20 @@
 	if ($listings['used'] < 0) {
 		$listingsStatus = '
 			<tr>
-				<th class="nowrap">'.ML_LABEL_LISTINGS_USED_THIS_MONTH.':</th>
-				<td class="fullWidth">'.ML_ERROR_LISTINGS_USED_UNKOWN.'</td>
+				<th class="nowrap">' . MLI18n::gi()->ML_LABEL_LISTINGS_USED_THIS_MONTH . ':</th>
+				<td class="fullWidth">' . MLI18n::gi()->ML_ERROR_LISTINGS_USED_UNKOWN . '</td>
 			</tr>';
 	} else if ($listings['available'] < 0) {
 		$listingsStatus = '
 			<tr>
-				<th class="nowrap">'.ML_LABEL_LISTINGS_USED_THIS_MONTH.':</th>
-				<td class="fullWidth">'.$listings['used'].'</td>
+				<th class="nowrap">' . MLI18n::gi()->ML_LABEL_LISTINGS_USED_THIS_MONTH . ':</th>
+				<td class="fullWidth ml-td-pd">'.$listings['used'].'</td>
 			</tr>';
 	} else {
 		$percent = min(100.0, round($listings['used']/$listings['available'] * 100, 2));
 		$listingsStatus = '
 			<tr>
-				<th class="nowrap">'.ML_LABEL_LISTINGS_USED_THIS_MONTH.':</th>
+				<th class="nowrap">' . MLI18n::gi()->ML_LABEL_LISTINGS_USED_THIS_MONTH . ':</th>
 				<td class="fullWidth">
 					<div id="listingsBar">
 						<img src="'.MLHttp::gi()->getResourceUrl('images/listingsbar.png').'" alt="'.$listings['used'].' / '.$listings['available'].'"/>
@@ -121,14 +123,14 @@
 			</tr>';
 		if ($listings['used'] > $listings['available']) {
 			$upgrade = '
-				<tr><th>'.ML_LABEL_LISTINGS_UPGRADE_HEADLINE.'</th><td>
-					'.sprintf(ML_TEXT_LISTING_EXCEEDED, ($listings['used'] - $listings['available']), $magnaConfig['maranon']['ShopID']).'
+				<tr><th>' . MLI18n::gi()->ML_LABEL_LISTINGS_UPGRADE_HEADLINE . '</th><td>
+					' . sprintf(MLI18n::gi()->ML_TEXT_LISTING_EXCEEDED, ($listings['used'] - $listings['available']), $magnaConfig['maranon']['ShopID']) . '
 				</td></tr>';
 		
 		} else if (($percent >= 80) && ($magnaConfig['maranon']['Tariff'] != 'FreeTrial')) {
 			$upgrade = '
-				<tr><th>'.ML_LABEL_LISTINGS_UPGRADE_HEADLINE.'</th><td>
-					'.sprintf(ML_TEXT_LISTING_ALMOST_EMPTY, 
+				<tr><th>' . MLI18n::gi()->ML_LABEL_LISTINGS_UPGRADE_HEADLINE . '</th><td>
+					' . sprintf(MLI18n::gi()->ML_TEXT_LISTING_ALMOST_EMPTY,
 						(100 - $percent),
 						$magnaConfig['maranon']['ShopID']
 					).'

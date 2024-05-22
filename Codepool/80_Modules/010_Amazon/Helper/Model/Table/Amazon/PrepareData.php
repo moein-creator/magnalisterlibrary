@@ -11,10 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Form_Helper_Model_Table_PrepareData_Abstract');
 
 class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Model_Table_PrepareData_Abstract {
@@ -31,7 +32,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
         $aField['value'] = $this->getFirstValue($aField, $this->oProduct->getSku());
     }
     protected function currencyField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('currency');
+        $aField['value'] = MLModule::gi()->getConfig('currency');
     }
 
     protected function variationField(&$aField) {
@@ -57,12 +58,12 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
     }
 
     protected function quantityField(&$aField) {
-        $aStockConf = MLModul::gi()->getStockConfig();
-        $aField['value'] = $this->getFirstValue($aField, $this->oProduct->getSuggestedMarketplaceStock($aStockConf['type'],$aStockConf['value']));
+        $aStockConf = MLModule::gi()->getStockConfig();
+        $aField['value'] = $this->getFirstValue($aField, $this->oProduct->getSuggestedMarketplaceStock($aStockConf['type'], $aStockConf['value'], $aStockConf['max']));
     }
 
     protected function priceField(&$aField){
-        $aField['value'] = $this->getFirstValue($aField, $this->oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject()));
+        $aField['value'] = $this->getFirstValue($aField, $this->oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject()));
     }
 
     protected function productsIdField(&$aField){
@@ -170,7 +171,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
                 $mGeneralManufacturer = null;
             }
 
-            $mFallbackManufacturer = MLModul::gi()->getConfig('prepare.manufacturerfallback');
+            $mFallbackManufacturer = MLModule::gi()->getConfig('prepare.manufacturerfallback');
             if (empty($mFallbackManufacturer)) {
                 $mFallbackManufacturer = null;
             }
@@ -199,6 +200,8 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
             $this->setPreparelist(null)->setProduct(current($aVariants));
         }
         $sDescription = $this->getFirstValue($aField, $oProduct->getDescription());
+        // Helper for php8 compatibility - can't pass null to str_replace 
+        $sDescription = MLHelper::gi('php8compatibility')->checkNull($sDescription);
         $sDescription = str_replace(array('&nbsp;', html_entity_decode('&nbsp;')), ' ', $sDescription);
         $sDescription = sanitizeProductDescription(
             $sDescription,
@@ -224,7 +227,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
     protected function manufacturerPartNumberField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
         if (empty($aField['value'])) {
-            $sAmazonConfigValue = MLModul::gi()->getConfig('checkin.skuasmfrpartno');
+            $sAmazonConfigValue = MLModule::gi()->getConfig('checkin.skuasmfrpartno');
             if (isset($sAmazonConfigValue) && $sAmazonConfigValue) {
                 $sDefaultValue = $this->oProduct->getSku();
             } else {
@@ -285,7 +288,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
         $aField['values'] = array();
         foreach($aImages as $sImage){
             try{
-                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'product', 60, 60);
+                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'product', 80, 80);
             }catch(Exception $oEx){
                 //no image in fs
             }
@@ -301,7 +304,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
 
     protected function willShipInternationallyField (&$aField) {
         $aDummyField = array('name' => 'shipping');
-        $aField['value'] = $this->getFirstValue($aDummyField, MLModul::gi()->getConfig('internationalshipping'));
+        $aField['value'] = $this->getFirstValue($aDummyField, MLModule::gi()->getConfig('internationalshipping'));
     }
 
     public function bulletPointsField(&$aField) {
@@ -317,12 +320,14 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
 
     protected function keywordsField(&$aField) {
         $sProductKeywords = $this->oProduct->getMetaKeywords();
+        // Helper for php8 compatibility - can't pass null to str_replace 
+        $sProductKeywords = MLHelper::gi('php8compatibility')->checkNull($sProductKeywords);
         $sProductKeywords = substr($sProductKeywords, 0, strpos(wordwrap($sProductKeywords, 1000, "\n", true)."\n", "\n"));
         $aField['value'] = $this->getFirstValue($aField, $sProductKeywords);
     }
 
     protected function shippingTimeField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField, MLModul::gi()->getConfig('leadtimetoship'));
+        $aField['value'] = $this->getFirstValue($aField, MLModule::gi()->getConfig('leadtimetoship'));
     }
 
     protected function basePriceField(&$aField) {
@@ -439,6 +444,8 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
     }
 
     public function stringToArray($sString,$iCount,$iMaxChars) {
+        // Helper for php8 compatibility - can't pass null to str_replace 
+        $sString = MLHelper::gi('php8compatibility')->checkNull($sString);
         $aArray = explode(',', $sString);
         array_walk($aArray, array($this, 'trim'));
         $aOut = array_slice($aArray, 0, $iCount);
@@ -458,7 +465,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
     }
 
     private function getInternationalIdentifier() {
-        $sSite = MLModul::gi()->getConfig('site');
+        $sSite = MLModule::gi()->getConfig('site');
         if ($sSite === 'US') {
             return 'UPC';
         }
@@ -468,7 +475,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
 
     protected function shippingTemplateField(&$aField) {
         $aField['optional']['active'] = true;
-        $aDefaultTemplate = MLModul::gi()->getConfig('shipping.template');
+        $aDefaultTemplate = MLModule::gi()->getConfig('shipping.template');
         $Default = 0;
         if (is_array($aDefaultTemplate)) {
             foreach ($aDefaultTemplate as $iKey => $sValue) {
@@ -480,6 +487,16 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
         }
 
         $aField['value'] = $this->getFirstValue($aField, $Default);
+    }
+
+    /**
+     * "BopisStores" Field of Prepare Form
+     *
+     * @param $aField
+     * @return void
+     */
+    protected function bopisStoresField(&$aField) {
+        $aField['value'] = $this->getFirstValue($aField);
     }
 
 
@@ -507,4 +524,81 @@ class ML_Amazon_Helper_Model_Table_Amazon_PrepareData extends ML_Form_Helper_Mod
         return parent::optionalIsActive($aField);
     }
 
+    public function searchEanAndAsinOnAmazon($asin, $ean, $productsName)
+    {
+        $searchResults = array();
+        if (!empty($asin)) {
+            try {
+                $result = MagnaConnector::gi()->submitRequest(array(
+                    'ACTION' => 'ItemLookup',
+                    'ASIN' => $asin
+                ));
+                if (!empty($result['DATA'])) {
+                    $searchResults = array_merge($searchResults, $result['DATA']);
+                }
+            } catch (MagnaException $e) {
+                $e->setCriticalStatus(false);
+            }
+        }
+        $ean = str_replace(array(' ', '-'), '', $ean);
+        if (!empty($ean)) {
+            try {
+                $result = MagnaConnector::gi()->submitRequest(array(
+                    'ACTION' => 'ItemLookup',
+                    'ASIN' => $ean
+                ));
+                if (!empty($result['DATA'])) {
+                    $searchResults = array_merge($searchResults, $result['DATA']);
+                }
+            } catch (MagnaException $e) {
+                $e->setCriticalStatus(false);
+            }
+            if (empty($searchResults)) {
+                try {
+                    $result = MagnaConnector::gi()->submitRequest(array(
+                        'ACTION' => 'ItemSearch',
+                        'NAME' => $ean
+                    ));
+                    if (!empty($result['DATA'])) {
+                        $searchResults = array_merge($searchResults, $result['DATA']);
+                    }
+                } catch (MagnaException $e) {
+                    $e->setCriticalStatus(false);
+                }
+            }
+        }
+
+        if (!empty($productsName)) {
+            try {
+                $result = MagnaConnector::gi()->submitRequest(array(
+                    'ACTION' => 'ItemSearch',
+                    'NAME' => $productsName
+                ));
+                if (!empty($result['DATA'])) {
+                    $searchResults = array_merge($searchResults, $result['DATA']);
+                }
+            } catch (MagnaException $e) {
+                $e->setCriticalStatus(false);
+            }
+        }
+
+        return $searchResults;
+    }
+
+    public function getProductArrayById($oProduct)
+    {
+        /* @var $oProduct ML_Shop_Model_Product_Abstract */
+        $aProduct = array(
+            'Id' => $oProduct->get('id'),
+            'SKU' => $oProduct->getSKU(),
+            'Title' => $oProduct->getName(),
+            'Description' => $oProduct->getDescription(),
+            'Images' => $oProduct->getImages(),
+            'Price' => $oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject(), true, true),
+            'Manufacturer' => $oProduct->getManufacturer(),
+            'EAN' => $oProduct->getModulField('general.ean', true)
+        );
+
+        return $aProduct;
+    }
 }

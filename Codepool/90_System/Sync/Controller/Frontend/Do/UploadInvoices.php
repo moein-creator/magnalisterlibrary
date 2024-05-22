@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -25,26 +25,25 @@ class ML_Sync_Controller_Frontend_Do_UploadInvoices extends ML_Core_Controller_A
     }
 
     public function render() {
-        $this->execute();
+        $this->execute(); 
     }
 
     public function execute() {
         $iStartTime = microtime(true);
         MLHelper::gi('stream')->activateOutput()->deeper('Start: '.$this->getIdent().($this->oRequest->data('continue') !== null ? " -> continue mode" : ''));
         try {
-            require_once MLFilesystem::getOldLibPath('php/callback/callbackFunctions.php');
             $sMessage = '';
             $iRequestMp = MLRequest::gi()->data('mpid');
             $aTabIdents = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.tabident')->get('value');
-            foreach (magnaGetInvolvedMarketplaces() as $sMarketPlace) {
-                foreach (magnaGetInvolvedMPIDs($sMarketPlace) as $iMarketPlace) {
+            foreach (MLHelper::gi('Marketplace')->magnaGetInvolvedMarketplaces() as $sMarketPlace) {
+                foreach (MLHelper::gi('Marketplace')->magnaGetInvolvedMPIDs($sMarketPlace) as $iMarketPlace) {
 
                     if ($iRequestMp === null || $iRequestMp == $iMarketPlace) {
                         ML::gi()->init(array('mp' => $iMarketPlace));
                         $sMarketPlaceText = 'Marketplace: '.$sMarketPlace.' ('.(isset($aTabIdents[$iMarketPlace]) && $aTabIdents[$iMarketPlace] != '' ? $aTabIdents[$iMarketPlace].' - ' : '').$iMarketPlace.')';
                         MLHelper::gi('stream')->deeper($sMarketPlaceText.' -> start upload');
                         try {
-                            if (MLModul::gi()->isConfigured()) {
+                            if (MLModule::gi()->isConfigured()) {
                                 try {
                                     $oService = $this->getService();
                                     $oService->execute();
@@ -52,20 +51,27 @@ class ML_Sync_Controller_Frontend_Do_UploadInvoices extends ML_Core_Controller_A
                                     MLHelper::gi('stream')->higher($sMarketPlaceText.' -> end upload');
 
                                 } catch (MLAbstract_Exception $oEx) {
-//                                    MLHelper::gi('stream')->higher(__LINE__.':'.microtime(true).$oEx->getMessage());
+                                    if(MLSetting::gi()->blDebug) {
+                                        MLHelper::gi('stream')->higher(__LINE__ . ':' . microtime(true) . $oEx->getMessage() . $oEx->getFile() . $oEx->getLine() . $oEx->getTraceAsString());
+                                    }
                                     MLHelper::gi('stream')->higher($sMarketPlaceText.' -> end upload, not implemented', false);
                                 }
                             } else {
                                 MLHelper::gi('stream')->higher($sMarketPlaceText.' -> end upload, not configured', false);
                             }
                         } catch (Exception $oEx) {
-//                            MLHelper::gi('stream')->higher(__LINE__.':'.microtime(true) . $oEx->getMessage());
+                            if(MLSetting::gi()->blDebug) {
+                                MLHelper::gi('stream')->higher(__LINE__ . ':' . microtime(true) . $oEx->getMessage() . $oEx->getFile() . $oEx->getLine() . $oEx->getTraceAsString());
+                            }
                             MLHelper::gi('stream')->higher($sMarketPlaceText.' -> end upload, not implemented', false);
                         }
                     }
                 }
             }
         } catch (Exception $oEx) {
+            if(MLSetting::gi()->blDebug) {
+                MLHelper::gi('stream')->higher(__LINE__ . ':' . microtime(true) . $oEx->getMessage() . $oEx->getFile() . $oEx->getLine() . $oEx->getTraceAsString());
+            }
             MLHelper::gi('stream')->stream($oEx->getMEssage());
         }
         MLHelper::gi('stream')->streamCommand(array('Complete' => 'true'));

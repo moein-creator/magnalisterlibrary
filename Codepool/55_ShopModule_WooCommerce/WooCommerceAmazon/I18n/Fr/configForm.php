@@ -85,3 +85,4 @@ Sélectionnez cette option, si vous souhaitez <strong>définir un service d’ex
 	<li>Le non-renseignement du service d’expédition lors de la confirmation de l’expédition sur amazon peut entrainer la suspension de votre compte vendeur.</li>
 </ul>
 ';
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcs.invoice__values__germanmarket'} = 'Les factures créées sur le marché allemand sont téléchargées sur Amazon.';

@@ -31,7 +31,7 @@ MLI18n::gi()->{'ricardo_prepare_form__field__listinglangs__label'} = 'Offer lang
 MLI18n::gi()->{'ricardo_prepare_form__field__langde__label'} = 'DE';
 MLI18n::gi()->{'ricardo_prepare_form__field__langfr__label'} = 'FR';
 MLI18n::gi()->{'ricardo_prepare_form__field__detitle__label'} = 'Title (German)';
-MLI18n::gi()->{'ricardo_prepare_form__field__detitle__hint'} = 'Title max. 40 characters <br> Placeholders allowed: <br> #BASEPRICE# - Price per Unit';
+MLI18n::gi()->{'ricardo_prepare_form__field__detitle__hint'} = 'Title max. 60 characters <br> Placeholders allowed: <br> #BASEPRICE# - Price per Unit';
 MLI18n::gi()->{'ricardo_prepare_form__field__detitle__optional__checkbox__labelNegativ'} = 'Always use product title from web-shop';
 MLI18n::gi()->{'ricardo_prepare_form__field__desubtitle__label'} = 'Subtitle (German)';
 MLI18n::gi()->{'ricardo_prepare_form__field__desubtitle__hint'} = 'Subtitle max 60 characters at extra charge';
@@ -41,7 +41,7 @@ MLI18n::gi()->{'ricardo_prepare_form__field__dedescription__label'} = 'Descripti
 MLI18n::gi()->{'ricardo_prepare_form__field__dedescription__hint'} = 'List of available place holders for product description:<dl><dt>#TITLE#</dt><dd>Product name (Titel)</dd><dt>#ARTNR#</dt><dd>Article number from the shop</dd><dt>#PID#</dt><dd>Products ID</dd><!--<dt>#PRICE#</dt><dd>Price</dd><dt>#VPE#</dt><dd>Price per packaging unit</dd>--><dt>#SHORTDESCRIPTION#</dt><dd>Short Description from Shop</dd><dt>#DESCRIPTION#</dt><dd>Description from Shop</dd><dt>#WEIGHT#</dt><dd>Products weight</dd><dt>#PICTURE1#</dt><dd>First Product-Image</dd><dt>#PICTURE2# etc.</dt><dd>Second Product-Image; with #PICTURE3#, #PICTURE4# etc. More Images can be sent, as many as available in the shop.</dd></dl>--';
 MLI18n::gi()->{'ricardo_prepare_form__field__dedescription__optional__checkbox__labelNegativ'} = 'Always use product description from web-shop';
 MLI18n::gi()->{'ricardo_prepare_form__field__frtitle__label'} = 'Title (French)';
-MLI18n::gi()->{'ricardo_prepare_form__field__frtitle__hint'} = 'Title max. 40 characters <br> Placeholders allowed: <br> #BASEPRICE# - Price per Unit';
+MLI18n::gi()->{'ricardo_prepare_form__field__frtitle__hint'} = 'Title max. 60 characters <br> Placeholders allowed: <br> #BASEPRICE# - Price per Unit';
 MLI18n::gi()->{'ricardo_prepare_form__field__frtitle__optional__checkbox__labelNegativ'} = 'Always use product title from web-shop';
 MLI18n::gi()->{'ricardo_prepare_form__field__frsubtitle__label'} = 'Subtitle (French)';
 MLI18n::gi()->{'ricardo_prepare_form__field__frsubtitle__hint'} = 'Subtitle max 60 characters at extra charge';
@@ -96,9 +96,9 @@ MLI18n::gi()->{'ricardo_prepare_form__field__availabilitycontainer__label'} = 'd
 MLI18n::gi()->{'ricardo_prepare_form__field__availability__label'} = 'Article availability after payment receipt';
 MLI18n::gi()->{'ricardo_prepare_form__field__promotion__label'} = 'Promotion';
 MLI18n::gi()->{'ricardo_prepare_form__field__firstpromotion__label'} = 'Promotion-Package';
-MLI18n::gi()->{'ricardo_prepare_form__field__firstpromotion__hint'} = '<span style="color:red;">Promotions are not free of charge. Please check the prices on Ricardo.</span>';
+MLI18n::gi()->{'ricardo_prepare_form__field__firstpromotion__hint'} = '<span style="color:#e31a1c;">Promotions are not free of charge. Please check the prices on Ricardo.</span>';
 MLI18n::gi()->{'ricardo_prepare_form__field__secondpromotion__label'} = 'Start page';
-MLI18n::gi()->{'ricardo_prepare_form__field__secondpromotion__hint'} = '<span style="color:red;">Promotions are not free of charge. Please check the prices on Ricardo.</span>';
+MLI18n::gi()->{'ricardo_prepare_form__field__secondpromotion__hint'} = '<span style="color:#e31a1c;">Promotions are not free of charge. Please check the prices on Ricardo.</span>';
 MLI18n::gi()->{'ricardo_prepareform_max_length_part1'} = 'Max length of';
 MLI18n::gi()->{'ricardo_prepareform_max_length_part2'} = 'attribute is';
 MLI18n::gi()->{'ricardo_prepareform_category'} = 'Category attribute is mandatory.';

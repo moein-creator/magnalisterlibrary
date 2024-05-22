@@ -24,7 +24,7 @@ abstract class ML_Productlist_Controller_Widget_ProductList_UploadAbstract exten
 
     public function getPrepareData(ML_Shop_Model_Product_Abstract $oProduct){
         if(!isset($this->aPrepare[$oProduct->get('id')])){
-            $sMpName = MLModul::gi()->getMarketPlaceName();
+            $sMpName = MLModule::gi()->getMarketPlaceName();
             $this->aPrepare[$oProduct->get('id')]=MLDatabase::factory($sMpName.'_prepare')->set('productsid',$oProduct->get('id'));
         }
         return $this->aPrepare[$oProduct->get('id')];
@@ -74,8 +74,7 @@ abstract class ML_Productlist_Controller_Widget_ProductList_UploadAbstract exten
             foreach ($oService->getErrors() as $sServiceMessage) {
                 $sMessage .= '<div>' . $sServiceMessage . '</div>';
             }
-
-            MLSetting::gi()->add('aAjaxPlugin', array('dom' => array('#recursiveAjaxDialog .errorBox' => array('action' => 'append', 'content' => $sMessage))));
+            $this->showErrorInPopupProgressBar($sMessage);
         }
         if ($this->getRequest('saveSelection') != 'true') {
             MLSetting::gi()->add(
@@ -116,7 +115,7 @@ abstract class ML_Productlist_Controller_Widget_ProductList_UploadAbstract exten
     }
 
     public function getStock(ML_Shop_Model_Product_Abstract $oProduct) {
-        $aStockConf = MLModul::gi()->getStockConfig();
+        $aStockConf = MLModule::gi()->getStockConfig();
         $iMax = isset($aStockConf['max']) && $aStockConf['max'] > 0 ? $aStockConf['max'] : null;
         return $oProduct->getSuggestedMarketplaceStock($aStockConf['type'], $aStockConf['value'], $iMax);
     }
@@ -137,7 +136,7 @@ abstract class ML_Productlist_Controller_Widget_ProductList_UploadAbstract exten
     public function getProductListWidget() {
         $sListName = $this->getListName();
         if (strpos($sListName, 'checkin') !== false && count($this->getProductList()->getMasterIds(true))==0) {//only check current page
-            MLMessage::gi()->addInfo(MLI18n::gi()->get('Productlist_No_Prepared_Products', array('marketplace'=> MLModul::gi()->getMarketPlaceName(false))));
+            MLMessage::gi()->addInfo(MLI18n::gi()->get('Productlist_No_Prepared_Products', array('marketplace' => MLModule::gi()->getMarketPlaceName(false))));
         }
         parent::getProductListWidget();
     }

@@ -78,9 +78,9 @@ MLI18n::gi()->{'cdiscount_prepare_form__field__availabilitycontainer__label'} = 
 MLI18n::gi()->{'cdiscount_prepare_form__field__availability__label'} = 'Disponibilité de l\'article après réception du paiement';
 MLI18n::gi()->{'cdiscount_prepare_form__field__promotion__label'} = 'Promotion';
 MLI18n::gi()->{'cdiscount_prepare_form__field__firstpromotion__label'} = 'Paquet de promotion';
-MLI18n::gi()->{'cdiscount_prepare_form__field__firstpromotion__hint'} = '<span style="color:red;">Les promotions ne sont pas gratuites. Veuillez vérifier, s\'il vous plaît, les prix sur Cdiscount.</span>';
+MLI18n::gi()->{'cdiscount_prepare_form__field__firstpromotion__hint'} = '<span style="color:#e31a1c;">Les promotions ne sont pas gratuites. Veuillez vérifier, s\'il vous plaît, les prix sur Cdiscount.</span>';
 MLI18n::gi()->{'cdiscount_prepare_form__field__secondpromotion__label'} = 'Haut de la page';
-MLI18n::gi()->{'cdiscount_prepare_form__field__secondpromotion__hint'} = '<span style="color:red;">Les promotions ne sont pas gratuites. Veuillez vérifier, s\'il vous plaît, les prix sur Cdiscount.</span>';
+MLI18n::gi()->{'cdiscount_prepare_form__field__secondpromotion__hint'} = '<span style="color:#e31a1c;">Les promotions ne sont pas gratuites. Veuillez vérifier, s\'il vous plaît, les prix sur Cdiscount.</span>';
 MLI18n::gi()->{'cdiscount_prepareform_max_length_part1'} = 'Longueur max de';
 MLI18n::gi()->{'cdiscount_prepareform_max_length_part2'} = 'L\'attribut est';
 MLI18n::gi()->{'cdiscount_prepareform_category'} = 'La catégorie de l\'attribut est obligatoire.';

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -24,20 +24,23 @@ $iSelectedMpid = $this->getRequestedMpid();
 $aMessages = array();
 if ($iSelectedMpid != null) {
     ML::gi()->init(array('mp' => $iSelectedMpid));
-    if (!MLModul::gi()->isConfigured()) {
+    if (!MLModule::gi()->isConfigured()) {
         throw new Exception('module is not configured');
     }
 }
 ?>
 
     <style>
-        table.ml-productSearchToolsForm td{
+        table.ml-productSearchToolsForm td {
             padding: 5px 10px;
         }
-        table.ml-productSearchToolsResult{
-            table-layout: fixed;width:100%;
+
+        table.ml-productSearchToolsResult {
+            table-layout: fixed;
+            width: 100%;
         }
-        table.ml-productSearchToolsResult td{
+
+        table.ml-productSearchToolsResult td {
             border-bottom: 1px solid #aaa;
             padding: 10px 60px 50px 30px;
         }
@@ -48,13 +51,14 @@ if ($iSelectedMpid != null) {
                 <input type="hidden" name="<?php echo $sKey ?>" value="<?php echo $sValue ?>"/>
             <?php } ?>
         </div>
-        <table class="ml-productSearchToolsForm">
+        <table class="attributesTable">
             <tr>
                 <td>
                     <label for="ml-sku">SKU :</label>
                 </td>
                 <td>
-                    <input type="text" name="<?php echo MLHttp::gi()->parseFormFieldName('sku') ?>" value="<?php echo $this->getRequestedSku() ?>">
+                    <input type="text" name="<?php echo MLHttp::gi()->parseFormFieldName('sku') ?>"
+                           value="<?php echo $this->getRequestedSku() ?>">
                 </td>
                 <td>
                     Sku of product that you are looking for
@@ -71,7 +75,7 @@ if ($iSelectedMpid != null) {
                             foreach (MLHelper::gi('Marketplace')->magnaGetInvolvedMPIDs($sMarketPlace) as $iMarketPlace) {
                                 ?>
                                 <option value="<?php echo $iMarketPlace ?>" <?php echo $iSelectedMpid == $iMarketPlace ? ' selected=selected ' : '' ?>>
-                                    <?php echo $sMarketPlace.' ('.(isset($aTabIdents[$iMarketPlace]) && $aTabIdents[$iMarketPlace] != '' ? $aTabIdents[$iMarketPlace].' - ' : '').$iMarketPlace.')'; ?>
+                                    <?php echo $sMarketPlace . ' (' . (isset($aTabIdents[$iMarketPlace]) && $aTabIdents[$iMarketPlace] != '' ? $aTabIdents[$iMarketPlace] . ' - ' : '') . $iMarketPlace . ')'; ?>
                                 </option>
                                 <?php
                             }
@@ -89,7 +93,9 @@ if ($iSelectedMpid != null) {
                 <td>
                     <label for="ml-pricetype">price type</label></td>
                 <td>
-                    <input type="text" id="ml-pricetype" name="<?php echo MLHttp::gi()->parseFormFieldName('pricetype') ?>" value="<?php echo $this->getRequest('pricetype') ?>">
+                    <input type="text" id="ml-pricetype"
+                           name="<?php echo MLHttp::gi()->parseFormFieldName('pricetype') ?>"
+                           value="<?php echo $this->getRequest('pricetype') ?>">
                 </td>
                 <td>
                     It is important for some marketplace like eBay that has different price type, e.g. 'fixed',
@@ -100,10 +106,45 @@ if ($iSelectedMpid != null) {
                 <td>
                     <label for="ml-countrycode">Country code to calculate tax</label></td>
                 <td>
-                    <input type="text" id="ml-countrycode" name="<?php echo MLHttp::gi()->parseFormFieldName('countrycode') ?>" value="<?php echo $this->getRequest('countrycode') !== null ? $this->getRequest('countrycode') : 'DE' ?>">
+                    <input type="text" id="ml-countrycode"
+                           name="<?php echo MLHttp::gi()->parseFormFieldName('countrycode') ?>"
+                           value="<?php echo $this->getRequest('countrycode') !== null ? $this->getRequest('countrycode') : 'DE' ?>">
                 </td>
                 <td>
                     Country code to calculate tax for specific country, e.g. 'DE', 'IT' and ...
+                </td>
+            </tr>
+            <tr>
+                <td><label for="ml-attribute">Attributes :</label></td>
+                <td>
+                    <select id="ml-attribute" name="<?php echo MLHttp::gi()->parseFormFieldName('attributeCode') ?>">
+                        <option value="">--</option>
+                        <?php
+                        $selectedAttribute = MLRequest::gi()->data('attributeCode');
+                        foreach (MLFormHelper::getShopInstance()->getGroupedAttributesForMatching() as $key => $attribute) {
+                            ?>
+                            <optgroup label="<?php echo $key ?>">
+                                <?php
+                                if (is_array($attribute)) {
+                                    foreach ($attribute as $attributeKey => $attributeValue) {
+                                        if (is_array($attributeValue)) {
+                                            ?>
+                                            <option value="<?php echo $attributeKey ?>" <?php echo $selectedAttribute === $attributeKey ? 'selected=selected' : '' ?>>
+                                                <?php echo $attributeValue['name'] ?>
+                                            </option>
+                                            <?php
+                                        }
+                                    }
+                                }
+                                ?>
+                            </optgroup>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </td>
+                <td>
+
                 </td>
             </tr>
             <tr>
@@ -115,7 +156,63 @@ if ($iSelectedMpid != null) {
         </table>
     </form>
     <hr/>
-    <table class="ml-productSearchToolsResult">
+    <table class="attributesTable">
+        <thead>
+        <tr>
+            <th>Product data to send to Marketplace<sup>from <?php echo get_class(MLProduct::factory()) ?></sup></th>
+            <th><span>Master Product functions<span><sup>from <?php echo get_class(MLProduct::factory()) ?></sup></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td style="vertical-align: top">
+                <?php
+
+                if (($oProduct = $this->getProduct(false)) !== null) {
+                    $aDataToSendToMarketplace = array();
+                    if ($oProduct->exists()) {
+                        /* @var  $oProduct ML_Shop_Model_Product_Abstract
+                         */
+                        $aDataToSendToMarketplace = $this->getVariantProductFieldAndMethods($oProduct);
+                        $aDataToSendToMarketplace = $this->getVariantProductModuleDependentFieldAndMethods($oProduct, $aDataToSendToMarketplace);
+                        if (method_exists(MLFormHelper::getShopInstance(), 'getProductFreeTextFieldsAttributes') && method_exists($oProduct, 'getAttributeValue')) {
+                            $aDataToSendToMarketplace['Attributes'] = array();
+                            foreach (MLFormHelper::getShopInstance()->getProductFreeTextFieldsAttributes() as $sKey => $sLabel) {
+                                //                                var_dump($sKey, $sLabel);
+                                $aDataToSendToMarketplace['Attributes'][$sLabel] = $oProduct->getProductField($sKey);
+                            }
+                        }
+                    }
+                    !Kint::dump($aDataToSendToMarketplace);
+                }
+                ?>
+            </td>
+            <td style="vertical-align: top">
+
+                <?php
+                try {
+
+                    if (($oProduct = $this->getProduct(true)) !== null) {
+                        $aDataToSendToMarketplace = array();
+                        if ($oProduct->exists()) {
+                            /* @var  $oProduct ML_Shop_Model_Product_Abstract */
+                            try {
+                                $aDataToSendToMarketplace = $this->getMasterProductModuleDependentFieldAndMethods($oProduct, $aDataToSendToMarketplace);
+                            } catch (Exception $oExc) {
+
+                            }
+                            $aDataToSendToMarketplace += $this->getMasterProductFieldAndMethods($oProduct);
+                        }
+                        !Kint::dump($aDataToSendToMarketplace, '', true);
+                    }
+
+                } catch (\Exception $ex) {
+                    MLMessage::gi()->addDebug($ex);
+                }
+                ?>
+            </td>
+        </tr>
+        </tbody>
         <thead>
         <tr>
             <th>Found master product (From "magnalister_products" table)</th>
@@ -130,10 +227,10 @@ if ($iSelectedMpid != null) {
                     $aData = $oProduct->getAllData();
                     if ($oProduct->exists()) {
                         if (count($aData) > 1) {
-                            $aData['methods'][get_class($oProduct).'::getTax(4)'] = $oProduct->getTax();
+                            $aData['methods'][get_class($oProduct) . '::getTax(4)'] = $oProduct->getTax();
                         }
-                        $aData['methods'][get_class($oProduct).'::getBasePriceString(20)'] = $oProduct->getBasePriceString(20);
-                        $aData['methods'][get_class($oProduct).'::getImages()'] = $oProduct->getImages();
+                        $aData['methods'][get_class($oProduct) . '::getBasePriceString(20)'] = $oProduct->getBasePriceString(20);
+                        $aData['methods'][get_class($oProduct) . '::getImages()'] = $oProduct->getImages();
                     }
                     new dBug($aData, '', true);
                 }
@@ -183,64 +280,7 @@ if ($iSelectedMpid != null) {
             </td>
         </tr>
         </tbody>
-        <thead>
-        <tr>
-            <th>Product data to send to Marketplace<sup>from <?php echo get_class(MLProduct::factory()) ?></sup></th>
-            <th><span>Master Product functions<span><sup>from <?php echo get_class(MLProduct::factory()) ?></sup></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="vertical-align: top">
-                <?php
 
-                if (($oProduct = $this->getProduct(false)) !== null) {
-                    $aDataToSendToMarketplace = array();
-                    if ($oProduct->exists()) {
-                        /* @var  $oProduct ML_Shop_Model_Product_Abstract
-                         */
-                        $aDataToSendToMarketplace = $this->getVariantProductModuleDependentFieldAndMethods($oProduct, $aDataToSendToMarketplace);
-
-                        $aDataToSendToMarketplace += $this->getVariantProductFieldAndMethods($oProduct);
-
-                        if (method_exists(MLFormHelper::getShopInstance(), 'getProductFreeTextFieldsAttributes') && method_exists($oProduct, 'getAttributeValue')) {
-                            $aDataToSendToMarketplace['Attributes'] = array();
-                            foreach (MLFormHelper::getShopInstance()->getProductFreeTextFieldsAttributes() as $sKey => $sLabel) {
-                                //                                var_dump($sKey, $sLabel);
-                                $aDataToSendToMarketplace['Attributes'][$sLabel] = $oProduct->getProductField($sKey);
-                            }
-                        }
-                    }
-                    !Kint::dump($aDataToSendToMarketplace);
-                }
-                ?>
-            </td>
-            <td style="vertical-align: top">
-
-                <?php
-                try {
-
-                    if (($oProduct = $this->getProduct(true)) !== null) {
-                        $aDataToSendToMarketplace = array();
-                        if ($oProduct->exists()) {
-                            /* @var  $oProduct ML_Shop_Model_Product_Abstract */
-                            try {
-                                $aDataToSendToMarketplace = $this->getMasterProductModuleDependentFieldAndMethods($oProduct, $aDataToSendToMarketplace);
-                            } catch (Exception $oExc) {
-
-                            }
-                            $aDataToSendToMarketplace += $this->getMasterProductFieldAndMethods($oProduct);
-                        }
-                        !Kint::dump($aDataToSendToMarketplace, '', true);
-                    }
-
-                } catch (\Exception $ex) {
-                    MLMessage::gi()->addDebug($ex);
-                }
-                ?>
-            </td>
-        </tr>
-        </tbody>
     </table>
 <?php
 

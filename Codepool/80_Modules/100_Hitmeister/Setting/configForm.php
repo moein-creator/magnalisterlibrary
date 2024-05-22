@@ -19,7 +19,7 @@
 MLSetting::gi()->add('hitmeister_config_account', array(
     'tabident' => array(
         'legend' => array(
-            'classes' => array('mlhidden'),
+            'classes' => array(''),
         ),
         'fields' => array(
             array(
@@ -43,6 +43,21 @@ MLSetting::gi()->add('hitmeister_config_account', array(
     ),
 ), false);
 
+MLSetting::gi()->add('hitmeister_config_country', [
+    'country' => [
+        'fields' => [
+            'site' => [
+                'name' => 'site',
+                'type' => 'select'
+            ],
+            'currency' => [
+                'name' => 'currency',
+                'type' => 'information'
+            ],
+        ]
+    ]
+], false);
+
 MLSetting::gi()->add('hitmeister_config_prepare', array(
     'prepare' => array(
         'fields' => array(
@@ -64,11 +79,15 @@ MLSetting::gi()->add('hitmeister_config_prepare', array(
                 'type' => 'select',
             ),
             array(
-                'name' => 'shippingtime',
+                'name' => 'handlingtime',
                 'type' => 'select',
             ),
             array(
                 'name' => 'itemcountry',
+                'type' => 'select',
+            ),
+            array(
+                'name' => 'shippinggroup',
                 'type' => 'select',
             ),
             array(
@@ -103,7 +122,7 @@ MLSetting::gi()->add('hitmeister_config_prepare', array(
     ),
 ), false);
 
-MLSetting::gi()->add('hitmeister_config_price', array(
+MLSetting::gi()->add('hitmeister_config_priceandstock', array(
     'price' => array(
         'fields' => array(
             array(
@@ -127,21 +146,38 @@ MLSetting::gi()->add('hitmeister_config_price', array(
                 'name' => 'exchangerate_update',
                 'type' => 'bool',
             ),
+        )
+    ),
+    'price.lowest' => array(
+        'fields' => array(
             array(
                 'name' => 'minimumpriceautomatic',
-                'type' => 'bool',
-                'expert' => true,
+                'type' => 'select',
                 'default' => true,
             ),
+            array(
+                'name' => 'price.lowest',
+                'type' => 'subFieldsContainer',
+                'subfields' => array(
+                    'addkind' => array('name' => 'price.lowest.addkind', 'type' => 'select'),
+                    'factor' => array('name' => 'price.lowest.factor', 'type' => 'string'),
+                    'signal' => array('name' => 'price.lowest.signal', 'type' => 'string')
+                )
+            ),
+            array(
+                'name' => 'priceoptions.lowest',
+                'type' => 'subFieldsContainer',
+                'subfields' => array(
+                    'group' => array('name' => 'price.lowest.group', 'type' => 'select'),
+                    'usespecialoffer' => array('name' => 'price.lowest.usespecialoffer', 'type' => 'bool'),
+                ),
+            ),
         )
-    )
-), false);
-
-MLSetting::gi()->add('hitmeister_config_sync', array(
+    ),
     'sync' => array(
         'fields' => array(
             array(
-                'name' => 'stocksync.tomarketplace',              
+                'name' => 'stocksync.tomarketplace',
                 'type' => 'select',/*
                 'type' => 'addon_select',
                 'addonsku' => 'FastSyncInventory',
@@ -175,6 +211,10 @@ MLSetting::gi()->add('hitmeister_config_orderimport', array(
                 'type' => 'select',
             ),
             array(
+                'name' => 'orderstatus.fbk',
+                'type' => 'select',
+            ),
+            array(
                 'name' => 'customergroup',
                 'type' => 'select',
             ),
@@ -183,10 +223,13 @@ MLSetting::gi()->add('hitmeister_config_orderimport', array(
                 'type' => 'select',
             ),
             'orderimport.shippingmethod' => array(
-                'name' => 'orderimport.shippingmethod',
-                'type' => 'string',
-                'default' => 'Kaufland.de',
-                'expert' => true,
+                'name'      => 'orderimport.shippingmethod',
+                'type'      => 'selectwithtextoption',
+                'subfields' => array(
+                    'select' => array('name' => 'orderimport.shippingmethod', 'type' => 'select'),
+                    'string' => array('name' => 'orderimport.shippingmethod.name', 'type' => 'string', 'default' => '{#setting:currentMarketplaceName#}',)
+                ),
+                'expert'    => true,
             ),
         ),
     ),
@@ -230,7 +273,7 @@ MLSetting::gi()->add('hitmeister_config_orderimport', array(
 ), false);
 
 MLSetting::gi()->add('hitmeister_config_invoice', array(
-    'metroInvoice' => array(
+    'invoice' => array(
         'legend' => array('i18n' => '{#i18n:config_headline_uploadinvoiceoption#}'),
         'fields' =>
             array(

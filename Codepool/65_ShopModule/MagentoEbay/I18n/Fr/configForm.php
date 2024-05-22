@@ -7,3 +7,4 @@ MLI18n::gi()->{'ebay_config_producttemplate__field__template.name__help'} = '<dl
 <dd>Saisissez dans ce champ le nom de l’article, tel que vous voulez qu’il apparaisse sur votre page eBay. <br>
 Le champ <b>#TITLE#</b> sera automatiquement remplacé par le nom que vous avez saisi.</dd>
 			</dl>';
+MLI18n::gi()->{'orderstatus_carrier_default_send_order_carrier'} = 'Transporter l\'ordre de passage';

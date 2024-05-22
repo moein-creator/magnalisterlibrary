@@ -37,7 +37,7 @@ MLI18n::gi()->{'ebay_prepare_apply_form__field__title__label'} = 'Nom du produit
 MLI18n::gi()->{'ebay_prepare_apply_form__field__title__hint'} = 'Titre max. 80 caractères<br />Rubriques disponibles:<br />#BASEPRICE# - Prix de base.<br /> Veuillez tenir compte du texte d\'info dans la configuration (template nom du modèle).';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__title__optional__checkbox__labelNegativ'} = 'Reprendre toujours le nom de l\'article actuel du magasin';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__label'} = 'Sous-titre';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__hint'} = 'Sous-titre max. 55 caractères <span style="color:red">option payante</span>';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__hint'} = 'Sous-titre max. 55 caractères <span style="color:#e31a1c">option payante</span>';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__optional__select__false'} = 'Ne pas transmettre';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__optional__select__true'} = 'Transmettre';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__pictureurl__label'} = 'Photo sur eBay';
@@ -66,7 +66,7 @@ MLI18n::gi()->{'ebay_prepare_apply_form__field__gallerytype__hint'} = 'configura
 MLI18n::gi()->{'ebay_prepare_apply_form__field__gallerytype__alert__Plus__title'} = 'Galerie plus';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__gallerytype__alert__Plus__content'} = 'Avec l\'activation de l\'option <b>Galerie plus</b>votre photo d\'article apparaîtra comme une vignette agrandie dans les résultats de recherche et dans la galerie.
 <br> Les images téléchragés doivent au-moins avoir une résolution de 800 x 800 pixels.<br>
-<br> Des <span style="color:red;">frais supplémentaires</span> peuvent-être facturés par eBay!<br>
+<br> Des <span style="color:#e31a1c;">frais supplémentaires</span> peuvent-être facturés par eBay!<br>
 <br> Pour plus d\'informations, reportez-vous à l\'aide en ligne de eBay, sous la rubrique galerie d\'images.<br> <br>
 <br>RedGecko GmbH n\'assume aucune responsabilité quant aux frais supplémentaires.<br>
 <br>
@@ -111,10 +111,12 @@ MLI18n::gi()->{'ebay_prepare_apply_form__field__paymentmethods__hint'} = 'Modes 
 MLI18n::gi()->{'ebay_prepare_apply_form__field__paymentmethods__help'} = 'Préférences pour les modes de paiement ( sélection multiple avec Ctrl+clic).<br /><br />Vous pouvez sélectionner ici les modes de paiement proposés par eBay.<br /><br />Si vous utilisez "Paiements gérés par eBay", eBay ne fournira pas d&apos;autres informations sur le mode de paiement utilisé par l&apos;acheteur.';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__conditionid__label'} = 'État de l\'article';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__conditionid__hint'} = 'État de l\'article (s\'affiche dans la plupart des catégories sur eBay)';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__conditiondescriptors__label'} = 'Informations sur l\'état de l\'article';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__conditiondescriptors__hint'} = 'Informations supplémentaires sur l\'état des articles (pour certaines catégories)';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__conditiondescription__label'} = 'Description de l\'état';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__conditiondescription__hint'} = 'Informations complémentaires sur l\'état de l\'article. Ne s\'affiche pas si l\'état de l\'article est "Nouveau" ou "Nouveau avec..."';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__privatelisting__label'} = 'Offre privée';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__privatelisting__hint'} = 'Si l\'option est activée, la liste des enchérisseurs ne peut pas être consultée par un tiers. <span style="color:red">option payante</span>';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__privatelisting__hint'} = 'Si l\'option est activée, la liste des enchérisseurs ne peut pas être consultée par un tiers. <span style="color:#e31a1c">option payante</span>';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__privatelisting__valuehint'} = 'Acheteur / Liste des enchérisseurs non accessible au public';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__bestofferenabled__label'} = 'prix proposé';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__bestofferenabled__hint'} = 'Si l\'option est activée,l\'acheteur peut proposer un prix';
@@ -122,8 +124,7 @@ MLI18n::gi()->{'ebay_prepare_apply_form__field__bestofferenabled__valuehint'} = 
 MLI18n::gi()->{'ebay_prepare_apply_form__field__ebayplus__label'} = 'eBay Plus';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__ebayplus__hint'} = 'Disponible uniquement si cette fonctionnalité est activée et active sur eBay.';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__ebayplus__valuehint'} = 'Activez eBay Plus';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__hitcounter__label'} = 'Compteur de visite';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__hitcounter__hint'} = '';
+
 MLI18n::gi()->{'ebay_prepare_apply_form__field__starttime__label'} = 'Heure de démarrage<br /> (si préréglée)';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__starttime__hint'} = 'Normalement, un article est actif sur eBay immédiatement après son téléchargement. Mais en remplissant ce champ, vous pouvez choisir l\'heure du début de la vente(<span style="color: red">option payante</span>).';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__primarycategory__label'} = 'Catégorie principale';

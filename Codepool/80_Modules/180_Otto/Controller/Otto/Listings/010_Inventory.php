@@ -27,6 +27,10 @@ class ML_Otto_Controller_Otto_Listings_Inventory extends ML_Listings_Controller_
         $this->saveDeletedLocally = false;
     }
 
+    public static function getTabTitle() {
+        return MLI18n::gi()->get('ML_GENERIC_INVENTORY');
+    }
+
     protected function getFields() {
         $oI18n = MLI18n::gi();
         return array(
@@ -44,7 +48,7 @@ class ML_Otto_Controller_Otto_Listings_Inventory extends ML_Listings_Controller_
             ),
             'ProductUrl' => array(
                 'Label' => 'URL',
-                'Sorter' => 'itemtitle',
+                'Sorter' => null,
                 'Getter' => 'getProductUrl',
                 'Field' => null,
             ),
@@ -56,7 +60,7 @@ class ML_Otto_Controller_Otto_Listings_Inventory extends ML_Listings_Controller_
 //                'Field' => null,
 //            ),
             'Price' => array(
-                'Label' => 'Shop-'.$oI18n->ML_GENERIC_PRICE . ' / OTTO ' . $oI18n->ML_GENERIC_PRICE,
+                'Label' => $oI18n->ML_LABEL_SHOP_PRICE.' / '.MLModule::gi()->getMarketPlaceName(false).' '.$oI18n->ML_GENERIC_PRICE,
                 'Sorter' => 'price',
                 'Getter' => 'getItemPrice',
                 'Field' => null,
@@ -85,7 +89,8 @@ class ML_Otto_Controller_Otto_Listings_Inventory extends ML_Listings_Controller_
     protected function getSKU($item) {
         $html = '<td>' . $item['SKU'] . '</td>';
         if (!empty($item['editUrl'])) {
-            $html = '<td><div class="product-link" ><a class="ml-js-noBlockUi" href="' . $item['editUrl'] . '" target="_blank" title="' . MLI18n::gi()->ML_LABEL_EDIT . '">' . $item['SKU'] . '</a></div></td>';
+            $addStyle = (empty($item['ShopTitle']) || $item['ShopTitle'] === '&mdash;') ? 'style="color:#e31e1c;"' : '';
+            $html = '<td><div class="product-link" ><a '. $addStyle .' class="ml-js-noBlockUi" href="' . $item['editUrl'] . '" target="_blank" title="' . MLI18n::gi()->ML_LABEL_EDIT . '">' . $item['SKU'] . '</a></div></td>';
         }
 
         return $html;
@@ -114,7 +119,6 @@ class ML_Otto_Controller_Otto_Listings_Inventory extends ML_Listings_Controller_
     }
 
     protected function manipulateSortParameter($aSort) {
-        $aSort['itemtitle'] = 'ItemTitle';
         return $aSort;
     }
 
@@ -210,7 +214,8 @@ class ML_Otto_Controller_Otto_Listings_Inventory extends ML_Listings_Controller_
 
     protected function getProductUrl($item) {
         if (!empty($item['ProductUrl'])) {
-            return '<td><a class="ml-js-noBlockUi" href="'.$item['ProductUrl'].'" target="_blank">LINK</a></td>';
+            $addStyle = (empty($item['ShopTitle']) || $item['ShopTitle'] === '&mdash;') ? 'style="color:#e31e1c;"' : '';
+            return '<td><a '. $addStyle .' class="ml-js-noBlockUi" href="'.$item['ProductUrl'].'" target="_blank">LINK</a></td>';
         }
         return '<td>&mdash;</td>';
     }

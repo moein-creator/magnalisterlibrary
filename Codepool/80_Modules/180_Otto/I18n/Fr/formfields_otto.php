@@ -75,12 +75,12 @@ MLI18n::gi()->add('formfields_otto', array(
     'orderstatus.open' => array(
         'label' => 'Statut des commandes “en cours” dans la boutique',
         'help' => '
-            <p>Le statut OTTO “en cours” signifie que la commande a été payée et qu’elle peut donc être expédiée. Sélectionnez ici le statut que les commandes “en cours” doivent recevoir dans votre boutique.</p>
+            <p>Le statut OTTO Market “en cours” signifie que la commande a été payée et qu’elle peut donc être expédiée. Sélectionnez ici le statut que les commandes “en cours” doivent recevoir dans votre boutique.</p>
         ',
     ),
     'orderimport.paymentstatus' => array(
         'label' => 'Payment Status (Webshop)',
-        'help' => '<p>Otto does not assign any shipping method to imported orders.</p>
+        'help' => '<p>OTTO Market does not assign any shipping method to imported orders.</p>
             <p>Please choose here the available Web Shop shipping methods. The contents of the drop-down menu can be assigned in Shopware > Settings > Shipping Costs.</p>
             <p>This setting is important for bills and shipping notes, the subsequent processing of the order inside the shop, and for some ERPs.</p>'
     ),
@@ -98,25 +98,25 @@ MLI18n::gi()->add('formfields_otto', array(
     ),
     'paymentmethods' => array(
         'label' => 'Payment Methods',
-        'help' => 'Payment method that will apply to all orders imported from OTTO. Standard: "OTTO"<br><br>
+        'help' => 'Payment method that will apply to all orders imported from OTTO Market. Standard: "OTTO Market"<br><br>
             This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.'
     ),
     'shippingservice' => array(
         'label' => 'Shipping Service',
-        'help' => 'Shipping methods that will be assigned to all OTTO orders. Standard: "Marketplace"<br><br>
+        'help' => 'Shipping methods that will be assigned to all OTTO Market orders. Standard: "Marketplace"<br><br>
             This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.'
     ),
     'orderstatus.carrier' => array(
         'label' => '&nbsp;&nbsp;&nbsp;&nbsp;Spediteur',
-        'help' => 'Vorausgew&auml;hlter Spediteur beim Best&auml;tigen des Versandes nach OTTO.',
+        'help' => 'Vorausgew&auml;hlter Spediteur beim Best&auml;tigen des Versandes nach OTTO Market.',
     ),
     'orderstatus.standardshipping' => array(
         'label' => 'Send Carrier Option',
-        'hint' => 'Otto.de only allows certain carriers.Please make sure to provide valid data only.'
+        'hint' => 'OTTO.de only allows certain carriers.Please make sure to provide valid data only.'
     ),
     'orderstatus.forwardershipping' => array(
         'label' => 'Forwarding Carrier Option',
-        'hint' => 'Otto.de only allows certain carriers.Please make sure to provide valid data only.'
+        'hint' => 'OTTO.de only allows certain carriers.Please make sure to provide valid data only.'
     ),
     'orderstatus.shippedaddress' => array(
         'label' => 'Confirm Shipping and \'From\' Address',
@@ -136,14 +136,14 @@ MLI18n::gi()->add('formfields_otto', array(
     ),
     'orderstatus.carrier' => array(
         'label' => 'Carrier',
-        'help' => 'Pre-selected freight forwarder confirming shipment to OTTO.',
+        'help' => 'Pre-selected freight forwarder confirming shipment to OTTO Market.',
     ),
     'customfield.carrier' => array(
         'label' => 'Carrier'
     ),
     'return.carrier' => array(
         'label' => 'Return Carrier Option',
-        'hint' => 'Otto.de only allows certain carriers.Please make sure to provide valid data only.'
+        'hint' => 'OTTO.de only allows certain carriers.Please make sure to provide valid data only.'
     ),
     'return.trackingkey' => array(
         'label' => 'Return Tracking Key Option',

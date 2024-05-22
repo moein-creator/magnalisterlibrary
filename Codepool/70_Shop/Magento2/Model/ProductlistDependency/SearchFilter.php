@@ -27,8 +27,23 @@ class ML_Magento2_Model_ProductListDependency_SearchFilter extends ML_Shop_Model
     public function manipulateQuery($mQuery) {
         $sFilterValue = $this->getFilterValue();
         if (!empty($sFilterValue)) {
-
             $sFilterValue = str_replace("'", "''", $sFilterValue);
+            // query to search the variations
+            $result =  MLDatabase::getDbInstance()->fetchArray('SELECT ts.parent_id FROM `catalog_product_relation` AS ts
+                            INNER JOIN `catalog_product_entity` AS es ON es.entity_id = ts.child_id
+                            INNER JOIN `catalog_product_entity_varchar` AS vs ON es.entity_id = vs.entity_id
+                            WHERE vs.value LIKE \'%'.$sFilterValue.'%\'
+                            OR es.entity_id = \''.$sFilterValue.'\'
+                            OR es.sku = \''.$sFilterValue.'\'', true);
+
+            // query to search the master products and simple products
+            $sWhere = 'catalog_product_entity_varchar.value LIKE \'%'. $sFilterValue .'%\'
+                    OR e.entity_id = \''.$sFilterValue.'\'
+                    OR e.sku = \''.$sFilterValue.'\'';
+
+            if(!empty($result)){
+                $sWhere .= 'OR e.entity_id IN ('.implode(',', $result).')';
+            }
             // Tables used for seach: catalog_product_entity, catalog_product_entity_text, catalog_product_entity_varchar
             $mQuery->getSelectSql()
                 /*->joinLeft(
@@ -43,11 +58,10 @@ class ML_Magento2_Model_ProductListDependency_SearchFilter extends ML_Shop_Model
                 )
                 ->where(
                 //'catalog_product_entity_text.value LIKE \'%'. $sFilterValue .'%\'
-                    'catalog_product_entity_varchar.value LIKE \'%'. $sFilterValue .'%\'
-                    OR e.entity_id = \''.$sFilterValue.'\'
-                    OR e.sku = \''.$sFilterValue.'\''
-                )->distinct(true);
-            MLMessage::gi()->addDebug('Magento Product list search Filter query',array($mQuery->getSelect()->__toString()));
+                    $sWhere
+                );
+
+
         }
     }
 }

@@ -3,7 +3,7 @@
 MLI18n::gi()->Hitmeister_CheckinForm = array(
     'Price' => 'Preis',
     'Amount' => 'Anzahl',
-    'ShippingTime' => 'Versand (Tage)',
+    'HandlingTime' => 'Zeit bis Versand (Tage)',
     
     'ShopPrice' => 'Shop',
     'SuggestedPrice' => 'Berechneter (aus Konfiguration)',

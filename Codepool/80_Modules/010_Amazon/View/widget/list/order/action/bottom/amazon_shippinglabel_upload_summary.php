@@ -11,44 +11,44 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <?php
-/* @var $this  ML_Amazon_Controller_Amazon_ShippingLabel_Orderlist */
+/* @var $this  ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Summary */
 /* @var $oList ML_Amazon_Model_List_Amazon_Order */
 /* @var $aStatistic array */
 
-$sMpId = MLModul::gi()->getMarketPlaceId();
-$sMpName = MLModul::gi()->getMarketPlaceName();
+$sMpId = MLModule::gi()->getMarketPlaceId();
+$sMpName = MLModule::gi()->getMarketPlaceName();
 
 $sUrlPrefix = "{$sMpName}:{$sMpId}_";
 $sI18nPrefix = 'ML_' . ucfirst($sMpName) . '_';
 ?>
 
+<div class="ml-container-action-head">
+    <h4>Aktionen</h4>
+</div>
+<div class="ml-container-action">
+    <div class="ml-container-inner ml-container-md">
+        <a class="mlbtn-gray" href="<?php echo $this->getUrl(array('controller' => "{$sUrlPrefix}shippinglabel_upload_shippingmethod")); ?>">
+            <?php echo $this->__('ML_BUTTON_LABEL_BACK') ?>
+        </a>
+    </div>
+    <div class="ml-container-inner ml-container-md">
+        <a class="js-marketplace-upload mlbtn-red action"
+           href="<?php echo $this->getUrl(array('controller' => "{$sUrlPrefix}shippinglabel_upload_summary", 'method' => 'confirmShipping')); ?>"
+           title="<?php echo MLI18n::gi()->ML_STATUS_FILTER_SYNC_ITEM ?>">
+            <?php echo $this->__('ML_Amazon_Shippinglabel_Confirm') ?>
+        </a>
+    </div>
+</div>
 
-
-<table class="actions">
-    <tbody class="firstChild">
-        <tr>
-            <td>
-                <div class="actionBottom">
-                    <a class="js-marketplace-upload mlbtn action right" href="<?php echo $this->getUrl(array('controller' => "{$sUrlPrefix}shippinglabel_upload_summary", 'method' => 'confirmShipping')); ?>" title="<?php echo ML_STATUS_FILTER_SYNC_ITEM ?>" >
-                        <?php echo $this->__('ML_Amazon_Shippinglabel_Confirm') ?>
-                    </a>
-                    <a class="mlbtn backbtn right" href="<?php echo $this->getUrl(array('controller' => "{$sUrlPrefix}shippinglabel_upload_shippingmethod")); ?>">
-                        <?php echo $this->__('ML_BUTTON_LABEL_BACK') ?>
-                    </a>
-                    <div class="clear"></div>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
 <script type="text/javascript">/*<![CDATA[*/
     (function ($) {
         jqml(document).ready(function () {
@@ -63,8 +63,8 @@ $sI18nPrefix = 'ML_' . ucfirst($sMpName) . '_';
                                     var eDialog = jqml('#recursiveAjaxDialog');
                                     if (eDialog.find(".requestErrorBox").is(':hidden')) {
                                         window.location.href = '<?php
-                        echo $this->getUrl(array('controller' => "{$sUrlPrefix}errorlog"));
-                        ?>';
+                                            echo $this->getUrl(array('controller' => "{$sUrlPrefix}errorlog"));
+                                            ?>';
                                     } else {
                                         window.location.href = '<?php echo $this->getCurrentUrl() ?>';
                                     }
@@ -73,10 +73,10 @@ $sI18nPrefix = 'ML_' . ucfirst($sMpName) . '_';
                         ],
                         oSuccess: [
                             {
-				text: <?php echo json_encode($this->__('ML_BUTTON_LABEL_CLOSE')); ?>,
-				click: function() {
-					window.location.href = '<?php echo $this->getUrl(array('controller' => "{$sUrlPrefix}shippinglabel_overview")); ?>';
-				}
+                                text: <?php echo json_encode($this->__('ML_BUTTON_LABEL_CLOSE')); ?>,
+                                click: function() {
+                                    window.location.href = '<?php echo $this->getUrl(array('controller' => "{$sUrlPrefix}shippinglabel_overview")); ?>';
+                                }
                             },
                             {text: 'Download ', click: function () {
                                     if (jqml('a.ml-downloadshippinglabel').length > 0) {
@@ -97,7 +97,6 @@ $sI18nPrefix = 'ML_' . ucfirst($sMpName) . '_';
                     },
                     onProgessBarClick: function (data) {
                         console.dir({data: data});
-
                     },
                     onFinalize: function (blError) {
 

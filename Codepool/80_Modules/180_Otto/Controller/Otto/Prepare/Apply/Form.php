@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -55,7 +55,7 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
             if ($aCategory['LeafCategory'] == 1) {
                 $aFinalCategories[] = array(
                     'id' => $aCategory['CategoryID'],
-                    'text' => html_entity_decode($aCategory['CategoryName'], null, 'UTF-8'),
+                    'text' => html_entity_decode($aCategory['CategoryName'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8'),
                 );
             }
         }
@@ -89,6 +89,7 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
         $aNewArray = array();
         $brands = array();
         $aFinalBrands = array();
+        $excludeAuto = MLRequest::gi()->data('brandmatchingExcludeAuto');
         $sCustomIdentifier = MLRequest::gi()->data('brandmatchingCustomIdentifier');
         $sMPAttributeCode = MLRequest::gi()->data('brandmatchingMpAttributeCode');
         if (MLRequest::gi()->data('brandmatching') == 'PreloadBrandCache') {
@@ -119,20 +120,31 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
         if (MLRequest::gi()->data('brandmatching') == 'GetBrands' && $matchingValue == '') {
             $results = $this->getCategoryIndependentAttributes();
             $brands = $results['DATA']['attributes'][current(unpack('H*', 'Brand'))]['values'];
-
-            $aNewArray = array(
-                'auto' => MLI18n::gi()->get('form_type_matching_select_auto'),
-                'reset' => MLI18n::gi()->get('form_type_matching_select_reset'),
-            );
+            //exclude auto match options
+            if(!$excludeAuto) {
+                $aNewArray = array(
+                    'auto' => MLI18n::gi()->get('form_type_matching_select_auto'),
+                    'reset' => MLI18n::gi()->get('form_type_matching_select_reset'),
+                );
+            }
         }
 
-        if (!empty($brands) && !empty($aNewArray)) {
+        if (!empty($brands)) {
             $brands = $aNewArray + $brands;
-
-            $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_options')], ['text' => MLI18n::gi()->get('otto_config_matching_shop_values')]];
+            //exclude auto match options
+            if (!$excludeAuto) {
+                $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_options')], ['text' => MLI18n::gi()->get('otto_config_matching_shop_values')]];
+            } else {
+                $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_shop_values')]];
+            }
             if (MLRequest::gi()->data('brandmatching') == 'GetBrands' && $matchingValue == '') {
-                $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_options')], ['text' => MLI18n::gi()->get('otto_config_matching_otto_values')]];
-            } 
+                //exclude auto match options
+                if (!$excludeAuto) {
+                    $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_options')], ['text' => MLI18n::gi()->get('otto_config_matching_otto_values')]];
+                } else {
+                    $aFinalBrands = [['text' => MLI18n::gi()->get('otto_config_matching_otto_values')]];
+                }
+            }
 
             foreach ($brands as $id => $text) {
                 if (in_array($id, ['all', 'auto', 'reset'])) {
@@ -150,21 +162,17 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
 
             $sSearch = MLRequest::gi()->data('brandmatchingSearch');
             if (!empty($sSearch)) {
-                $sBrands = array();
-                foreach ($aFinalBrands[1]['children'] as $sKey => &$aBrand) {
-                    if (stripos($aBrand['text'], $sSearch) !== false) {
-                        array_push($sBrands, $aBrand);
+                foreach ($aFinalBrands[1]['children'] as $sKey => $aBrand) {
+                    if (stripos($aBrand['text'], $sSearch) === false) {
+                        unset($aFinalBrands[1]['children'][$sKey]);
                     }
                 }
-                $aBrandCount = count($aFinalBrands[1]['children']);
-                $aFinalBrands[1]['children'] = array_slice($sBrands, $iOffset, $iLength);
             }
 
             // Pagination
             $iLength = 50;
             $iPageLength = (int)MLRequest::gi()->data('brandmatchingPage') * $iLength;
             $iOffset = (($iPageLength) - $iLength);
-
             $aBrandCount = count($aFinalBrands[1]['children']);
             $aFinalBrands[1]['children'] = array_slice($aFinalBrands[1]['children'], $iOffset, $iLength);
 
@@ -193,11 +201,19 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     public function getCategoryIndependentAttributes($getAllAttributes = false, $forceRefresh = false) {
-        $aCategoryDetails = MagnaConnector::gi()->submitRequestCached(array(
+        $request = array(
             'ACTION' => 'GetCategoryIndependentAttributes',
-        ), 86400, $forceRefresh);
+        );
+        if ($forceRefresh) {
+            $request['DATA'] = array(
+                'ForceUpdate' => true,
+            );
+        }
 
-        if (MLModul::gi()->isNeededPackingAttrinuteName()) {
+        $aCategoryDetails = MagnaConnector::gi()->submitRequestCached($request, 86400, $forceRefresh);
+
+
+        if (MLModule::gi()->isNeededPackingAttrinuteName()) {
             $aCodedKeys = array();
             foreach ($aCategoryDetails['DATA']['attributes'] as $aCategoryDetail) {
                 if (!$getAllAttributes && !$this->oProduct instanceof ML_Shop_Model_Product_Abstract && !$aCategoryDetail['multi']) {
@@ -216,7 +232,7 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
             return $this->aMPAttributes;
         }
 
-        $aValues = $this->getCategoryIndependentAttributes();
+        $aValues = $this->getCategoryIndependentAttributes(true);
         $result = array();
         if ($aValues && !empty($aValues['DATA']['attributes'])) {
             foreach ($aValues['DATA']['attributes'] as $key => $value) {
@@ -228,6 +244,7 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
                     'help' => isset($value['help']) ? $value['help'] : null,
                     'values' => !empty($value['values']) ? $value['values'] : array(),
                     'dataType' => !empty($value['type']) ? $value['type'] : 'text',
+                    'isbrand' => $value['name'] === 'Brand' ? 1 : 0,
                 );
             }
         }
@@ -436,8 +453,7 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
         return $aValue;
     }
 
-    protected function triggerBeforeFinalizePrepareAction()
-    {
+    protected function triggerBeforeFinalizePrepareAction() {
         $aActions = $this->getRequest($this->sActionPrefix);
         $savePrepare = $aActions['prepareaction'] === '1';
         $this->oPrepareList->set('preparetype', $this->getSelectionNameValue());
@@ -498,6 +514,8 @@ class ML_Otto_Controller_Otto_Prepare_Apply_Form extends ML_Form_Controller_Widg
                         // If value is required convert Required to boolean value.
                         $value['Required'] = in_array($value['Required'], array(1, true, '1', 'true'), true);
                     }
+
+                    $value['CategoryId'] = $this->getCategoryIdentifierValue();
 
                     if ($sIdentifier === $this->categoryIndependentAttributes && empty($value['Values']) && $savePrepare) {
                         $value['Values'] = true;

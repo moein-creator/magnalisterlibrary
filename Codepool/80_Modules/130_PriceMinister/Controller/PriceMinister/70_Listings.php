@@ -30,6 +30,6 @@ class ML_PriceMinister_Controller_PriceMinister_Listings extends ML_Tabs_Control
 
     public static function getTabActive()
     {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

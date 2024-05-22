@@ -15,7 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <div style="line-height:30px">
     <span style="float:left;margin-right:10px;">Web-shop:</span>

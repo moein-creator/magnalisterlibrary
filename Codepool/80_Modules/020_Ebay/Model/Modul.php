@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -26,19 +26,20 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         'chinese' => null,
         'buyitnow' => null,
     );
-
+    
     /**
      * better cache it, for exceptions in ebay-api
      * @var string side id
      */
     protected $sEbaySiteId = null;
-
+   
     public function getConfig($sName = null) {
+        //Add Tecdoc
         $mParent = parent::getConfig($sName);
         if ($sName === null) {
-            $mParent['productfield.brand'] =
-                array_key_exists('productfield.brand', $mParent)
-                ? $mParent['productfield.brand']
+            $mParent['productfield.brand'] = 
+                array_key_exists('productfield.brand', $mParent) 
+                ? $mParent['productfield.brand'] 
                 : $this->getConfig('manufacturer')
             ;
         } elseif ($sName == 'productfield.brand' && $mParent === null) {
@@ -78,12 +79,12 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             return false;
         }
     }
-
+    
     protected function getShippingServiceDetails() {
         try {
             $aShipping = MagnaConnector::gi()->submitRequestCached(array(
                 'ACTION' => 'GetShippingServiceDetails',
-                'DATA' => array('Site' => MLModul::gi()->getConfig('site')
+                'DATA' => array('Site' => MLModule::gi()->getConfig('site')
             ),), 30 * 60);
             if ($aShipping['STATUS'] == 'SUCCESS') {
                 $aLocalService = array();
@@ -105,7 +106,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             return array('local' => array(), 'international' => array(), 'locations' => array());
         }
     }
-
+    
     public function getLocalShippingServices() {
         $aShipping = $this->getShippingServiceDetails();
         return isset($aShipping['local']) ? $aShipping['local'] : array();
@@ -147,7 +148,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             return isset($aOut[$sService]) ? $aOut[$sService]['amount'] : 0;
         }
     }
-
+    
     public function getShippingPromotionalDiscount() {
         try {
             $aResponse = MagnaConnector::gi()->submitRequestCached(array(
@@ -181,7 +182,8 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         $aOut = array();
         foreach ($aDurations['DATA']['ListingDurations'] as $sDuration) {
             $sDefine = 'ML_EBAY_LABEL_LISTINGDURATION_'.strtoupper($sDuration);
-            $aOut[$sDuration] = (defined($sDefine) ? constant($sDefine) : $sDuration);
+            $translate = MLI18n::gi()->$sDefine;
+            $aOut[$sDuration] = (!empty($translate) ? $translate : $sDuration);
         }
         return $aOut;
     }
@@ -190,7 +192,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         try {
             $aPayment = MagnaConnector::gi()->submitRequestCached(array(
                 'ACTION' => 'GetPaymentOptions',
-                'DATA' => array('Site' => MLModul::gi()->getConfig('site')),
+                'DATA' => array('Site' => MLModule::gi()->getConfig('site')),
             ), 30 * 60);
             if ($aPayment['STATUS'] == 'SUCCESS' && isset($aPayment['DATA']['PaymentOptions']) && is_array($aPayment['DATA']['PaymentOptions'])) {
                 return $aPayment['DATA']['PaymentOptions'];
@@ -210,22 +212,16 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             '1500' => $oI18n->get('ML_EBAY_CONDITION_NEW_OTHER'),
             '1750' => $oI18n->get('ML_EBAY_CONDITION_NEW_WITH_DEFECTS'),
             '2000' => $oI18n->get('ML_EBAY_CONDITION_CERTIFIED_REFURBISHED'),
+            '2010' => $oI18n->get('ML_EBAY_CONDITION_EXCELLENT_REFURBISHED'),
+            '2020' => $oI18n->get('ML_EBAY_CONDITION_VERY_GOOD_REFURBISHED'),
+            '2030' => $oI18n->get('ML_EBAY_CONDITION_GOOD_REFURBISHED'),
             '2500' => $oI18n->get('ML_EBAY_CONDITION_SELLER_REFURBISHED'),
+            '2750' => $oI18n->get('ML_EBAY_CONDITION_AS_NEW'),
             '3000' => $oI18n->get('ML_EBAY_CONDITION_USED'),
             '4000' => $oI18n->get('ML_EBAY_CONDITION_VERY_GOOD'),
             '5000' => $oI18n->get('ML_EBAY_CONDITION_GOOD'),
             '6000' => $oI18n->get('ML_EBAY_CONDITION_ACCEPTABLE'),
             '7000' => $oI18n->get('ML_EBAY_CONDITION_FOR_PARTS_OR_NOT_WORKING')
-        );
-    }
-
-    public function getHitcounterValues() {
-        $oI18n = MLI18n::gi();
-        return array(
-            'NoHitCounter' => $oI18n->get('ML_EBAY_NO_HITCOUNTER'),
-            'BasicStyle' => $oI18n->get('ML_EBAY_BASIC_HITCOUNTER'),
-            'RetroStyle' => $oI18n->get('ML_EBAY_RETRO_HITCOUNTER'),
-            'HiddenStyle' => $oI18n->get('ML_EBAY_HIDDEN_HITCOUNTER'),
         );
     }
 
@@ -245,7 +241,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
      * @return ML_Shop_Model_Price_Interface
      */
     public function getPriceObject($sType = null, $aSettings = null) {
-        $sType = strtolower($sType);
+        $sType = strtolower(MLHelper::gi('php8compatibility')->checkNull($sType));
         if (in_array($sType, array('storesfixedprice', 'fixedpriceitem'))) {
             $sType = 'fixed';
         } else if (in_array($sType, array('strike', 'strikeprice'))) {
@@ -289,7 +285,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         }
         return $this->aPrice[$sType];
     }
-
+    
     public function getPriceGroupKeys(){
         return array('chinese.price.group', 'fixed.price.group', 'strikeprice.group');
     }
@@ -331,7 +327,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         global $_MagnaSession;
         #echo print_m($_MagnaSession,'$_MagnaSession');
         $mpID = (int)MLRequest::gi()->get('mp');
-        $site = MLModul::gi()->getConfig('site');
+        $site = MLModule::gi()->getConfig('site');
         if (!isset($site) || empty($site)) {
             $site = '999'; //  999 um keine falsche Gleichheit bei nicht gesetzten Werten zu bekommen
         }
@@ -373,7 +369,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         }
         return $returnPolicyDetails[$detailName];
     }
-
+    
     /**
      * @return array('configKeyName'=>array('api'=>'apiKeyName', 'value'=>'currentSantizedValue'))
      */
@@ -384,8 +380,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         $sDate = date('Y-m-d', strtotime($sDate));
         $sSync = $this->getConfig('stocksync.tomarketplace');
         return array(
-            'site'=>array('api' => 'Access.Site', 'value' => ($this->getConfig('site'))),
-            'inventory.import' => array('api' => 'Inventory.Import', 'value' => ($this->getConfig('inventory.import'))),
+            'site'=>array('api' => 'Access.Site', 'value' => ($this->getConfig('site'))),            
             'import' => array('api' => 'Orders.Import', 'value' => ($this->getConfig('import'))),
             'preimport.start' => array('api' => 'Orders.Import.TS', 'value' => $sDate),
             'importonlypaid' => array('api' => 'Orders.ImportOnlyPaid', 'value' => ($this->getConfig('importonlypaid') == '1' ? 'true':'false')),
@@ -395,21 +390,20 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             'stocksync.tomarketplace' => array('api' => 'Callback.SyncInventory', 'value' => isset($sSync) ? $sSync : 'no'),
         );
     }
-
-
+    
+    
     public function getCarrier() {
         try {
             $aResponse = MagnaConnector::gi()->submitRequestCached(array(
                 'ACTION' => 'GetCarriers'
             ), 30 * 60);
-            return $aResponse['DATA'];
+            return $aResponse['DATA'];             
         } catch (MagnaException $e) {
             return array();
         }
     }
-
+    
     public function isAuthed($blResetCache = false) {
-        return true;
         if (parent::isAuthed($blResetCache)) {
             if ($this->tokenAvailable()) {
                 $expires = $this->getConfig('token.expires');
@@ -460,7 +454,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
     public function isMultiPrepareType(){
         return true;
     }
-
+    
     public function isConfigured() {
         $sCurrency = $this->getConfig('currency');
         $aFields = MLRequest::gi()->data('field');
@@ -476,13 +470,13 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
                 return true;
             }
         }
-
+        
         $bReturn = parent::isConfigured();
         return $bReturn;
     }
 
     /**
-     * search with lookup and search by available fields
+     * search with lookup and search by available fields 
      * @param string $sEpid
      * @param string $sEan
      * @param string $sMpn
@@ -492,13 +486,13 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
      */
     public function performItemSearch($sEpid='', $sEan='', $sMpn='', $sProductName='', $sKeywords='') {
             $aResult = array();
-
+            
             if (!empty($sEpid)) {
                 $aResult = $this->ebayLookUp($sEpid);
             } else {
                 $aResult = $this->ebaySearch($sEan, $sMpn, $sProductName, $sKeywords);
             }
-
+            
             foreach ($aResult as &$item) {
                 if (isset($item['GTIN']) && is_array($item['GTIN'])) {
                     if (count($item['GTIN']) == 1) {
@@ -511,7 +505,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
                 }
 
                 if (isset($item['MPN']) && is_array($item['MPN'])) {
-                    if (count($item['MPN']) == 1) {
+                    if (count($item['MPN']) == 1) { 
                         $item['MPN'] = current($item['MPN']);
                     } else {
                         $item['MPN'] = implode(', ', $item['MPN']);
@@ -522,7 +516,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             }
         return $aResult;
     }
-
+    
     public function ebayLookUp($sSearch) {
         $sCacheId = __FUNCTION__ . '_' . md5($sSearch);
         try {
@@ -550,7 +544,7 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         return $aResult ;
     }
 
-
+    
     public function ebaySearch($sEan = '', $sMpn = '', $sProductName = '', $sKeywords = '') {
         $sCacheId = __FUNCTION__ . '_' . md5(json_encode(array($sEan, $sMpn, $sProductName, $sKeywords)));
         try {
@@ -683,22 +677,58 @@ class ML_Ebay_Model_Modul extends ML_Modul_Model_Modul_Abstract {
 
     }
 
-    public function getStatusConfigurationKeyToBeConfirmedOrCanceled(){
+    public function getStatusConfigurationKeyToBeConfirmedOrCanceled() {
         $aParentReturn = parent::getStatusConfigurationKeyToBeConfirmedOrCanceled();
         $aParentReturn[] = 'refundstatus';
         return $aParentReturn;
     }
 
+    public function getNoneRepeatedStatusConfigurationKey() {
+        $configFields = parent::getNoneRepeatedStatusConfigurationKey();
+
+        $configFields = array_filter($configFields, function ($sKey) {
+            return $sKey !== 'refundstatus';
+        });
+        return $configFields;
+    }
 
     public function isOrderShippingMethodAvailable() {
         return true;
     }
 
-    public function isOrderPaymentMethodAvailable(){
+    public function isOrderPaymentMethodAvailable() {
         return true;
     }
 
+    public function addRequiredConfigurationKeys($aRequiredConfig) {
+        if (
+            $this->getConfig('importonlypaid') !== '1' &&
+            MLRequest::gi()->data('do') === null // by running cron (order import)
+        ) {
+            $aNewRequiredConfig = array(
+                'orderstatus.closed',
+                'updateable.orderstatus'
+            );
+            return array_merge($aNewRequiredConfig, $aRequiredConfig);
+        }
+        return $aRequiredConfig;
+    }
+
+    public function getListOfConfigurationKeysNeedShopValidationOnlyActive() {
+        $aReturn = array();
+        $aSettings = MLSetting::gi()->get('aModules');
+        $aConfigKeysNeedsShopValidation = $aSettings[MLModule::gi()->getMarketPlaceName()]['configKeysNeedsShopValidation'];
+        if (is_array($aConfigKeysNeedsShopValidation)) {
+            foreach ($aConfigKeysNeedsShopValidation as $sKey) {
+                $aReturn[$sKey] = 'config' . $this->getPriceConfigurationUrlPostfix();
+            }
+        } else {
+            MLMessage::gi()->addDebug(__LINE__ . ':' . microtime(true), array($aConfigKeysNeedsShopValidation));
+        }
+        return $aReturn;
+    }
+
     //    public function isAttributeMatchingNotMatchOptionImplemented() {
-//        return true;
-//    }
+    //        return true;
+    //    }
 }

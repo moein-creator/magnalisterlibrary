@@ -88,11 +88,11 @@ class ML_Amazon_Controller_Amazon_Config_VCS extends ML_Form_Controller_Widget_F
     }
 
     public function amazonvcsinvoice_invoicedirField(&$aField) {
-        $aField['url'] = MLModul::gi()->getPublicDirLink().'Invoices/';
+        $aField['url'] = MLModule::gi()->getPublicDirLink() . 'Invoices/';
     }
 
     public function amazonvcsinvoice_previewField(&$aField) {
-        $companyleft = MLModul::gi()->getConfig('amazonvcsinvoice.companyadressleft');
+        $companyleft = MLModule::gi()->getConfig('amazonvcsinvoice.companyadressleft');
         if (empty($companyleft)) {
             $aField['disabled'] = true;
         }

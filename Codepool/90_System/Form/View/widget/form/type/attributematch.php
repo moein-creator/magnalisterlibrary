@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,19 +12,17 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2017 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
-/** @var ML_Form_Controller_Widget_Form_VariationsAbstract $this */
+/** @var ML_Form_Controller_Widget_Form_VariationsAbstract|ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstract $this */
 /** @var array $aField */
 
 if (!class_exists('ML', false))
     throw new Exception();
-$marketplaceName = MLModul::gi()->getMarketPlaceName();
+$marketplaceName = MLModule::gi()->getMarketPlaceName();
 
 $aParent = $this->getField(substr($aField['realname'], 0, -5));
 $aParentValue = isset($aParent['valuearr']) ? $aParent['valuearr'] : null;
@@ -96,19 +94,20 @@ if (is_array($aParentValue) && count($aParentValue) === 2 && reset($aParentValue
         $freeTextDisabled = false === strpos(strtolower($marketplaceDataType), 'text');
     }
 
-    if ($sAttributeCode === 'freetext') {
+    if ($sAttributeCode === 'freetext') {//user want to enter own entry to be sent as value for this attribute
         $shopValue = $this->getAttributeValues($sVariationValue, $sCustomIdentifier, $sMPAttributeCode, true);
         $aNewField = array(
             'type' => 'string',
             'name' => $sName,
             'value' => is_array($shopValue) ? implode(', ', $shopValue) : $shopValue,
         );
-    } else if ($sAttributeCode === 'attribute_value') {
+    } else if ($sAttributeCode === 'attribute_value') {// one of marketplace presented option is selected
+        $aSelectValues = $this->getManipulateMarketplaceAttributeValues($aMPAttribute['values']);
         $aNewField = array(
             'name' => $sName,
             'type' => 'select',
             'value' => $this->getAttributeValues($sVariationValue, $sCustomIdentifier, $sMPAttributeCode, true),
-            'values' => $aMPAttribute['values'],
+            'values' => $aSelectValues,
         );
 
         if (MLHelper::gi('Model_Service_AttributesMatching')->isMultiSelectType($marketplaceDataType)) {
@@ -150,7 +149,7 @@ if (is_array($aParentValue) && count($aParentValue) === 2 && reset($aParentValue
             $aNewField['doKeyPacking'] = $aField['doKeyPacking'];
         }
     }
-    $aNewField['notMatchIsSupported'] = MLFormHelper::getShopInstance()->shouldBeDisplayedAsVariationAttribute($sAttributeCode) && MLModul::gi()->isAttributeMatchingNotMatchOptionImplemented();
+    $aNewField['notMatchIsSupported'] = MLFormHelper::getShopInstance()->shouldBeDisplayedAsVariationAttribute($sAttributeCode) && MLModule::gi()->isAttributeMatchingNotMatchOptionImplemented();
     $this->includeType($aNewField);
 } else {
     // without this line the whole row is removed which removes needed controls

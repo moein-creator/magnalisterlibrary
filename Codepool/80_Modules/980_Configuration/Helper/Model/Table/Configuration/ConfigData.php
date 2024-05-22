@@ -28,17 +28,17 @@ class ML_Configuration_Helper_Model_Table_Configuration_ConfigData extends ML_Fo
         }
         return $this->blValidPassPhrase;
     }
-
+ 
     public function general_passphraseField(&$aField) {
         $sPassPhrase = $aField['value'];
 
-        if (empty($sPassPhrase)) {
+        if (empty($sPassPhrase)) {    
             try {
                 $partner = '?partner='.MLSetting::gi()->get('magnaPartner');
             } catch (MLSetting_Exception $oEx) {
                 $partner = '';
             }
-            /* Hier die bunte Startseite */
+                /* Hier die bunte Startseite */
             try {
                 $partner = '?partner='.MLSetting::gi()->get('magnaPartner');
             } catch (MLSetting_Exception $oEx) {
@@ -47,7 +47,7 @@ class ML_Configuration_Helper_Model_Table_Configuration_ConfigData extends ML_Fo
             MLMessage::gi()->addNotice(sprintf(MLI18n::gi()->ML_NOTICE_PLACE_PASSPHRASE, $partner));
         }
     }
-
+    
     public function general_manufacturerField(&$aField) {
         if ($this->checkPassPhrase()) {
             $aField['values'] = MLFormHelper::getShopInstance()->getManufacturer();

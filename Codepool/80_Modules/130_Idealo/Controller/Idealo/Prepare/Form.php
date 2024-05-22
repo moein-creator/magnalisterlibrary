@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -22,38 +22,104 @@ class ML_Idealo_Controller_Idealo_Prepare_Form extends ML_Form_Controller_Widget
 
     protected $aParameters = array('controller');
 
-    public function __construct() {
-        MLSetting::gi()->add('aJs', 'idealo.form.js');
-        parent::__construct();
-        MLSetting::gi()->set('idealo.activatedirectbuyconfigurl', $this->getUrl(array(
-                'controller' => substr($this->getRequest('controller'), 0, strpos($this->getRequest('controller'), '_')).'_config_account'
-            )
-        ));
-    }
-
     protected function getSelectionNameValue() {
         return 'match';
     }
 
-    /**
-     * @return boolean
-     * @todo verify addItems
-     */
+    protected function setPreparedStatus($verified, $productIDs = array()) {
+        $this->oPrepareList->set('iscomplete', $verified ? 'true' : 'false');
+    }
+
+    protected function paymentMethodField(&$aField) {
+        $request = MLRequest::gi()->data();
+        // check if form was saved or if it was inital load
+        if(isset($request['field']) && !isset($request['field']['paymentmethod'])) {
+            $aField['required'] = true;
+            MLMessage::gi()->addError($this->__('ML_AMAZON_TEXT_APPLY_DATA_INCOMPLETE'));
+        }
+    }
+
     protected function triggerBeforeFinalizePrepareAction() {
-        $this->oPrepareList->set('verified', 'OK');
-        return true;
+        $blReturn = true;
+        $aActions = $this->getRequest($this->sActionPrefix);
+        $savePrepare = $aActions['prepareaction'] === '1';
+        $request = MLRequest::gi()->data();
+
+        $sMessage = '';
+        $oddEven = true;
+        $i = 0;
+        foreach ($this->oPrepareList->getList() as $oPrepared) {
+            $this->oProduct = MLProduct::factory()->set('id', $oPrepared->get('products_id'));
+            $aMissingValues = array();
+            foreach (array(
+                         MLI18n::gi()->get('ML_LABEL_MARKETPLACE_PAYMENT_METHOD') => 'paymentmethod',
+                     ) as $sMissingText => $sFieldName) {
+                $mValue = $oPrepared->get($sFieldName);
+                if (empty($mValue) || !isset($request['field'][$sFieldName])) {
+                    $blReturn = false;
+                    $aMissingValues[] = $sMissingText;
+                }
+            }
+
+            if (!empty($aMissingValues)) {
+                $this->setPreparedStatus(false);
+            }
+
+            if (!empty($aMissingValues) && $i <= 20) {
+                $sMessage .= '
+                    <tr class="'.(($oddEven = !$oddEven) ? 'odd' : 'even') . '">
+                        <td>' . $this->oProduct->get('id') . '</td>
+                        <td>' . $this->oProduct->getMarketPlaceSku() . '</td>
+                        <td>' . $this->oProduct->getName() . '</td>
+                        <td>' . implode(', ', $aMissingValues) . '</td>
+                    </tr>
+                ';
+            } elseif(!empty($aMissingValues) && $i == 21) {
+                $sMessage .= '
+                    <tr class="' . (($oddEven = !$oddEven) ? 'odd' : 'even') . '">
+                        <td colspan="5" class="textcenter bold">&hellip;</td>
+                    </tr>
+                ';
+            }
+
+            ++$i;
+        }
+
+
+        if ($savePrepare && !empty($sMessage)) {
+            $sMessage = '
+                <table class="datagrid">
+                    <thead>
+                        <tr>
+                            <th>' . $this->__('ML_LABEL_PRODUCTS_ID') . '</th>
+                            <th>' . $this->__('ML_LABEL_ARTICLE_NUMBER') . '</th>
+                            <th>' . $this->__('ML_LABEL_PRODUCT_NAME') . '</th>
+                            <th>' . $this->__('ML_AMAZON_LABEL_MISSING_FIELDS') . '</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ' . $sMessage . '
+                    </tbody>
+                </table>
+            ';
+            MLMessage::gi()->addWarn($sMessage);
+        }
+
+
+        if ($savePrepare) {
+            $this->oPrepareList->set('applydata', '');
+        }
+
+        if($savePrepare && empty($sMessage)) {
+            $this->oPrepareList->set('verified', 'OK');
+        }
+
+        return $blReturn;
     }
 
     public function render() {
         $this->getFormWidget();
         return $this;
-    }
-
-    public function checkoutField(&$aField) {
-        $aField['autooptional'] = false; // from old tablestructure
-        if (!MLModul::gi()->idealoHaveDirectBuy()) {
-            $aField = array();
-        }
     }
 
     protected function shippingTimeField(&$aField) {
@@ -86,27 +152,4 @@ class ML_Idealo_Controller_Idealo_Prepare_Form extends ML_Form_Controller_Widget
         }  catch (Exception $oEx){}
 
     }
-
-    public function fulfillmentTypeField(&$aField) {
-        $aField['autooptional'] = false;
-        if (!MLModul::gi()->idealoHaveDirectBuy()) {
-            $aField = array();
-        }
-    }
-
-
-    public function disposalfeeField(&$aField) {
-        $aField['autooptional'] = false;
-        if (!MLModul::gi()->idealoHaveDirectBuy()) {
-            $aField = array();
-        }
-    }
-
-    public function twomanhandlingfeeField(&$aField) {
-        $aField['autooptional'] = false;
-        if (!MLModul::gi()->idealoHaveDirectBuy()) {
-            $aField = array();
-        }
-    }
-
 }

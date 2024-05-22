@@ -49,7 +49,7 @@ class ML_Amazon_Controller_Amazon_Listings_Deleted extends ML_Listings_Controlle
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public function initAction(){
@@ -116,7 +116,7 @@ class ML_Amazon_Controller_Amazon_Listings_Deleted extends ML_Listings_Controlle
             return '<td>&mdash</td>';
         }
 
-        $aItem = MLModul::gi()->amazonLookUp($item['ASIN']);
+        $aItem = MLModule::gi()->amazonLookUp($item['ASIN']);
         if(empty($aItem) || !isset($aItem[0]['URL']) || empty($aItem[0]['URL']) || strpos($aItem[0]['URL'], $aItem[0]['ASIN']) === false){
             $sUrl =  "http://www.amazon.de/gp/offer-listing/" ;
         }else{

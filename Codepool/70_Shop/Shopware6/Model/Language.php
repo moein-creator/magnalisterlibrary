@@ -17,9 +17,9 @@
  * -----------------------------------------------------------------------------
  */
 
+use Redgecko\Magnalister\Controller\MagnalisterController;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Redgecko\Magnalister\Controller\MagnalisterController;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 
 class ML_Shopware6_Model_Language extends ML_Shop_Model_Language_Abstract {
@@ -32,10 +32,17 @@ class ML_Shopware6_Model_Language extends ML_Shop_Model_Language_Abstract {
             $sLangId = MagnalisterController::getShopwareLanguageId();
             $LanguageCriteria = new Criteria();
             $Language = MagnalisterController::getShopwareMyContainer()->get('language.repository')->search($LanguageCriteria->addFilter(new EqualsFilter('id', $sLangId)), Context::createDefaultContext())->first();
-            $localeCriteria = new Criteria();
-            $locale = MagnalisterController::getShopwareMyContainer()->get('locale.repository')->search($localeCriteria->addFilter(new EqualsFilter('locale.id', $Language->getLocaleId())), Context::createDefaultContext())->first();
-            if ($locale !== null) {
-                $IsoCode = substr($locale->getCode(), 0, strpos($locale->getCode(), "-"));
+            if (!is_object($Language)) {
+                $Language = MagnalisterController::getShopwareMyContainer()->get('language.repository')->search(new Criteria(), Context::createDefaultContext())->first();
+            }
+            if (is_object($Language)) {
+                $localeCriteria = new Criteria();
+                $locale = MagnalisterController::getShopwareMyContainer()->get('locale.repository')->search($localeCriteria->addFilter(new EqualsFilter('locale.id', $Language->getLocaleId())), Context::createDefaultContext())->first();
+                if ($locale !== null) {
+                    $IsoCode = substr($locale->getCode(), 0, strpos($locale->getCode(), "-"));
+                }
+            } else {
+                $IsoCode = 'en';
             }
         }
         return $IsoCode;

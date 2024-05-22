@@ -37,8 +37,9 @@ class ML_Magento2_Model_Http extends ML_Shop_Model_Http_Abstract {
      */
     public function getResourceUrl($sFile = '', $blAbsolute = true) {
 
-        $fileSystem = MLMagento2Alias::ObjectManagerProvider('\Magento\Framework\Filesystem');
-        $mediaPath = $fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)->getAbsolutePath();
+        $fileSystem = MLMagento2Alias::ObjectManagerProvider('\Magento\Framework\Filesystem\DirectoryList');
+        $mediaPath = $fileSystem->getPath(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
+
 
         $store = MLMagento2Alias::ObjectManagerProvider('Magento\Store\Model\StoreManagerInterface');
 
@@ -197,7 +198,7 @@ class ML_Magento2_Model_Http extends ML_Shop_Model_Http_Abstract {
      * @return string
      */
     public function getFrontendDoUrl($aParams = array()) {
-        $sConfig = $this->getConfigFrontCornURL($aParams);
+        $sConfig = $this->getConfigFrontCronURL($aParams);
         if ($sConfig !== '') {
             return $sConfig;
         }
@@ -207,11 +208,10 @@ class ML_Magento2_Model_Http extends ML_Shop_Model_Http_Abstract {
         return $store->getStore()->getBaseUrl().'magnalister/'.(($sParent == '') ? '' : '?'.$sParent);;
     }
 
-
     /**
      * @return string
      */
-    public function getConfigFrontCornURL($aParams) {
+    public function getConfigFrontCronURL($aParams) {
         $sParent = parent::getUrl($aParams);
         $aSubmittedValues = MLRequest::gi()->data();
         if (isset($aSubmittedValues['field']['general.cronfronturl'])) {
@@ -226,14 +226,15 @@ class ML_Magento2_Model_Http extends ML_Shop_Model_Http_Abstract {
             return '';
         }
     }
+
     /**
      * return directory or path (file system) of specific shop images
      * @return string
      */
     public function getShopImagePath() {
-        $fileSystem = MLMagento2Alias::ObjectManagerProvider('\Magento\Framework\Filesystem');
-        $mediaPath = $fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)->getAbsolutePath();
-        return $mediaPath;
+        $fileSystem = MLMagento2Alias::ObjectManagerProvider('\Magento\Framework\Filesystem\DirectoryList');
+        $mediaPath = $fileSystem->getPath(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
+        return $mediaPath . '/';
     }
 
     /**

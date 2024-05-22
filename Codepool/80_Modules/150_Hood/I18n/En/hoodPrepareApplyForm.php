@@ -28,10 +28,10 @@ MLI18n::gi()->{'hood_prepare_apply_form__legend__primarycategory_attributes'} = 
 MLI18n::gi()->{'hood_prepare_apply_form__legend__secondarycategory_attributes'} = 'Attributes for Secondary Category';
 MLI18n::gi()->{'hood_prepare_apply_form__legend__shipping'} = 'Shipping';
 MLI18n::gi()->{'hood_prepare_apply_form__field__title__label'} = 'Product Name';
-MLI18n::gi()->{'hood_prepare_apply_form__field__title__hint'} = 'Title, max. 80 characters.<br />Placeholders allowed:<br />#BASEPRICE#<br />Please note the <span style="color:red;">Info Text in the Configuration</span> (on Template Product name).';
+MLI18n::gi()->{'hood_prepare_apply_form__field__title__hint'} = 'Title, max. 85 characters.<br />Placeholders allowed:<br />#BASEPRICE#<br />Please note the <span style="color:#e31a1c;">Info Text in the Configuration</span> (on Template Product name).';
 MLI18n::gi()->{'hood_prepare_apply_form__field__title__optional__checkbox__labelNegativ'} = 'Always use product title from web-shop';
 MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__label'} = 'Subtitle';
-MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__hint'} = 'Subtitle, max. 55 characters <span style="color:red">requires payment</span> ';
+MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__hint'} = 'Subtitle, max. 55 characters <span style="color:#e31a1c">requires payment</span> ';
 MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__optional__select__false'} = 'Don\'t transfer to Hood.de';
 MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__optional__select__true'} = 'Transfer to Hood.de';
 MLI18n::gi()->{'hood_prepare_apply_form__field__manufacturer__label'}='Manufacturer';
@@ -69,12 +69,12 @@ MLI18n::gi()->{'hood_prepare_apply_form__field__paymentmethods__help'} = 'Preset
 MLI18n::gi()->{'hood_prepare_apply_form__field__conditiontype__label'} = 'Item Condition';
 MLI18n::gi()->{'hood_prepare_apply_form__field__conditiontype__hint'} = 'Condition of item (will be displayed in most Hood.de categories)';
 MLI18n::gi()->{'hood_prepare_apply_form__field__privatelisting__label'} = 'Private Listing';
-MLI18n::gi()->{'hood_prepare_apply_form__field__privatelisting__hint'} = 'When activated, the buyer/bidder list cannot be seen by third parties <span style="color:red">requires payment</span> ';
+MLI18n::gi()->{'hood_prepare_apply_form__field__privatelisting__hint'} = 'When activated, the buyer/bidder list cannot be seen by third parties <span style="color:#e31a1c">requires payment</span> ';
 MLI18n::gi()->{'hood_prepare_apply_form__field__privatelisting__valuehint'} = 'Activate Private Listing';
 MLI18n::gi()->{'hood_prepare_apply_form__field__hitcounter__label'} = 'Enable Hit Counter';
 MLI18n::gi()->{'hood_prepare_apply_form__field__hitcounter__hint'} = '';
 MLI18n::gi()->{'hood_prepare_apply_form__field__starttime__label'} = 'Start Time<br />(If allocated)';
-MLI18n::gi()->{'hood_prepare_apply_form__field__starttime__hint'} = 'An item on Hood.de is normally active immediately after uploading. Fill out this field to only make it available after the set start time (<span style="color:red">requires payment</span>).';
+MLI18n::gi()->{'hood_prepare_apply_form__field__starttime__hint'} = 'An item on Hood.de is normally active immediately after uploading. Fill out this field to only make it available after the set start time (<span style="color:#e31a1c">requires payment</span>).';
 MLI18n::gi()->{'hood_prepare_apply_form__field__boldtitle__label'} = 'Bold font in article lists';
 MLI18n::gi()->{'hood_prepare_apply_form__field__backgroundcolor__label'} = 'Background color in article lists';
 MLI18n::gi()->{'hood_prepare_apply_form__field__gallery__label'} = 'Gallery Premium in article lists';
@@ -88,7 +88,7 @@ MLI18n::gi()->{'hood_prepare_apply_form__field__noidentifierflag__label'} = 'Spe
 MLI18n::gi()->{'hood_prepare_apply_form__field__fsk__label'} = 'FSK';
 MLI18n::gi()->{'hood_prepare_apply_form__field__usk__label'} = 'USK';
 MLI18n::gi()->{'hood_prepare_apply_form__field__features__label'} = 'Additional options';
-MLI18n::gi()->{'hood_prepare_apply_form__field__features__hint'} = '<span style="color:red">Features are chargeable on Hood.de</span>';
+MLI18n::gi()->{'hood_prepare_apply_form__field__features__hint'} = '<span style="color:#e31a1c">Features are chargeable on Hood.de</span>';
 MLI18n::gi()->{'hood_prepare_apply_form__field__primarycategory__label'} = 'Primary Category';
 MLI18n::gi()->{'hood_prepare_apply_form__field__primarycategory__hint'} = 'Select';
 MLI18n::gi()->{'hood_prepare_apply_form__field__secondarycategory__label'} = 'Secondary Category';

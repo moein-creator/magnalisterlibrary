@@ -23,6 +23,6 @@ class ML_Check24_Controller_Check24_Listings extends ML_Tabs_Controller_Widget_T
         return MLI18n::gi()->get('ML_GENERIC_LISTINGS');
     }
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

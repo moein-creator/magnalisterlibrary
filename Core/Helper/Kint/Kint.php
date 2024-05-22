@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The MIT License (MIT).
  *
@@ -347,7 +348,7 @@ class Kint_Object {
     public $hints = array();
 
     public function __construct() {
-        
+
     }
 
     public function addRepresentation(Kint_Object_Representation $rep, $pos = null) {
@@ -403,10 +404,10 @@ class Kint_Object {
         } if ($this->static) {
             $out .= ' static';
         } if (strlen($out)) {
-                return ltrim($out);
-            }
+            return ltrim($out);
         }
-         
+    }
+
     public function getAccess() {
         switch ($this->access) {
             case self::ACCESS_PRIVATE: return 'private';
@@ -557,7 +558,8 @@ class Kint_Parser {
             $array->hints[] = 'recursion';
             $this->applyPlugins($var, $array, self::TRIGGER_RECURSION);
             return $array;
-        } $rep = new Kint_Object_Representation('Contents');
+        }
+        $rep = new Kint_Object_Representation('Contents');
         $rep->implicit_label = true;
         $array->addRepresentation($rep);
         if ($array->size) {
@@ -1124,7 +1126,7 @@ class Kint_Object_Closure extends Kint_Object_Instance {
     }
 
     public function getSize() {
-        
+
     }
 
     public function getParams() {
@@ -1281,6 +1283,7 @@ class Kint_Object_Method extends Kint_Object {
     public $hints = array('callable', 'method');
     public $showparams = true;
     private $paramcache = null;
+    private $docstring;
 
     public function __construct($method) {
         if (!($method instanceof ReflectionMethod) && !($method instanceof ReflectionFunction)) {
@@ -1296,7 +1299,11 @@ class Kint_Object_Method extends Kint_Object {
         } if (KINT_PHP70) {
             $this->returntype = $method->getReturnType();
             if ($this->returntype) {
-                $this->returntype = (string) $this->returntype;
+                if (method_exists($this->returntype, 'getName')) {
+                    $this->returntype = $this->returntype->getName();
+                } else {
+                    $this->returntype = (string)$this->returntype;
+                }
             }
         } if (!$this->returntype && $this->docstring) {
             if (preg_match('/@return\s+(.*)\r?\n/m', $this->docstring, $matches)) {
@@ -1442,7 +1449,11 @@ class Kint_Object_Parameter extends Kint_Object {
     public function __construct(ReflectionParameter $param) {
         if (method_exists('ReflectionParameter', 'getType')) {
             if ($type = $param->getType()) {
-                $this->type_hint = (string) $type;
+                if (method_exists($type, 'getName')) {
+                    $this->type_hint = $type->getName();
+                } else {
+                    $this->type_hint = (string)$type;
+                }
             }
         } else {
             if ($param->isArray()) {
@@ -1658,10 +1669,10 @@ class Kint_Object_Representation_Color extends Kint_Object_Representation {
             case self::COLOR_NAME: $hex = sprintf('%02x%02x%02x', $this->r, $this->g, $this->b);
                 return array_search($hex, Kint_Object_Color::$color_map);
             case self::COLOR_HEX_3: if ($this->r % 0x11 === 0 && $this->g % 0x11 === 0 && $this->b % 0x11 === 0) {
-                    return sprintf('#%1X%1X%1X', round($this->r / 0x11), round($this->g / 0x11), round($this->b / 0x11));
-                } else {
-                    return false;
-                } case self::COLOR_HEX_6: return sprintf('#%02X%02X%02X', $this->r, $this->g, $this->b);
+                return sprintf('#%1X%1X%1X', round($this->r / 0x11), round($this->g / 0x11), round($this->b / 0x11));
+            } else {
+                return false;
+            } case self::COLOR_HEX_6: return sprintf('#%02X%02X%02X', $this->r, $this->g, $this->b);
             case self::COLOR_RGB: return sprintf('rgb(%d, %d, %d)', $this->r, $this->g, $this->b);
             case self::COLOR_RGBA: return sprintf('rgba(%d, %d, %d, %s)', $this->r, $this->g, $this->b, round($this->a, 4));
             case self::COLOR_HSL: $val = Kint_Object_Color::rgbToHsl($this->r, $this->g, $this->b);
@@ -1669,10 +1680,10 @@ class Kint_Object_Representation_Color extends Kint_Object_Representation {
             case self::COLOR_HSLA: $val = Kint_Object_Color::rgbToHsl($this->r, $this->g, $this->b);
                 return sprintf('hsla(%d, %d%%, %d%%, %s)', $val[0], $val[1], $val[2], round($this->a, 4));
             case self::COLOR_HEX_4: if ($this->r % 0x11 === 0 && $this->g % 0x11 === 0 && $this->b % 0x11 === 0 && ($this->a * 255) % 0x11 === 0) {
-                    return sprintf('#%1X%1X%1X%1X', round($this->r / 0x11), round($this->g / 0x11), round($this->b / 0x11), round($this->a * 0xF));
-                } else {
-                    return false;
-                } case self::COLOR_HEX_8: return sprintf('#%02X%02X%02X%02X', $this->r, $this->g, $this->b, round($this->a * 0xFF));
+                return sprintf('#%1X%1X%1X%1X', round($this->r / 0x11), round($this->g / 0x11), round($this->b / 0x11), round($this->a * 0xF));
+            } else {
+                return false;
+            } case self::COLOR_HEX_8: return sprintf('#%02X%02X%02X%02X', $this->r, $this->g, $this->b, round($this->a * 0xFF));
             case null: return $this->contents;
         } return false;
     }
@@ -3318,7 +3329,7 @@ class Kint_Renderer_Rich extends Kint_Renderer {
     public static $tab_renderers = array('binary' => 'Kint_Renderer_Rich_Binary', 'color' => 'Kint_Renderer_Rich_ColorDetails', 'docstring' => 'Kint_Renderer_Rich_Docstring', 'microtime' => 'Kint_Renderer_Rich_Microtime', 'source' => 'Kint_Renderer_Rich_Source', 'table' => 'Kint_Renderer_Rich_Table', 'timestamp' => 'Kint_Renderer_Rich_Timestamp',);
     public static $pre_render_sources = array('script' => array(array('Kint_Renderer_Rich', 'renderJs'), array('Kint_Renderer_Rich_Microtime', 'renderJs'),), 'style' => array(array('Kint_Renderer_Rich', 'renderCss'),), 'raw' => array(),);
     public static $access_paths = true;
-    public static $strlen_max = 80;
+    public static $strlen_max = 150;
     public static $theme = 'original.css';
     public static $escape_types = false;
     protected static $been_run = false;
@@ -3408,13 +3419,13 @@ class Kint_Renderer_Rich extends Kint_Renderer {
         $tabs = array();
         foreach ($o->getRepresentations() as $rep) {
             $result = $this->renderTab($o, $rep);
-                if (is_null($result)) {
-                    $result = '';
-                }
-                if (strlen($result)) {
-                    $contents[] = $result;
-                    $tabs[] = $rep;
-                }
+            if (is_null($result)) {
+                $result = '';
+            }
+            if (strlen($result)) {
+                $contents[] = $result;
+                $tabs[] = $rep;
+            }
         } if (empty($tabs)) {
             return '';
         } $output = '<dd>';
@@ -3429,8 +3440,8 @@ class Kint_Renderer_Rich extends Kint_Renderer {
                     $output .= '<li>';
                 } $output .= $this->escape($tab->getLabel()) . '</li>';
             } $output .= '</ul><ul>';
-            foreach ($contents as $tab) {
-                $output .= '<li>' . $tab . '</li>';
+            foreach ($contents as $i => $tab) {
+                $output .= '<li '.(($i !== 0)? 'style="display:none"':'').'>' . $tab . '</li>';
             } $output .= '</ul>';
         } return $output . '</dd>';
     }
@@ -4131,7 +4142,7 @@ class Kint_Renderer_Rich_Table extends Kint_Renderer_Rich_Plugin {
                     case 'boolean': $out .= $field->value->contents ? '<var>' . $ref . 'true</var>' : '<var>' . $ref . 'false</var>';
                         break;
                     case 'integer': case 'double': $out .= (string) $field->value->contents;
-                        break;
+                    break;
                     case 'null': $out .= '<var>' . $ref . 'null</var>';
                         break;
                     case 'string': $val = $field->value->contents;

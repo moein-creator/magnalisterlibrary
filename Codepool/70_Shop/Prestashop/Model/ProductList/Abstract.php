@@ -58,11 +58,10 @@ abstract class ML_Prestashop_Model_ProductList_Abstract extends ML_Productlist_M
     }
 
     public function getFilters() {
-        //exit(print_m($this->oFilter->getOutput()));
         return $this->oFilter->getOutput();
     }
 
-    public function getStatistic() {//exit(print_m($this->oFilter->getStatistic()));
+    public function getStatistic() {
         return $this->oFilter->getStatistic();
     }
 

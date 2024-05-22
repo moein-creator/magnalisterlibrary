@@ -17,10 +17,12 @@
  */
 
 MLI18n::gi()->add('formfields', array(
-    'config_shopware5_invoice_documenttype' => array(
+    'config_shopware5_invoice_documenttype'    => array(
         'label' => 'Création d\'un document PDF Shopware Facture "Nom technique"',
     ),
     'config_shopware5_creditnote_documenttype' => array(
         'label' => 'Création d\'un justificatif Shopware PDF Note de crédit "Nom technique"',
     ),
 ));
+MLI18n::gi()->shop_order_attribute_name = 'Champs supplémentaires de Shopware';
+MLI18n::gi()->shop_order_attribute_creation_instruction = 'Vous pouvez créer des champs de texte libre dans votre backend Shopware sous "Configuration" -> "Gestion des champs de texte libre" (tableau : commande) et les remplir sous "Clients" -> "Commandes". Pour ce faire, ouvrez la commande correspondante et faites défiler vers le bas jusqu’à "Champs supplémentaires".';

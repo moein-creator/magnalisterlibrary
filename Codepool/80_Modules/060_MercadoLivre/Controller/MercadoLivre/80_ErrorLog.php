@@ -27,6 +27,6 @@ class ML_MercadoLivre_Controller_MercadoLivre_ErrorLog extends ML_ErrorLog_Contr
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -20,8 +20,8 @@ MLI18n::gi()->add('formgroups', array(
     'orderimport' => 'Bestellimport Direktkauf'
 ));
 MLI18n::gi()->add('formgroups_idealo', array(
+    'tabident' => 'Tab',
     'account' => 'idealo Account',
-    'directbuycredential' => 'idealo Direkt-Kauf',
     'prepare' => 'Artikelvorbereitung',
     'shipping' => array(
         'title' => 'Versand',
@@ -31,5 +31,4 @@ MLI18n::gi()->add('formgroups_idealo', array(
     'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu idealo',
     'prepare_details' => 'Angebotseinstellungen',
     'prepare_general' => 'Allgemeine Einstellungen',
-    'directbuy' => 'Direktkauf',
 ));

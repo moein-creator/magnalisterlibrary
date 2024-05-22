@@ -11,17 +11,18 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
     <table class="attributesTable">
         <?php foreach ($aField['subfields'] as $aSubField){ ?>
             <?php $aSubField['type'] = 'select'; ?>
             <tr>
-                <td style="width:80%;border:none;"><?php $this->includeType($aSubField); ?></td>
+                <td style="width:95%;border:none; padding-left: 0px;padding-right: 0px;"><?php $this->includeType($aSubField); ?></td>
                 <td style="border:none;">
                     <button class="mlbtn ml-js-category-btn" type="button" data-ml-catselector="#modal-<?php echo $aSubField['id']; ?>">
                         <?php echo MLI18n::gi()->get('form_text_choose'); ?>
@@ -37,7 +38,8 @@ class_exists('ML', false) or die();
     ?>
     <div class="ml-modal" id="modal-<?php echo $aSubField['id']; ?>" title="<?php echo $aSubField['i18n']['label']; ?>">
             <span class="ml-js-ui-dialog-titlebar-additional">
-                <a class="ui-icon ui-corner-all ui-state-focus global-ajax ui-icon-arrowrefresh-wrap ml-js-noBlockUi" href="<?php echo MLHttp::gi()->getUrl(array('mp' => MLModul::gi()->getMarketPlaceId(), 'controller' => 'do_categories', 'method' => 'getChildCategories', 'parentid' => 0, 'type' => $sType)); ?>">
+                <a class="ui-icon ui-corner-all ui-state-focus global-ajax ui-icon-arrowrefresh-wrap ml-js-noBlockUi"
+                   href="<?php echo MLHttp::gi()->getUrl(array('mp' => MLModule::gi()->getMarketPlaceId(), 'controller' => 'do_categories', 'method' => 'getChildCategories', 'parentid' => 0, 'type' => $sType)); ?>">
                     <span class="ui-icon ui-icon-arrowrefresh-1-n">reload</span>
                 </a>
             </span>
@@ -67,19 +69,26 @@ try {
                     var eSelect = element.closest("tr").find("select");
                     eModal.jDialog({
                         width : '75%',
-                        buttons: {
-                            "<?php echo MLI18n::gi()->get('ML_BUTTON_LABEL_ABORT'); ?>" : function() {
-                                jqml( this ).dialog( "close" );
-                            },
-                            "<?php echo MLI18n::gi()->get('ML_BUTTON_LABEL_OK'); ?>" : function() {
-                                var eRadio = eModal.find("input[type=radio]:checked");
-                                if (eSelect.find("option[value="+escapeSelector(eRadio.val())+"]").length == 0) {
-                                    eSelect.append('<option value="'+eRadio.val()+'">'+eRadio.attr("title")+'</option>');
+                        buttons: [
+                            {
+                                "text": "<?php echo MLI18n::gi()->get('ML_BUTTON_LABEL_ABORT'); ?>",
+                                "class": "mlbtnreset",
+                                "click": function () {
+                                    jqml(this).dialog("close");
+                                },
+                            }, {
+                                "text": "<?php echo MLI18n::gi()->get('ML_BUTTON_LABEL_OK'); ?>",
+                                "class": "mlbtnok",
+                                "click": function() {
+                                    var eRadio = eModal.find("input[type=radio]:checked");
+                                    if (eSelect.find("option[value="+escapeSelector(eRadio.val())+"]").length == 0) {
+                                        eSelect.append('<option value="'+eRadio.val()+'">'+eRadio.attr("title")+'</option>');
+                                    }
+                                    eSelect.val(eRadio.val()).change();
+                                    jqml( this ).dialog( "close" );
                                 }
-                                eSelect.val(eRadio.val()).change();
-                                jqml( this ).dialog( "close" );
                             }
-                        }
+                        ]
                     });
                     eModal.parents('.ui-dialog').find('.ui-dialog-titlebar').append(eModal.find('.ml-js-ui-dialog-titlebar-additional').addClass('ml-ui-dialog-titlebar-additional'));
                 });

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -44,7 +44,7 @@ class ML_Shopware6Ebay_Model_Service_UpdateOrders extends ML_Ebay_Model_Service_
                 $oOrder->setUpdatableOrderStatus(false);
             }
 
-            return empty($aMessage) ? 'cannot update order and payment status' : implode($aMessage, ', ');
+            return empty($aMessage) ? 'cannot update order and payment status' : implode(', ', $aMessage);
         } else {
             throw new Exception("Order doesn't exist");
         }

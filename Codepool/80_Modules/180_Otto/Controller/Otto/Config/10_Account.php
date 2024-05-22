@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -28,4 +28,18 @@ class ML_Otto_Controller_Otto_Config_Account extends ML_Form_Controller_Widget_F
         return self::calcConfigTabActive(__class__, true);
     }
 
+    public function renderAjax() {
+        if ($this->getRequest('what') === 'token') {  
+            try {
+                $result = MagnaConnector::gi()->submitRequest(array(
+                    'ACTION' => 'GetOauthTokenCreationLink'
+                )); 
+                $iframeURL = $result['DATA']['TokenLink'];
+            } catch (MagnaException $e) {
+                $iframeURL = 'error';
+            }
+            echo $iframeURL;
+            MagnalisterFunctions::stop();
+        }
+    }
 }

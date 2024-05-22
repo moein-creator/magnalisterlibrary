@@ -38,15 +38,24 @@ MLFilesystem::gi()->loadClass('Productlist_Helper_Model_ProductList_List_Abstrac
      protected $aProduct = null ;
 
      //protected $aAttributes = null ;
+    /**
+     * @var array|mixed|string[]
+     */
+    protected $aAttributes;
 
-     public function __construct() {
+    /**
+     * @var array
+     */
+    protected $aMixedData;
+
+    public function __construct() {
          $this->oI18n = MLI18n::gi() ;
          $this->aAttributes = MLFormHelper::getShopInstance()->getManufacturerPartNumber() ;
      }
 
      /**
       * clear all property value of this class and refresh the class
-      * @return \ML_Prestashop_Helper_Shop_ProductList_List
+      * @return ML_Prestashop_Helper_Model_ProductList_List
       */
      public function clear() {
          $oRef = new ReflectionClass($this) ;
@@ -63,15 +72,25 @@ MLFilesystem::gi()->loadClass('Productlist_Helper_Model_ProductList_List_Abstrac
      }
 
      public function getLoadedList() {
-         if ( count($this->aList) <= 0 ) {
-             $aIDs = array () ;
-             $aPrducts = $this->oSelect->getResult() ;
-             foreach ( $aPrducts as $aProduct ) {
-                 $aIDs[] = $aProduct['id_product'] ;
+         if (count($this->aList) <= 0) {
+             $aIDs = array();
+             $oConfig = MLDatabase::factory('config')->set('mpid', '0')->set('mkey', 'blUseSubQueryToImprovePerformance');
+             $startTime = time();
+             $aProducts = $this->oSelect->getResult();
+             if ((time() - $startTime) > 30) {//Some databases work faster with sub queries, blUseSubQueryForPerformance could be set for customer as individual programming
+                 if ($oConfig->get('value') === '1') {
+                     $oConfig->set('value', '0');
+                 } else {
+                     $oConfig->set('value', '1');
+                 }
+                 $oConfig->save();
              }
-             return $aIDs ;
+             foreach ($aProducts as $aProduct) {
+                 $aIDs[] = $aProduct['id_product'];
+             }
+             return $aIDs;
          } else {
-             return array_keys($this->aList) ;
+             return array_keys($this->aList);
          }
      }
 

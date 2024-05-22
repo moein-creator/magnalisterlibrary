@@ -139,7 +139,7 @@ MLSetting::gi()->cdiscount_prepare_variations = array(
     'action' => array(
         'legend' => array(
             'classes' => array(
-                'mlhidden',
+                /*'mlhidden',*/
             ),
         ),
         'row' => array(

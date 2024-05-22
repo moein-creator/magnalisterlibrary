@@ -15,7 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <table class="attributesTable">
     <?php foreach ($aField['subfields'] as $aSubField) {
@@ -40,7 +41,8 @@ class_exists('ML', false) or die();
         ob_start(); ?>
         <div class="ml-modal" id="modal-<?php echo $aSubField['id']; ?>" title="<?php echo $aSubField['i18n']['label']; ?>">
             <span class="ml-js-ui-dialog-titlebar-additional">
-                <a class="ui-icon ui-corner-all ui-state-focus global-ajax ui-icon-arrowrefresh-wrap ml-js-noBlockUi" href="<?php echo MLHttp::gi()->getUrl(array('mp' => MLModul::gi()->getMarketPlaceId(), 'controller' => 'do_categories', 'method' => 'getChildCategories', 'parentid' => 0, 'type' => $sType)); ?>">
+                <a class="ui-icon ui-corner-all ui-state-focus global-ajax ui-icon-arrowrefresh-wrap ml-js-noBlockUi"
+                   href="<?php echo MLHttp::gi()->getUrl(array('mp' => MLModule::gi()->getMarketPlaceId(), 'controller' => 'do_categories', 'method' => 'getChildCategories', 'parentid' => 0, 'type' => $sType)); ?>">
                     <span class="ui-icon ui-icon-arrowrefresh-1-n">reload</span>
                 </a>
             </span>

@@ -32,18 +32,18 @@ MLI18n::gi()->add('configuration', array(
             'help' => 'Die PassPhrase erhalten Sie nach der Registrierung auf www.magnalister.com.',
         ),
         'general.keytype' => array(
-            'label' => 'Bitte w&auml;hlen Sie',
-            'help' => 'Je nach Auswahl wird die Artikelnummer vom Shop als SKU auf dem Marketplace verwendet, oder die Product ID
-                                              des Shops als Marketplace-SKU verwendet, um das Produkt bei Lagersynchronisation und Bestellimporten zuordnen zu k&ouml;nnen.<br/><br/>
-                                              Diese Funktion wirkt sich ma&szlig;geblich bei der Weiterverarbeitung
-                                              &uuml;ber eine Warenwirtschaft, sowie bei Abgleich der Shop- und Marketplace-Inventare aus.<br /><br />
+            'label'  => 'Bitte w&auml;hlen Sie',
+            'help'   => 'Je nach Auswahl wird die Artikelnummer vom Shop als SKU auf dem Marktplatz verwendet, oder die Product ID
+                                              des Shops als Marktplatz-SKU verwendet, um das Produkt bei Lagersynchronisation und Bestellimporten zuordnen zu k&ouml;nnen.<br/><br/>
+                                              Diese Funktion wirkt sich ma&szlig;geblich bei der Weiterverarbeitung 
+                                              &uuml;ber eine Warenwirtschaft, sowie bei Abgleich der Shop- und Marktplatz-Inventare aus.<br /><br />
                                               <strong>Vorsicht!</strong> Die Synchronisation der Lagermengen und -Preise h&auml;ngt von dieser Einstellung ab. Wenn Sie bereits Artikel hochgeladen haben, sollten Sie diese Einstellung <strong>nicht mehr &auml;ndern</strong>, sonst k&ouml;nnen die "alten" Artikel nicht mehr synchronisiert werden.',
             'values' => array(
-                'pID' => 'Product ID (Shop) = SKU (Marketplace)<br>',
-                'artNr' => 'Artikelnummer (Shop) = SKU (Marketplace)'
+                'pID'   => 'Product ID (Shop) = SKU (Marktplatz)<br>',
+                'artNr' => 'Artikelnummer (Shop) = SKU (Marktplatz)'
             ),
-            'alert' => array(
-                'pID' => '{#i18n:sChangeKeyAlert#}',
+            'alert'  => array(
+                'pID'   => '{#i18n:sChangeKeyAlert#}',
                 'artNr' => '{#i18n:sChangeKeyAlert#}'
             ),
         ),
@@ -63,12 +63,14 @@ MLI18n::gi()->add('configuration', array(
                 '9' => '10 Monate',
                 '10' => '11 Monate',
                 '11' => '12 Monate',
+                '12' => '13 Monate',
+                '13' => '14 Monate',
             ),
         ),
         'general.order.information' => array(
             'label' => 'Bestellinformation',
-            'valuehint' => 'Bestellnummer und Marktplatzname im Kundenkommentar speichern',
-            'help' => 'Wenn Sie die Funktion aktivieren, wird die Marktplatz-Bestellnummer und der Marktplatzname nach dem Bestellimport im Kundenkommentar gespeichert.<br />
+            'valuehint' => 'Bestellnummer, Marktplatzname und Bestellnachricht des Käufers (falls vorhanden) im Kundenkommentar speichern',
+            'help' => 'Wenn Sie die Funktion aktivieren, wird die Marktplatz-Bestellnummer, der Marktplatzname und, soweit übermittelt, die Nachricht des Käufers, nach dem Bestellimport im Kundenkommentar gespeichert.<br />
                 Der Kundenkommentar kann in vielen Systemen auf der Rechnung &uuml;bernommen werden, so dass der Endkunde somit automatisch Information erhält, woher die Bestellung urspr&uuml;nglich stammt.<br />
                 Auch k&ouml;nnen Sie damit Erweiterungen f&uuml;r weitere statistische Umsatz-Auswertungen programmieren lassen.<br />
                 <b>Wichtig:</b> Einige Warenwirtschaften importieren keine Bestellungen, bei denen der Kundenkommentar gesetzt ist. Wenden Sie sich für weitere Fragen dazu bitte direkt an Ihren WaWi-Anbieter.',
@@ -76,7 +78,7 @@ MLI18n::gi()->add('configuration', array(
         'general.editor'                                  => array(
             'label' => 'Editor',
             'help' => 'Editor f&uuml;r Artikelbeschreibungen, Templates und E-Mails an Käufer.<br /><br />
-                                <strong>TinyMCE Editor:</strong><br />Verwenden Sie einen komfortablen Editor, der fertig formatiertes HTML anzeigt und z.B. Bild-Pfade in der
+                                <strong>TinyMCE Editor:</strong><br />Verwenden Sie einen komfortablen Editor, der fertig formatiertes HTML anzeigt und z.B. Bild-Pfade in der 
                                 Artikelbeschreibung automatisch korrigiert.<br /><br />
                                 <strong>Einfaches Textfeld, lokale Links erweitern:</strong><br />Verwenden Sie ein einfaches Textfeld. Sinnvoll in F&auml;llen wenn der TinyMCE Editor ungewollte &Auml;nderungen der eingegebenen Templates bewirkt
                                 (wie z.B. in dem eBay-Produkt-Template).<br />
@@ -89,14 +91,6 @@ MLI18n::gi()->add('configuration', array(
                 'none' => 'Einfaches Textfeld, lokale Links erweitern<br>',
                 'none_none' => 'Einfaches Textfeld, Daten direkt &uuml;bernehmen'
             ),
-        ),
-        'general.trigger.checkoutprocess.inventoryupdate' => array(
-            'label' => 'Synchro-Trigger<br /> bei Bestellungen',
-            'help'  => 'Soll bei Bestellungen im Shop der Lagerbestand auf den angeschlossenen Marktpl&auml;tzen direkt abgeglichen werden?<br /><br />
-                                                    <b>Vorteil</b>: So vermeiden Sie &Uuml;berverk&auml;ufe<br />
-                                                    <b>Nachteil</b>: Der Abgleich kann einige Sekunden dauern, was den Bestellvorgang verz&ouml;gert.<br />',
-
-            'valuehint' => 'Bei Bestellungen im Shop, den Lagerbestand sofort zu den Marktpl&auml;tzen synchronisieren',
         ),
         'general.cronfronturl'                            => array(
             'label' => 'Base CRON Url',

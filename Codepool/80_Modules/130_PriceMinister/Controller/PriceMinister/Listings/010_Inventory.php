@@ -29,7 +29,7 @@ class ML_PriceMinister_Controller_PriceMinister_Listings_Inventory extends ML_Li
 
     public static function getTabActive()
     {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public static function getTabDefault()
@@ -135,8 +135,8 @@ class ML_PriceMinister_Controller_PriceMinister_Listings_Inventory extends ML_Li
         if (empty($item['ProductId'])) {
             return '<td>&mdash;</td>';
         }
-
-        return '<td><a href="'.$item['ProductUrl'].'" target="_blank">'.$item['ProductId'].'</a></td>';
+        $addStyle = empty($item['ShopProductTitle']) ? 'style="color:#fe1109;"' : '';
+        return '<td><a '. $addStyle .' href="'.$item['ProductUrl'].'" target="_blank">'.$item['ProductId'].'</a></td>';
     }
 
     protected function getItemStartTime($item)
@@ -291,7 +291,7 @@ class ML_PriceMinister_Controller_PriceMinister_Listings_Inventory extends ML_Li
                 MagnaConnector::gi()->submitRequest(array(
                     'ACTION' => 'ImportInventory'
                 ));
-                MLModul::gi()->setConfig('inventory.import', time());
+                MLModule::gi()->setConfig('inventory.import', time());
             } catch (MagnaException $e){
             }
         }

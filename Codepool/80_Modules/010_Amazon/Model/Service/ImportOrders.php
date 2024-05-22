@@ -36,7 +36,7 @@ class ML_Amazon_Model_Service_ImportOrders extends ML_Modul_Model_Service_Import
      */
     protected function normalizeOrder($aOrder) {
         // check for "blacklisted-" prefix in email address
-        $sBlacklistEmails = MLModul::gi()->getConfig('orderimport.amazoncommunicationrules.blacklisting');
+        $sBlacklistEmails = MLModule::gi()->getConfig('orderimport.amazoncommunicationrules.blacklisting');
         if ($sBlacklistEmails === '0') { // in case of emails should not be blacklisted, remove prefix (0 = do not blacklist, 1 = blacklist mail)
             if (array_key_exists('AddressSets', $aOrder)) {
                 foreach ($aOrder['AddressSets'] as &$addressSet) {
@@ -54,13 +54,13 @@ class ML_Amazon_Model_Service_ImportOrders extends ML_Modul_Model_Service_Import
             foreach ($aOrder['Totals'] as &$aTotal) {
                 if (array_key_exists('Type', $aTotal)) {
                     if ($aTotal['Type'] == 'AmazonDiscount') {
-                        $sProductDiscountSKU = MLModul::gi()->getConfig('orderimport.amazonpromotionsdiscount.products_sku');
+                        $sProductDiscountSKU = MLModule::gi()->getConfig('orderimport.amazonpromotionsdiscount.products_sku');
                         if ($sProductDiscountSKU !== null) {
                             $aTotal['SKU'] = $sProductDiscountSKU;
                         }
                     }
                     if ($aTotal['Type'] == 'AmazonShippingDiscount') {
-                        $sShippingDiscountSKU = MLModul::gi()->getConfig('orderimport.amazonpromotionsdiscount.shipping_sku');
+                        $sShippingDiscountSKU = MLModule::gi()->getConfig('orderimport.amazonpromotionsdiscount.shipping_sku');
                         if ($sShippingDiscountSKU !== null) {
                             $aTotal['SKU'] = $sShippingDiscountSKU;
                         }
@@ -81,7 +81,7 @@ class ML_Amazon_Model_Service_ImportOrders extends ML_Modul_Model_Service_Import
      */
     protected function sendPromotionMail($aOrder, $oOrder = null) {
         // check for "blacklisted-" prefix in email address
-        $sBlacklistEmails = MLModul::gi()->getConfig('orderimport.amazoncommunicationrules.blacklisting');
+        $sBlacklistEmails = MLModule::gi()->getConfig('orderimport.amazoncommunicationrules.blacklisting');
         if ($sBlacklistEmails === '1') { // in case of emails are blacklisted, remove prefix (0 = not blacklist, 1 = blacklisted mail)
             if (!empty($aOrder['AddressSets']['Main']['EMail'])
                 && (substr($aOrder['AddressSets']['Main']['EMail'], 0, strlen($this->sBlackListedMailPrefix)) == $this->sBlackListedMailPrefix)

@@ -20,35 +20,20 @@ MLI18n::gi()->otto_config_account_title = 'Zugangsdaten';
 MLI18n::gi()->add('otto_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
             'label' => '{#i18n:ML_LABEL_TAB_IDENT#}',
             'help' => '{#i18n:ML_TEXT_TAB_IDENT#}'
         ),
-        'clientkey' => array(
-            'label' => 'OTTO API-Nutzer',
-            'help' => '
-                <p>Ihren “OTTO API-Nutzer” erhalten Sie automatisch per E-Mail, nachdem Sie einen Händler-Account bei OTTO registriert und die Legitimationsprüfung durchlaufen haben.</p>
-                <strong>Weitere Infos:</strong>
-                <ul>
-                    <li>Unter <a href="https://www.otto.market/" target=_"blank">https://www.otto.market/</a> können Sie sich als Händler registrieren.</li>
-                    <li>Damit Ihre per magnalister hochgeladenen Produkte auf OTTO angezeigt werden, müssen Sie als neuer Händler die Sichtbarkeits-Restriktion im OTTO Händler-Backend entfernen und eine “Bestätigung über Ihr Verständnis des Bestellprozesses” an OTTO senden. </br>Weitere Infos dazu finden Sie hier: <a href="https://account.otto.market/s/article/Vorbereitungen-Livegang/" target=_"blank">https://account.otto.market/s/article/Vorbereitungen-Livegang/</a></li>
-                </ul>
-            ',
-        ),
-        'secretkey' => array(
-            'label' => 'OTTO API-Passwort',
-            'help' => '
-                <p>Nach der Registrierung des OTTO Händler-Accounts und der Legitimationsprüfung durch OTTO erhalten Sie eine E-Mail mit Ihrem OTTO “API-Nutzer” und einem Link zur Passwort-Vergabe. </br>Tragen Sie das generierte “API-Passwort” hier ein.</p>
-                <p>Bitte beachten Sie auch die Hinweise im Info-Icon unter “OTTO Market API-Username”.</p>
-            ',
+        'token' => array(
+            'label' => 'OTTO API-Token'
         ),
     ),
 ), false);
 MLI18n::gi()->add('otto_config_prepare__field__vat', array(
-    'label' => 'VAT',
+    'label' => 'Steuern',
     'help' => 'Sie müssen mindestens eine VAT im Shopsystem definiert haben.',
     'hint' => '',
     'matching' => array(
@@ -88,7 +73,7 @@ MLI18n::gi()->{'sOtto_automatically'} = '-- Automatisch zuordnen --';
 
 MLI18n::gi()->{'otto_config_matching_options'} = 'Matching Options';
 MLI18n::gi()->{'otto_config_matching_shop_values'} = 'Shop Values';
-MLI18n::gi()->{'otto_config_matching_otto_values'} = 'OTTO Values';
+MLI18n::gi()->{'otto_config_matching_otto_values'} = 'OTTO Market Values';
 
 /*----- Remove below -------*/
 MLI18n::gi()->otto_config_general_autosync = 'Automatische Synchronisierung per CronJob (empfohlen)';
@@ -96,11 +81,6 @@ MLI18n::gi()->otto_config_general_nosync = 'keine Synchronisierung';
 MLI18n::gi()->otto_config_account_price = 'Preisberechnung';
 MLI18n::gi()->otto_config_account_emailtemplate = 'Promotion-E-Mail Template';
 MLI18n::gi()->otto_config_account_producttemplate = 'Produkt Template';
-
-MLI18n::gi()->{'formfields_otto_freightforwarding_values'} = array(
-    'true' => 'Ja',
-    'false' => 'Nein',
-);
 
 MLI18n::gi()->otto_configform_orderstatus_sync_values = array(
     'auto' => '{#i18n:otto_config_general_autosync#}',

@@ -11,15 +11,15 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 MLI18n::gi()->{'otto_prepare_apply_form__legend__details'} = 'Product details';
-MLI18n::gi()->{'otto_prepare_apply_form__legend__categories'} = 'Otto Kategorien';
+MLI18n::gi()->{'otto_prepare_apply_form__legend__categories'} = 'OTTO Market Kategorien';
 MLI18n::gi()->{'otto_prepare_apply_form__legend__attributes'} = 'attributes';
-MLI18n::gi()->{'otto_prepare_apply_form__field__categories__label'} = 'Otto Kategorien';
+MLI18n::gi()->{'otto_prepare_apply_form__field__categories__label'} = 'OTTO Market Kategorien';
 MLI18n::gi()->{'otto_prepare_apply_form__field__categories__hint'} = '';
 MLI18n::gi()->{'otto_prepare_apply_form__field__primarycategory__label'} = 'Marktplatz Kategorie';
 MLI18n::gi()->{'otto_prepare_apply_form__field__primarycategory__hint'} = '';
@@ -32,8 +32,8 @@ MLI18n::gi()->{'otto_prepare_apply_form__legend__variationmatchingoptional__0'} 
 MLI18n::gi()->{'otto_prepare_apply_form__legend__variationmatchingoptional__1'} = '{#i18n:attributes_matching_title#}';
 MLI18n::gi()->{'otto_prepare_apply_form__legend__variationmatching__0'} = '{#i18n:attributes_matching_required_attributes#}';
 MLI18n::gi()->{'otto_prepare_apply_form__legend__variationmatching__1'} = '{#i18n:attributes_matching_title#}';
-MLI18n::gi()->{'otto_prepare_variations__legend__variations'} = 'Select Otto Category';
-MLI18n::gi()->{'otto_prepare_variations__legend__attributes'} = 'Attributsnamen von Otto ausw&auml;hlen';
+MLI18n::gi()->{'otto_prepare_variations__legend__variations'} = 'Select OTTO Market Category';
+MLI18n::gi()->{'otto_prepare_variations__legend__attributes'} = 'Attributsnamen von OTTO Market ausw&auml;hlen';
 MLI18n::gi()->{'otto_prepare_variations__legend__variationmatching__0'} = '{#i18n:attributes_matching_required_attributes#}';
 MLI18n::gi()->{'otto_prepare_variations__legend__variationmatching__1'} = '{#i18n:attributes_matching_title#}';
 MLI18n::gi()->{'otto_prepare_variations__legend__variationmatchingoptional__0'} = '{#i18n:attributes_matching_optional_attributes#}';
@@ -80,7 +80,7 @@ MLI18n::gi()->{'otto_varmatch_attribute_value_deleted_from_mp'} = '{#i18n:attrib
 MLI18n::gi()->{'otto_varmatch_attribute_deleted_from_shop'} = '{#i18n:attributes_matching_attribute_deleted_from_shop_message#}';
 
 MLI18n::gi()->{'otto_prepare_variations_shop_value'} = 'Shop Value';
-MLI18n::gi()->{'otto_prepare_variations_otto_value'} = 'OTTO Value';
+MLI18n::gi()->{'otto_prepare_variations_otto_value'} = 'OTTO Market Value';
 MLI18n::gi()->{'otto_prepare_match_variations_saved'} = '{#i18n:attributes_matching_prepare_variations_saved#}';
 MLI18n::gi()->{'otto_prepare_match_variations_category_missing'} = 'Please select variant group.';
 MLI18n::gi()->{'otto_prepare_variations_reset_success'} = 'Matching has been reseted.';
@@ -94,3 +94,4 @@ MLI18n::gi()->{'otto_prepare_images_not_exist'} = 'Images do not exist on this p
 MLI18n::gi()->{'otto_prepare_variations_saved'} = '{#i18n:attributes_matching_matching_variations_saved#}';
 MLI18n::gi()->{'otto_please_select'} = 'Please Select';
 MLI18n::gi()->{'otto_please_value_search'} = 'Value Search';
+MLI18n::gi()->{'otto_prepare_variations_multiselect_hint'} = '{#i18n:attributes_matching_multi_select_hint#}';

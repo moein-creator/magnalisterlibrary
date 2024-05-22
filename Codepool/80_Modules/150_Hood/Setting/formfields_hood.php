@@ -129,6 +129,12 @@ MLSetting::gi()->add('formfields_hood', array(
         'name' => 'mwst',
         'type' => 'string',
     ),
+    'forcefallback' => array(
+        'i18n' => '{#i18n:formfields_hood__forcefallback#}',
+        'name' => 'forcefallback',
+        'type' => 'bool',
+        'default' => true,
+    ),
     'orderstatus.sendmail' => array(
         'i18n' => '{#i18n:formfields_hood__orderstatus.sendmail#}',
         'name' => 'orderstatus.sendmail',
@@ -142,12 +148,12 @@ MLSetting::gi()->add('formfields_hood', array(
     'shippingTime.min' => array(
         'i18n' => '{#i18n:formfields_hood__shippingTime.min#}',
         'name' => 'shippingTime.min',
-        'type' => 'select',
+        'type' => 'string',
     ),
     'shippingTime.max' => array(
         'i18n' => '{#i18n:formfields_hood__shippingTime.max#}',
         'name' => 'shippingTime.max',
-        'type' => 'select',
+        'type' => 'string',
     ),
     'fixed.quantity' => array(
         'i18n' => '{#i18n:formfields_hood__fixed.quantity#}',

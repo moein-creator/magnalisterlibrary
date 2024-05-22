@@ -51,7 +51,7 @@ class ML_Hitmeister_Model_Table_Hitmeister_CategoriesMarketplace extends ML_Modu
         ),
         'Expires' => array(
             'isExpirable' => true,
-            'Type' => 'datetime',       'Null' => 'NO', 'Default' => NULL,  'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime',       'Null' => self::IS_NULLABLE_YES, 'Default' => NULL,  'Extra' => '', 'Comment' => ''
         ),
     );
 }

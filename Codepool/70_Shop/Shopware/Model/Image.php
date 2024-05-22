@@ -77,11 +77,11 @@ class ML_Shopware_Model_Image extends ML_Base_Model_Image {
                         $mediaGeneratorService = Shopware()->Container()->get('thumbnail_generator_basic');
                         try {
                             $mediaGeneratorService->createThumbnail($sSrc, $sDst, $iMaxWidth, $iMaxHeight, true);
-                        } catch (\Exception $ex1) {//it is not allow to create magnalister directory, so we create image in media directory
+                        } catch (\Throwable $ex1) {//it is not allow to create magnalister directory, so we create image in media directory
                             try {
                                 $mediaGeneratorService->createThumbnail($sSrc, $sDst2, $iMaxWidth, $iMaxHeight, true);
                                 $sDst = $sDst2;
-                            } catch (\Exception $ex2) {
+                            } catch (\Throwable $ex2) {
                                 MLMessage::gi()->addDebug('There is problem to create image with this source and destination', array($sSrc, $sDst2));
                                 MLMessage::gi()->addDebug($ex2);
                             }

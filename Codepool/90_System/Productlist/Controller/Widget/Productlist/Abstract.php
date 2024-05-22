@@ -1,4 +1,21 @@
 <?php
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
+
 MLFilesystem::gi()->loadClass('Core_Controller_Abstract');
 abstract class ML_Productlist_Controller_Widget_ProductList_Abstract extends ML_Core_Controller_Abstract {
     /**
@@ -58,15 +75,15 @@ abstract class ML_Productlist_Controller_Widget_ProductList_Abstract extends ML_
      */
     protected function setFilter(){
         $aRequestFilter=$this->oRequest->data('filter');
-        $sIdent=  MLModul::gi()->getMarketPlaceId().'_'.$this->getIdent();
+        $sIdent = MLModule::gi()->getMarketPlaceId() . '_' . $this->getIdent();
         $aFilters=array();
         if($aRequestFilter!==null){
             $aFilters[$sIdent]=$aRequestFilter;
         }
-        $aSessionFilter=MLSession::gi()->get('PRODUCTLIST__filter.json');
+        $sSessionKey = 'PRODUCTLIST__filter_' . $sIdent . '.json';
+        $aSessionFilter = MLSession::gi()->get($sSessionKey);
         if(is_array($aSessionFilter)){
             foreach($aSessionFilter as $sController=>$aFilter){
-                unset($aFilter['meta']);
                 if(substr($sIdent, 0, strlen($sController))==$sController&&!isset($aFilters[$sController])){
                     $aFilters[$sController]=$aFilter;
                 }
@@ -85,15 +102,15 @@ abstract class ML_Productlist_Controller_Widget_ProductList_Abstract extends ML_
                 }
             }
         }
-        MLSession::gi()->set('PRODUCTLIST__filter.json',$aFilters);
+        MLSession::gi()->set($sSessionKey, $aFilters);
         $this->getProductList()->setFilters($aRequestFilter);
         return $this;
     }
 
 
     public function __construct(){
-        parent::__construct();                
-        $oModul = MLModul::gi();
+        parent::__construct();
+        $oModul = MLModule::gi();
         if ($oModul->getConfig('currency') !== null && (boolean)$oModul->getConfig('exchangerate_update')) {
             try {
                 MLCurrency::gi()->updateCurrencyRate($oModul->getConfig('currency'));
@@ -133,8 +150,8 @@ abstract class ML_Productlist_Controller_Widget_ProductList_Abstract extends ML_
         $aProfile = MLSetting::gi()->get('productListProfile_'.$this->getIdent());
         MLMessage::gi()->addDebug('ProductList Profile: '.$this->getIdent(), array(
             'time-query' => $aProfile['endquery']-$aProfile['construct'], 
-            'time-render' => $aProfile['endrender'] - $aProfile['endquery'], 
-            'statistic' => $oList->getStatistic(),
+            'time-render' => $aProfile['endrender'] - $aProfile['endquery'] - $aProfile['construct'],
+            'statistic' => $aStatistic,
             'dependencies' => $aDependencies,
         ));
     }
@@ -184,7 +201,7 @@ abstract class ML_Productlist_Controller_Widget_ProductList_Abstract extends ML_
         $sSql = "
             SELECT COUNT(*)
               FROM ".MLDatabase::getPrepareTableInstance()->getTableName()." prepare
-             WHERE     ".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()." = '".MLModul::gi()->getMarketPlaceId()."'
+             WHERE     " . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . " = '" . MLModule::gi()->getMarketPlaceId() . "'
                    AND ".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = ".(int)$oProduct->get('id')."
         ";
         $aResult = $this->oDB->fetchOne($sSql);
@@ -224,7 +241,7 @@ abstract class ML_Productlist_Controller_Widget_ProductList_Abstract extends ML_
             INNER JOIN magnalister_products product ON product.id = prepare.".$oPrepareTable->getProductIdFieldName()." AND product.parentid = '".(int)$oProduct->get('id')."'";
         }
         $sQuery .= " 
-                 WHERE     `".$oPrepareTable->getMarketplaceIdFieldName()."` = '".MLModul::gi()->getMarketPlaceId()."'";
+                 WHERE     `" . $oPrepareTable->getMarketplaceIdFieldName() . "` = '" . MLModule::gi()->getMarketPlaceId() . "'";
         if ($oProduct->get('parentid') > 0) {
             $sQuery .= " 
                        AND prepare.".$oPrepareTable->getProductIdFieldName()." = '".(int)$oProduct->get('id')."'";

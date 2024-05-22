@@ -20,4 +20,10 @@ class ML_Otto_Model_Service_ImportCategories extends ML_Modul_Model_Service_Impo
 
     protected $sTableName = 'magnalister_otto_categories_marketplace';
 
+    protected function extendCategoryData(&$dCategories, $timestamp) {
+        foreach ($dCategories as &$dCategory) {
+            $dCategory['ImportOrUpdateTime'] = $timestamp;
+        }
+    }
+
 }

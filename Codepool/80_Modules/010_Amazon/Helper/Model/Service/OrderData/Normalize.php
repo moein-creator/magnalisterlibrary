@@ -7,14 +7,13 @@
  * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
  * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
- *                            m a g n a l i s t e r
- *                                        boost your Online-Shop
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
  *
- *   -----------------------------------------------------------------------------
- *   @author magnalister
- *   @copyright 2010-2022 RedGecko GmbH -- http://www.redgecko.de
- *   @license Released under the MIT License (Expat)
- *   -----------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
  */
 
 MLFilesystem::gi()->loadClass('Modul_Helper_Model_Service_OrderData_Normalize');
@@ -24,7 +23,7 @@ class ML_Amazon_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper
     protected $oModul = null;
     protected function getModul(){
         if($this->oModul === null ){
-            $this->oModul = MLModul::gi();
+            $this->oModul = MLModule::gi();
         }
         return $this->oModul;
     }
@@ -59,9 +58,9 @@ class ML_Amazon_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper
         }
         if ('textfield' === $this->getModul()->getConfig($sStatusKey)) {
             $sPayment = $this->getModul()->getConfig($sStatusKey.'.name');
-            return $sPayment == '' ? MLModul::gi()->getMarketPlaceName() : $sPayment;
+            return $sPayment == '' ? MLModule::gi()->getMarketPlaceName() : $sPayment;
         } elseif($this->getModul()->getConfig($sStatusKey) === null){//'matching'
-            return MLModul::gi()->getMarketPlaceName();
+            return MLModule::gi()->getMarketPlaceName();
         }else{
             return $this->getModul()->getConfig($sStatusKey);
         }
@@ -70,19 +69,42 @@ class ML_Amazon_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper
     protected function normalizeOrder () {
         parent::normalizeOrder();
         $this->aOrder['Order']['Payed'] = true;
-        $this->aOrder['Order']['PaymentStatus'] = MLModul::gi()->getConfig('orderimport.paymentstatus');
-        if ($this->aOrder['MPSpecific']['FulfillmentChannel'] == 'AFN') { //amazon payed and shipped
+        $this->aOrder['Order']['PaymentStatus'] = MLModule::gi()->getConfig('orderimport.paymentstatus');
+        if ($this->aOrder['MPSpecific']['FulfillmentChannel'] === 'AFN') { //amazon payed and shipped
             $this->aOrder['Order']['Shipped'] = true;
-            $this->aOrder['Order']['Status'] = MLModul::gi()->getConfig('orderstatus.fba');
+            $this->aOrder['Order']['Status'] = MLModule::gi()->getConfig('orderstatus.fba');
+        }
+        if ($this->aOrder['MPSpecific']['FulfillmentChannel'] === 'Bopis') { //amazon BOPIS
+            $orderStatusForBopisOrder = MLModule::gi()->getConfig('bopis.orderstatus.open');
+
+            // check if it's configured if not use default order status for new orders
+            if ($orderStatusForBopisOrder !== null) {
+                $this->aOrder['Order']['Status'] = $orderStatusForBopisOrder;
+            }
         }
         return $this;
     }
     
     protected function normalizeProduct (&$aProduct, $fDefaultTax) {
+        // discount for product or shipping: Tax follows the highest product tax
+        if ($aProduct['SKU'] == MLModule::gi()->getConfig('orderimport.amazonpromotionsdiscount.products_sku')
+            || $aProduct['SKU'] == MLModule::gi()->getConfig('orderimport.amazonpromotionsdiscount.shipping_sku')
+        ) {
+            $fTaxMax = 0.00;
+            foreach ($this->aOrder['Products'] as $aPr) {
+                if (    isset($aPr['Tax'])
+                     && is_numeric($aPr['Tax'])
+                     && $aPr['Tax'] > $fTaxMax
+                ) {
+                    $fTaxMax = $aPr['Tax'];
+                }
+            }
+            $aProduct['Tax'] = $fTaxMax;
+        }
         parent::normalizeProduct($aProduct, $fDefaultTax);
-        $aProduct['StockSync'] = 
-               (MLModul::gi()->getConfig('stocksync.frommarketplace') == 'rel' && $this->aOrder['MPSpecific']['FulfillmentChannel'] != 'AFN')
-            || MLModul::gi()->getConfig('stocksync.frommarketplace') == 'fba'
+        $aProduct['StockSync'] =
+            (MLModule::gi()->getConfig('stocksync.frommarketplace') == 'rel' && $this->aOrder['MPSpecific']['FulfillmentChannel'] != 'AFN')
+            || MLModule::gi()->getConfig('stocksync.frommarketplace') == 'fba'
         ;
         return $this;
     }
@@ -92,13 +114,13 @@ class ML_Amazon_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper
         if (array_key_exists('FulfillmentChannel', $this->aOrder['MPSpecific'])) {
             switch ($this->aOrder['MPSpecific']['FulfillmentChannel']){
                 case 'MFN-Prime':
-                    $sTitle = MLModul::gi()->getMarketPlaceName(false).' Prime'; 
+                    $sTitle = MLModule::gi()->getMarketPlaceName(false) . ' Prime';
                     break;
                 case 'AFN':
-                    $sTitle = MLModul::gi()->getMarketPlaceName(false).'FBA';
+                    $sTitle = MLModule::gi()->getMarketPlaceName(false) . 'FBA';
                     break;
                 default :
-                    $sTitle = MLModul::gi()->getMarketPlaceName(false);
+                    $sTitle = MLModule::gi()->getMarketPlaceName(false);
                     break;
             }
             $this->aOrder['MPSpecific']['InternalComment'] =

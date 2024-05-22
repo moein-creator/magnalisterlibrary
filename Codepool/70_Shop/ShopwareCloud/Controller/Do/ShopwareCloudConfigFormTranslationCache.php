@@ -1,0 +1,4 @@
+<?php
+MLFilesystem::gi()->loadClass('ShopwareCloud_Controller_Frontend_Do_ShopwareCloudConfigFormTranslationCache');
+class ML_ShopwareCloud_Controller_Do_ShopwareCloudConfigFormTranslationCache extends ML_ShopwareCloud_Controller_Frontend_Do_ShopwareCloudConfigFormTranslationCache {
+}

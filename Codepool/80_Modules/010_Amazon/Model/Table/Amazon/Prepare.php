@@ -15,11 +15,13 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Database_Model_Table_Prepare_Abstract');
+
 class ML_Amazon_Model_Table_Amazon_Prepare extends ML_Database_Model_Table_Prepare_Abstract {
 
     protected $sTableName = 'magnalister_amazon_prepare';
-    //protected $aKeys = array('mpid', 'productsid');
+
     protected $aFields = array(
         'mpID'                     => array(
             'isKey' => true,
@@ -37,10 +39,10 @@ class ML_Amazon_Model_Table_Amazon_Prepare extends ML_Database_Model_Table_Prepa
             'Type' => "enum('manual','auto','apply')", 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'AIdentID'                 => array(
-            'Type' => 'varchar(16)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(16)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'AIdentType'               => array(
-            'Type' => "enum('ASIN','EAN','UPC')", 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => "enum('ASIN','EAN','UPC')", 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         // @deprecated price comes only from mp-config dont need saving
         'Price'                    => array(
@@ -51,13 +53,13 @@ class ML_Amazon_Model_Table_Amazon_Prepare extends ML_Database_Model_Table_Prepa
             'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'ShippingTime'             => array(
-            'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Quantity'                 => array(
             'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'LowestPrice'              => array(
-            'Type' => 'decimal(15,2)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'lowest price (amazon)'
+            'Type' => 'decimal(15,2)', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => 'lowest price (amazon)'
         ),
         'ConditionType'            => array(
             'Type' => 'varchar(50)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => 'item condition'
@@ -69,19 +71,19 @@ class ML_Amazon_Model_Table_Amazon_Prepare extends ML_Database_Model_Table_Prepa
             'Type' => 'varchar(10)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => 'old will ship internationally'
         ),
         'MainCategory'             => array(
-            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => 'only apply'
         ),
         'ProductType'              => array(
-            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => 'only apply'
         ),
         'BrowseNodes'              => array(
-            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => 'only apply'
         ),
         'Attributes'               => array(
-            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
         ),
         'ShopVariation'            => array(
-            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
         ),
         'variation_theme'          => array(
             'Type' => 'varchar(200)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '{"autodetect":[]}', 'Extra' => '', 'Comment' => ''
@@ -114,20 +116,20 @@ class ML_Amazon_Model_Table_Amazon_Prepare extends ML_Database_Model_Table_Prepa
             'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
         ),
         'TopMainCategory'          => array(
-            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply, for top-ten-categories'
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => 'only apply, for top-ten-categories'
         ),
         'TopProductType'           => array(
-            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply, for top-ten-categories'
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => 'only apply, for top-ten-categories'
         ),
         'TopBrowseNode1'           => array(
-            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply, for top-ten-categories'
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => 'only apply, for top-ten-categories'
         ),
         'TopBrowseNode2'           => array(
-            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply, for top-ten-categories'
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => 'only apply, for top-ten-categories'
         ),
         'ApplyData'                => array(
             /** @deprecated */
-            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => 'only apply'
         ),
         'B2BActive'                => array(
             'Type' => "enum('true','false')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'false', 'Extra' => '', 'Comment' => ''
@@ -177,8 +179,11 @@ class ML_Amazon_Model_Table_Amazon_Prepare extends ML_Database_Model_Table_Prepa
         'ShippingTemplate'         => array(
             'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
-
+        'BopisStores' => array(
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+        )
     );
+
     protected $aTableKeys = array(
         'UC_products_id'               => array('Non_unique' => '0', 'Column_name' => 'mpID, ProductsID'),
     );
@@ -210,7 +215,7 @@ class ML_Amazon_Model_Table_Amazon_Prepare extends ML_Database_Model_Table_Prepa
     public function getByIdentifier($sIdentValue , $sIdentType , $iMpId = null) {
          $this->aKeys = array ('mpid' , 'aidenttype' , 'aidentid') ;
          if ( $iMpId === null ) {
-             $iMpId =  MLModul::gi()->getMarketplaceId() ;
+             $iMpId = MLModule::gi()->getMarketplaceId();
          }
          $this->set('aidenttype' , $sIdentType)
                  ->set('aidentid' , $sIdentValue);

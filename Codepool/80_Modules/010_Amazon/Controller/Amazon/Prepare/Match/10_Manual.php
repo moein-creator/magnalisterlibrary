@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,12 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Productlist_Controller_Widget_ProductList_Abstract');
 
 class ML_Amazon_Controller_Amazon_Prepare_Match_Manual extends ML_Productlist_Controller_Widget_ProductList_Abstract {
@@ -27,25 +26,14 @@ class ML_Amazon_Controller_Amazon_Prepare_Match_Manual extends ML_Productlist_Co
     public function __construct() {
         parent::__construct();
         $aStatistic = $this->getProductList()->getStatistic();
-        if ($aStatistic['iCountTotal'] == 0) {
+        if ($aStatistic['iCountTotal'] == 0 && !MLSetting::gi()->blPreventRedirect) {
             MLHttp::gi()->redirect($this->getParentUrl());
         }
     }
 
-    public function renderAjax() {
-        $sMethod = MLRequest::gi()->data('method');
-        if ($sMethod !== null && method_exists($this, $sMethod.'_ajax')) {
-            $this->{$sMethod.'_ajax'}();
-        } else {
-            echo json_encode(array('success' => false, 'error' => MLI18n::gi()->get('Productlist_Message_sErrorGeneral')));
-        }
-        exit();
-    }
-
-    protected function amazonItemsearch_ajax() {
+    protected function callAjaxAmazonItemSearch() {
         $oRequest = MLRequest::gi();
         $oProduct = MLProduct::factory()->set('id', $oRequest->data('id'));
-        //print_r($oProduct->data());
         if (!in_array($oRequest->data('search'), array(null, ''))) {
             $sName = $oRequest->data('search');
             $sEan = null;
@@ -56,27 +44,69 @@ class ML_Amazon_Controller_Amazon_Prepare_Match_Manual extends ML_Productlist_Co
         $sContent = $this->includeViewBuffered(
             'widget_productlist_list_variantarticleadditional_amazon_itemsearch',
             array(
-                'oProduct' => $oProduct,
-                'aAdditional' => array('aAmazonResult' => MLModul::gi()->performItemSearch(null, $sEan, $sName))
+                'oProduct'    => $oProduct,
+                'aAdditional' => array('aAmazonResult' => MLModule::gi()->performItemSearch(null, $sEan, $sName))
             )
         );
-        echo json_encode(array('success' => true, 'content' => $sContent));
+        MLSetting::gi()->add(
+            'aAjax', array(
+                'content' => $sContent,
+                'success' => true,
+                'error'   => '',
+            )
+        );
     }
 
-    public function update_ajax() {
+    /**
+     * @return ML_Amazon_Helper_Model_Table_Amazon_Prepare_Product|Object
+     */
+    protected function getPrepareProductHelper() {
+        return MLHelper::gi('Model_Table_Amazon_Prepare_Product');
+    }
+
+    public function callAjaxUpdate() {
         $aRequest = $this->getRequest();
         //        new dBug($aRequest);
         $aData = json_decode(str_replace("\\\"", "'", str_replace("'", '"', $aRequest['data'])), true);
         $oProduct = MLProduct::factory()->set('id', $aRequest['id'])->load();
-        if (is_array($aData)) {//have amazon data
-            MLHelper::gi('Model_Table_Amazon_Prepare_Product')->manual($oProduct, array_merge($aRequest['amazonProperties'], array('aidentid' => $aData['ASIN'], 'lowestprice' => $aData['LowestPrice'])))->getTableModel()->save();
+
+        if (is_array($aData) && array_key_exists('LowestPrice', $aData) && !is_numeric($aData['LowestPrice'])) {
+            $aData['LowestPrice'] = null;
         }
-        echo json_encode(array('success' => true));
-        MLDatabase::factory('selection')->set('pid', $oProduct->get('id'))->getList()->getQueryObject()->doDelete();
+
+        if (is_array($aData)) {//have amazon data
+            // convert BOPIS stores field to json array
+            if (array_key_exists('BopisStores', $aRequest['amazonProperties']) && !empty($aRequest['amazonProperties']['BopisStores'])) {
+                if (is_string($aRequest['amazonProperties']['BopisStores'])) {
+                    $stores = explode(',', $aRequest['amazonProperties']['BopisStores']);
+                } else {
+                    $stores = $aRequest['amazonProperties']['BopisStores'];
+                }
+
+                $aRequest['amazonProperties']['BopisStores'] = json_encode($stores);
+            }
+
+            $this->getPrepareProductHelper()->manual($oProduct,
+                array_merge($aRequest['amazonProperties'],
+                    array(
+                        'aidentid'    => $aData['ASIN'],
+                        'lowestprice' => $aData['LowestPrice']
+                    )
+                ))->getTableModel()->save();
+        }
+        MLSetting::gi()->add(
+            'aAjax', array(
+                'success' => true,
+                'error'   => '',
+            )
+        );
+        if (!MLSetting::gi()->blPreventRedirect) {
+            MLDatabase::factory('selection')->set('pid', $oProduct->get('id'))->getList()->getQueryObject()->doDelete();
+        }
     }
 
     public function getPriceObject(ML_Shop_Model_Product_Abstract $oProduct) {
-        return MLModul::gi()->getPriceObject();
+        return MLModule::gi()->getPriceObject();
     }
 
     public function isSingleMatching() {

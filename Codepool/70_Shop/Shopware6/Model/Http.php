@@ -21,6 +21,7 @@
  */
 
 use Redgecko\Magnalister\Controller\MagnalisterController;
+use Shopware\Storefront\Framework\Csrf\CsrfModes;
 use Shopware\Storefront\Framework\Csrf\CsrfPlaceholderHandler;
 use Shopware\Storefront\Framework\Twig\Extension\CsrfFunctionExtension;
 
@@ -53,16 +54,16 @@ class ML_Shopware6_Model_Http extends ML_Shop_Model_Http_Abstract {
         $sRelLibPath = substr($aResource['path'], strlen(MLFilesystem::getLibPath().'Codepool'));
         $sResourceType = strtolower(preg_replace('/^.*\/resource\/(.*)\/.*$/Uis', '$1', $sRelLibPath));
         if (basename($sResourceType) === 'js') {
-            $mediaPath = MagnalisterController::getShopwareMyContainer()->get('kernel')->getProjectDir() . '/public/js';
-            $sDstPath = $mediaPath . '/magnalister' . $sRelLibPath;
+            $mediaPath = MagnalisterController::getShopwareMyContainer()->get('kernel')->getProjectDir().'/public/js';
+            $sDstPath = $mediaPath.'/magnalister'.$sRelLibPath;
         }
         if (basename($sResourceType) === 'css') {
-            $mediaPath = MagnalisterController::getShopwareMyContainer()->get('kernel')->getProjectDir() . '/public/css';
-            $sDstPath = $mediaPath . '/magnalister' . $sRelLibPath;
+            $mediaPath = MagnalisterController::getShopwareMyContainer()->get('kernel')->getProjectDir().'/public/css';
+            $sDstPath = $mediaPath.'/magnalister'.$sRelLibPath;
         }
         if (basename($sResourceType) === 'images') {
-            $mediaPath = MagnalisterController::getShopwareMyContainer()->get('kernel')->getProjectDir() . '/public/css';
-            $sDstPath = $mediaPath . '/magnalister' . $sRelLibPath;
+            $mediaPath = MagnalisterController::getShopwareMyContainer()->get('kernel')->getProjectDir().'/public/css';
+            $sDstPath = $mediaPath.'/magnalister'.$sRelLibPath;
         }
         if (!file_exists($sDstPath)) {// we copy complete resource-type-folder if one file not exists
             $sSubPath = preg_replace('/^(.*\/resource\/.*)\/.*$/Uis', '$1', $sRelLibPath);
@@ -114,6 +115,20 @@ class ML_Shopware6_Model_Http extends ML_Shop_Model_Http_Abstract {
         return MagnalisterController::getShopwareRequest()->getScheme().'://'.str_replace('//', '/', $sBaseURL);
     }
 
+    protected function getMagnalisterURLForShopware6() {
+        if (
+            (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== 'off') ||
+            (!empty($_SERVER["HTTP_X_FORWARDED_SSL"]) && $_SERVER["HTTP_X_FORWARDED_SSL"] !== 'off') ||
+            (!empty($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] === 'https')
+        ) {
+            $scheme = 'https';
+        } else {
+            $scheme = 'http';
+        }
+        //MagnalisterController::getShopwareRequest()->getRequestUri() doesn't work properly when a virtual sub directly is used
+        return $scheme . '://' . $_SERVER['HTTP_HOST'] . explode("?", $_SERVER['REQUEST_URI'])[0];
+    }
+
     /**
      * Gets the backend url of the magnalister app.
      * @param array $aParams
@@ -123,7 +138,7 @@ class ML_Shopware6_Model_Http extends ML_Shop_Model_Http_Abstract {
     public function getUrl($aParams = array()) {
         $sParent = parent::getUrl($aParams);
 
-        return MagnalisterController::getShopwareRequest()->getRequestUri().(($sParent == '') ? '' : '?'.$sParent);
+        return $this->getMagnalisterURLForShopware6().(($sParent == '') ? '' : '?'.$sParent);
     }
 
     /**
@@ -149,21 +164,41 @@ class ML_Shopware6_Model_Http extends ML_Shop_Model_Http_Abstract {
      *    Assoc of hidden neccessary form fields array(name => value, ...)
      */
     public function getNeededFormFields() {
+        if (version_compare(MLSHOPWAREVERSION, '6.5.0.0', '>=')) {
+            return array();
+        }else{
+            return array(
+                '_csrf_token' => self::getCSRFToken()
+            );
+        }
 
-        return array(
-            '_csrf_token' =>
-                MagnalisterController::getShopwareMyContainer()->get('security.csrf.token_manager')
-                    ->getToken('magnalister.admin.page')
-                    ->getValue()
-        );
+    }
+
+    static protected $csrfToken;
+
+    private static function getCSRFToken() {
+        if (self::$csrfToken === null) {
+            if (MagnalisterController::getShopwareMyContainer()->getParameter('storefront.csrf.mode') === CsrfModes::MODE_TWIG) {
+                $intent = 'magnalister.admin.page';
+            } else {
+                $intent = 'ajax';
+            }
+            /** @var Symfony\Component\Security\Csrf\CsrfTokenManager $sCsrfTokeClass */
+            $sCsrfTokeClass = MagnalisterController::getShopwareMyContainer()->get('security.csrf.token_manager');
+            self::$csrfToken = $sCsrfTokeClass
+                ->getToken($intent)
+                ->getValue();
+        }
+        return self::$csrfToken;
     }
 
     /**
      * Gets the magnalister cache FS url.
      * @return string
+     * @todo Create logic to get file of cache like implementation in Magento
      */
     public function getCacheUrl($sFile = '') {
-        return $this->getBackendBaseUrl().dirname($this->getMlLibPath()).'/writable/cache/'.$sFile;
+        return $sFile;
     }
 
     /**
@@ -172,13 +207,15 @@ class ML_Shopware6_Model_Http extends ML_Shop_Model_Http_Abstract {
      * @return string
      */
     public function getFrontendDoUrl($aParams = array()) {
-        $sConfig = $this->getConfigFrontCornURL($aParams);
+        $sConfig = $this->getConfigFrontCronURL($aParams);
         if ($sConfig !== '') {
             return $sConfig;
         }
         $sParent = parent::getUrl($aParams);
-        $sBaseURL = MagnalisterController::getShopwareRequest()->getHttpHost().'/'.MagnalisterController::getShopwareRequest()->getBasePath().'/magnalister/'.(($sParent == '') ? '' : '?'.$sParent);
-        return MagnalisterController::getShopwareRequest()->getScheme().'://'.str_replace('//', '/', $sBaseURL);
+        $sURL = $this->getMagnalisterURLForShopware6();
+        $sURL = substr($sURL, 0, strrpos($sURL, '/magnalister/'));
+        $return = $sURL.'/magnalister/'.(($sParent == '') ? '' : '?'.$sParent);
+        return $return;
     }
 
     /**
@@ -196,6 +233,42 @@ class ML_Shopware6_Model_Http extends ML_Shop_Model_Http_Abstract {
     public function getShopImageUrl() {
         $sBaseURL = MagnalisterController::getShopwareRequest()->getHttpHost().'/'.MagnalisterController::getShopwareRequest()->getBasePath().'/media/';
         return MagnalisterController::getShopwareRequest()->getScheme().'://'.str_replace('//', '/', $sBaseURL);
+    }
+
+    /**
+     * return directory or path (file system) of specific shop images
+     * @param string $sFiles
+     */
+    public function getImagePath($sFile) {
+        if(self::$sImagePath === null ){
+            $sShopwareImagePath = $this->getShopImagePath();
+            if (MagnalisterController::getFileSystem()->has($sShopwareImagePath)) {
+                if (!MagnalisterController::getFileSystem()->has($sShopwareImagePath.'magnalister/')) {
+                    if (method_exists(MagnalisterController::getFileSystem(), 'createDir')) {//6.4
+                        MagnalisterController::getFileSystem()->createDir($sShopwareImagePath . 'magnalister/');
+                    } else {//6.5
+                        MagnalisterController::getFileSystem()->createDirectory($sShopwareImagePath . 'magnalister/');
+                    }
+                }
+                self::$sImagePath = $sShopwareImagePath.'magnalister/';
+            }else{
+                MLMessage::gi()->addDebug(MLI18n::gi()->get('sException_update_pathNotWriteable', array(
+                    'path' => $sShopwareImagePath
+                )));
+                throw new Exception('cannot create images');
+            }
+        }
+        return self::$sImagePath.$sFile;
+    }
+
+    public function getImageUrl($sFile) {
+        $sUrl = MagnalisterController::getMediaConverter()->getAbsoluteMediaUrl(MLImage::gi()->getMediaObject($sFile));
+        $sBaseUrl = '';
+        if (strpos($sUrl, '/media/') !== false) {
+            $sBaseUrl = explode('/media/', $sUrl)[0].'/media/';
+        }
+        $sMagnalisterImageUrl = $sBaseUrl.'magnalister/'.$sFile;
+        return $sMagnalisterImageUrl;
     }
 
 

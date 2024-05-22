@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -23,12 +23,14 @@ class ML_Shopware6Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Amazon_
     protected $carrierOptions = array(
         'marketplaceCarrier',
         'matchShopShippingOptions',
+        'shopFreeTextField',
         'orderFreeTextField',
         'freeText',
     );
 
     protected $shipmethodOptions = array(
         'matchShopShippingOptions',
+        'shopFreeTextField',
         'orderFreeTextField',
         'freeText',
     );
@@ -45,7 +47,6 @@ class ML_Shopware6Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Amazon_
     
     public function orderimport_shippingmethodField (&$aField) {
         $aField['values'] = MLFormHelper::getShopInstance()->getShippingMethodValues();
-        $aField['values']['__automatic__'] = MLI18n::gi()->get('sAmazon_automatically');
     }   
         
     public function orderimport_fbapaymentmethodField (&$aField) {
@@ -60,14 +61,12 @@ class ML_Shopware6Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Amazon_
     
     public function orderimport_fbashippingmethodField (&$aField) {
         $aField['values'] = MLFormHelper::getShopInstance()->getShippingMethodValues();
-        $aField['values']['__automatic__'] = MLI18n::gi()->get('sAmazon_automatically');
     }    
       
     public function orderimport_paymentstatusField (&$aField) {
         $aField['values'] = MLFormHelper::getShopInstance()->getPaymentStatusValues();
     }
-    
-        
+
     public function orderstatus_carrier_defaultField(&$aField){
         $aField['ajax']=array(
             'selector' => '#' . $this->getFieldId('orderstatus.carrier.additional'),
@@ -82,5 +81,24 @@ class ML_Shopware6Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Amazon_
                 MLFormHelper::getModulInstance()->getCarrierCodeValues();
         
     }
-    
+
+    /**
+     * Set config values - shop document types
+     *
+     * @param $aField
+     * @return void
+     */
+    public function invoice_invoice_documentTypeField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getDocumentTypeValues();
+    }
+
+    /**
+     * Set config values - shop document types
+     *
+     * @param $aField
+     * @return void
+     */
+    public function invoice_creditNote_documentTypeField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getDocumentTypeValues();
+    }
 }

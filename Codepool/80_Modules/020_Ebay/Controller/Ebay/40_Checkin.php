@@ -1,4 +1,20 @@
 <?php
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
 
 MLFilesystem::gi()->loadClass('Ebay_Controller_Widget_ProductList_Ebay_Abstract');
 class ML_Ebay_Controller_Ebay_Checkin extends ML_Ebay_Controller_Widget_ProductList_Ebay_Abstract {
@@ -11,7 +27,7 @@ class ML_Ebay_Controller_Ebay_Checkin extends ML_Ebay_Controller_Widget_ProductL
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
     
     public function getProductListWidget() {
@@ -26,7 +42,7 @@ class ML_Ebay_Controller_Ebay_Checkin extends ML_Ebay_Controller_Widget_ProductL
     } 
     
     protected function callAjaxDontShowWarning() {
-        MLModul::gi()->setConfig('checkin.dontshowwarning', 1, true);
+        MLModule::gi()->setConfig('checkin.dontshowwarning', 1, true);
         MLSetting::gi()->add(
             'aAjax', array(
                 'success' => true,
@@ -51,7 +67,7 @@ class ML_Ebay_Controller_Ebay_Checkin extends ML_Ebay_Controller_Widget_ProductL
 
     public function getPriceObject(ML_Shop_Model_Product_Abstract $oProduct) {
         $oPrepare = $this->getPrepareData($oProduct);
-        return MLModul::gi()->getPriceObject($oPrepare->get('ListingType'));
+        return MLModule::gi()->getPriceObject($oPrepare->get('ListingType'));
     }
 
     public function getPrepareData(ML_Shop_Model_Product_Abstract $oProduct) {
@@ -66,7 +82,7 @@ class ML_Ebay_Controller_Ebay_Checkin extends ML_Ebay_Controller_Widget_ProductL
         if ($oPrepare->get('price') !== null) {
             return $oPrepare->get('price');
         } else {
-            return $oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject($oPrepare->get('ListingType')), true, false);
+            return $oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($oPrepare->get('ListingType')), true, false);
         }
     }
 
@@ -76,7 +92,7 @@ class ML_Ebay_Controller_Ebay_Checkin extends ML_Ebay_Controller_Widget_ProductL
             $oPreparedProduct = $this->getFirstVariant($oPreparedProduct);
         }
         $oPrepare = $this->getPrepareData($oPreparedProduct);
-        $aStockConf = MLModul::gi()->getStockConfig($oPrepare->get('ListingType'));
+        $aStockConf = MLModule::gi()->getStockConfig($oPrepare->get('ListingType'));
         return $oProduct->getSuggestedMarketplaceStock($aStockConf['type'], $aStockConf['value'], $aStockConf['max']);
     }
 }

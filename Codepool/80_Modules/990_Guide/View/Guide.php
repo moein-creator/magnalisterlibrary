@@ -17,22 +17,24 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML',false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <div class="help">
     <?php echo $this->getHelp(); ?>
     <script type="text/javascript">/*<![CDATA[*/
-        jqml(document).ready(function() {
+        jqml(document).ready(function () {
             jqml.get(
                 "<?php echo MLHttp::gi()->getUrl(array('controller' => 'guide', 'ajax' => 'true', 'method' => 'getHelp')); ?>",
-                function(data) {
+                function (data) {
                 },
                 'html'
             );
         });
-    /*]]>*/</script>
+        /*]]>*/</script>
 </div>
-<?php class_exists('ML',false) or die()?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
 <?php
 #<iframe id="wikiframe" style="border: 1px solid #ccc;width: 100%;-moz-box-sizing: border-box; box-sizing: border-box; -webkit-box-sizing: border-box; min-height: 500px;margin-bottom: 5px;" src="//wiki.magnalister.com/wiki/Hauptseite">
 #	<a href="http://wiki.magnalister.com/wiki/Hauptseite">http://wiki.magnalister.com/</a>

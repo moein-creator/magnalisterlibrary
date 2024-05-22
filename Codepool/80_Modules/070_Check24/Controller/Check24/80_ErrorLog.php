@@ -27,6 +27,6 @@ class ML_Check24_Controller_Check24_ErrorLog extends ML_ErrorLog_Controller_Widg
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

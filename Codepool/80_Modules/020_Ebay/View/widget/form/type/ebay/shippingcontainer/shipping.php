@@ -1,13 +1,14 @@
-<?php class_exists('ML', false) or die(); ?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
 <div class="ebay-shipping">
     <div>
         <div class="type">
             <?php
-                $aType = $aField;
-                $aType['type'] = 'select';
-                $aType['name'].='[ShippingService]';
-                $aType['value'] = isset($aType['value']['ShippingService']) ? $aType['value']['ShippingService'] : '';
-                $this->includeType($aType); 
+            $aType = $aField;
+            $aType['type'] = 'select';
+            $aType['name'] .= '[ShippingService]';
+            $aType['value'] = isset($aType['value']['ShippingService']) ? $aType['value']['ShippingService'] : '';
+            $this->includeType($aType);
             ?>
         </div>
         <div class="text"><?php echo $aField['i18n']['cost'] ?>:</div>

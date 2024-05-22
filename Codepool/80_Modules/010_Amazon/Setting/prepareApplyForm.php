@@ -228,6 +228,9 @@ MLSetting::gi()->amazon_prepare_apply_form = array(
             'ShippingTemplate' => array(
                 'name' => 'ShippingTemplate'
             ),
+            'BopisStores' => array(
+                'name' => 'BopisStores'
+            ),
         ),
     ),
 );
@@ -258,7 +261,7 @@ MLSetting::gi()->amazon_prepare_variations = array(
     'action' => array(
         'legend' => array(
             'classes' => array(
-                'mlhidden',
+                '',
             ),
         ),
         'row' => array(

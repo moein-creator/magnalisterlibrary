@@ -18,7 +18,8 @@
  * -----------------------------------------------------------------------------
  */
 /** @var ML_Hitmeister_Controller_Hitmeister_Prepare_Variations $this */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 $marketplaceName = MLModul::gi()->getMarketPlaceName();
 $aRequestData = MLRequest::gi()->data();
 if (isset($aRequestData['action']['deleteaction'])) {
@@ -75,7 +76,7 @@ if (!empty($mParentValue) && $mParentValue !== 'none' && !$blCustom) {
             /*<![CDATA[*/
             jqml(document).ready(function () {
                 jqml('#<?php echo $aDeleteButton['id'] ?>').click(function () {
-                    if (!confirm(unescape('<?php echo html_entity_decode(MLI18n::gi()->get($marketplaceName.'_prepare_match_variations_delete')) ?>'))) {
+                    if (!confirm(unescape('<?php echo addslashes(html_entity_decode(MLI18n::gi()->get($marketplaceName.'_prepare_match_variations_delete'))) ?>'))) {
                         return false;
                     }
                 });

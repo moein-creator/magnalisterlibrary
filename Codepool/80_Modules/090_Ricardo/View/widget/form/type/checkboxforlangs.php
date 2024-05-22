@@ -16,20 +16,21 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 $aLangs = $aField['value'];
 if (!empty($aLangs['de']) || !empty($aLangs['fr'])) {
-	if ($aLangs['de'] === 'true') {
-		$de = 'checked';
-	} else {
-		$de = '';
-	}
+    if ($aLangs['de'] === 'true') {
+        $de = 'checked';
+    } else {
+        $de = '';
+    }
 
-	if ($aLangs['fr'] === 'true') {
-		$fr = 'checked';
-	} else {
-		$fr = '';
-	}
+    if ($aLangs['fr'] === 'true') {
+        $fr = 'checked';
+    } else {
+        $fr = '';
+    }
 } else {
 	$de = 'checked';
 	$fr = '';

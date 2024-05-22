@@ -18,7 +18,8 @@
 
 /* @var $oList ML_Amazon_Model_List_Amazon_Order */
 /* @var $aOrder array */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 
 $fulfillment = $aOrder['FulfillmentChannel'];
 

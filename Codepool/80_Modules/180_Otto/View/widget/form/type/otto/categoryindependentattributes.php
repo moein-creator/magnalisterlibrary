@@ -17,7 +17,8 @@
  * -----------------------------------------------------------------------------
  */
 /** @var ML_Form_Controller_Widget_Form_VariationsAbstract $this */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 $marketplaceName = MLModul::gi()->getMarketPlaceName();
 // if there are more than 5 optional attributes, they are displayed as a dropdown
 $optionalAttributesMaxSize = 5;
@@ -129,6 +130,7 @@ $i18n = $this->getFormArray('aI18n');
     foreach ($aMPAttributes as $key => $sAttribute) {
         $aMatchedAttributes = $this->getAttributeValues($mParentValue, $sCustomIdentifier, $key);
         $sAttribute['custom'] = !empty($sAttribute['custom']) ? $sAttribute['custom'] : false;
+        $aSelectField['isbrand'] = $sAttribute['isbrand'];
         $sBaseName = "field[variationgroups][$mParentValue][$key]";
         $sName = $sBaseName . '[Code]';
         $sId = 'variationgroups.' . $mParentValue . '.' . $key . '.code';
@@ -165,6 +167,11 @@ $i18n = $this->getFormArray('aI18n');
         //set default value for manufacturer part number
         if ($key === current(unpack('H*', 'Brand')) && empty($aSelectField['value']))  {
             $aSelectField['value'] = MLProduct::factory()->getBrandDefaultField();
+            if (isset($aSelectField['cssclass'])) {
+                $aSelectField['cssclass'] .= ' preselected-value';
+            } else {
+                $aSelectField['cssclass'] = 'preselected-value';
+            }
         }
 
         //set default value for suggested retail price
@@ -196,15 +203,25 @@ $i18n = $this->getFormArray('aI18n');
 
         $style = '';
         if ($bError == true) {
-            $aSelectField['cssclass'] = 'error';
-            $aCustomSelectField['cssclass'] = 'error';
-            $style = 'color:red';
+            if (isset($aSelectField['cssclass'])) {
+                $aSelectField['cssclass'] .= ' error';
+            } else {
+                $aSelectField['cssclass'] = 'error';
+            }
+
+            if (isset($aCustomSelectField['cssclass'])) {
+                $aCustomSelectField['cssclass'] .= ' error';
+            } else {
+                $aCustomSelectField['cssclass'] = 'error';
+            }
+            $style = 'color:#e31a1c';
         }
 
         $aAjaxField = $this->getField($sId . '_ajax');
         $aAjaxField['type'] = 'attributeajax';
         $aAjaxField['cascading'] = true;
         $aAjaxField['breakbefore'] = true;
+        $aAjaxField['isbrand'] = $sAttribute['isbrand'];
         $aAjaxField['padding-right'] = 0;
         $aAjaxField['i18n']['label'] = '';
         if (isset($aSelectField['value']) && $aSelectField['value'] != null) {
@@ -460,9 +477,10 @@ $i18n = $this->getFormArray('aI18n');
         </table>
     <?php $aHeadlineAdded = true; }
     if (!empty($aFieldsetOptional['fields'])) { ?>
-        <table class="<?php if($aHeadlineAdded) { ?> marginTopMinus<?php } ?> attributesTable ml-js-attribute-matching" id="attributesTableOptional">
+        <table class="attributesTable ml-js-attribute-matching" id="attributesTableOptional">
             <?php $this->includeView('widget_form_type_attributefield', array('aFieldset' => $aFieldsetOptional, 'aHeadLine' => !$aHeadlineAdded ? $aHeadline : array())); ?>
         </table>
+        <div class="spacer"></div>
     <?php $aHeadlineAdded = true; }
     if (!empty($aFieldsetCustom['fields'])) {
     ?>
@@ -890,6 +908,9 @@ $i18n = $this->getFormArray('aI18n');
 
                     if (required) {
                         select.select2({dropdownAutoWidth: true});
+                        if(select.attr('value') !== '' && select.hasClass('preselected-value')) {
+                            select.trigger('change');
+                        }
                         select.on('select2:open', function () {
                             if (this.options.length === 1) {
                                 jqml(this).find('option').remove().end();

@@ -37,7 +37,7 @@
                         <td style="border:none;"></td>
                         <td style="border:none;"></td>
                     <?php } ?>
-                    <td style="border:none;"><?php echo $aCurrentField['i18n']['label']; ?>:</td>
+                    <td style="border:none; vertical-align:middle;"><?php echo $aCurrentField['i18n']['label']; ?>:</td>
                     <td style="border:none;"><?php $this->includeType($aCurrentField); ?></td>
                 </tr>
             <?php

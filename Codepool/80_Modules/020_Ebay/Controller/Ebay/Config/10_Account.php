@@ -19,41 +19,45 @@
  */
 MLFilesystem::gi()->loadClass('Form_Controller_Widget_Form_ConfigAbstract');
 class ML_Ebay_Controller_Ebay_Config_Account extends ML_Form_Controller_Widget_Form_ConfigAbstract {
-    
-    public static function getTabTitle () {
+
+    public static function getTabTitle() {
         return MLI18n::gi()->get('ebay_config_account_title');
     }
-    
+
     public static function getTabActive() {
         return self::calcConfigTabActive(__class__, true);
     }
-    
-    public function renderAjax() {
-        if ($this->getRequest('what') === 'token') {            
-            try {
-                $result = MagnaConnector::gi()->submitRequest(array(
-                    'ACTION' => 'GetTokenCreationLink'
-                ));
-                $iframeURL = $result['DATA']['tokenCreationLink'];
-            } catch (MagnaException $e) {
-                $iframeURL = 'error';
-            }
-            echo $iframeURL;
-            die();
-        } else if ($this->getRequest('what') === 'oauth.token') {            
-            try {
-                $result = MagnaConnector::gi()->submitRequest(array(
-                    'ACTION' => 'GetOauthTokenCreationLink'
-                ));
-                $iframeURL = $result['DATA']['tokenCreationLink'];
-            } catch (MagnaException $e) {
-                $iframeURL = 'error';
-            }
-            echo $iframeURL;
-            die();
-        } else {
-            parent::renderAjax();
+
+    protected function callAjaxGetTokenCreationLink() {
+        switch ($this->getRequest('what')) {
+            case 'token':
+                $sAction = 'GetTokenCreationLink';
+                break;
+            case 'oauth.token':
+                $sAction = 'GetOauthTokenCreationLink';
+                break;
+            default :
+                $sAction = '';
+        }
+        try {
+            $result = MagnaConnector::gi()->submitRequest(array(
+                'ACTION' => $sAction
+            ));
+            $iframeURL = $result['DATA']['tokenCreationLink'];
+            MLSetting::gi()->add(
+                'aAjax', array(
+                    'iframeUrl' => $iframeURL,
+                    'error'     => '',
+                )
+            );
+        } catch (MagnaException $e) {
+            MLSetting::gi()->add(
+                'aAjax', array(
+                    'iframeUrl' => '',
+                    'error'     => $e->getMessage(),
+                )
+            );
         }
     }
-    
+
 }

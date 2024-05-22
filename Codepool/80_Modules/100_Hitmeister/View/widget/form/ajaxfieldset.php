@@ -18,14 +18,15 @@
  * -----------------------------------------------------------------------------
  */
 /** @var ML_Core_Controller_Abstract $this */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 $aField = $this->getField($aFieldset['field']['name']);
 $aField['type'] = 'ajax';
 ?>
 <tbody id="<?php echo $aFieldset['id'] ?>">
-    <tr class="js-field">
-        <td style="border:none;padding: 0" colspan="4" class="js-field">
-            <?php $this->includeView('widget_form_type_ajax', array('aField' => $aField)) ?>
-        </td>
-    </tr>
+<tr class="js-field">
+    <td style="border:none;padding: 0" colspan="4" class="js-field">
+        <?php $this->includeView('widget_form_type_ajax', array('aField' => $aField)) ?>
+    </td>
+</tr>
 </tbody>

@@ -32,7 +32,7 @@ class ML_GoogleShopping_Controller_GoogleShopping_ErrorLog extends ML_ErrorLog_C
      * @return bool
      */
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     /**

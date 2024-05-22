@@ -23,31 +23,13 @@ if (!class_exists('ML', false))
 
 <?php
 if (!empty($aField['values'])) {
-    $aValuesChunk = array_chunk($aField['values'], 15, true);
-    $i = 0;
-
-    foreach ($aValuesChunk as $aValues) {
-        $aField['values'] = $aValues;
-        ?>
-        <table class="imageBox">
-            <tbody>
-            <tr>
-                <?php
+    ?>
+        <div class="ml-image-wrapper">
+            <?php
                 $aField['type'] = 'image_list';
+                $aField['input_type'] = 'checkbox';
                 $this->includeType($aField);
-                ?>
-            </tr>
-            <tr>
-                <?php
-                foreach ($aField['values'] as $sOptionKey => $aImage) { ?>
-                    <td class="cb">
-                        <input type="checkbox" id="<?php echo $aField['id'] ?>_<?php echo $sOptionKey ?>" value="<?php echo $sOptionKey ?>"<?php echo(in_array($sOptionKey, $aField['value']) ? ' checked="checked"' : ''); ?> name="<?php echo MLHTTP::gi()->parseFormFieldName($aField['name']).'['.$i.']';
-                        $i++; ?>">
-                    </td>
-                <?php } ?>
-            </tr>
-            </tbody>
-        </table>
-        <?php
-    }
+            ?>
+        </div>
+    <?php
 }

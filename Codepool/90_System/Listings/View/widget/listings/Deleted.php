@@ -29,14 +29,21 @@ $this->includeView('widget_listings_misc_listingbox');
                 <input type="checkbox" id="selectAll"/><label for="selectAll"><?php echo $this->__('ML_LABEL_CHOICE') ?></label>
                 </td>
                 <?php foreach ($this->getFields() as $aFiled) { ?>            
-                    <td> <?php
-                        echo $aFiled['Label'];
-                        if (isset($aFiled['Sorter'])) {
-                            if ($aFiled['Sorter'] != null) {
+                    <td>
+                        <div class="ml-inventory-th">
+                            <div> <?php
+                                echo $aFiled['Label'];
+                                if (isset($aFiled['Sorter'])) {
+                                if ($aFiled['Sorter'] != null) {
                                 ?>
+                            </div>
+                            <div style="min-width: 42px">
                                 <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
                                 <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
-                        <?php } } ?>
+                            </div>
+                                <?php } } ?>
+                        </div>
+
                     </td>
                 <?php } ?>
             </tr>
@@ -56,7 +63,7 @@ $this->includeView('widget_listings_misc_listingbox');
                 foreach ($this->aData as $item) {
                     $commissiondate = strtotime($item['timestamp']);
                     ?>
-                    <tr class="<?php echo(($oddEven = !$oddEven) ? 'odd' : 'even') ?>">
+                    <tr>
                         <td><input type="checkbox" name="<?php echo MLHttp::gi()->parseFormFieldName('delIDs[]') ?>" value="<?php echo $item['id'] ?>"></td>
                         <td><?php echo fixHTMLUTF8Entities(empty($item['title']) ? $item['productsSku'] : $item['title']) ?></td>
                         <td>

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -20,37 +20,20 @@
  * all tabs using form-groups
  */
 MLSetting::gi()->add('idealo_config_account', array(
-    'checkoutenabled' => '{#setting:formgroups_idealo__checkoutenabled#}',
     'tabident' => '{#setting:formgroups__tabident#}',
     'account' => '{#setting:formgroups_idealo__account#}',
-    'directbuycredential' => '{#setting:formgroups_idealo__directbuycredential#}',
 ), false);
 
 MLSetting::gi()->add('idealo_config_prepare', array(
-    'checkoutenabled' => '{#setting:formgroups_idealo__checkoutenabled#}',
     'prepare' => '{#setting:formgroups_idealo__prepare#}',
     'shipping' => '{#setting:formgroups_idealo__shipping#}',
     'upload' => '{#setting:formgroups_idealo__upload#}',
 ), false);
 
 MLSetting::gi()->add('idealo_config_price', array(
-    'checkoutenabled' => '{#setting:formgroups_idealo__checkoutenabled#}',
-    'price' => '{#setting:formgroups__comparisonprice#}'
-), false);
-
-MLSetting::gi()->add('idealo_config_orderimport', array(
-    'checkoutenabled' => '{#setting:formgroups_idealo__checkoutenabled#}',
-    'orderimport' => '{#setting:formgroups_idealo__orderimport#}',
-    'mwst' => '{#setting:formgroups__mwst#}',
-    'orderstatus' => '{#setting:formgroups_idealo__orderstatus#}',
+    'price' => '{#setting:formgroups_idealo__comparisonprice#}'
 ), false);
 
 MLSetting::gi()->add('idealo_config_sync', array(
-    'checkoutenabled' => '{#setting:formgroups_idealo__checkoutenabled#}',
-    'sync' => '{#setting:formgroups__sync#}',
-), false);
-
-MLSetting::gi()->add('idealo_config_emailtemplate', array(
-    'checkoutenabled' => '{#setting:formgroups_idealo__checkoutenabled#}',
-    'mail' => '{#setting:formgroups__mail#}',
+    'sync' => '{#setting:formgroups_idealo__sync#}',
 ), false);

@@ -27,3 +27,9 @@ MLI18n::gi()->add('hood_config_orderimport', array(
 ), false);
 
 MLI18n::gi()->{'hood_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+
+MLI18n::gi()->{'hood_config_producttemplate__field__template.name__help'} = '<dl>
+    <dt>Name des Produkts auf Hood.de</dt>
+    <dd>Einstellung, wie das Produkt auf Hood.de hei&szlig;en soll.
+        Der Platzhalter <b>#TITLE#</b> wird automatisch durch den Produktnamen aus dem Shop ersetzt..</dd></dl>';
+MLI18n::gi()->{'hood_config_producttemplate__field__template.name__hint'} = 'Platzhalter: #TITLE# - Produktname';

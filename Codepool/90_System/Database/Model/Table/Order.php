@@ -57,8 +57,23 @@ class ML_Database_Model_Table_Order extends ML_Database_Model_Table_Abstract {
              'Comment'             => '',
              'isInsertCurrentTime' => true,
          ),
+         'order_status_sync_last_check_date' => array(
+             'Type'                => 'datetime',
+             'Null'                => self::IS_NULLABLE_YES,
+             'Default'             => NULL,
+             'Extra'               => '',
+             'Comment'             => '',
+             'isInsertCurrentTime' => true,
+         ),
+         'order_exists_in_shop' => array(
+             'Type'                => 'int(1)',
+             'Null'                => self::IS_NULLABLE_NO,
+             'Default'             => 1,
+             'Extra'               => '',
+             'Comment'             => '',
+         ),
          'logo'                     => array(
-             'Type' => 'varchar(50)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+             'Type' => 'varchar(50)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
          ),
          'shopAdditionalOrderField' => array(
              'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''

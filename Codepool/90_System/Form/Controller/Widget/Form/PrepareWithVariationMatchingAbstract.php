@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -26,6 +26,8 @@ abstract class ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstra
     protected $shopAttributes;
     protected $numberOfMaxAdditionalAttributes = 0;
     protected $aMPAttributes;
+
+    protected $variationCache = array();
 
     public function construct()
     {
@@ -135,7 +137,7 @@ abstract class ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstra
                         '_prepare_variations_error_duplicated_custom_attribute_name',
                         array(
                             'attributeName' => $value['AttributeName'],
-                            'marketplace' => MLModul::gi()->getMarketPlaceName(false),
+                            'marketplace' => MLModule::gi()->getMarketPlaceName(false),
                         )
                     );
                 }
@@ -984,6 +986,7 @@ abstract class ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstra
                     'values' => !empty($value['values']) ? $value['values'] : array(),
                     'dataType' => !empty($value['type']) ? $value['type'] : 'text',
                     'categoryId' => !empty($value['categoryId']) ? $value['categoryId'] : null,
+                    'attributeId' => !empty($value['id']) ? $value['id'] : null,
                 );
             }
         }
@@ -1166,13 +1169,17 @@ abstract class ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstra
         if ($sCustomIdentifier === null) {
             $sCustomIdentifier = '';
         }
-        $aValue = $this->getVariationDb()
-            ->set('Identifier', $sIdentifier)
-            ->set('CustomIdentifier', $sCustomIdentifier)
-            ->get('ShopVariation');
 
-        if ($aValue) {
-            return $aValue;
+        $hashParams = md5($sIdentifier.$sCustomIdentifier.'ShopVariation');
+        if (!array_key_exists($hashParams, $this->variationCache)) {
+            $this->variationCache[$hashParams] = $this->getVariationDb()
+                ->set('Identifier', $sIdentifier)
+                ->set('CustomIdentifier', $sCustomIdentifier)
+                ->get('ShopVariation');
+        }
+
+        if ($this->variationCache[$hashParams]) {
+            return $this->variationCache[$hashParams];
         }
 
         return array();
@@ -1483,11 +1490,16 @@ abstract class ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstra
 
     protected static function getMessage($sIdentifier, $aReplace = array())
     {
-        return MLI18n::gi()->get(MLModul::gi()->getMarketPlaceName() . $sIdentifier, $aReplace);
+        return MLI18n::gi()->get(MLModule::gi()->getMarketPlaceName() . $sIdentifier, $aReplace);
     }
 
     protected static function getMPName()
     {
-        return MLModul::gi()->getMarketPlaceName();
+        return MLModule::gi()->getMarketPlaceName();
     }
+
+    public function getManipulateMarketplaceAttributeValues($values) {
+        return MLFormHelper::getPrepareAMCommonInstance()->getManipulateMarketplaceAttributeValues($values);
+    }
+
 }

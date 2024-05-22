@@ -36,9 +36,8 @@ class ML_Otto_Model_Table_Otto_CategoriesMarketplace extends ML_Modul_Model_Tabl
         'LeafCategory' => array(
             'Type' => 'tinyint(4)', 'Null' => 'NO', 'Default' => 1, 'Extra' => '', 'Comment' => ''
         ),
-        'Expires' => array(
-            'isExpirable' => false,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+        'ImportOrUpdateTime' => array(
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
     );
 

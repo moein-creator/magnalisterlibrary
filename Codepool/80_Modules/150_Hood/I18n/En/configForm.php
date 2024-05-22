@@ -129,7 +129,7 @@ table.ordersummary tbody td.qty {
 <p>Sincerely,</p>
 <p>Your Online Shop Team</p>';
 MLI18n::gi()->{'hood_config_account__legend__account'} = 'Login Details';
-MLI18n::gi()->{'hood_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'hood_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'hood_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'hood_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'hood_config_account__field__mpusername__label'} = 'Hood.de Member Name';
@@ -162,16 +162,20 @@ MLI18n::gi()->{'hood_config_prepare__field__postalcode__label'} = 'Postcode';
 MLI18n::gi()->{'hood_config_prepare__field__postalcode__help'} = 'Please enter the location of your Shop. This will be visible as the Seller Address on Hood.de.';
 MLI18n::gi()->{'hood_config_prepare__field__location__label'} = 'City';
 MLI18n::gi()->{'hood_config_prepare__field__country__label'} = 'Country';
-MLI18n::gi()->{'hood_config_prepare__field__mwst__label'} = 'VAT';
-MLI18n::gi()->{'hood_config_prepare__field__mwst__help'} = 'VAT rate that will apply to items sold via Hood.de. Please only fill this out if you have a commercial seller account with Hood.de.';
+MLI18n::gi()->{'hood_config_prepare__field__mwst__label'} = 'VAT Fallback';
+MLI18n::gi()->{'hood_config_prepare__field__mwst__help'} = 'VAT rate shown at Hood.de, if not stored on the item. Values other than 0 are only permitted if you have a commercial account with Hood.de.';
 MLI18n::gi()->{'hood_config_prepare__field__mwst__hint'} = 'Tax rate for commercial sellers in %';
+MLI18n::gi()->{'hood_config_prepare__field__forcefallback__label'} = 'Always use VAT Fallback';
+MLI18n::gi()->{'hood_config_prepare__field__forcefallback__help'} = 'If activated, always the fallback value is used, regardles of the data stored on the item.';
 MLI18n::gi()->{'hood_config_prepare__field__conditiontype__label'} = 'Item Condition';
 MLI18n::gi()->{'hood_config_prepare__field__conditiontype__help'} = 'Item Condition presets (for Hood.de categories that require or provide the option for this). Not every description is valid for every category; after choosing the category please ensure the Item Condition is correct. ';
 MLI18n::gi()->{'hood_config_prepare__field__lang__label'} = 'Language';
 MLI18n::gi()->{'hood_config_prepare__field__lang__help'} = 'Language for item names and descriptions. Your Shop allows names and descriptions to be given in more than one language; for uploading to Hood.de, one language must be selected. 
 Error reports from hood will also be made in the selected language.';
-MLI18n::gi()->{'hood_config_prepare__field__shippingtime.min__label'}='Delivery time (min)';
-MLI18n::gi()->{'hood_config_prepare__field__shippingtime.max__label'}='Delivery time (max)';
+MLI18n::gi()->{'hood_config_prepare__field__shippingtime.min__label'}='Delivery time in days (min)';
+MLI18n::gi()->{'hood_config_prepare__field__shippingtime.min__help'}='Enter the shortest delivery time here (as a number). Use 0 if you deliver on the same day. If you do not enter a number here, the value stored in your Hood.de account will be used.';
+MLI18n::gi()->{'hood_config_prepare__field__shippingtime.max__label'}='Delivery time in days (max)';
+MLI18n::gi()->{'hood_config_prepare__field__shippingtime.max__help'}='Enter the longest delivery time here (as a number). Use 0 if you deliver on the same day. If you do not enter a number here, the value stored in your Hood.de account will be used.';
 MLI18n::gi()->{'hood_config_prepare__field__dispatchtimemax__label'} = 'Lead Time';
 MLI18n::gi()->{'hood_config_prepare__field__dispatchtimemax__help'} = 'Maximum amount of time required before the item is shipped. This will be visible on Hood.de.';
 MLI18n::gi()->{'hood_config_prepare__field__topten__label'} = 'Category Quick-Selection';
@@ -638,6 +642,7 @@ MLI18n::gi()->{'hood_config_emailtemplate__field__mail.copy__help'} = 'A copy wi
 MLI18n::gi()->{'hood_config_producttemplate__legend__product__title'} = 'Product Template';
 MLI18n::gi()->{'hood_config_producttemplate__legend__product__info'} = 'Template for Product Description on Hood.de. (You can change the Editor under \'Global Configurations\' > \'Expert Settings\'.)***';
 MLI18n::gi()->{'hood_config_producttemplate__field__template.name__label'} = 'Product Name Template ';
+// For shopify this help is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyHood/I18n/En/configForm.php
 MLI18n::gi()->{'hood_config_producttemplate__field__template.name__help'} = '<dl>
                             <dt>Name of the product on Hood.de</dt>
                              <dd>Decide how to name the product on Hood.de.
@@ -655,7 +660,8 @@ MLI18n::gi()->{'hood_config_producttemplate__field__template.name__help'} = '<dl
 <li>Variation: 0.5 l (2.50 EUR / l)</li>
 <li>etc.</li></ul></dd>
 <dd>In this case, please <b>disable the price synchronization</b> (because the Variation titles cannot be changed on Hood.de).</dd>
-                            </dl>dd';
+                            </dl>';
+// For shopify this hint is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyHood/I18n/En/configForm.php
 MLI18n::gi()->{'hood_config_producttemplate__field__template.name__hint'} = 'Placeholder: #TITLE# - Product name; #BASEPRICE# - Baseprice';
 MLI18n::gi()->{'hood_config_producttemplate__field__template.content__label'} = 'Product Description Template';
 MLI18n::gi()->{'hood_config_producttemplate__field__template.content__hint'} = 'List of available placeholders for Content:

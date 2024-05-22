@@ -82,7 +82,7 @@ MLI18n::gi()->ricardo_config_error_price_signal = 'Preise auf Ricardo sind in Sc
 MLI18n::gi()->add('ricardo_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
@@ -104,7 +104,7 @@ MLI18n::gi()->add('ricardo_config_account', array(
         ),
         'apilang' => array(
 			'label' => 'Interface Sprache',
-			'hint' => 'Fur abgerufenene Werte und Fehlermeldungen',
+			'hint' => 'F&uuml;r abgerufenene Werte und Fehlermeldungen',
             'values' => array(
 				'de' => 'Deutsch',
 				'fr' => 'Franz&ouml;sisch',
@@ -224,11 +224,11 @@ MLI18n::gi()->add('ricardo_config_prepare', array(
 		),
 		'firstpromotion' => array(
 			'label' => 'Promotion-Paket',
-            'hint' => '<span style="color:red;">Promotions sind nicht kostenlos. Bitte &uuml;berpr&uuml;fen Sie die Preise auf Ricardo.</span>',
+            'hint' => '<span style="color:#e31a1c;">Promotions sind nicht kostenlos. Bitte &uuml;berpr&uuml;fen Sie die Preise auf Ricardo.</span>',
 		),
 		'secondpromotion' => array(
 			'label' => 'Startseite',
-            'hint' => '<span style="color:red;">Promotions sind nicht kostenlos. Bitte &uuml;berpr&uuml;fen Sie die Preise auf Ricardo.</span>',
+            'hint' => '<span style="color:#e31a1c;">Promotions sind nicht kostenlos. Bitte &uuml;berpr&uuml;fen Sie die Preise auf Ricardo.</span>',
 		),
         'checkin.showlimitationwarning' => array(
             'label' => 'Ricardo Angebotslimits vor Hochladen anzeigen',

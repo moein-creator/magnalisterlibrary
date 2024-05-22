@@ -18,7 +18,8 @@
  * -----------------------------------------------------------------------------
  */
 /** @var ML_Core_Controller_Abstract $this */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 $aField = $this->getField($aFieldset['field']['name']);
 $aField['type'] = 'ajax';
 ?>

@@ -116,9 +116,9 @@ abstract class ML_Productlist_Model_ProductList_Abstract{
      */
     abstract public function variantInList(ML_Shop_Model_Product_Abstract $oProduct);
     /**
-     * 
-     * @param type $iFrom
-     * @param type $iCount
+     *
+     * @param int $iFrom
+     * @param int $iCount
      * @return ML_Productlist_Model_ProductList_Abstract
      */
     abstract public function setLimit($iFrom, $iCount);
@@ -168,7 +168,7 @@ abstract class ML_Productlist_Model_ProductList_Abstract{
                            " . (($sPreparedType === null) ? '' : ', ' . $sPreparedType) . "
                     FROM magnalister_products
                     INNER JOIN ".$sPrepareTableName." ON magnalister_products.id = ".$sPrepareTableName.".".$oPrepareTable->getProductIdFieldName()."
-                    WHERE     ".$oPrepareTable->getMarketplaceIdFieldName()."='".MLModul::gi()->getMarketPlaceId()."'
+                    WHERE     " . $oPrepareTable->getMarketplaceIdFieldName() . "='" . MLModule::gi()->getMarketPlaceId() . "'
                         AND magnalister_products.parentid= ".(int)$oProduct->get('id')."
                     GROUP BY ".$sPreparedStatusFieldName."
                            ".(($sPreparedType === null) ? '' : ', '.$sPreparedType)."
@@ -183,7 +183,7 @@ abstract class ML_Productlist_Model_ProductList_Abstract{
                     ) {
                         $aOut[$iGroup] = $aI18n[$aSelected[$sPreparedStatusFieldName]];
                         $aOut[$iGroup]['status'] = $aSelected[$sPreparedStatusFieldName];
-                        $aTypeI18n = MLI18n::gi()->get(ucfirst(MLModul::gi()->getMarketPlaceName()).'_Productlist_Cell_aPreparedType');
+                        $aTypeI18n = MLI18n::gi()->get(ucfirst(MLModule::gi()->getMarketPlaceName()) . '_Productlist_Cell_aPreparedType');
                         if ($sPreparedType !== null) {
                             $aOut[$iGroup]['type'] =
                                 isset($aTypeI18n[$aSelected[$sPreparedType]])
@@ -210,7 +210,7 @@ abstract class ML_Productlist_Model_ProductList_Abstract{
                         ->select($sPreparedStatusFieldName." ".(($sPreparedType === null) ? '' : ', '.$sPreparedType))
                         ->from($sPrepareTableName)
                         ->where(array(
-                            $oPrepareTable->getMarketplaceIdFieldName() => MLModul::gi()->getMarketPlaceId(),
+                            $oPrepareTable->getMarketplaceIdFieldName() => MLModule::gi()->getMarketPlaceId(),
                             $oPrepareTable->getProductIdFieldName() => $oProduct->get('id')
                         ))->getRowResult();
                 if (   isset($aSelected[$sPreparedStatusFieldName])
@@ -218,7 +218,7 @@ abstract class ML_Productlist_Model_ProductList_Abstract{
                 ) {
                     $aOut = $aI18n[$aSelected[$sPreparedStatusFieldName]];
                     $aOut['status'] = $aSelected[$sPreparedStatusFieldName];
-                    $aTypeI18n = MLI18n::gi()->get(ucfirst(MLModul::gi()->getMarketPlaceName()).'_Productlist_Cell_aPreparedType');
+                    $aTypeI18n = MLI18n::gi()->get(ucfirst(MLModule::gi()->getMarketPlaceName()) . '_Productlist_Cell_aPreparedType');
                     if ($sPreparedType !== null) {
                         $aOut['type'] =
                             isset($aTypeI18n[$aSelected[$sPreparedType]])
@@ -279,7 +279,8 @@ abstract class ML_Productlist_Model_ProductList_Abstract{
         if (isset($aPreparedData[$sCategoryField])) {
             $sGlobalMatching = $this->getMatchedAttributes($aPreparedData[$sCategoryField]);
             $shopAttributes = MLFormHelper::getShopInstance()->getFlatShopAttributesForMatching();
-            $preparedData = json_decode($aPreparedData[$sShopVariationField], true);
+
+            $preparedData = isset($aPreparedData[$sShopVariationField]) ? json_decode($aPreparedData[$sShopVariationField], true) : null;
 
             $this->filterAMPreparedDataBeforeComparison($preparedData, $aPreparedData[$sCategoryField], $sGlobalMatching);
 

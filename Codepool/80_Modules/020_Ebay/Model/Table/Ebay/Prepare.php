@@ -29,7 +29,7 @@ class ML_Ebay_Model_Table_Ebay_Prepare extends ML_Database_Model_Table_Prepare_A
         ),
         'PreparedTS'   => array (
             'isInsertCurrentTime' => true,
-            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_NO, 'Default' => '0000-00-00 00:00:00', 'Extra' => '', 'Comment'=>''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
         ),
         'StartTime'    => array (
             'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
@@ -68,6 +68,9 @@ class ML_Ebay_Model_Table_Ebay_Prepare extends ML_Database_Model_Table_Prepare_A
         'ConditionDescription'  => array (
             'Type' => 'varchar(1000)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment'=>''
         ),
+        'ConditionDescriptors'  => array (
+            'Type' => 'varchar(1000)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment'=>''
+        ),
         'StartPrice'   => array (
             'Type' => 'decimal(15,4)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
         ),
@@ -75,7 +78,7 @@ class ML_Ebay_Model_Table_Ebay_Prepare extends ML_Database_Model_Table_Prepare_A
             'Type' => 'decimal(15,4)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
         ),
         'StrikePrice'   => array (
-            'Type' => 'enum(\'false\', \'true\')', 'Null' => self::IS_NULLABLE_NO, 'Default' => 'false', 'Extra' => '', 'Comment'=>''
+            'Type' => "enum('false','true')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'false', 'Extra' => '', 'Comment'=>''
         ),
         'currencyID'   => array (
             'Type' => 'varchar(3)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 'EUR', 'Extra' => '', 'Comment'=>''
@@ -86,14 +89,14 @@ class ML_Ebay_Model_Table_Ebay_Prepare extends ML_Database_Model_Table_Prepare_A
         'PrimaryCategory'               => array (
             'Type' => 'int(10)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
         ),
-        'PrimaryCategoryName'           => array (
-            'Type' => 'varchar(128)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
+        'PrimaryCategoryName'           => array(
+            'Type' => 'varchar(256)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'SecondaryCategory'             => array (
             'Type' => 'int(10)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
         ),
-        'SecondaryCategoryName'         => array (
-            'Type' => 'varchar(128)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
+        'SecondaryCategoryName'         => array(
+            'Type' => 'varchar(256)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'StoreCategory'                 => array (
             'Type' => 'bigint(11)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
@@ -108,7 +111,7 @@ class ML_Ebay_Model_Table_Ebay_Prepare extends ML_Database_Model_Table_Prepare_A
             'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
         ),
         'ShopVariation' => array(
-            'Type' => 'mediumtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'VariationThemeBlacklist' => array(
             'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
@@ -127,9 +130,6 @@ class ML_Ebay_Model_Table_Ebay_Prepare extends ML_Database_Model_Table_Prepare_A
         ),
         'BestOfferEnabled'              => array (
             'Type' => 'enum(\'0\',\'1\')', 'Null' => self::IS_NULLABLE_NO, 'Default' => '0', 'Extra' => '', 'Comment'=>''
-        ),
-        'HitCounter'   => array (
-            'Type' => 'enum(\'NoHitCounter\',\'BasicStyle\',\'RetroStyle\',\'HiddenStyle\')', 'Null' => self::IS_NULLABLE_NO, 'Default' => 'NoHitCounter', 'Extra' => '', 'Comment'=>''
         ),
         'paymentsellerprofile'                => array (
             'Type' => 'varchar(16)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
@@ -162,16 +162,16 @@ class ML_Ebay_Model_Table_Ebay_Prepare extends ML_Database_Model_Table_Prepare_A
             'Type' => 'tinyint(1)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '0', 'Extra' => '', 'Comment'=>''
         ),
         'Verified'     => array (
-            'Type' => 'enum(\'OK\',\'ERROR\',\'OPEN\')', 'Null' => self::IS_NULLABLE_NO, 'Default' => 'OPEN', 'Extra' => '', 'Comment'=>''
+            'Type' => "enum('OK','ERROR','OPEN')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'OPEN', 'Extra' => '', 'Comment'=>''
         ),
         'ErrorCode'     => array (
-            'Type' => 'VARCHAR(10)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment'=>''
+            'Type' => 'varchar(10)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment'=>''
         ),
         'productRequired'     => array (
-            'Type' => "ENUM('false', 'true')", 'Null' => self::IS_NULLABLE_YES, 'Default' => 'false', 'Extra' => '', 'Comment'=>''
+            'Type' => "enum('false','true')", 'Null' => self::IS_NULLABLE_YES, 'Default' => 'false', 'Extra' => '', 'Comment'=>''
         ),
         'ePID'     => array (
-            'Type' => 'VARCHAR(43)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment'=>''
+            'Type' => 'varchar(43)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment'=>''
         ),
         'deletedBy'    => array (
             'Type' => 'enum(\'\',\'empty\',\'Sync\',\'Button\',\'expired\',\'notML\')', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
@@ -210,10 +210,11 @@ class ML_Ebay_Model_Table_Ebay_Prepare extends ML_Database_Model_Table_Prepare_A
      * @deprecated since 3488
      */
     protected function runOnceSession(){
-         if(MLDatabase::getDbInstance()->tableExists($this->sTableName)){
-            MLDatabase::getDbInstance()->update($this->getTableName(), array('StartPrice'=>null), array('ListingType'=>'FixedPriceItem'));
-            MLDatabase::getDbInstance()->update($this->getTableName(), array('StartPrice'=>null), array('ListingType'=>'StoresFixedPrice'));
-         }
+        //it is very old change, and fozen price couldn't be stored anywhere
+//         if(MLDatabase::getDbInstance()->tableExists($this->sTableName)){
+//            MLDatabase::getDbInstance()->update($this->getTableName(), array('StartPrice'=>null), array('ListingType'=>'FixedPriceItem'));
+//            MLDatabase::getDbInstance()->update($this->getTableName(), array('StartPrice'=>null), array('ListingType'=>'StoresFixedPrice'));
+//         }
         parent::runOnceSession();
     }
 

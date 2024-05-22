@@ -7,7 +7,7 @@ if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) {
     //        new dBug($oList->getHead());
     //        new dBug(array('product'=>$oList->getList()->current(),'data'=>$oList->getList()->current()->mixedData()));
     ?>
-    <div class="ml-plist <?php echo MLModul::gi()->getMarketPlaceName(); ?>">
+    <div class="ml-plist <?php echo MLModule::gi()->getMarketPlaceName(); ?>">
         <table class="fullWidth nospacing nopadding valigntop topControls">
             <tbody>
             <tr>
@@ -37,7 +37,7 @@ if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) {
             </tbody>
         </table>
         <div class="clear"></div>
-        <div class="pagination_bar">
+        <div class="pagination_bar" style="align-items: center;justify-content: space-between;">
             <?php
             $this->includeView('widget_productlist_pagination', get_defined_vars());
             ?>
@@ -45,7 +45,7 @@ if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) {
         <?php
         $this->includeView('widget_productlist_list', get_defined_vars());
         ?>
-        <div class="pagination_bar">
+        <div class="pagination_bar" style="align-items: center;justify-content: space-between;">
             <?php
             $this->includeView('widget_productlist_pagination', get_defined_vars());
             ?>
@@ -59,6 +59,18 @@ if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) {
                     MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true); 
                 ?>
             </div>
+            <script>
+                const pagination_bar = document.getElementsByClassName('pagination_bar');
+                Array.from(pagination_bar).forEach(pagination_bar => {
+                    if(pagination_bar.innerHTML.trim() === '') {
+                       /* pagination_bar.classList.add('spacer');*/
+                        pagination_bar.classList.remove('pagination_bar');
+
+                  /*      pagination_bar.style.margin = 'unset';
+                        pagination_bar.style.border = 'unset';*/
+                    }
+                });
+            </script>
         <?php 
     }
 ?>

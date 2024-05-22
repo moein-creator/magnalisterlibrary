@@ -34,7 +34,7 @@ class ML_Amazon_Model_ProductList_Amazon_Prepare_Match_Auto extends ML_Productli
                  WHERE     s.pID = p.ID
                        AND s.session_id = '".MLShop::gi()->getSessionId()."'
                        AND s.selectionname = 'match'
-                       AND mpid = '".MLModul::gi()->getMarketPlaceId()."'
+                       AND mpid = '" . MLModule::gi()->getMarketPlaceId() . "'
             ";
             $this->iCountTotal = MLDatabase::getDbInstance()->fetchOne(sprintf($sSql, ' count(distinct p.ParentId) '));
             foreach (MLDatabase::getDbInstance()->fetchArray(sprintf($sSql, ' distinct p.ParentId ')." limit ".$this->iOffset.", ".$this->iCountPerPage) as $aRow) {
@@ -82,9 +82,7 @@ class ML_Amazon_Model_ProductList_Amazon_Prepare_Match_Auto extends ML_Productli
     }
 
     public function variantInList(ML_Shop_Model_Product_Abstract $oProduct) {
-        return (
-               MLDatabase::factory('selection')->loadByProduct($oProduct, 'match')->get('expires') === null
-            || !$this->getMixedData($oProduct, 'general.ean')
-        ) ? false : true;
+        return MLDatabase::factory('selection')->loadByProduct($oProduct, 'match')->get('expires')===null?false:true;
     }
+
 }

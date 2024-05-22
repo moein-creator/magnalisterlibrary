@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -20,13 +20,33 @@ class ML_Ebay_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncO
 
     protected function getCarrier($oOrder) {
         $sCarrier = $oOrder->getShippingCarrier();
-        $aCarriers = MLModul::gi()->getCarrier();
-        if (in_array($sCarrier, $aCarriers) || MLModul::gi()->getConfig('orderstatus.carrier.default') == null || MLModul::gi()->getConfig('orderstatus.carrier.default') == '-1') {
+        $sConfigCarrier = MLModule::gi()->getConfig('orderstatus.carrier.default');
+
+        if (    $sConfigCarrier != null
+             && $sConfigCarrier != '-1'
+             && strpos($sConfigCarrier, 'a_') === false
+        ) {
+            // fixed value configured
+            return $sConfigCarrier;
+        }
+
+        $aCarriers = MLModule::gi()->getCarrier();
+        if (
+            in_array($sCarrier, $aCarriers) ||
+            $sConfigCarrier == null ||
+            $sConfigCarrier == '-1' ||//shipping method will be transferred as carrier
+            strpos($sConfigCarrier, 'a_') !== 0//right now it works only after activating IVCarrierFreeTextFieldMatching individually
+        ) {
             return $sCarrier;
+        }
+        //order attribute freetext field(only in Shopware 5)
+        if (strpos($sConfigCarrier, 'a_') === 0) {
+            return $oOrder->getAttributeValue($sConfigCarrier);
         } else {
-            return MLModul::gi()->getConfig('orderstatus.carrier.default');
+            return $sConfigCarrier;
         }
     }
+
 
     protected function postProcessError($aError, &$aModels) {
         $sFieldId = 'MOrderID';
@@ -50,10 +70,20 @@ class ML_Ebay_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncO
      */
     public function otherActions($oOrder) {
         $aOrderData = $oOrder->get('data');
-        if (!isset($aOrderData['refund']) &&  MLModul::gi()->isPaymentProgramAvailable() && in_array($oOrder->getShopOrderStatus(), MLModul::gi()->getConfig('refundstatus'), true)) {
-            $aReasons = MLModul::gi()->getConfig('refundreason');
-            $aComments = MLModul::gi()->getConfig('refundcomment');
-            $iIndex = array_search($oOrder->getShopOrderStatus(), MLModul::gi()->getConfig('refundstatus'), true);
+
+        // PHP Fix for in_array check cant be done against NULL as value
+        $refundStatuses = MLModule::gi()->getConfig('refundstatus');
+        if (empty($refundStatuses)) {
+            $refundStatuses = array();
+        }
+
+        if (    !isset($aOrderData['refund'])
+            && MLModule::gi()->isPaymentProgramAvailable()
+            && in_array($oOrder->getShopOrderStatus(), $refundStatuses, true)
+        ) {
+            $aReasons = MLModule::gi()->getConfig('refundreason');
+            $aComments = MLModule::gi()->getConfig('refundcomment');
+            $iIndex = array_search($oOrder->getShopOrderStatus(), MLModule::gi()->getConfig('refundstatus'), true);
             $aRequest = array(
                 'ACTION' => 'DoRefund',
                 'MagnalisterOrderId' => $oOrder->get('special'),

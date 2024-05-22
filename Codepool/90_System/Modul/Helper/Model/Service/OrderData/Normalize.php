@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -78,8 +78,8 @@ class ML_Modul_Helper_Model_Service_OrderData_Normalize {
     }
     
     protected function normalizeProducts () {
-        $fDefaultProductTax = MLModul::gi()->getConfig('mwst.fallback');
-        $fDefaultProductTax = $fDefaultProductTax === null ? MLModul::gi()->getConfig('mwstfallback') : $fDefaultProductTax;// some moduls have this, other that
+        $fDefaultProductTax = MLModule::gi()->getConfig('mwst.fallback');
+        $fDefaultProductTax = $fDefaultProductTax === null ? MLModule::gi()->getConfig('mwstfallback') : $fDefaultProductTax;// some moduls have this, other that
         $this->aOrder['Products'] = isset($this->aOrder['Products']) ? $this->aOrder['Products'] : array();
         foreach ($this->aOrder['Products'] as &$aProduct) {
             $this->normalizeProduct($aProduct, $fDefaultProductTax);
@@ -89,7 +89,7 @@ class ML_Modul_Helper_Model_Service_OrderData_Normalize {
     
     protected function normalizeProduct (&$aProduct, $fDefaultProductTax) {
         $aProduct['Tax'] = !isset($aProduct['Tax']) || !is_numeric($aProduct['Tax']) ? $fDefaultProductTax : $aProduct['Tax'];
-        $aProduct['StockSync'] = MLModul::gi()->getConfig('stocksync.frommarketplace') == 'rel';
+        $aProduct['StockSync'] = MLModule::gi()->getConfig('stocksync.frommarketplace') == 'rel';
         if (isset($aProduct['SKU']) && $aProduct['SKU'] == '') {
             unset($aProduct['SKU']);
         }
@@ -112,7 +112,7 @@ class ML_Modul_Helper_Model_Service_OrderData_Normalize {
 
     protected function getShippingCode($aTotal) {
         $sShipping = MLModule::gi()->getConfig('orderimport.shippingmethod');
-        return $sShipping == '' ? MLModul::gi()->getMarketPlaceName(false) : $sShipping;
+        return $sShipping == '' ? MLModule::gi()->getMarketPlaceName(false) : $sShipping;
     }
 
     protected function getPaymentCode($aTotal, $sPaymentMethodConfigKey = 'orderimport.paymentmethod') {
@@ -146,7 +146,7 @@ class ML_Modul_Helper_Model_Service_OrderData_Normalize {
     }
     
     protected function normalizeOrder () {
-        $this->aOrder['Order']['Status'] = MLModul::gi()->getConfig('orderstatus.open');
+        $this->aOrder['Order']['Status'] = MLModule::gi()->getConfig('orderstatus.open');
         $this->aOrder['Order']['Payed'] = false;
         $this->aOrder['Order']['Shipped'] = false;
         $this->aOrder['Order']['Comments'] = isset($this->aOrder['Order']['Comments']) ? $this->aOrder['Order']['Comments'] : '';
@@ -165,8 +165,8 @@ class ML_Modul_Helper_Model_Service_OrderData_Normalize {
     }
     
     protected function normalizeMpSpecific () {
-        $this->aOrder['MPSpecific']['InternalComment'] = 	
-            sprintf(MLI18n::gi()->get('ML_GENERIC_AUTOMATIC_ORDER_MP_SHORT'), MLModul::gi()->getMarketPlaceName(false) )."\n".
+        $this->aOrder['MPSpecific']['InternalComment'] =
+            sprintf(MLI18n::gi()->get('ML_GENERIC_AUTOMATIC_ORDER_MP_SHORT'), MLModule::gi()->getMarketPlaceName(false)) . "\n" .
             MLI18n::gi()->get('ML_LABEL_MARKETPLACE_ORDER_ID').': '.$this->aOrder['MPSpecific']['MOrderID']."\n\n"
             .$this->aOrder['Order']['Comments']
         ;

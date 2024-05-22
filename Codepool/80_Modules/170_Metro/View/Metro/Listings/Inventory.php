@@ -1,4 +1,5 @@
-<?php class_exists('ML', false) or die() ?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
 <?php
 MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true);
 /* @var $this   ML_Listings_Controller_Widget_Listings_InventoryAbstract */

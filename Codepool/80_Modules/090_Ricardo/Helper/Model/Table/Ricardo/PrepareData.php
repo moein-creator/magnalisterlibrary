@@ -20,7 +20,7 @@ MLFilesystem::gi()->loadClass('Form_Helper_Model_Table_PrepareData_Abstract');
 
 class ML_Ricardo_Helper_Model_Table_Ricardo_PrepareData extends ML_Form_Helper_Model_Table_PrepareData_Abstract {
 
-    const TITLE_MAX_LENGTH = 40;
+    const TITLE_MAX_LENGTH = 60;
     const SUBTITLE_MAX_LENGTH = 60;
 
     public $aErrors = array();
@@ -133,8 +133,8 @@ class ML_Ricardo_Helper_Model_Table_Ricardo_PrepareData extends ML_Form_Helper_M
         $aField['type'] = 'price';
         $aField['currency'] = 'CHF';
         $aField['value'] = $this->getFirstValue($aField);
-        if (!isset($aField['value'])) {
-            $aField['value'] = 0;
+        if (!isset($aField['value']) || $aField['value'] === "") {
+            $aField['value'] = 0.00;
         }
     }
 
@@ -142,8 +142,8 @@ class ML_Ricardo_Helper_Model_Table_Ricardo_PrepareData extends ML_Form_Helper_M
         $aField['type'] = 'price';
         $aField['currency'] = 'CHF';
         $aField['value'] = $this->getFirstValue($aField);
-        if (!isset($aField['value'])) {
-            $aField['value'] = 0;
+        if (!isset($aField['value']) || $aField['value'] === "") {
+            $aField['value'] = 0.00;
         }
     }
 
@@ -208,10 +208,10 @@ class ML_Ricardo_Helper_Model_Table_Ricardo_PrepareData extends ML_Form_Helper_M
                 }
 
                 try {
-                    $aUrl = MLImage::gi()->resizeImage($sImagePath, 'products', 60, 60);
+                    $aUrl = MLImage::gi()->resizeImage($sImagePath, 'products', 80, 80);
                     $aField['values'][$sId] = array(
-                        'height' => '60',
-                        'width' => '60',
+                        'height' => '80',
+                        'width' => '80',
                         'alt' => $sId,
                         'url' => $aUrl['url'],
                     );

@@ -19,7 +19,8 @@
 /* @var $this  ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Orderlist */
 /* @var $oList ML_Amazon_Model_List_Amazon_Order */
 /* @var $aStatistic array */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <form action="<?php echo $this->getCurrentUrl() ?>" method="post" class="js-mlFilter">
     <div>

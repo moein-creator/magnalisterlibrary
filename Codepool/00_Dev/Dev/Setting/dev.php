@@ -1,4 +1,4 @@
-<?php
+<?php 
 MLSetting::gi()->blDebug = true;
 MLSetting::gi()->blDev = true;
 MLSetting::gi()->blShowInfos = true;

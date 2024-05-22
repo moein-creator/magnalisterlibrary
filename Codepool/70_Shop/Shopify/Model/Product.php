@@ -11,22 +11,29 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 use Shopify\API\Application\Application;
+use Shopify\API\Application\Request\Products\ProductGraphQL\ProductGraphQLParams;
 
 /**
  * Class ML_Shopify_Model_Product
  */
 class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
 
+    const ATTRIBUTE_PREFIX_VARIANT = 'c_';
     /**
      * @var array Shopify Product
      */
     protected $aProduct = null;
+
+    /**
+     * @var array Shopify Product
+     */
+    protected $aCollection = null;
 
     /**
      * if get Variant is loaded it contain variant data of product
@@ -98,7 +105,15 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
     }
 
     function getReplaceProperty() {
-        return parent::getReplaceProperty() + ['#TAGS#' => $this->getMetaKeywords()];
+        $aReturn = parent::getReplaceProperty() + ['#TAGS#' => $this->getMetaKeywords()];
+        foreach (MLShopifyAlias::getMetaFieldModel()->getList()->getList() as $oMetaField) {
+            /** @var $oMetaField ML_Shopify_Model_Table_ShopifyMetaField */
+            $sValue = $this->getAttributeValue('m_' . $oMetaField->get('MetaFieldId'));
+            foreach ($oMetaField->getMetaFieldExtraInformationAllPossibleKeys() as $metaFieldExtraInformationAllPossibleKey) {
+                $aReturn['#' . $metaFieldExtraInformationAllPossibleKey . '#'] = $sValue;
+            }
+        }
+        return $aReturn;
     }
 
     /**
@@ -191,21 +206,20 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
      *
      * @return mixed value of product-attribute or null if the value does not exist.
      */
-    public function getModulField($sFieldName, $blGeneral = false) {
-        if ($sFieldName === 'general.ean') {
-            return $this->getEAN();
-            //return isset($this->getVariants()[0]->oProduct->variants[0]->barcode) ? $this->getVariants()[0]->oProduct->variants[0]->barcode : '';
+    public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false) {
+        $sConfiguredFieldName = MLModule::gi()->getConfig($sFieldName);
+        $mValue = $this->getShopifyEntityField($this->getCurrentVariant(), $sConfiguredFieldName);
+        if ($mValue === null) {
+            $mValue = $this->getShopifyEntityField($this->oProduct, $sConfiguredFieldName);
+            if ($mValue === null) {
+                $mValue = $this->getShopifyEntityField($this->getVariants()[0]->oProduct->variants[0], $sConfiguredFieldName);
+            }
+        }
+        if ($mValue === null) {
+            $mValue = $this->getAttributeValue($sConfiguredFieldName);
         }
 
-        if ($sFieldName === 'manufacturer' || $sFieldName === 'general.manufacturer') {
-            return isset($this->getVariants()[0]->oProduct->vendor) ? $this->getVariants()[0]->oProduct->vendor : '';
-        }
-
-        if (!isset($this->getVariants()[0]->oProduct->variants[0]->$sFieldName)) {
-            return '';
-        }
-
-        return $this->getVariants()[0]->oProduct->variants[0]->$sFieldName;
+        return $mValue;
     }
 
     /**
@@ -300,12 +314,11 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
     public function getFrontendLink() {
         $sShopId = MLHelper::gi('model_shop')->getShopId();
         $application = new Application($sShopId);
-        $sToken = MLHelper::gi('container')->getCustomerModel()->getAccessToken($sShopId);
 
-        $oProductParams = new \Shopify\API\Application\Request\Products\ProductGraphQL\ProductGraphQLParams();
+        $oProductParams = new ProductGraphQLParams();
         $oProductParams->setId($this->oProduct->admin_graphql_api_id);
 
-        $aProduct = $application->getProductRequest($sToken)->productGraphQL($oProductParams)->getBodyAsArray()['data']['product'];
+        $aProduct = $application->getProductRequest()->productGraphQL($oProductParams)->getBodyAsArray()['data']['product'];
 
         return $aProduct['onlineStoreUrl'];
     }
@@ -318,16 +331,11 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @return string
      */
     public function getShopifySku($oProduct) {
-        //@todo gets first sku
         if (is_array($oProduct->variants[0])) {
             $sku = $oProduct->variants[0]['sku'];
         } else {
             $sku = $oProduct->variants[0]->sku;
         }
-        if ($sku == '') {
-            //@todo
-        }
-
         return $sku;
     }
 
@@ -369,7 +377,10 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
             foreach ($this->oProduct->variants as $aVariant) {
                 $iQuantity += $aVariant['inventory_quantity'];
             }
-
+            $oVendor = MLShopifyAlias::getProductVendorModel()
+                ->set('VendorTitleMD5', md5($this->oProduct->vendor))
+                ->set('ShopifyVendorTitle', $this->oProduct->vendor)
+                ->save();
             $this
                 ->set('marketplaceidentid', $this->oProduct->id)
                 ->set('marketplaceidentsku', empty($sSku) ? '__ERROR__'.$this->oProduct->id : $sSku)
@@ -381,14 +392,18 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
                 ->set('ShopifyQuantity', $iQuantity)
                 ->set('ShopifyPrice', $sPrice)
                 ->set('ShopifyVendor', $this->oProduct->vendor)
+                ->set('ShopifyVendorId', $oVendor->get('VendorId'))
                 ->set('ShopifyPublication', $this->oProduct->published_at)
                 ->set('ShopifyStatus', $this->oProduct->status)
-                ->set('ShopifyData', $aProduct)
+                ->set('ShopifyData', [])//deprecated, use  ShopifyProductData.ShopifyProductData instead
                 ->set('ShopifyMethodOfUpdate', $this->oProduct->MethodOfUpdate)
                 ->set('ShopifyUpdateDate', date('Y-m-d H:i:s'))
                 ->save()
                 ->aKeys = array('id');
-
+            MLDatabase::factory('ShopifyProductData')
+                ->set('ShopifyProductID', $this->oProduct->id)
+                ->set('ShopifyProductData', $aProduct)
+                ->save();
             $this->refreshAttributeTable();
 
             if ($sKey !== 'pID' && empty($sSku)) {
@@ -469,7 +484,12 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
             } else {
                 $oProduct = $this->getParent();
             }
-            $this->aProduct = $oProduct->get('shopifydata');
+            $this->aProduct = MLDatabase::factory('ShopifyProductData')
+                ->set('ShopifyProductID', $oProduct->get('ProductsId'))
+                ->get('ShopifyProductData');
+            if (!is_array($this->aProduct)) {//the new product table still is not populated
+                $this->aProduct = $oProduct->get('shopifydata');
+            }
             $this->oProduct = (object)$this->aProduct;
         }
         if ($this->aProduct !== null) {
@@ -481,6 +501,23 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
             }
         }
         return $this;
+    }
+
+    protected function getCategoryArray() {
+        if ($this->aCollection === null) {
+            if ((int)$this->get('parentid') === 0) {
+                $oProduct = $this;
+            } else {
+                $oProduct = $this->getParent();
+            }
+            $sCollectionProductTable = MLShopifyAlias::getProductCollectionRelationModel()->getTableName();
+            $this->aCollection = MLDatabase::factory('ShopifyProductCollectionRelation')
+                ->set('ShopifyProductID', $oProduct->get('ProductsId'))
+                ->getList()->getQueryObject()
+                ->join('magnalister_shopify_collection sc ON '.$sCollectionProductTable.'.ShopifyCollectionID = sc.ShopifyCollectionID', ML_Database_Model_Query_Select::JOIN_TYPE_INNER)
+                ->where($sCollectionProductTable.'.ShopifyProductID= "'.$this->aProduct['id'].'"')->getResult();
+        }
+        return $this->aCollection;
     }
 
     /**
@@ -552,12 +589,12 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
                 $aImages[$this->getShopifyEntityField($aProductImage, 'id')] = $this->getShopifyEntityField($aProductImage, 'src');
             }
             if (
-                (int)$this->get('parentid') !== 0 && $this->getVariantCount() > 1
-                && isset($this->getCurrentVariant()['image_id']) && isset($aImages[$this->getCurrentVariant()['image_id']])
+                (int)$this->get('parentid') !== 0
+                && $this->getVariantCount() > 1
+                && isset($this->getCurrentVariant()['image_id'])
+                && isset($aImages[$this->getCurrentVariant()['image_id']])
             ) {
-                $sImageTemp = $aImages[$this->getCurrentVariant()['image_id']];
-                unset($aImages[$this->getCurrentVariant()['image_id']]);
-                array_splice($aImages, 0, 0, array($this->getCurrentVariant()['image_id'] => $sImageTemp));
+                $aImages = [$this->getCurrentVariant()['image_id'] => $aImages[$this->getCurrentVariant()['image_id']]];
             }
             $this->aImages = $aImages;
         }
@@ -575,10 +612,10 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     protected function getShopifyEntityField($mEntity, $sFieldName) {
         $mValue = null;
-        if (is_array($mEntity)) {
+        if (is_array($mEntity) && isset($mEntity[$sFieldName])) {
             $mValue = $mEntity[$sFieldName];
         }
-        if (is_object($mEntity)) {
+        if (is_object($mEntity) && isset($mEntity->{$sFieldName})) {
             $mValue = $mEntity->{$sFieldName};
         }
         return $mValue;
@@ -718,14 +755,11 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
         $this->load();
         $oProduct = $this->oProduct;
         $aProductOptions = $oProduct->options;
-        $oCurrentProductVariant = null;
         $aOut = array();
         $iVariantCount = $this->getVariantCount();
 
         //if product has variations
         if ($iVariantCount > 1) {
-            //$oCurrentProductVariant = $aProductVariants[1];
-
             $oCurrentProductVariant = $this->getCurrentVariant();
             foreach ($aProductOptions as $aProductOption) {
                 $aOut[] = array(
@@ -742,7 +776,7 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
                     $aOut[$int]['value'] = $sVariantOptionValue;
 
                     if (in_array('code', $aFields)) {//an identifier for group of id_attribute_group , that used in Meinpaket at the moment
-                        $aOut[$int]['code'] = $aOut[$int]['name'];
+                        $aOut[$int]['code'] = MLShopifyAlias::getProductModel()::ATTRIBUTE_PREFIX_VARIANT.$aOut[$int]['name'];
                     }
                     if (in_array('valueid', $aFields)) {//an identifier for group of id_attribute , that used in Meinpaket at the moment
                         $aOut[$int]['valueid'] = $aOut[$int]['value'];
@@ -768,21 +802,23 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getTax($aAddressSets = null) {
         $fTax = 0.0;
-        $sCountryCode = MLShopifyAlias::getShopHelper()->getDefaultCountry();
-        if ($aAddressSets !== null) {
-            $sCountryCode = $aAddressSets['Shipping']['CountryCode'];
-        }
-        if ($sCountryCode !== null) {
-            $fTaxDecimal = 0.0;
-            $aCountries = $this->getListOfCountriesFromShopifyAsArray();
-            //@todo get state tax, currently returns country tax
-            foreach ($aCountries as $aCountry) {
-                if ($aCountry['code'] == $sCountryCode) {
-                    $fTaxDecimal = $aCountry['tax'];
-                    break;
-                }
+        if (isset($this->getCurrentVariant()['taxable']) && $this->getCurrentVariant()['taxable']) {
+            $sCountryCode = MLShopifyAlias::getShopHelper()->getDefaultCountry();
+            if ($aAddressSets !== null) {
+                $sCountryCode = $aAddressSets['Shipping']['CountryCode'];
             }
-            $fTax = $fTaxDecimal * 100;
+            if ($sCountryCode !== null) {
+                $fTaxDecimal = 0.0;
+                $aCountries = $this->getListOfCountriesFromShopifyAsArray();
+                //@todo get state tax, currently returns country tax
+                foreach ($aCountries as $aCountry) {
+                    if ($aCountry['code'] == $sCountryCode) {
+                        $fTaxDecimal = $aCountry['tax'];
+                        break;
+                    }
+                }
+                $fTax = $fTaxDecimal * 100;
+            }
         }
         return $fTax;
     }
@@ -842,11 +878,8 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @return mixed|string
      */
     public function getCategoryPath() {
-        if((int)$this->get('parentid') === 0) {
-            return $this->get('ShopifyCollectionTitle');
-        } else {
-            return $this->getParent()->get('ShopifyCollectionTitle');
-        }
+        $this->load();
+        return array_column($this->getCategoryArray(), 'ShopifyCollectionTitle');
     }
 
     /**
@@ -877,9 +910,6 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     /**
      * Returns the number of variant items if this item is a master item.
-     *
-     * @todo Investigate and implement function.
-     *
      * @return int|null
      */
     public function getVariantCount() {
@@ -887,55 +917,35 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
     }
 
     /**
-     * Returns the EAN.
-     *
-     * @todo Investigate and implement function.
-     *
-     * @return string
-     * @throws Exception
-     */
-    public function getEAN() {
-        $this->loadShopProduct();
-        return $this->getCurrentVariant()['barcode'];
-    }
-
-    /**
-     * Returns the manufacturer.
-     *
-     * @todo Investigate and implement function.
-     *
      * @return string
      */
     public function getManufacturer() {
-        $this->loadShopProduct();
-
-        return $this->oProduct->vendor;
+        return $this->getModulField('manufacturer');
     }
 
     /**
-     * Returns the manufacturer part number.
-     *
-     * @todo Investigate and implement function.
-     *
-     * @return string
+     * @return string|null
      */
     public function getManufacturerPartNumber() {
-        return '';
+        return $this->getModulField('manufacturerpartnumber');
     }
 
     /**
-     * @todo Investigate and implement function.
-     * In Shopify we have collection, and collection doesn't have hierarchy, or tree structure
+     * @return string|null
+     */
+    public function getEAN() {
+        return $this->getModulField('ean');
+    }
+
+    /**
      * @param bool $blIncludeRootCats
      *
      * @return array
+     * @todo Investigate and implement function.
+     * In Shopify we have collection, and collection doesn't have hierarchy, or tree structure
      */
     public function getCategoryStructure($blIncludeRootCats = true) {
-        if((int)$this->get('parentid') === 0) {
-            return $this->get('ShopifyCollectionTitle');
-        } else {
-            return $this->getParent()->get('ShopifyCollectionTitle');
-        }
+        return array_column($this->getCategoryArray(), 'ShopifyCollectionTitle');
     }
 
     /**
@@ -946,11 +956,7 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @return array
      */
     public function getCategoryIds($blIncludeRootCats = true) {
-        if((int)$this->get('parentid') === 0) {
-            return $this->get('ShopifyCollectionId');
-        } else {
-            return $this->getParent()->get('ShopifyCollectionId');
-        }
+        return array_column($this->getCategoryArray(), 'ShopifyCollectionID');
     }
 
     /**
@@ -1037,9 +1043,16 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getAttributeValue($sAttribute) {
         $aAttribute = explode('_', $sAttribute, 2);
-        $sAttributeName = $aAttribute[1];
+        $sAttributeName = '';
+        $sAttributePrefix = '';
+        if (isset($aAttribute[0])) {
+            $sAttributePrefix = $aAttribute[0];
+        }
+        if (isset($aAttribute[1])) {
+            $sAttributeName = $aAttribute[1];
+        }
         $sValue = null;
-        if ($aAttribute[0] === 'c') {
+        if ($sAttributePrefix === 'c') {
             $aRow = $this->getCurrentVariant();
 
             $iOptionIndex = 1;
@@ -1050,39 +1063,29 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
                 }
                 $iOptionIndex++;
             }
-        } elseif ($aAttribute[0] === 'pd') {
-            if ($sAttributeName !== 'vendor') {
+        } elseif ($sAttributePrefix === 'pd') {
+            if ($sAttributeName !== 'vendor' && isset($this->getCurrentVariant()[strtolower($sAttributeName)])) {
                 $sValue = $this->getCurrentVariant()[strtolower($sAttributeName)];
-            } else {
-                $sValue = null;
-            }
-
-            // If value is not specified at variation level used it from master product
-            if (empty($sValue)) {
+            } else if (isset($this->oProduct->{strtolower($sAttributeName)})) {// If value is not specified at variation level used it from master product
                 $sValue = $this->oProduct->{strtolower($sAttributeName)};
             }
-        } elseif ($aAttribute[0] === 'p') {
+        } elseif ($sAttributePrefix === 'p') {
             $sValue = $this->oProduct->{strtolower($sAttributeName)};
-        } elseif ($aAttribute[1] === 'barcode') {
+        } elseif ($sAttributeName === 'barcode') {
             $sValue = $this->getCurrentVariant()['barcode'];
             if (empty($sValue)) {
                 $sValue = $this->oProduct->{'barcode'};
             }
-        } elseif ($aAttribute[1] === 'tags') {
+        } elseif ($sAttributeName === 'tags') {
             $sValue = $this->oProduct->{strtolower($sAttributeName)};
+        } elseif ($sAttributePrefix === 'm') {
+            $sValue = $this->getMetaFieldValue($sAttributeName, $sAttribute);
         }
-
         return $sValue;
     }
 
     public function getPrefixedVariationData() {
-        $variationData = $this->getVariatonDataOptinalField(array('name', 'value', 'code', 'valueid'));
-
-        foreach ($variationData as &$variation) {
-            $variation['code'] = 'c_'.$variation['code'];
-        }
-
-        return $variationData;
+        return $this->getVariatonDataOptinalField(array('name', 'value', 'code', 'valueid'));
     }
 
     /**
@@ -1206,7 +1209,7 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
             'Type' => 'int(11)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'ProductsId'            => array(
-            'Type' => 'varchar(255)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'bigint(11)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'ProductsSku'           => array(
             'Type' => 'varchar(255)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
@@ -1223,44 +1226,47 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
         'Data'                  => array(
             'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
-        'ShopData'              => array(
+        'ShopData'               => array(
             'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
-        'ShopifyTitle'          => array(
+        'ShopifyTitle'           => array(
             'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
-        'ShopifyQuantity'       => array(
+        'ShopifyQuantity'        => array(
             'Type' => 'int(11)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'Use separated column to sort by quantity faster.'
         ),
-        'ShopifyPrice'          => array(
+        'ShopifyPrice'           => array(
             'Type' => 'decimal(20,3)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'Use separated column to sort by quantity faster.'
         ),
-        'ShopifyCollectionId'   => array(
+        'ShopifyCollectionId'    => array(
             'Type' => 'varchar(255)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'CollectionID:CollectionTitle, It is used separated column to filter by collection faster. The collections are like categories'
         ),
         'ShopifyCollectionTitle' => array(
             'Type' => 'varchar(255)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'CollectionID:CollectionTitle, It is used separated column to filter by collection faster. The collections are like categories'
         ),
-        'ShopifyVendor'         => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'Use separated column to filter by vendor faster. The vendors are like manufactures'
+        'ShopifyVendor'          => array(
+            'Type' => 'varchar(255)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'Deprecated after vendor id'
         ),
-        'ShopifyPublication'    => array(
+        'ShopifyVendorId'        => array(
+            'Type' => 'int(11) unsigned', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'Use vendor id of vendor name to make it faster'
+        ),
+        'ShopifyPublication'     => array(
             'Type' => 'datetime', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => 'Use separated column to filter by availability faster. It is used for filtering availability, it is null if product is not published'
         ),
-        'ShopifyStatus'         => array(
+        'ShopifyStatus'          => array(
             'Type' => 'varchar(50)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => 'Use separated column to filter by status faster. It is used for filtering by status of product, it could be active or draft'
         ),
-        'ShopifyData'           => array(
+        'ShopifyData'            => array(
             'Type' => 'longtext', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'Cache product data in this column'
         ),
-        'ShopifyLocation'       => array(
+        'ShopifyLocation'        => array(
             'Type' => 'bigint(11)', 'Null' => 'NO', 'Default' => 0, 'Extra' => '', 'Comment' => 'It is important in future if we want to support locations'
         ),
-        'ShopifyMethodOfUpdate' => array(
+        'ShopifyMethodOfUpdate'  => array(
             'Type' => "enum('hook', 'cron', 'update', '-')", 'Null' => 'NO', 'Default' => '-', 'Extra' => '', 'Comment' => ''
         ),
-        'ShopifyUpdateDate'     => array(
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => 'date of update'
+        'ShopifyUpdateDate'      => array(
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => 'date of update'
         ),
     );
 
@@ -1358,5 +1364,58 @@ class ML_Shopify_Model_Product extends ML_Shop_Model_Product_Abstract {
             $result = 'p_vendor';
         }
         return $result;
+    }
+
+    public function getAllData($blLoad = true) {
+        $aData = $this->data($blLoad);
+        try {
+            $aData['ShopifyData'] = $this->aProduct;
+            $aData['ShopifyCollections'] = $this->getCategoryArray();
+        } catch (\Exception $ex) {
+            MLMessage::gi()->addDebug($ex);
+        }
+        return $aData;
+    }
+
+    protected function getMetaFieldValue($sAttributeName, string $sAttribute) {
+        $sOwnerType = MLShopifyAlias::getMetaFieldModel()
+            ->set('MetaFieldId', $sAttributeName)
+            ->get('ShopifyMetaFieldOwnerType');
+        if ($sOwnerType === 'PRODUCT') {
+            $sValue = MLShopifyAlias::getObjectMetaFieldRelationModel()
+                ->set('MetaFieldId', $sAttributeName)
+                ->set('ShopifyObjectID', $this->oProduct->id)
+                ->get('ShopifyMetaFieldValue');
+        } else {//PRODUCTVARIANT
+            $sValue = MLShopifyAlias::getObjectMetaFieldRelationModel()
+                ->set('MetaFieldId', $sAttributeName)
+                ->set('ShopifyObjectID', $this->get('ProductsId'))
+                ->get('ShopifyMetaFieldValue');
+        }
+        $sValue = $this->attributeValueToString($sValue);
+        return $sValue;
+    }
+
+    protected function attributeValueToString($sValue) {
+        if (is_array($sValue)) {
+            $sValue = implode(', ', $sValue);
+        }
+        return $sValue;
+    }
+
+    /**
+     * Returns the link to frontend of the product in the shop
+     *
+     * @return string
+     */
+    public function productContainsComponent() {
+        $sShopId = MLHelper::gi('model_shop')->getShopId();
+        $application = new Application($sShopId);
+
+        $oProductParams = new ProductGraphQLParams();
+        $oProductParams->setId($this->oProduct->admin_graphql_api_id);
+
+        $aProduct = $application->getProductRequest()->variantComponent($oProductParams)->getBodyAsArray()['data']['product'];
+        return !empty($aProduct['variants']['edges'][0]['node']['productVariantComponents']['edges'][0]['node']['id']);
     }
 }

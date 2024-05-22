@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2018 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -179,17 +179,17 @@ class ML_Shopware_Model_ProductListDependency_CategoryFilter extends ML_Shop_Mod
         foreach ($aCats as $aCat) {
             $this->aCategories[$aCat['id']] = array(
                 'value' => $aCat['id'],
-                'label' => str_repeat('&nbsp;', substr_count($aCat['path'], '|') * 2).$aCat['name'],
+                'label' => str_repeat('&nbsp;', substr_count($aCat['path'], '|') * 2) . $aCat['description'],
             );
             if (
                 empty($this->aCatsFilter)
-                || $aCat['parentid'] == $this->getFilterValue()
+                || $aCat['parent'] == $this->getFilterValue()
                 || in_array($aCat['id'], $this->aCatsFilter)
             ) {
-                $this->getShopwareCategories($aCat['id']);
+                $this->getShopwareCategories((int)$aCat['id']);
             } else {
                 $this->aCategories[$aCat['id']]['label'] .=
-                    (count($this->getShopwareCategoryByParentId($aCat['id'], 1)) > 0)
+                    ($this->getShopwareCategoryByParentId($aCat['id'], 1) !== false)
                         ? '  '
                         : '';
             }
@@ -202,18 +202,20 @@ class ML_Shopware_Model_ProductListDependency_CategoryFilter extends ML_Shop_Mod
     }
 
     protected function getShopwareCategoryByParentId($iParentId, $iMaxResults = null) {
-        $oBuilder = Shopware()->Models()->createQueryBuilder();
-        $oBuilder->from('Shopware\Models\Category\Category', 'category')
-            ->select(array(
-                'category',
-            ))
-            ->andWhere('category.parent = :parent')
-            ->setParameter('parent', $iParentId)
-            ->addOrderBy('category.position');
+        $iParentId = (int)$iParentId;
+        $sSQL = "
+SELECT *
+FROM `s_categories`
+WHERE `parent` = $iParentId
+ORDER BY `position` ASC
+";
         if ($iMaxResults !== null) {
-            $oBuilder->setMaxResults($iMaxResults);
+            $iMaxResults = (int)$iMaxResults;
+            $sSQL .= "
+LIMIT $iMaxResults
+";
         }
-        return $oBuilder->getQuery()->getArrayresult();
+        return MLDatabase::getDbInstance()->fetchArray($sSQL);
     }
 
     /**
@@ -222,7 +224,7 @@ class ML_Shopware_Model_ProductListDependency_CategoryFilter extends ML_Shop_Mod
      * @return array
      */
     protected function getCategoriesForSelect2() {
-        $sCacheName = strtoupper(get_class($this)).'_Categories_'.MLModul::gi()->getMarketPlaceId().'.json';
+        $sCacheName = strtoupper(get_class($this)) . '_Categories_' . MLModule::gi()->getMarketPlaceId() . '.json';
         if (!MLCache::gi()->exists($sCacheName)) {
             $aFinalCategories = array();
 

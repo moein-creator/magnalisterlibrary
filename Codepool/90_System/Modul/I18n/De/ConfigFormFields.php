@@ -86,8 +86,9 @@ MLI18n::gi()->{'configform_price_field_priceoptions_help'} = '<p>Mit dieser Funk
 
 // E-Mail Template placeholders
 MLI18n::gi()->{'configform_emailtemplate_legend'} = 'E-Mail an K&auml;ufer';
-MLI18n::gi()->{'configform_emailtemplate_field_send_label'} = 'E-Mail versenden?';
+MLI18n::gi()->{'configform_emailtemplate_field_send_label'} = 'E-Mail bei Bestelleingang an Käufer';
 MLI18n::gi()->{'configform_emailtemplate_field_send_help'} = 'Soll von Ihrem Shop eine E-Mail an den K&auml;ufer gesendet werden?';
+MLI18n::gi()->{'configform_emailtemplate_field_send_hint'} = 'E-Mail versenden?';
 MLI18n::gi()->{'generic_prepareform_day'} = 'Tag';
 MLI18n::gi()->{'orderstatus_carrier_defaultField_value_shippingname'} = 'Versandart als Spediteur &uuml;bergeben';
 MLI18n::gi()->{'marketplace_configuration_orderimport_payment_method_from_marketplace'} = 'Vom Marktplatz übermittelte Zahlart übernehmen';

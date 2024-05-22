@@ -134,6 +134,7 @@ MLSetting::gi()->add('dummymodule_config_orderimport', array(
     'orderstatus' => array(
         'fields' => array(
             array(
+                'i18n' => '{#i18n:formfields__orderstatus.sync#}',
                 'name' => 'orderstatus.sync',
                 'type' => 'select',
             ),

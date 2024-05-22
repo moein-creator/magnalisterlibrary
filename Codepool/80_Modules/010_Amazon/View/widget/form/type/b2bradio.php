@@ -11,11 +11,13 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+
+ if (!class_exists('ML', false))
+     throw new Exception();
 
 $enabled = isset($aField['value']) ? $aField['value'] : 'false';
 if (!isset($aField['values']) && isset($aField['i18n']['values'])) {
@@ -27,13 +29,26 @@ $this->includeType($aField);
 <script>
     (function ($) {
         function enableB2b(enable, cls) {
-            jqml(cls).parent().find('input, select').prop('disabled', !enable);
+            jqml(cls).parent().find('input, select, button').prop('disabled', !enable);
+            jqml(cls).closest('div.duplicate').find('button').prop('disabled', !enable);
+            let style;
+            if (!enable) {
+                style = {
+                    color: '#6d6d6d'
+                }
+            } else {
+                style = {
+                    color: 'unset',
+                }
+            }
+            jqml(cls).closest('tr').css(style);
+            // color #6D6D6D  to all elements as css class .disabled
         }
 
         function showMessage(message) {
             jqml('<div class="ml-modal dialog2" title="<?php echo addslashes($aField['i18n']['label']) ?>"></div>').html(message)
                 .jDialog({
-                    width: '500px'
+                    width: (window.innerWidth > 1000) ? '580px' : '500px',
                 });
         }
 

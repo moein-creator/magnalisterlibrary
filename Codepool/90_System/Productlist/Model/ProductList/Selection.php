@@ -6,7 +6,7 @@ abstract class ML_Productlist_Model_ProductList_Selection extends ML_Productlist
             SELECT COUNT(*)
               FROM magnalister_selection s 
              WHERE     s.pid = '".$oProduct->get('id')."'
-                   AND s.mpID = '".MLModul::gi()->getMarketPlaceId()."'
+                   AND s.mpID = '" . MLModule::gi()->getMarketPlaceId() . "'
                    AND s.selectionname = '".$this->getSelectionName()."'
                    AND s.session_id = '".MLShop::gi()->getSessionId()."'
         ");
@@ -22,7 +22,7 @@ abstract class ML_Productlist_Model_ProductList_Selection extends ML_Productlist
              WHERE     s.pID = p.ID
                    AND s.session_id = '".MLShop::gi()->getSessionId()."'
                    AND s.selectionname = 'checkin'
-                   AND mpid = '".MLModul::gi()->getMarketPlaceId()."'
+                   AND mpid = '" . MLModule::gi()->getMarketPlaceId() . "'
         ";
         $iCountTotal = MLDatabase::getDbInstance()->fetchOne(sprintf($sSql, ' COUNT(DISTINCT p.ParentId) '));
         foreach (MLDatabase::getDbInstance()->fetchArray(sprintf($sSql, ' DISTINCT p.ParentId ')." LIMIT ".$iFrom.", ".$iCount) as $aRow) {

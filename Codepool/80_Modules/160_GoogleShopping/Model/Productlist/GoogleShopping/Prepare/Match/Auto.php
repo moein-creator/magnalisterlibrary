@@ -51,7 +51,7 @@ class ML_GoogleShopping_Model_ProductList_GoogleShopping_Prepare_Match_Auto exte
                  WHERE     s.pID = p.ID
                        AND s.session_id = '".MLShop::gi()->getSessionId()."'
                        AND s.selectionname = 'match'
-                       AND mpid = '".MLModul::gi()->getMarketPlaceId()."'
+                       AND mpid = '" . MLModule::gi()->getMarketPlaceId() . "'
             ";
             $this->iCountTotal = MLDatabase::getDbInstance()->fetchOne(sprintf($sSql, ' count(distinct p.ParentId) '));
             foreach (MLDatabase::getDbInstance()->fetchArray(sprintf($sSql, ' distinct p.ParentId ')." limit ".$this->iOffset.", ".$this->iCountPerPage) as $aRow) {

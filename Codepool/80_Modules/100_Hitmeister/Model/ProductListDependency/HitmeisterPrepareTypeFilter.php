@@ -76,7 +76,7 @@ class ML_Hitmeister_Model_ProductListDependency_HitmeisterPrepareTypeFilter exte
     public function getMasterIdents() {
         $sValue = $this->getConfig('PrepareType');
         $sCompare = $sValue === 'match' ? "'apply'" : "'manual' , 'auto'";
-        $sProductTable = MLDatabase::getTableInstance('product')->getTableName();
+        $sProductTable = MLProduct::factory()->getTableName();
         // get masterarticles which have no/missing prepared variant
         $sSql = "
                 SELECT master.".(

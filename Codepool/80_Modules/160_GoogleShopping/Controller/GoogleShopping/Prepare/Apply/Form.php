@@ -36,8 +36,8 @@ class ML_GoogleShopping_Controller_GoogleShopping_Prepare_Apply_Form extends ML_
 
     protected function callGetCategoryDetails($sCategoryId) {
 
-        $locale = MLModul::gi()->getConfig('googleshopping.language');
-        $targetCountry = MLModul::gi()->getConfig('googleshopping.targetcountry');
+        $locale = MLModule::gi()->getConfig('googleshopping.language');
+        $targetCountry = MLModule::gi()->getConfig('googleshopping.targetcountry');
         $response = MagnaConnector::gi()->submitRequestCached(array(
                 'ACTION' => 'GetCategoryDetails',
                 'DATA' => array(

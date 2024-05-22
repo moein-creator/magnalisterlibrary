@@ -7,7 +7,7 @@ class ML_Check24_Controller_Check24_Listings_Inventory extends ML_Listings_Contr
         return MLI18n::gi()->get('ML_GENERIC_INVENTORY');
     }
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
     
 

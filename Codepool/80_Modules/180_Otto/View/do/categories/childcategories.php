@@ -18,7 +18,8 @@
 
 /* @var $aFilter array array('name'=>'', 'value'=>'', 'values'=>array('value'=>'','label'=>'translatedText'), 'placeholder'=>'') */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <?php if (isset($aFilter)) {
     $selectid = str_replace(array(']', '['), '', MLHttp::gi()->parseFormFieldName('filter[' . $aFilter['name'] . ']'));

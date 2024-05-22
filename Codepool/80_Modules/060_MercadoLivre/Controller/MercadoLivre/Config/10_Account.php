@@ -35,7 +35,7 @@ class ML_MercadoLivre_Controller_MercadoLivre_Config_Account extends ML_Form_Con
     public function getTokenField(&$aField) {
         $aField['url'] = str_replace('http:', 'https:', MLSetting::gi()->get('sDefaultApiUrl'))
             . '/MarketPlaces/MercadoLivre/Callback/Auth/'
-            . 'index.php?mpId=' . MLModul::gi()->getMarketPlaceId();
+            . 'index.php?mpId=' . MLModule::gi()->getMarketPlaceId();
     }
 	
 	public function resetAction($blExecute = true) {
@@ -57,7 +57,7 @@ class ML_MercadoLivre_Controller_MercadoLivre_Config_Account extends ML_Form_Con
     
     private function saveConfig($sKey, $sValue) {
         MLDatabase::factory('config')
-            ->set('mpId', MLModul::gi()->getMarketPlaceId())
+            ->set('mpId', MLModule::gi()->getMarketPlaceId())
             ->set('mkey', $sKey)
             ->set('value', $sValue)
             ->save();

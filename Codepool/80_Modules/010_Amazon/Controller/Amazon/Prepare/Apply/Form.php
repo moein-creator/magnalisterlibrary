@@ -1,5 +1,4 @@
 <?php
-
 /*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
@@ -12,10 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstract');
 
 class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstract {
@@ -26,8 +26,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         return 'apply';
     }
 
-    protected function getCustomIdentifier()
-    {
+    protected function getCustomIdentifier() {
         $category = $this->getRequestField('variationgroups.value');
         if (!isset($category)) {
             $category = $this->getField('variationgroups.value','value');
@@ -51,14 +50,21 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         $i = 0;
         foreach ($this->oPrepareList->getList() as $oPrepared) {
             $this->oProduct = MLProduct::factory()->set('id', $oPrepared->get('productsid'));
+            $aProductPrepareData = MLModule::getPrepareDataHelper()->setProduct($this->oProduct)->getPrepareData(
+                array(
+                    'mainCategory' => array('optional' => array('active' => true)),
+                    'topBrowseNode1' => array('optional' => array('active' => true)),
+                    'itemTitle' => array('optional' => array('active' => true)),
+                    'manufacturer' => array('optional' => array('active' => true)),
+                ), 'value');
             $aMissingValues = array();
             foreach(array(
-                        MLI18n::gi()->get('ML_LABEL_MAINCATEGORY')              => 'variationgroups.value',
-                        MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_BROWSENODES')  => 'topbrowsenode1',
-                        MLI18n::gi()->get('ML_LABEL_PRODUCT_NAME')              => 'itemtitle',
+                        MLI18n::gi()->get('ML_LABEL_MAINCATEGORY') => 'mainCategory',
+                        MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_BROWSENODES') => 'topBrowseNode1',
+                        MLI18n::gi()->get('ML_LABEL_PRODUCT_NAME') => 'itemTitle',
                         MLI18n::gi()->get('ML_GENERIC_MANUFACTURER_NAME')       => 'manufacturer',
                     ) as $sMissingText => $sFieldName) {
-                $mValue = $this->getField($sFieldName, 'value');
+                $mValue = $aProductPrepareData[$sFieldName];
                 if (empty($mValue)) {
                     $blReturn = false;
                     $aMissingValues[] = $sMissingText;
@@ -135,20 +141,20 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         $aField['type'] = 'select';
         $aTopTen = $this->getTopTenCategories('topMainCategory', $aField['name']);
         if (count($aTopTen) > 0) {
-            $aCategories = array($this->__('ML_TOPTEN_TEXT') => $aTopTen) + MLModul::gi()->getMainCategories();
+            $aCategories = array($this->__('ML_TOPTEN_TEXT') => $aTopTen) + MLModule::gi()->getMainCategories();
         } else {
-            $aCategories = MLModul::gi()->getMainCategories();
+            $aCategories = MLModule::gi()->getMainCategories();
         }
 
         $aField['values'] = array('' => $this->__('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT')) + $aCategories;
     }
 
-    protected function prepareTypeField(&$aField){
+    protected function prepareTypeField(&$aField) {
         $aField['value'] = 'apply';
         $aField['type'] = 'hidden';
     }
 
-    protected function productTypeField(&$aField){
+    protected function productTypeField(&$aField) {
         $aField['type']='ajax';
         $mParentValue=$this->getField('variationgroups.value','value');
         $aField['ajax']=array(
@@ -158,7 +164,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         $aField['ajax']['field']['autoTriggerOnLoad'] = 'change';
 
         if ($mParentValue != '') {
-            $aTypesAndAttributes = MLModul::gi()->getProductTypesAndAttributes($mParentValue);
+            $aTypesAndAttributes = MLModule::gi()->getProductTypesAndAttributes($mParentValue);
             if (isset($aTypesAndAttributes['ProductTypes']) && !empty($aTypesAndAttributes['ProductTypes'])) {
                 $aTopTen = $this->getTopTenCategories('topProductType', array($mParentValue));
                 if (count($aTopTen) > 0) {
@@ -177,8 +183,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         }
     }
 
-    protected function variationMatchingField(&$aField)
-    {
+    protected function variationMatchingField(&$aField) {
         $aField['ajax'] = array(
             'selector' => '#' . $this->getField('ProductType', 'id'),
             'trigger' => 'change',
@@ -188,8 +193,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         );
     }
 
-    protected function variationThemeAllDataField(&$aField)
-    {
+    protected function variationThemeAllDataField(&$aField) {
         $aField['type'] = 'ajax';
         $aField['ajax'] = array(
             'selector' => '#' . $this->getField('ProductType', 'id'),
@@ -211,9 +215,10 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         }
     }
 
-    protected function variationThemeCodeField(&$aField)
-    {
-        $variationThemes = json_decode(htmlspecialchars_decode($this->getField('variationthemealldata', 'value')), true);
+    protected function variationThemeCodeField(&$aField) {
+        // Helper for php8 compatibility - overriding deprecated function htmlspecialchars_decode 
+        $sField = MLHelper::gi('php8compatibility')->htmlspecialcharsDecode($this->getField('variationthemealldata', 'value'));
+        $variationThemes = json_decode($sField, true);
         $aField['type'] = 'ajax';
         $aField['ajax'] = array(
             'selector' => '#' . $this->getField('ProductType', 'id'),
@@ -263,7 +268,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
 
         $mParentValue=$this->getField('variationgroups.value','value');
         if($mParentValue!=''){
-            $aBrowseNodes = MLModul::gi()->getBrowseNodes($mParentValue);
+            $aBrowseNodes = MLModule::gi()->getBrowseNodes($mParentValue);
             if(!empty($aBrowseNodes)){
                 $aTopTen = $this->getTopTenCategories('topBrowseNode', array($mParentValue));
                 if (count($aTopTen) > 0) {
@@ -310,23 +315,27 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         $aField['type']='imagemultipleselect';
     }
 
-
     protected function DescriptionField(&$aField) {
         $aField['type']='text';
     }
-
-
 
     protected function b2bselltoField(&$aField) {
         $aField['values'] = $aField['i18n']['values'];
     }
 
     protected function shippingTimeField(&$aField) {
-        $aValues=range(0,30);
-        unset($aValues[0]);// value=1 should have key=1
+        $aValues = array(
+            '-' => MLI18n::gi()->get('ML_AMAZON_SHIPPING_TIME_DEFAULT_VALUE'),
+            '0' => MLI18n::gi()->get('ML_AMAZON_SHIPPING_TIME_SAMEDAY_VALUE')
+        );
+
+        for ($i = 1; $i < 31; $i++) {
+            $aValues[$i.''] = $i;
+        }
+
         return array(
-            'type'=>'select',
-            'values'=> $aValues,
+            'type' => 'select',
+            'values' => $aValues,
         );
     }
 
@@ -336,7 +345,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         }
         try {
             $requestParams = array(
-                'ACTION' => 'GetCategoryDetails',
+                'ACTION'   => 'GetCategoryDetails',
                 'CATEGORY' => $sCategoryId
             );
 
@@ -346,7 +355,8 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
             }
 
             return MagnaConnector::gi()->submitRequest($requestParams);
-        } catch (MagnaException $e) {
+        } catch (MagnaException $oEx) {
+            MLMessage::gi()->addDebug($oEx);
             return array();
         }
     }
@@ -428,8 +438,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         );
     }
 
-    public function triggerAfterField(&$aField, $parentCall = false)
-    {
+    public function triggerAfterField(&$aField, $parentCall = false) {
         //TODO Check this parent call
         parent::triggerAfterField($aField, true);
         $sName = $aField['realname'];
@@ -462,13 +471,14 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
                     $aValue = $this->oPrepareList->get($sShopVariationField);
                     $aValueFix = isset($aValue['[' . $sProductId . ']']) ? $aValue['[' . $sProductId . ']'] : reset($aValue);
 
-                    if (empty($aValueFix)) {
-                        $aValue = $this->oPrepareList->get('ApplyData');
-                        $aValueFix = isset($aValue['[' . $sProductId . ']']) ? $aValue['[' . $sProductId . ']'] : reset($aValue);
-                        if (!empty($aValueFix['Attributes'])) {
-                            $aValueFix = $this->fixOldAttributes($aValueFix['Attributes'], $sPrimaryCategoriesValue);
-                        }
-                    }
+                    // the ApplyData column is deprecated and we do not use it anymore
+//                    if (empty($aValueFix)) {
+//                        $aValue = $this->oPrepareList->get('ApplyData');
+//                        $aValueFix = isset($aValue['[' . $sProductId . ']']) ? $aValue['[' . $sProductId . ']'] : reset($aValue);
+//                        if (!empty($aValueFix['Attributes'])) {
+//                            $aValueFix = $this->fixOldAttributes($aValueFix['Attributes'], $sPrimaryCategoriesValue);
+//                        }
+//                    }
 
                     // real name is in format "variationgroups.qnvjagzvcm1hda____.rm9ybwf0.code"
                     $sCustomIdentifier = count($aCustomIdentifier) == 2 ? $aCustomIdentifier[1] : '';
@@ -480,10 +490,15 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
                     $aProductTypeFirst = reset($aProductType);
                     $sProductType = !empty($aProductType['[' . $sProductId . ']'][$sPrimaryCategoriesValue]) ? $aProductType['[' . $sProductId . ']'][$sPrimaryCategoriesValue] : (!empty($aProductTypeFirst[$sPrimaryCategoriesValue])? $aProductTypeFirst[$sPrimaryCategoriesValue]:null);
                     if (!isset($aValueFix) || (strtolower($sPrimaryCategoriesValue) !== strtolower($aNames[1])) || ($sProductType !== $sCustomIdentifier)) {
-                        $aValue = $this->getVariationDb()
-                            ->set('Identifier', $aNames[1])
-                            ->set('CustomIdentifier', $sCustomIdentifier)
-                            ->get('ShopVariation');
+                        // cache db values
+                        $hashParams = md5($aNames[1].$sCustomIdentifier.'ShopVariation');
+                        if (!array_key_exists($hashParams, $this->variationCache)) {
+                            $this->variationCache[$hashParams] = $this->getVariationDb()
+                                ->set('Identifier', $aNames[1])
+                                ->set('CustomIdentifier', $sCustomIdentifier)
+                                ->get('ShopVariation');
+                        }
+                        $aValue = $this->variationCache[$hashParams];
                     } else {
                         $aValue = $aValueFix;
                     }
@@ -523,21 +538,27 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
             if ($sPrimaryCategoryValue === $sIdentifier && $sProductType == $sCustomIdentifier) {
                 $aShopVariation = $this->oPrepareList->get($sShopVariationField);
                 $aValue = isset($aShopVariation['[' . $sProductId . ']']) ? $aShopVariation['[' . $sProductId . ']'] : reset($aShopVariation);
-                if (empty($aValue)) {
-                    $aShopVariation = $this->oPrepareList->get('ApplyData');
-                    $aValue = isset($aShopVariation['[' . $sProductId . ']']) ? $aShopVariation['[' . $sProductId . ']'] : reset($aShopVariation);
-                    if (!empty($aValue['Attributes'])) {
-                        $aValue = $this->fixOldAttributes($aValue['Attributes'], $sIdentifier);
-                    }
-                }
+                // the ApplyData column is deprecated we do not use it anymore
+//                if (empty($aValue)) {
+//                    $aShopVariation = $this->oPrepareList->get('ApplyData');
+//                    $aValue = isset($aShopVariation['[' . $sProductId . ']']) ? $aShopVariation['[' . $sProductId . ']'] : reset($aShopVariation);
+//                    if (!empty($aValue['Attributes'])) {
+//                        $aValue = $this->fixOldAttributes($aValue['Attributes'], $sIdentifier);
+//                    }
+//                }
             }
         }
 
         if (!isset($aValue)) {
-            $aValue = $this->getVariationDb()
-                ->set('Identifier', $sIdentifier, false)
-                ->set('CustomIdentifier', $sCustomIdentifier)
-                ->get('ShopVariation');
+            // cache db values
+            $hashParams = md5($sIdentifier.$sCustomIdentifier.'ShopVariation');
+            if (!array_key_exists($hashParams, $this->variationCache)) {
+                $this->variationCache[$hashParams] = $this->getVariationDb()
+                    ->set('Identifier', $sIdentifier)
+                    ->set('CustomIdentifier', $sCustomIdentifier)
+                    ->get('ShopVariation');
+            }
+            $aValue = $this->variationCache[$hashParams];
         }
 
         if ($aValue) {
@@ -590,7 +611,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
      * @return array
      */
     private function getTopTenCategories($sField, $aConfig=array()) {
-        $mpID = MLModul::gi()->getMarketPlaceId();
+        $mpID = MLModule::gi()->getMarketPlaceId();
         $sParent = isset($aConfig[0]) ? $aConfig[0] : '';
         switch ($sField) {
             case 'topMainCategory':{
@@ -648,16 +669,16 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
         try {
             switch ($sField) {
                 case 'topMainCategory':{
-                    $aCategories = MLModul::gi()->getMainCategories();
+                    $aCategories = MLModule::gi()->getMainCategories();
                     break;
                 }
                 case 'topProductType':{
-                    $aCategories = MLModul::gi()->getProductTypesAndAttributes($sParent);
+                    $aCategories = MLModule::gi()->getProductTypesAndAttributes($sParent);
                     $aCategories = $aCategories['ProductTypes'];
                     break;
                 }
                 case 'topBrowseNode1':{
-                    $aCategories = MLModul::gi()->getBrowseNodes($sParent);
+                    $aCategories = MLModule::gi()->getBrowseNodes($sParent);
                     break;
                 }
             }
@@ -681,7 +702,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
     }
 
     private function getInternationalIdentifier() {
-        $sSite = MLModul::gi()->getConfig('site');
+        $sSite = MLModule::gi()->getConfig('site');
         if ($sSite === 'US') {
             return 'UPC';
         }
@@ -690,16 +711,26 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply_Form extends ML_Form_Controller_
     }
     
     protected function shippingTemplateField(&$aField) {
-        if(MLModul::gi()->getConfig('shipping.template.active') == '1'){
-            $aDefaultTemplate = MLModul::gi()->getConfig('shipping.template');
-            $aTemplateName = MLModul::gi()->getConfig('shipping.template.name');
-            $aField['type']='select';
-            $aField['autooptional'] = false;
-            foreach ($aDefaultTemplate as $iKey => $sValue) {
-                 $aField['values'][]= $aTemplateName[$iKey];
-            }
-        }else{
-            return array();
+        $aDefaultTemplate = MLModule::gi()->getConfig('shipping.template');
+        $aTemplateName = MLModule::gi()->getConfig('shipping.template.name');
+        $aField['type']='select';
+        $aField['autooptional'] = false;
+        foreach ($aDefaultTemplate as $iKey => $sValue) {
+             $aField['values'][]= $aTemplateName[$iKey];
+        }
+    }
+
+    /**
+     * "BopisStores" Field of Prepare Form
+     *
+     * @param $aField
+     * @return void
+     */
+    protected function bopisStoresField(&$aField) {
+        $shopData = MLShop::gi()->getShopInfo();
+        if ($shopData['DATA']['IsBopisPilot'] === 'yes') {
+            $aField['type'] = 'multipleselect';
+            $aField['values'] = MLModule::gi()->GetBopisStores();
         }
     }
 }

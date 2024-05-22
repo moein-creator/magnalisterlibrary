@@ -40,7 +40,7 @@ if (!class_exists('ML', false))
         <div class="name"><?php echo $oProduct->setProductlistMode(true)->getName() ?></div>
         <?php $sSku = $oProduct->getProductlistSku(); ?>
         <?php $iProductId = $oProduct->get('MarketplaceIdentId'); ?>
-        <div class="artNr" <?php echo $sSku === '' ? 'style="color:red"' : ''; ?>><?php echo $this->__('Productlist_Header_sSku').': '.$sSku ?></div>
+        <div class="artNr" <?php echo $sSku === '' ? 'style="color:#e31a1c"' : ''; ?>><?php echo $this->__('Productlist_Header_sSku').': '.$sSku ?></div>
         <?php if ($sKey === 'pID') { ?>
             <div class="ml-product-id"><?php echo $this->__('ML_LABEL_PRODUCT_ID').': '.$iProductId ?></div>
         <?php } ?>

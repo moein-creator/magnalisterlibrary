@@ -21,8 +21,14 @@ class ML_Etsy_Controller_Etsy_Listings_Inventory extends ML_Listings_Controller_
                 'Getter' => null,
                 'Field' => 'SKU'
             ),
-            'Title' => array(
+            'ShopTitle' => array(
                 'Label' => $oI18n->ML_LABEL_SHOP_TITLE,
+                'Sorter' => null,
+                'Getter' => 'getShopProductTitle',
+                'Field' => null,
+            ),
+            'EtsyTitle' => array(
+                'Label' => 'Etsy Titel',
                 'Sorter' => null,
                 'Getter' => 'getTitle',
                 'Field' => null,
@@ -34,7 +40,7 @@ class ML_Etsy_Controller_Etsy_Listings_Inventory extends ML_Listings_Controller_
                 'Field' => null
             ),
             'Price' => array(
-                'Label' => $oI18n->ML_GENERIC_PRICE,
+                'Label' => $oI18n->ML_LABEL_SHOP_PRICE.' / '.MLModule::gi()->getMarketPlaceName(false).' '.$oI18n->ML_GENERIC_PRICE,
                 'Sorter' => 'price',
                 'Getter' => 'getItemPrice',
                 'Field' => null
@@ -84,24 +90,37 @@ class ML_Etsy_Controller_Etsy_Listings_Inventory extends ML_Listings_Controller_
         } elseif (empty($item['Data']['Url'])) {
             return '<td>'.$item['ListingId'].'</td>';
         }
-
-        return '<td><a class="ml-js-noBlockUi" href="'.$item['Data']['Url'].'" target="_blank">'.$item['ListingId'].'</a></td>';
+        $addStyle = (empty($item['ShopTitle']) || $item['ShopTitle'] === '&mdash;') ? 'color:#e31e1c;' : '';
+        return '<td><a style="'. $addStyle .'" class="ml-js-noBlockUi" href="'.$item['Data']['Url'].'" target="_blank">'.$item['ListingId'].'</a></td>';
     }
 
     protected function getStatus($item) {
         $status = '-';
 
-        if ($item['Status'] === 'update') {
-            $status = MLI18n::gi()->etsy_inventory_listing_status_update;
-        } else if ($item['Status'] === 'active') {
+        if ($item['Status'] === 'active') {
             $status = MLI18n::gi()->etsy_inventory_listing_status_active;
         } else if ($item['Status'] === 'inactive') {
             $status = MLI18n::gi()->etsy_inventory_listing_status_inactive;
+        }  else if ($item['Status'] === 'expired') {
+            $status = MLI18n::gi()->etsy_inventory_listing_status_expired;
+        }  else if ($item['Status'] === 'draft') {
+            $status = MLI18n::gi()->etsy_inventory_listing_status_draft;
+        } else if ($item['Status'] === 'sold_out') {
+            $status = MLI18n::gi()->etsy_inventory_listing_status_sold_out;
         } else if ($item['Status'] === 'add') {
             $status = MLI18n::gi()->etsy_inventory_listing_status_new;
         }
 
         return '<td>'.$status.'</td>';
+    }
+
+    public function getShopProductTitle($item) {
+        $title = '--';
+        $oProduct = MLProduct::factory()->getByMarketplaceSKU($item['SKU']);
+        if ($oProduct->exists()) {
+            $title = $oProduct->getName();
+        }
+        return '<td>'.$title.'</td>';
     }
 
     public function prepareData() {

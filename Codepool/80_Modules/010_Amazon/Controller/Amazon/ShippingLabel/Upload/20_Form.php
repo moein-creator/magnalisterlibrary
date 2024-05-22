@@ -31,7 +31,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Form extends ML_Core_Cont
     }
     
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public static function getTabDefault() {

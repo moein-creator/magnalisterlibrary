@@ -11,65 +11,16 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-
-// example for overwriting global element (add css-class to form-field)
-foreach (array(
-             'stocksync.frommarketplace', 'mail.send', 'mail.originator.name',
-             'mail.originator.adress', 'mail.subject', 'mail.content', 'mail.copy',
-             'importactive', 'import', 'preimport.start', 'customergroup',
-             'orderimport.shop', 'orderstatus.open', 'orderimport.shippingmethod',
-             'orderimport.paymentmethod', 'maxquantity', 'mwst.fallback',
-             'orderstatus.sync', 'orderstatus.shipped', 'orderstatus.carrier.default',
-             'orderstatus.canceled',
-         ) as $sIdealoDirectBuyFieldName) {
-    MLSetting::gi()->add('formfields__'.$sIdealoDirectBuyFieldName.'__cssclasses', array('mljs-directbuy',));
-}
 
 /**
  * all fields include i18n directly
  * @see ../Codepool/90_System/Form/Setting/formfields.php
  */
 MLSetting::gi()->add('formfields_idealo', array(
-
-    'directbuyactive'=>array(
-        'i18n' => '{#i18n:formfields_idealo__directbuyactive#}',
-        'name' => 'directbuyactive',
-        'type' => 'directbuyactive',
-        'default' => 'false'
-    ),
-    'idealoclientid' => array(
-        'i18n' => '{#i18n:formfields_idealo__idealoclientid#}',
-        'name' => 'idealoclientid',
-        'type' => 'string',
-        'cssclasses' => array('js-directbuy'),
-    ),
-    'idealopassword' => array(
-        'i18n' => '{#i18n:formfields_idealo__idealopassword#}',
-        'name' => 'idealopassword',
-        'type' => 'password',
-        'savevalue' => '__saved__',
-        'cssclasses' => array('js-directbuy'),
-    ),
-    'oldtokenmigrationpopup' => array(
-        'i18n' => '{#i18n:formfields_idealo__oldtokenmigrationpopup#}',
-        'name' => 'oldtokenmigrationpopup',
-        'type' => 'hidden',
-    ),
-    'checkout' => array(
-        'i18n' => '{#i18n:formfields_idealo__checkout#}',
-        'name' => 'checkout',
-        'type' => 'bool',
-        'cssclasses' => array('mljs-directbuy',),
-    ),
-    'checkoutenabled' => array(
-        'i18n' => '{#i18n:formfields_idealo__checkoutenabled#}',
-        'name' => 'checkoutenabled',
-        'type' => 'hidden',
-    ),
     'shippingcountry' => array(
         'i18n' => '{#i18n:formfields_idealo__shippingcountry#}',
         'name' => 'shippingcountry',
@@ -106,13 +57,6 @@ MLSetting::gi()->add('formfields_idealo', array(
         'type' => 'string',
         'default' => '0.00',
     ),
-    'subheader.pd' => array(
-        'i18n' => '{#i18n:formfields_idealo__subheader.pd#}',
-        'name' => 'subheader.pd',
-        'type' => 'subHeader',
-        'fullwidth' => true,
-        'showdesc' => false,
-    ),
     'paymentmethod' => array(
         'i18n' => '{#i18n:formfields_idealo__paymentmethod#}',
         'name' => 'paymentmethod',
@@ -123,27 +67,6 @@ MLSetting::gi()->add('formfields_idealo', array(
         'i18n' => '{#i18n:formfields_idealo__access.inventorypath#}',
         'name' => 'access.inventorypath',
         'type' => 'information',
-    ),
-    'fulfillmenttype' => array(
-        'i18n' => '{#i18n:formfields_idealo__shippingmethod#}',
-        'name' => 'fulfillmenttype',
-        'type' => 'select',
-        'values' => '{#i18n:formfields_idealo__shippingmethod__values#}',
-        'cssclasses' => array('mljs-directbuy',),
-    ),
-    'twomanhandlingfee' => array(
-        'i18n' => '{#i18n:formfields_idealo__twomanhandlingfee#}',
-        'name' => 'twomanhandlingfee',
-        'cssclasses' => array('mljs-directbuy', 'mljs-fulfillment'),
-        'type' => 'string',
-        'default' => '0.00',
-    ),
-    'disposalfee' => array(
-        'i18n' => '{#i18n:formfields_idealo__disposalfee#}',
-        'name' => 'disposalfee',
-        'cssclasses' => array('mljs-directbuy', 'mljs-fulfillment'),
-        'type' => 'string',
-        'default' => '0.00',
     ),
     'shippingtime' => array(
         'i18n' => '{#i18n:formfields_idealo__shippingtime#}',
@@ -169,28 +92,15 @@ MLSetting::gi()->add('formfields_idealo', array(
         'type' => 'string',
     ),
     'shippingtimeproductfield' => array(
-        'i18n' => '{#i18n:formfields_idealo__shippingtimeproductfield#}',
-        'name' => 'shippingtimeproductfield',
-        'type' => 'select',
+        'i18n'   => '{#i18n:formfields_idealo__shippingtimeproductfield#}',
+        'name'   => 'shippingtimeproductfield',
+        'type'   => 'am_attributesselect',
         'expert' => true,
     ),
-    'orderstatus.cancelreason' => array(
-        'i18n' => '{#i18n:formfields_idealo__orderstatus.cancelreason#}',
-        'name' => 'orderstatus.cancelreason',
-        'type' => 'select',
-        'cssclasses' => array('mljs-directbuy',),
-    ),
-    'orderstatus.cancelcomment' => array(
-        'i18n' => '{#i18n:formfields_idealo__orderstatus.cancelcomment#}',
-        'name' => 'orderstatus.cancelcomment',
+    'campaignlink' => array(
+        'i18n' => '{#i18n:formfields_idealo__campaignlink#}',
+        'name' => 'campaignlink',
         'type' => 'string',
-        'cssclasses' => array('mljs-directbuy',),
-    ),
-    'orderstatus.refund' => array(
-        'i18n' => '{#i18n:formfields_idealo__orderstatus.refund#}',
-        'name' => 'orderstatus.refund',
-        'type' => 'select',
-        'cssclasses' => array('mljs-directbuy',),
     ),
     'prepare_title' => array(
         'i18n' => '{#i18n:formfields_idealo__prepare_title#}',
@@ -210,15 +120,9 @@ MLSetting::gi()->add('formfields_idealo', array(
         'type' => 'imagemultipleselect',
         'singleproduct' => true,
     ),
-    'orderimport.paymentmethod' => array(
-        'i18n' => '{#i18n:formfields__orderimport.paymentmethod#}',
-        'name' => 'orderimport.paymentmethod',
-        'type' => 'selectwithtextoption',
-        'subfields' => array(
-            'select' => array('name' => 'orderimport.paymentmethod', 'type' => 'select', 'cssclasses' => array('mljs-directbuy',),),
-            'string' => array('name' => 'orderimport.paymentmethod.name', 'type' => 'string', 'default' => '{#setting:currentMarketplaceName#}', 'cssclasses' => array('mljs-directbuy',),)
-        ),
-        'expert' => true,
-        'cssclasses' => array('mljs-directbuy',),
-    ),
+    'currency' => [
+        'i18n' => '{#i18n:formfields_idealo__currency#}',
+        'name' => 'currency',
+        'type' => 'select',
+    ],
 ));

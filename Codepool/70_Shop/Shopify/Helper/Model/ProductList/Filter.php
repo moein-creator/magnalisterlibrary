@@ -2,7 +2,7 @@
 
 use Shopify\API\Application\Application;
 use Shopify\API\Application\Request\Products\CountProducts\CountProductsParams;
-use \Shopify\API\Application\Request\Products\ListOfProducts\ListOfProductsParams;
+use Shopify\API\Application\Request\Products\ListOfProducts\ListOfProductsParams;
 
 /**
  * 888888ba                 dP  .88888.                    dP
@@ -167,7 +167,7 @@ class ML_Shopify_Helper_Model_ProductList_Filter {
 
     public function setOrder($sOrder) {
         $aOrder = explode('_', $sOrder);
-        if (count($aOrder) == 2) {
+        if (is_array($aOrder) && count($aOrder) == 2 && !empty($aOrder[0])) {
             $this->aOrder = array('name' => $aOrder[0], 'direction' => $aOrder[1]);
             $this->oSelect->orderBy("{$aOrder[0]} {$aOrder[1]}");
         }

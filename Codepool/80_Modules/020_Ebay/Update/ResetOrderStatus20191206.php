@@ -64,8 +64,12 @@ class ML_Ebay_Update_ResetOrderStatus20191206 extends ML_Core_Update_Abstract {
     protected $aOpenStatusCache = array();
 
     protected function fillMarketplaceOpenStatus() {
-        foreach (MLDatabase::getDbInstance()->fetchArray('SELECT `mpid` FROM `magnalister_orders` WHERE `platform` = \'ebay\' AND `insertTime` > \'2019-12-05 10:00:00\' AND `insertTime` < \'2019-12-06 11:00:00\' GROUP BY `mpid`') as $aConfig) {
-            $this->aOpenStatusCache[$aConfig['mpid']] = MLDatabase::getDbInstance()->fetchOne('SELECT `value` FROM `magnalister_config` WHERE `mpid` = \''.((int)$aConfig['mpid']).'\' AND `mkey` = \'orderstatus.open\' ');
+        $mResult = MLDatabase::getDbInstance()->fetchArray('SELECT `mpid` FROM `magnalister_orders` WHERE `platform` = \'ebay\' AND `insertTime` > \'2019-12-05 10:00:00\' AND `insertTime` < \'2019-12-06 11:00:00\' GROUP BY `mpid`');
+
+        if (is_array($mResult)) {
+            foreach ($mResult as $aConfig) {
+                $this->aOpenStatusCache[$aConfig['mpid']] = MLDatabase::getDbInstance()->fetchOne('SELECT `value` FROM `magnalister_config` WHERE `mpid` = \'' . ((int)$aConfig['mpid']) . '\' AND `mkey` = \'orderstatus.open\' ');
+            }
         }
     }
 
@@ -73,8 +77,11 @@ class ML_Ebay_Update_ResetOrderStatus20191206 extends ML_Core_Update_Abstract {
     protected $aCancelStatusCache = array();
 
     protected function fillMarketplaceCancelStatus() {
-        foreach (MLDatabase::getDbInstance()->fetchArray('SELECT `mpid` FROM `magnalister_orders` WHERE `platform` = \'ebay\' AND `insertTime` > \'2019-12-05 10:00:00\' AND `insertTime` < \'2019-12-06 11:00:00\' GROUP BY `mpid`') as $aConfig) {
-            $this->aCancelStatusCache[$aConfig['mpid']] = MLDatabase::getDbInstance()->fetchOne('SELECT `value` FROM `magnalister_config` WHERE `mpid` = \''.((int)$aConfig['mpid']).'\' AND `mkey` = \'orderstatus.cancelled\' ');
+        $mResult = MLDatabase::getDbInstance()->fetchArray('SELECT `mpid` FROM `magnalister_orders` WHERE `platform` = \'ebay\' AND `insertTime` > \'2019-12-05 10:00:00\' AND `insertTime` < \'2019-12-06 11:00:00\' GROUP BY `mpid`');
+        if (is_array($mResult)) {
+            foreach ($mResult as $aConfig) {
+                $this->aCancelStatusCache[$aConfig['mpid']] = MLDatabase::getDbInstance()->fetchOne('SELECT `value` FROM `magnalister_config` WHERE `mpid` = \'' . ((int)$aConfig['mpid']) . '\' AND `mkey` = \'orderstatus.cancelled\' ');
+            }
         }
     }
 

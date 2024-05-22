@@ -17,13 +17,16 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 ?>
 <tbody id="<?php echo $aFieldset['id'] ?>">
-    <?php
-        if (isset($aFieldset['fields'])) {
-            $this->includeView('widget_form_row_' . $aFieldset['row']['template'], array('aFields' => $aFieldset['fields']));
-        }
-    ?>
-    <tr class="spacer"><td colspan="4"></td></tr>
+<?php
+if (isset($aFieldset['fields'])) {
+    $this->includeView('widget_form_row_'.$aFieldset['row']['template'], array('aFields' => $aFieldset['fields']));
+}
+?>
+<tr class="spacer">
+    <td colspan="4"></td>
+</tr>
 </tbody>

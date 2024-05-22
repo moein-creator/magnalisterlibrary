@@ -11,10 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Database_Model_Table_Prepare_Abstract');
 
 class ML_Hitmeister_Model_Table_Hitmeister_Prepare extends ML_Database_Model_Table_Prepare_Abstract {
@@ -23,57 +24,63 @@ class ML_Hitmeister_Model_Table_Hitmeister_Prepare extends ML_Database_Model_Tab
     protected $aFields = array(
         'mpID' => array(
             'isKey' => true,
-            'Type' => 'int(11) unsigned', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11) unsigned', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'products_id' => array(
             'isKey' => true, 
-            'Type' => 'int(11)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'EAN' => array(
-            'Type' => 'varchar(30)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(30)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'PrimaryCategory' => array(
-            'Type' => 'varchar(15)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(15)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'TopPrimaryCategory' => array(
-            'Type' => 'varchar(15)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(15)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Title' => array(
-            'Type' => 'varchar(120)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(120)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Subtitle' => array(
-            'Type' => 'varchar(200)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(200)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Description' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Images' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'ShopVariation' => array(
-            'Type' => 'mediumtext', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ItemCondition' => array(
-            'Type' => 'varchar(60)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(60)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShippingTime' => array(
-            'Type' => 'char(1)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'char(1)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '3', 'Extra' => '', 'Comment' => ''
+        ),
+        'HandlingTime' => array(
+            'Type' => 'int(3)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '3', 'Extra' => '', 'Comment' => ''
+        ),
+        'ShippingGroup' => array(
+            'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '0', 'Extra' => '', 'Comment' => ''
         ),
         'ItemCountry' => array(
-            'Type' => 'char(2)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'char(2)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'Comment' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'PrepareType' => array(
-             'Type' => "enum('manual','auto','apply')", 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment'=>''
+             'Type' => "enum('manual','auto','apply')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'manual', 'Extra' => '', 'Comment'=>''
         ),
         'Verified' => array(
-            'Type' => "enum('OK','ERROR','OPEN','EMPTY')", 'Null' => 'NO', 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
+            'Type' => "enum('OK','ERROR','OPEN','EMPTY')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
         ),
         'PreparedTS'   => array (
             'isInsertCurrentTime' => true,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => '0000-00-00 00:00:00', 'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ), 
     );
 

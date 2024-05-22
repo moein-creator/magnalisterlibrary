@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -48,7 +48,7 @@ abstract class ML_Magento2_Model_ProductList_Abstract extends ML_Productlist_Mod
         $productCollection = MLMagento2Alias::ObjectManagerProvider('Magento\Catalog\Model\ResourceModel\Product\Collection');
         /** Apply filters here */
         $productCollection->addFinalPrice();
-        $aConfig = MLModul::gi()->getConfig();
+        $aConfig = MLModule::gi()->getConfig();
         $iStoreId = (int)(isset($aConfig['lang']) ? $aConfig['lang'] : 0);
 
         $productCollection->setStore($iStoreId);
@@ -67,8 +67,7 @@ abstract class ML_Magento2_Model_ProductList_Abstract extends ML_Productlist_Mod
                     '{{table}}.store_id = '.$iStoreId,
                     'left'
                 )->addAttributeToSelect('*');*/
-            $productCollection->getSelect()->joinLeft('catalog_product_relation as t', 'e.entity_id = t.child_id')->where('t.child_id IS NULL');
-            MLMessage::gi()->addDebug('magento 2 magnalister product list select products',array($collection->getSelect()->__toString()));
+            $productCollection->getSelect()->distinct(true)->joinLeft($productCollection->getTable('catalog_product_relation') . ' as t', 'e.entity_id = t.child_id')->where('t.child_id IS NULL');
         } catch (Exception $oExc) {
 
         }

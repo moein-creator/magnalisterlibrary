@@ -29,7 +29,7 @@ class ML_Magento2Ebay_Model_ProductList_Ebay_Prepare_Apply extends ML_Magento2_M
             ->registerDependency('marketplacesyncfilter')
             ->registerDependency('productstatusfilter')
             ->registerDependency('manufacturerfilter')
-        ;
+            ->registerDependency('producttypefilter');
         return $this;
     }
     public function getSelectionName() {

@@ -1,10 +1,11 @@
 <?php
 /* @var $this  ML_Amazon_Controller_Amazon_ShippingLabel_Upload_ShippingMethod */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
     <?php
-    $sMpId = MLModul::gi()->getMarketPlaceId();
-    $sMpName = MLModul::gi()->getMarketPlaceName();
+    $sMpId = MLModule::gi()->getMarketPlaceId();
+    $sMpName = MLModule::gi()->getMarketPlaceName();
 //    $aStatistic = isset($aStatistic) ? $aStatistic : array();
     ?>
 <form action="<?php echo $this->getUrl(array('controller' => "{$sMpName}:{$sMpId}_shippinglabel_upload_summary")); ?>" method="post">
@@ -12,7 +13,7 @@ class_exists('ML', false) or die();
     <?php foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) { ?>
         <input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue ?>"/>
     <?php } ?>
-<div class="ml-plist <?php echo MLModul::gi()->getMarketPlaceName(); ?>">
+    <div class="ml-plist <?php echo MLModule::gi()->getMarketPlaceName(); ?>">
     <?php
     $this->includeView('widget_list_order_list', get_defined_vars());
     $this

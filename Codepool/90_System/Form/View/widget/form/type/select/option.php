@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -28,7 +28,20 @@ $sDataMlAlert =
     )
         ? json_encode($aField['i18n']['alert'][$aOption['key']])
         : '';
+// allow '*' for all (or all remaining) options
+if (       empty($sDataMlAlert)
+        && isset($aField['i18n']) && $aField['i18n'] != null && array_key_exists('alert', $aField['i18n'])
+        && is_array($aField['i18n']['alert'])
+        && array_key_exists('*', $aField['i18n']['alert'])
+        && is_array($aField['i18n']['alert']['*'])
+        && array_key_exists('title', $aField['i18n']['alert']['*'])
+        && array_key_exists('content', $aField['i18n']['alert']['*'])
+    ) {
+        $sDataMlAlert = json_encode($aField['i18n']['alert']['*']);
+}
+
 ?>
+
 <option
     <?php echo empty($sDataMlAlert) ? '' : 'data-ml-alert="'.htmlentities($sDataMlAlert).'" ' ?>
     <?php echo empty($aOption['dataType']) ? '' : 'data-type="'.$aOption['dataType'].'" ' ?>

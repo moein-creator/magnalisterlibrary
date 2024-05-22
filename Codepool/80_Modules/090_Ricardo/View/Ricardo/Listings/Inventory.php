@@ -1,20 +1,21 @@
-<?php class_exists('ML', false) or die();
+<?php if (!class_exists('ML', false))
+    throw new Exception();
 
 MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true);
 /* @var $this   ML_Listings_Controller_Listings_Inventory */
 ob_start();
 ?>
-<form action="<?php echo $this->getCurrentUrl() ?>"  method="post" class="ml-plist ml-js-plist">
+<form action="<?php echo $this->getCurrentUrl() ?>" method="post" class="ml-plist ml-js-plist">
     <div>
-        <?php 
-            foreach(MLHttp::gi()->getNeededFormFields() as $sName=>$sValue ){
-                ?><input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue?>" /><?php
-            }
-            
-            if (isset($this->aPostGet['sorting'])) { ?>
-                <input type="hidden" name="ml[sorting]" value="<?php echo $this->aPostGet['sorting'] ?>" />
-            <?php 
-            }
+        <?php
+        foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) {
+            ?><input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue ?>" /><?php
+        }
+
+        if (isset($this->aPostGet['sorting'])) { ?>
+            <input type="hidden" name="ml[sorting]" value="<?php echo $this->aPostGet['sorting'] ?>"/>
+            <?php
+        }
         ?>
     </div>
     <?php
@@ -23,18 +24,27 @@ ob_start();
     $this->includeView('widget_listings_misc_pagination'); ?>
     <table class="datagrid ml-plist-old-fix">
         <thead>
-            <tr>
-                <td class="nowrap" style="width: 5px;">
-                    <input type="checkbox" id="selectAll"/><label for="selectAll"><?php echo $this->__('ML_LABEL_CHOICE') ?></label>
+        <tr>
+            <td class="nowrap" style="width: 5px;">
+                <input type="checkbox" id="selectAll"/><label for="selectAll"><?php echo $this->__('ML_LABEL_CHOICE') ?></label>
                 </td>
                 <?php foreach ($this->getFields() as $aFiled) { ?>            
-                    <td> <?php
-                        echo $aFiled['Label'];
-                        if (isset($aFiled['Sorter']) && $aFiled['Sorter'] != null) {
-                            ?>
-                            <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
-                            <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
-                        <?php } ?>
+                    <td>
+                        <div class="ml-ricardo-inventory-th">
+                            <div>
+                                <?php
+                                echo $aFiled['Label'];
+                                if (isset($aFiled['Sorter']) && $aFiled['Sorter'] != null) {
+                                ?>
+                            </div>
+                            <div style="width: 42px;">
+                                <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
+                                <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
+                                <?php } ?>
+                            </div>
+
+                        </div>
+
                     </td>
                 <?php } ?>
             </tr>
@@ -62,7 +72,7 @@ ob_start();
                         ? 'style="color:#900;"'
                         : '';
                     ?>
-                    <tr class="<?php echo (($oddEven = !$oddEven) ? 'odd' : 'even') ?>" <?= $addStyle ?>>
+                    <tr <?= $addStyle ?>>
                         <td>
                             <input type="checkbox" name="<?php echo MLHttp::gi()->parseFormFieldName('SKUs[]') ?>" value="<?php echo $item['SKU'] ?>">
                             <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName("details[{$item['SKU']}]") ?>" value="<?php echo $sDetails ?>">

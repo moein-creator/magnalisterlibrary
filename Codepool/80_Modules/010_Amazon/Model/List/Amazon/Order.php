@@ -18,7 +18,7 @@
 
 class ML_Amazon_Model_List_Amazon_Order {
 
-    protected $aList = null;
+    protected $aList = array();
     protected $iCountTotal = 0;
     protected $aMixedData = array();
     protected $iFrom = 0;
@@ -114,32 +114,32 @@ class ML_Amazon_Model_List_Amazon_Order {
             $aRequest['ORDERBY'] = 'PurchaseDate';
             $aRequest['SORTORDER'] = 'DESC';
         }
+        $aRequest['OFFSET'] = array(
+            'START' => $this->iFrom,
+            'COUNT' => $this->iCount
+        );
         return $aRequest;
     }
 
     public function getList() {
-        if ($this->aList === null) {
+        if (!isset($this->aList[$this->iFrom.'_'.$this->iCount])) {
             $this->iCountTotal = 0;
             try {
                 $aResponse = MagnaConnector::gi()->submitRequestCached($this->prepareRequest(), 0);
             } catch (MagnaException $oExc) {
-
+                MLMessage::gi()->addDebug($oExc);
             }
             if (!isset($aResponse['DATA']) || $aResponse['STATUS'] != 'SUCCESS' || !is_array($aResponse['DATA'])) {
-                $this->aList = array();
+                $this->aList[$this->iFrom.'_'.$this->iCount] = array();
             } else {
-                $this->aList = $aResponse['DATA'];
-                foreach ($this->aList as &$aOrder) {
+                $this->aList[$this->iFrom.'_'.$this->iCount] = $aResponse['DATA'];
+                foreach ($this->aList[$this->iFrom.'_'.$this->iCount] as &$aOrder) {
                     $aOrder['isselected'] = $this->isSelected($aOrder['AmazonOrderID']);
                 }
             }
-            $this->iCountTotal = count($this->aList);
+            $this->iCountTotal = $aResponse['TotalCount'];
         }
-        if ($this->iCount !== null) {
-            return array_slice($this->aList, $this->iFrom, $this->iCount);
-        } else {
-            return $this->aList;
-        }
+        return $this->aList[$this->iFrom.'_'.$this->iCount];
     }
 
     public function getOrdersIds($blPage = false) {

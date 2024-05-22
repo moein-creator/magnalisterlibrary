@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,16 +12,15 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 /** @var ML_Hitmeister_Controller_Hitmeister_Prepare_Variations $this */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 
-$marketplaceName = MLModul::gi()->getMarketPlaceName();
+$marketplaceName = MLModule::gi()->getMarketPlaceName();
 $optionalAttributesMaxSize = 5;
 $mParentValue = $this->getRequestField('PrimaryCategory');
 if (empty($mParentValue)) {
@@ -154,7 +153,7 @@ if (!empty($mParentValue) && $mParentValue !== 'none' && $mParentValue !== 'new'
         if ($bError == true) {
             $aSelectField['cssclass'] = 'error';
             $aCustomSelectField['cssclass'] = 'error';
-            $style = 'color:red';
+            $style = 'color:#e31a1c';
         }
 
         $aAjaxField = $this->getField($sId . '_ajax');
@@ -631,12 +630,6 @@ if (!empty($mParentValue) && $mParentValue !== 'none' && $mParentValue !== 'new'
                         }
                     }
                 });
-                var categorySelector = "#<?php echo $this->getField('variationgroups.value', 'id')?>";
-                if($(categorySelector).length ){
-                } else {
-                    categorySelector = "#<?php echo $this->getField('title', 'id')?>";
-                }
-
                 $('button.delete-matched-value').click(function() {
                     var form = $(this).closest('form');
                     $(this).closest('table')[0].deleteRow(this.parentNode.parentNode.rowIndex);

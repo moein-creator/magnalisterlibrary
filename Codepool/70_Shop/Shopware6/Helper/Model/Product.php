@@ -1,5 +1,4 @@
 <?php
-
 /*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
@@ -12,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -29,25 +28,25 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 class ML_Shopware6_Helper_Model_Product {
 
     public function getProductSelectQuery() {
-
         return MLDatabase::factorySelectClass()
             ->select('HEX(p.`id`) AS `id`')
-                        ->from(MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getEntityName(), 'p')
-                        ->where("p.`parent_id` IS NULL AND p.`version_id` =  UNHEX('" . Context::createDefaultContext()->getVersionId() . "')");
+            ->from(MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getEntityName(), 'p')
+            ->where("p.`parent_id` IS NULL AND p.`version_id` = UNHEX('".Context::createDefaultContext()->getVersionId()."')");
     }
 
     /**
-     * if product has any variation it i will return sum of quantity of all variation, otherwise it will return quantiy of product
-     * @param type $oArticle
-     * @return int
+     * if product has any variation it will return sum of quantity of all variation, otherwise it will return quantity of the product
+     * @param object $oArticle
+     * @return int $iStock
      */
     public function getTotalCount($oArticle) {
+        $iStock = 0;
 
         try {
             $iStock = (int)$oArticle->getAvailableStock();
         } catch (Exception $oExc) {
-
         }
+
         return $iStock;
     }
 

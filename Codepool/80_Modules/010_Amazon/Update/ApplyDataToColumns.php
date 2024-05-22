@@ -66,7 +66,7 @@ class ML_Amazon_Update_ApplyDataToColumns extends ML_Core_Update_Abstract {
                  SELECT *
                  FROM  `magnalister_amazon_prepare`
                  WHERE `preparetype` = 'apply'
-                   AND `applydata` not like '%\"ApplyDataToColums\":true%' AND `applydata` != ''
+                   AND `applydata` not like '%\"ApplyDataToColums\":true%' AND `applydata` != '' AND `applydata` != '0'
                  LIMIT 100;
              ");
             if (count($aPrepareDatas) > 0) {

@@ -1,5 +1,6 @@
 <?php
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 /*
  * example 1: $aField['ajax']['field'] is initial set (ajax will not executed by initial load)
  *  $aField['type']='ajax';

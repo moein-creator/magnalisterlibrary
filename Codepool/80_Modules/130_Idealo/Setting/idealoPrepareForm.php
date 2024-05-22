@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,14 +11,12 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 MLSetting::gi()->idealo_prepare_form = array(
-    'checkoutenabled' => '{#setting:formgroups_idealo__checkoutenabled#}',
     'details' => '{#setting:formgroups_idealo__prepare_details#}',
     'general' => '{#setting:formgroups_idealo__prepare_general#}',
-    'directbuy' => '{#setting:formgroups_idealo__directbuy#}',
 );

@@ -22,7 +22,8 @@
 /** @var ML_Form_Controller_Widget_Form_VariationsAbstract $this */
 /** @var array $aField */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 $marketplaceName = MLModul::gi()->getMarketPlaceName();
 
 $aParent = $this->getField(substr($aField['realname'], 0, -5));
@@ -65,8 +66,11 @@ if (is_array($aParentValue) && count($aParentValue) === 2 && reset($aParentValue
     $i18n = $this->getFormArray('aI18n');
 
     $sCustomGroupName = $this->getField('variationgroups.value', 'value');
-    $aCustomIdentifier = explode(':', $sCustomGroupName);
-    $sCustomIdentifier = count($aCustomIdentifier) == 2 ? $aCustomIdentifier[1] : '';
+
+    if (isset($sCustomGroupName)) {
+        $aCustomIdentifier = explode(':', $sCustomGroupName);
+        $sCustomIdentifier = count($aCustomIdentifier) == 2 ? $aCustomIdentifier[1] : '';
+    }
     if (empty($sCustomIdentifier) && MLFormHelper::getPrepareAMCommonInstance()->shouldCheckOtherIdentifier()) {
         if ($tabType === 'variations') {
             $sCustomIdentifier = $this->getRequestField('customidentifier');
@@ -100,12 +104,16 @@ if (is_array($aParentValue) && count($aParentValue) === 2 && reset($aParentValue
         $aNewField = array(
             'type' => 'string',
             'name' => $sName,
+            'isbrand' => $aField['isbrand'],
             'value' => is_array($shopValue) ? implode(', ', $shopValue) : $shopValue,
         );
     } else if ($sAttributeCode === 'attribute_value') {
         $aNewField = array(
             'name' => $sName,
-            'type' => 'select',
+            'type' => 'otto_select2',
+            //exclude auto match options
+            'excludeauto' => true,
+            'isbrand' => $aField['isbrand'],
             'value' => $this->getAttributeValues($sVariationValue, $sCustomIdentifier, $sMPAttributeCode, true),
             'values' => $aMPAttribute['values'],
         );
@@ -134,6 +142,7 @@ if (is_array($aParentValue) && count($aParentValue) === 2 && reset($aParentValue
             'i18n' => isset($i18n['field']['attributematching']) ? $i18n['field']['attributematching'] : '',
             'addonempty' => true,
             'automatch' => true,
+            'isbrand' => $aField['isbrand'],
             'valuessrc' => $aShopAttributes['values'],
             'attributecode' => $sAttributeCode,
             'variationvalue' => $sVariationValue,

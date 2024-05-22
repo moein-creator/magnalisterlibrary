@@ -1,3 +1,4 @@
-<?php class_exists('ML',false) or die()?>
-<?php $aStatistic=$this->getProductlist()->getStatistic();?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
+<?php $aStatistic = $this->getProductlist()->getStatistic(); ?>
 <?php $this->getProductListWidget();

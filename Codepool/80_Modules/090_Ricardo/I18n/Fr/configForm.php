@@ -92,7 +92,7 @@ Des frais supplémentaires peuvent-être facturés par Ricardo si cette fonction
 magnalister n\'assume aucune responsabilité pour d\'éventuels frais supplémentaires facturés par Ricardo.';
 MLI18n::gi()->{'ricardo_config_error_price_signal'} = 'Les prix sur Ricardo doivent être indiqués en francs suisses. Veuillez les  adapter à 2 décimals près, pour qu\'ils finissent, soit par 0 (ex. 12,40), soit par 5 (ex. 12,45). Le plus petit montant autorisé est de 5 centimes (0,05 CHF). D\'autres informations en cliquant sur l\'icône d\'info.';
 MLI18n::gi()->{'ricardo_config_account__legend__account'} = 'Données d\'accès';
-MLI18n::gi()->{'ricardo_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'ricardo_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'ricardo_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'ricardo_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'ricardo_config_account__field__mpusername__label'} = 'Pseudo';
@@ -158,9 +158,9 @@ MLI18n::gi()->{'ricardo_config_prepare__field__cumulative__valuehint'} = 'Frais 
 MLI18n::gi()->{'ricardo_config_prepare__field__availabilityfield__label'} = 'Délai de livraison ';
 MLI18n::gi()->{'ricardo_config_prepare__field__availability__label'} = 'Disponibilité de l\'article après réception du paiement';
 MLI18n::gi()->{'ricardo_config_prepare__field__firstpromotion__label'} = 'Pack promotionnelle';
-MLI18n::gi()->{'ricardo_config_prepare__field__firstpromotion__hint'} = '<span style="color:red;">Cette option fait l\'objet d\'une facturation, renseignez-vous auprès de Ricardo.</span>';
+MLI18n::gi()->{'ricardo_config_prepare__field__firstpromotion__hint'} = '<span style="color:#e31a1c;">Cette option fait l\'objet d\'une facturation, renseignez-vous auprès de Ricardo.</span>';
 MLI18n::gi()->{'ricardo_config_prepare__field__secondpromotion__label'} = 'Page d\'accueil : option de publication promotionnelle';
-MLI18n::gi()->{'ricardo_config_prepare__field__secondpromotion__hint'} = '<span style="color:red;">Cette option fait l\'objet d\'une facturation, renseignez-vous auprès de Ricardo</span>';
+MLI18n::gi()->{'ricardo_config_prepare__field__secondpromotion__hint'} = '<span style="color:#e31a1c;">Cette option fait l\'objet d\'une facturation, renseignez-vous auprès de Ricardo</span>';
 MLI18n::gi()->{'ricardo_config_prepare__field__checkin.showlimitationwarning__label'} = 'Afficher le nombre d\'annonces sur Ricardo avant de charger';
 MLI18n::gi()->{'ricardo_config_prepare__field__checkin.showlimitationwarning__help'} = 'Veuillez noter que Ricardo fixe en principe une limite de 100 annonces publiées simultanément par vendeur. Cette limite peut être adaptée au cas par cas, à la demande du vendeur. Avant de charger votre produit, assurez-vous bien de ne dépassez pas cette limite et vérifiez le log d\'erreurs au moins 30 minutes après le chargement.
 <br><br>
@@ -238,7 +238,7 @@ MLI18n::gi()->{'ricardo_config_sync__field__stocksync.frommarketplace__label'} =
 MLI18n::gi()->{'ricardo_config_sync__field__stocksync.frommarketplace__help'} = 'Si cette fonction est activée le nombre de commandes effectués et payés sur Ricardo sera soustrait de votre stock boutique.<br>
 <br>
 <b>Attention :</b> cette fonction ne s’exécute que si  l’importation des commandes est activée!';
-MLI18n::gi()->{'ricardo_config_sync__field__inventorysync.price__label'} = 'Prix de l\'article';
+MLI18n::gi()->{'ricardo_config_sync__field__inventorysync.price__label'} = 'Prix de l&apos;article';
 MLI18n::gi()->{'ricardo_config_sync__field__inventorysync.price__help'} = 'Utilisez la fonction “synchronisation automatique” pour que les prix de vos articles sur Ricardo soient mis à jour par rapport au prix de vos articles en boutique. Cette mise à jour aura lieu toutes les quatre heures, à moins que vous n’ayez défini d’autres paramètres de configuration. <br>
 Les données de votre base de données seront appliquées sur Ricardo, même si les changements n’ont eu lieu que dans votre base de données.
 Vous pouvez à tout moment effectuer une synchronisation des prix en cliquant sur le bouton “synchroniser les prix et les stocks” en haut à droite du module. <br><br>

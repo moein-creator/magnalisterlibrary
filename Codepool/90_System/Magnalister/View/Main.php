@@ -1,19 +1,17 @@
 <?php 
-/**
- * 888888ba                 dP  .88888.                    dP                
- * 88    `8b                88 d8'   `88                   88                
- * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b. 
- * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88 
- * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88 
- * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P' 
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
  *                          m a g n a l i s t e r
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2015 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -25,11 +23,14 @@ if (!class_exists('ML', false))
 ?>
 
 <?php
+if (MLDatabase::factory('config')->isGCConfigured()) {
+    MLShop::gi()->addShopMessages();
+}
 $sConfigPassPhrase = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.passphrase')->get('value');
 $sPassPhrase = is_string($sConfigPassPhrase) ? $sConfigPassPhrase : '';
 $aCronUrlParam = array('auth' => md5(MLShop::gi()->getShopId().trim($sPassPhrase)));
 try {
-    $oModul = MLModul::gi();
+    $oModul = MLModule::gi();
     $aCronUrlParam['mpid'] = $oModul->getMarketPlaceId();
     $aCronUrlParam['mps'] = $oModul->getMarketPlaceName();
 } catch (Exception $exc) {
@@ -66,7 +67,11 @@ ob_start(); ?>
             <tr>
                 <td width="100%">
                     <?php $this->headController()->render(); ?>
-                    <?php $this->getTabsWidget(); ?>
+                    <?php $sContent = $this->getTabsWidgetBuffered(); ?>
+                    <div class="ml-navigator-wrapper">
+                        <?php echo $this->getMenuView(); ?>
+                    </div>
+                    <?php echo $sContent ?>
                     <?php $this->footController()->render(); ?>
                 </td>
             </tr>
@@ -91,6 +96,7 @@ ob_start(); ?>
 </div>
 <?php
 MLSettingRegistry::gi()->addJs('magnalister.global.ajax.js');
+MLSettingRegistry::gi()->addJs('magnalister.navigator.js');
 if (MLI18n::gi()->isTranslationActive()) {
     try {
         MLSetting::gi()->get('blFormWysiwigLoaded');
@@ -123,42 +129,16 @@ foreach (array('css', 'js') as $sResourceType) {
     }
 }
 
-ob_start();
-if (MLI18n::gi()->isTranslationActive()) {
-    ?>
-    <table class="attributesTable globalTranslate">
-        <tbody>
-        <tr class="headline">
-            <td colspan="4"><h4>Translation</h4></td>
-        </tr>
-        <?php $isOdd = false;
-        foreach (MLI18n::gi()->getGlobalTranslationKeys() as $sKey) { ?>
-            <tr class="js-field <?php echo ($isOdd = !$isOdd) ? 'odd' : 'even'?>">
-                <td class="mlhelp ml-js-noBlockUi">
-                    <div class="ml-translate-toolbar">
-                        <a href="#" title="Translate" class="translate-label abutton" data-ml-translate-modal="<?php echo '#modal-tr-' . str_replace('.', '\\.', $sKey); ?>">&nbsp;</a>
-                    </div>
-                    <div class="ml-modal-translate dialog2" id="modal-tr-<?php echo str_replace('.', '\\.', $sKey) ?>">
-                        <script type="text/plain" class="data"><?php echo json_encode(MLI18n::gi()->getTranslationData($sKey)); ?></script>
-                    </div>
-                </td>
-                <th colspan="3" class="ml-translate-toolbar-wrapper">
-                    <label data-ml-translate-modal="<?php echo '#modal-tr-' . str_replace('.', '\\.', $sKey); ?>"><?php echo MLI18n::gi()->get($sKey); ?></label>
-                </th>
-            </tr>
-        <?php } ?>
-        <tr class="spacer"><td colspan="4"></td></tr>
-        <tr class="spacer"><td colspan="4"></td></tr>
-        <tr class="spacer"><td colspan="4"></td></tr>
-        </tbody>
-    </table>
-    <?php
-}
-$sGlobalTranslation = ob_get_clean();
 
+if (MLI18n::gi()->isTranslationActive()) {
+    /** @see  ./Main/translation.php */
+    $sGlobalTranslation = $this->includeViewBuffered('main_translation');
+} else {
+    $sGlobalTranslation = '';
+}
 ob_start();
 ?>
-    <div class="ml-js-mlMessages" id="ml-js-pushMessages"><?php
+    <div class="ml-js-mlMessages ml-mlMessages" id="ml-js-pushMessages"><?php
         $this->includeView('main_messages');
     ?></div>
     <?php MLLog::gi()->render();?>

@@ -54,7 +54,8 @@ class ML_Otto_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         }
 
         if ($sName === null) {// merge
-            $mReturn = MLHelper::getArrayInstance()->mergeDistinct($mReturn, array('lang' => $this->getConfig('lang'), 'currency' => 'EUR'));
+            $mReturn['lang'] = $this->getConfig('lang');
+            $mReturn['currency'] = 'EUR';
         }
 
         return $mReturn;

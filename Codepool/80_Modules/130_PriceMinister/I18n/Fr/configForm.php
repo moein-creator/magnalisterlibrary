@@ -76,7 +76,7 @@ Nous vous remercions d\'avoir effectué une commande sur #MARKETPLACE# et d’av
 MLI18n::gi()->{'priceminister_config_producttemplate_content'} = '<p>#TITLE#</p><p>#ARTNR#</p><p>#SHORTDESCRIPTION#</p><p>#PICTURE1#</p><p>#PICTURE2#</p><p>#PICTURE3#</p><p>#DESCRIPTION#</p>';
 MLI18n::gi()->{'priceminister_config_orderstatus_autoacceptance'} = 'Important : Vous avez désactivé la confirmation automatique des commandes. PriceMinisters ne transmet pas les frais de port, pour les commandes non confirmées, des commandes sans frais de port seront donc transmises à votre boutique. Nous recommandons donc, par conséquent, d\'activer l\'option "confirmation des commandes".';
 MLI18n::gi()->{'priceminister_config_account__legend__account'} = 'Mes coordonnées';
-MLI18n::gi()->{'priceminister_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'priceminister_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'priceminister_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'priceminister_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'priceminister_config_account__field__username__label'} = 'Pseudo';
@@ -170,7 +170,7 @@ Si vous modifiez la quantité d’un article dans votre boutique, sous la rubriq
 <b>Remarque :</b> Cette fonction n’est effective, que si vous choisissez une de deux première option se trouvant sous la rubrique: Configuration &rarr;  Préparation de l’article &rarr; Préréglages de téléchargement d’article. ';
 MLI18n::gi()->{'priceminister_config_sync__field__stocksync.frommarketplace__label'} = 'Variation du stock PriceMinister';
 MLI18n::gi()->{'priceminister_config_sync__field__stocksync.frommarketplace__help'} = 'Lorsque par exemple 3 articles sont achetés, la quantité de stock boutique imputé à l\'article se trouve réduit de 3.  <br><br> <strong>Important : </strong> Cette fonction n\'est active que lorsque que l\'importation de commande à été activé !';
-MLI18n::gi()->{'priceminister_config_sync__field__inventorysync.price__label'} = 'Prix de l\'article';
+MLI18n::gi()->{'priceminister_config_sync__field__inventorysync.price__label'} = 'Prix de l&apos;article';
 MLI18n::gi()->{'priceminister_config_sync__field__inventorysync.price__help'} = '<b>Synchronisation automatique via CronJob (recommandée)</b><br>
 <br>
 Utilisez la fonction “synchronisation automatique”, pour synchroniser votre stock Priceminister et votre stock boutique. L’actualisation de base se fait toutes les quatre heures, - à moins que vous n’ayez définit d’autres paramètres - et commence à 00:00 heure. <b>Si la synchronisation est activée, les données de votre base de données seront appliquées à Priceminister.</b><br>
@@ -207,11 +207,11 @@ MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.autoaccepta
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.autoacceptance__help'} = 'Si vous desactivez la fonction "Confirmation automatique", les commandes seront transmisent à votre boutique sans frais de port, car PriceMinisters ne transmet pas les frais de port, des commandes qui ne sont pas confirmées.Nous vous conseillons donc d\'activer la fonction.
 ';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.accepted__label'} = 'Acepter la commande avec';
-MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.accepted__hint'} = '<span style="color:red;">Pour plus d\'explications, lisez les points d\'informations.</span>';
+MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.accepted__hint'} = '<span style="color:#e31a1c;">Pour plus d\'explications, lisez les points d\'informations.</span>';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.accepted__help'} = 'Avant de confirmer la livraison. veuillez définir le statut qui acceptera les commandes sur Priceminister. .<br/><br/><b>Attention:</b><br/><br/>
 Les commandes doivent-être acceptées ou rejetées dans un délai de 2 jours, autrement votre compte sera banni.';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.refused__label'} = 'Refuser la commande avec';
-MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.refused__hint'} = '<span style="color:red;">Pour plus d\'explications, lisez les points d\'informations.</span>';
+MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.refused__hint'} = '<span style="color:#e31a1c;">Pour plus d\'explications, lisez les points d\'informations.</span>';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.refused__help'} = 'Définissez ici, le statut boutique, qui doit automatiquement activer la fonction "annuler la commande" sur Priceminister.<br/><br/><b>Attention:</b><br/>
 Les commandes doivent-être acceptées ou rejetées dans un délai de 2 jours, autrement votre compte sera banni.';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.shipped__label'} = 'Confirmation d\'expédition avec';
@@ -248,7 +248,7 @@ MLI18n::gi()->{'priceminister_config_orderimport__field__preimport.start__label'
 MLI18n::gi()->{'priceminister_config_orderimport__field__preimport.start__hint'} = 'Point de départ du lancement de l\'importation';
 MLI18n::gi()->{'priceminister_config_orderimport__field__preimport.start__help'} = 'Les commandes seront importées à partir de la date que vous saisissez dans ce champ. Veillez cependant à ne pas donner une date trop éloignée dans le temps pour le début de l’importation, car les données sur les serveurs de Priceminister ne peuvent être conservées, que quelques semaines au maximum. <br>
 ';
-MLI18n::gi()->{'priceminister_config_orderimport__field__customergroup__label'} = 'Groupe client';
+MLI18n::gi()->{'priceminister_config_orderimport__field__customergroup__label'} = 'Groupe clients';
 MLI18n::gi()->{'priceminister_config_orderimport__field__customergroup__help'} = 'Vous pouvez choisir ici un groupe dans lesquel vos clients seront classés. Pour créer des groupes, rendez-vous dans le menu de l\'administration de votre boutique PrestaShop ->Clients ->Groupes. Lorsqu\'ils sont créés, ils apparaissent dans la liste de choix proposée. ';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.open__label'} = 'Statut de la commande dans votre boutique';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.open__help'} = ' Définissez ici, Le statut qui sera automatiquement attribué aux commandes importé de Priceminister vers votre boutique. <br>

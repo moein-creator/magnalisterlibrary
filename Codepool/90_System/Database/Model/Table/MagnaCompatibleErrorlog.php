@@ -40,7 +40,7 @@ class ML_Database_Model_Table_MagnaCompatibleErrorlog extends ML_Database_Model_
             'isKey' => false,
             'Type' => 'text',
             'Null' => 'NO',
-            'Default' => '',
+            'Default' => NULL,
             'Extra' => '',
             'Comment' => ''
         ),
@@ -48,7 +48,7 @@ class ML_Database_Model_Table_MagnaCompatibleErrorlog extends ML_Database_Model_
             'isKey' => false,
             'Type' => 'longtext',
             'Null' => 'NO',
-            'Default' => '',
+            'Default' => NULL,
             'Extra' => '',
             'Comment' => ''
         )

@@ -22,8 +22,6 @@ MLSetting::gi()->add('aModules', array(
         'logo' => 'otto',
         'displayAlways' => false,
         'requiredConfigKeys' => array(
-            'clientkey',
-            'secretkey',
             'lang',
             'price.addkind',
             'price.group',
@@ -44,10 +42,7 @@ MLSetting::gi()->add('aModules', array(
             // TODO: move this to Woocommerce
             // 'customfieldshipingtrackingnumber',
         ),
-        'authKeys' => array(
-            'clientkey' => 'Username',
-            'secretkey' => 'Password',
-        ),
+        'authKeys' => array(),
         'settings' => array(
             'defaultpage' => 'prepare',
             'subsystem' => 'otto',

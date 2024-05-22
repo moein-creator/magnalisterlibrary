@@ -36,15 +36,15 @@ class ML_PriceMinister_Helper_Model_Table_PriceMinister_ConfigData extends ML_Fo
 
     public function primaryCategoryField(&$aField) {
         $aRequest = MLRequest::gi()->data();
-        if (MLModul::gi()->getMarketPlaceName().':'.MLModul::gi()->getMarketPlaceId().'_prepare_variations' === $aRequest['controller']) {
-            $aField['values'] = MLDatabase::factory(MLModul::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
+        if (MLModule::gi()->getMarketPlaceName() . ':' . MLModule::gi()->getMarketPlaceId() . '_prepare_variations' === $aRequest['controller']) {
+            $aField['values'] = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
         } else {
-            $aField['values'] = MLDatabase::factory( MLModul::gi()->getMarketPlaceName() . '_prepare')->getTopPrimaryCategories();
+            $aField['values'] = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_prepare')->getTopPrimaryCategories();
         }
     }
 
     public function listingTypeField(&$aField) {
-        $listingTypes = MLModul::gi()->getConfig('site.listing_types');
+        $listingTypes = MLModule::gi()->getConfig('site.listing_types');
         $aField['values'][''] = ML_AMAZON_LABEL_APPLY_PLEASE_SELECT;
         if ($listingTypes) {
             foreach ($listingTypes as $code => $name) {

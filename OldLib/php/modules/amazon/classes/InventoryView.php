@@ -1,20 +1,18 @@
 <?php
-/**
- * 888888ba                 dP  .88888.                    dP                
- * 88    `8b                88 d8'   `88                   88                
- * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b. 
- * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88 
- * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88 
- * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P' 
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
  *                          m a g n a l i s t e r
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 RedGecko GmbH -- http://www.redgecko.de
- *     Released under the GNU General Public License v2 or later
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
@@ -338,7 +336,7 @@ class InventoryView extends ML_Listings_Controller_Widget_Listings_ListingAbstra
 		$oddEven = false;
 		#echo print_m($this->renderableData);
                 $aFirstItem = current($this->renderableData);
-                $aItem = MLModul::gi()->amazonLookUp($aFirstItem['ASIN']);
+        $aItem = MLModule::gi()->amazonLookUp($aFirstItem['ASIN']);
                 if(empty($aItem) || !isset($aItem[0]['URL']) || empty($aItem[0]['URL']) || strpos($aItem[0]['URL'], $aItem[0]['ASIN']) === false){
                     $sUrl =  "http://www.amazon.de/gp/offer-listing/" ;
                 }else{
@@ -398,7 +396,7 @@ class InventoryView extends ML_Listings_Controller_Widget_Listings_ListingAbstra
 					      'title="'.$this->__('ML_AMAZON_LABEL_PRODUCT_IN_AMAZON').'" class="ml-js-noBlockUi" '.
 					      'target="_blank">'.$item['ASIN'].'</a>').
 					'</td>
-					<td>'.( isset($item['Price'])?MLPrice::factory()->format($item['Price'], MLModul::gi()->getConfig('currency')):'&mdash;').'</td>
+					<td>' . (isset($item['Price']) ? MLPrice::factory()->format($item['Price'], MLModule::gi()->getConfig('currency')) : '&mdash;') . '</td>
 					<td>'.(($item['Quantity'] > 0) ? $item['Quantity'] : $this->__('ML_LABEL_SOLD_OUT')).'</td>
 					<td>'.(($item['DateAdded'] == 0)
 						? '&mdash;'
@@ -532,7 +530,7 @@ $(document).ready(function() {
 		$left = '<input type="button" class="mlbtn" value="'.$this->__('ML_BUTTON_LABEL_DELETE').'" id="listingDelete" name="'.MLHttp::gi()->parseFormFieldName('listing[delete]').'"/>';
 		$right = '<table class="right"><tbody>
 			<tr><td><input type="submit" class="mlbtn fullWidth smallmargin" name="'.MLHttp::gi()->parseFormFieldName('reload').'" value="'.$this->__('ML_BUTTON_RELOAD_INVENTORY').'"/></td></tr>
-			'.(in_array(MLModul::gi()->getConfig('stocksync.tomarketplace'), array('abs', 'auto'))
+			' . (in_array(MLModule::gi()->getConfig('stocksync.tomarketplace'), array('abs', 'auto'))
 				? '<tr><td><input type="submit" class="mlbtn fullWidth smallmargin" name="'.MLHttp::gi()->parseFormFieldName('refreshStock').'" value="'.$this->__('ML_BUTTON_REFRESH_STOCK').'"/></td></tr>'
 				: ''
 			).'

@@ -31,7 +31,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Orderlist  extends ML_Cor
     }
       
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public static function getTabDefault() {
@@ -45,7 +45,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Orderlist  extends ML_Cor
      */
     protected function setFilter() {
         $aRequestFilter = MLRequest::gi()->data('filter');
-        $sIdent = MLModul::gi()->getMarketPlaceId() . '_' . $this->getIdent();
+        $sIdent = MLModule::gi()->getMarketPlaceId() . '_' . $this->getIdent();
         $aFilters = array();
         if ($aRequestFilter !== null) {
             $aFilters[$sIdent] = $aRequestFilter;
@@ -102,7 +102,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Orderlist  extends ML_Cor
                     if (MLHttp::gi()->isAjax()) {
                         $aStatistic = $this->getOrderlist()->getStatistic();
                         $iFrom = 0;
-                        $iCount = 100; // if its to high, we have fast-cgi problems, perhaps make some output (spaces) after while and flush() them directly
+                        $iCount = 5;
                          if (MLRequest::gi()->data('selectionlimit') !== null) {
                              list($iFrom,$iCount) = explode('_', MLRequest::gi()->data('selectionlimit'));
                          }

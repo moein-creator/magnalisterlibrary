@@ -20,21 +20,17 @@ input.ottoMultiple:not(:last-child) {
     margin-bottom: 5px;
 }
 table.attributesTable tr.attributeMatchingHeaderBackground>* {
-    background: #aaaaaa78 !important;
+    background: #dddddd78 !important;
 }
 
 table.attributesTable tr.borderTopNone>* {
     border-top: none !important;
 }
 
-.marginTopMinus {
-    margin-top: -6px;
-}
-
 .refresh-btn {
     background-image: url('../images/icons/buttonbox.png');
-    background-position: -66px 0;
+    background-position: -65px 6px;
     background-repeat: no-repeat;
-    height: 22px;
+    height: 30px;
     width: 22px;
 }

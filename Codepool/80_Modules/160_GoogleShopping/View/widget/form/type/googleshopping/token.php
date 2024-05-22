@@ -16,11 +16,12 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 
 $expires = '';
 try {
-    $expires .= MLModul::gi()->getConfig('token.expires');
+    $expires .= MLModule::gi()->getConfig('token.expires');
     $firstToken = '';
     if (!empty($expires)) {
         if (is_numeric($expires)) {

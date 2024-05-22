@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,9 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -34,7 +32,7 @@ class ML_Tools_Controller_Main_Tools_Products_Search extends ML_Core_Controller_
         //        $iRequestMp = $this->getRequestedMpid();
         //        if($iRequestMp != null) {
         //            ML::gi()->init(array('mp' => $iRequestMp));
-        //            if (!MLModul::gi()->isConfigured()) {
+        //            if (!MLModule::gi()->isConfigured()) {
         //                throw new Exception('module is not configured');
         //            }
         //        }
@@ -61,100 +59,110 @@ class ML_Tools_Controller_Main_Tools_Products_Search extends ML_Core_Controller_
     }
 
     protected function getMasterProductFieldAndMethods(ML_Shop_Model_Product_Abstract $oProduct) {
-        return array(
-            //'getAttributeValue("pd_BasePriceUnitName")' => $oProduct->getAttributeValue('pd_BasePriceUnitName'),
-            //'getAttributeValue("pd_BasePriceUnit")'     => $oProduct->getAttributeValue('pd_BasePriceUnit'),
-            //'getAttributeValue("pd_BasePriceValue")'    => $oProduct->getAttributeValue('pd_BasePriceValue'),
-            //'getAttributeValue("pd_BasePriceUnitShort")'    => $oProduct->getAttributeValue('pd_BasePriceUnitShort'),
-            //'getAttributeValue("pd_BasePriceBasicUnit")'    => $oProduct->getAttributeValue('pd_BasePriceBasicUnit'),
-            'getSku()'                                  => $oProduct->getSku(),
-            'getName()'                                 => $oProduct->getName(),
-            'getDescription()'                          => htmlentities($oProduct->getDescription()),
-            'getStock()'                                => $oProduct->getStock(),
-            'getShopPrice()'                            => $oProduct->getShopPrice(),
-            'getEAN()'                                  => $oProduct->getEAN(),
-            'getTax()'                                  => $oProduct->getTax(),
-            'getManufacturer()'                         => $oProduct->getManufacturer(),
-            'getManufacturerPartNumber()'               => $oProduct->getManufacturerPartNumber(),
-            'getImages()'                               => $oProduct->getImages(),
-            'isSingle()'                                => $oProduct->isSingle(),
-            'getVariantCount()'                         => $oProduct->getVariantCount(),
-            'isActive()'                                => $oProduct->isActive(),
-            'getVariatonDataOptinalField()'             => $oProduct->getVariatonDataOptinalField(array('code', 'valueid', 'name', 'value')),
-            'getFrontendLink()'                         => $oProduct->getFrontendLink(),
-            'getCategoryPath()'                         => $oProduct->getCategoryPath(),
-            'getCategoryIds()'                          => $oProduct->getCategoryIds(),
-            'getCategoryStructure()'                    => $oProduct->getCategoryStructure(),
-            'getEditLink()'                             => $oProduct->getEditLink(),
-            'getImageUrl()'                             => $oProduct->getImageUrl(),
-            'getMetaDescription()'                      => $oProduct->getMetaDescription(),
-            'getMetaKeywords()'                         => $oProduct->getMetaKeywords(),
-            'getWeight()'                               => $oProduct->getWeight(),
+        $return = array(
+            'Sku' => $oProduct->getSku(),
+            'Name' => $oProduct->getName(),
+            'Description' => htmlentities($oProduct->getDescription()),
+            'Stock' => $oProduct->getStock(),
+            'Shop Price' => $oProduct->getShopPrice(),
+            'EAN' => $oProduct->getEAN(),
+            'Tax' => $oProduct->getTax(),
+            'Manufacturer' => $oProduct->getManufacturer(),
+            'Manufacturer Part Number' => $oProduct->getManufacturerPartNumber(),
+            'Images' => $oProduct->getImages(),
+            'isSingle' => $oProduct->isSingle(),
+            'VariantCount' => $oProduct->getVariantCount(),
+            'isActive' => $oProduct->isActive(),
+            'Variation Data' => $oProduct->getVariatonDataOptinalField(array('code', 'valueid', 'name', 'value')),
+            'Frontend Link' => $oProduct->getFrontendLink(),
+            'Category Path' => $oProduct->getCategoryPath(),
+            'Category Ids' => $oProduct->getCategoryIds(),
+            'Category Structure' => $oProduct->getCategoryStructure(),
+            'EditLink' => $oProduct->getEditLink(),
+            'ImageUrl' => $oProduct->getImageUrl(),
+            'Meta Description' => $oProduct->getMetaDescription(),
+            'Meta Keywords' => $oProduct->getMetaKeywords(),
+            'Weight' => $oProduct->getWeight(),
         );
+        if (MLRequest::gi()->data('attributeCode') !== null) {
+            $return['AttributeValue("' . MLRequest::gi()->data('attributeCode') . '")'] = $oProduct->getAttributeValue(MLRequest::gi()->data('attributeCode'));
+        }
+        return $return;
     }
 
 
     public function getVariantProductFieldAndMethods(ML_Shop_Model_Product_Abstract $oProduct) {
-        return array(
-            //'getAttributeValue("pd_BasePriceUnitName")' => $oProduct->getAttributeValue('pd_BasePriceUnitName'),
-            //'getAttributeValue("pd_BasePriceUnit")'     => $oProduct->getAttributeValue('pd_BasePriceUnit'),
-            //'getAttributeValue("pd_BasePriceValue")'    => $oProduct->getAttributeValue('pd_BasePriceValue'),
-            //'getAttributeValue("pd_BasePriceUnitShort")'    => $oProduct->getAttributeValue('pd_BasePriceUnitShort'),
-            //'getAttributeValue("pd_BasePriceBasicUnit")'    => $oProduct->getAttributeValue('pd_BasePriceBasicUnit'),
-            'getSku()'                      => $oProduct->getSku(),
-            'getName()'                     => $oProduct->getName(),
-            'getDescription()'              => !is_string($oProduct->getDescription()) ? $oProduct->getDescription() : htmlentities($oProduct->getDescription()),
-            'getStock()'                    => $oProduct->getStock(),
-            'getShopPrice()'                => $oProduct->getShopPrice(),
-            'getImages()'                   => $oProduct->getImages(),
-            'getTax()'                      => $oProduct->getTax(),
-            'isActive()'                    => $oProduct->isActive(),
-            'getVariatonDataOptinalField()' => $oProduct->getVariatonDataOptinalField(array('code', 'valueid', 'name', 'value')),
-            'getFrontendLink()'             => $oProduct->getFrontendLink(),
-            'getCategoryPath()'             => $oProduct->getCategoryPath(),
-            'getCategoryIds()'              => $oProduct->getCategoryIds(),
-            'getCategoryStructure()'        => $oProduct->getCategoryStructure(),
-            'getEditLink()'                 => $oProduct->getEditLink(),
-            'getImageUrl()'                 => $oProduct->getImageUrl(),
-            'getMetaDescription()'          => $oProduct->getMetaDescription(),
-            'getMetaKeywords()'             => $oProduct->getMetaKeywords(),
-            'getWeight()'                   => $oProduct->getWeight(),
+        $sCountryCode = $this->getRequest('countrycode');
+        $return = array(
+
+            'SKU' => $oProduct->getSku(),
+            'Name' => $oProduct->getName(),
+            'Description' => !is_string($oProduct->getDescription()) ? $oProduct->getDescription() : htmlentities($oProduct->getDescription()),
+            'Stock' => $oProduct->getStock(),
+            'Marketplace Stock' => '(not set)',
+            'Shop Price' => $oProduct->getShopPrice(),
+            'Marketplace Price' => '(not set)',
+            'Marketplace Price(net)' => '(not set)',
+            'Tax(' . $sCountryCode . ')' => '(not set)',
+            'Volume Prices' => '(not set)',
+            'Base Price' => $oProduct->getBasePrice(),
+            'Base Price String' => '(not set)',
+            'EAN' => '(not set)',
+            'Manufacturer' => '(not set)',
+            'Manufacturer Part Number' => '(not set)',
+            'Images' => $oProduct->getImages(),
+            'Tax' => $oProduct->getTax(),
+            'isActive' => $oProduct->isActive(),
+            'Variation Data' => $oProduct->getVariatonDataOptinalField(array('code', 'valueid', 'name', 'value')),
+            'Frontend Link' => $oProduct->getFrontendLink(),
+            'Category Path' => $oProduct->getCategoryPath(),
+            'Category Ids' => $oProduct->getCategoryIds(),
+            'Category Structure' => $oProduct->getCategoryStructure(),
+            'EditLink' => $oProduct->getEditLink(),
+            'Image Url' => $oProduct->getImageUrl(),
+            'Meta Description' => $oProduct->getMetaDescription(),
+            'Meta Keywords' => $oProduct->getMetaKeywords(),
+            'Weight' => $oProduct->getWeight(),
         );
+        if (MLRequest::gi()->data('attributeCode') !== null) {
+            $return['AttributeValue("' . MLRequest::gi()->data('attributeCode') . '")'] = $oProduct->getAttributeValue(MLRequest::gi()->data('attributeCode'));
+        }
+        return $return;
     }
 
     public function getVariantProductModuleDependentFieldAndMethods(ML_Shop_Model_Product_Abstract $oProduct, array $aDataToSendToMarketplace) {
         try {
             $aStockConf = MLModule::gi()->getStockConfig($this->getRequest('pricetype'));
-            $aDataToSendToMarketplace['getSuggestedMarketplaceStock()'] = $oProduct->getSuggestedMarketplaceStock($aStockConf['type'], $aStockConf['value'], isset($aStockConf['max']) ? $aStockConf['max'] : null);
-            $aDataToSendToMarketplace['getSuggestedMarketplacePrice()'] = $oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($this->getRequest('pricetype')), true, true);
-            $aDataToSendToMarketplace['getSuggestedMarketplacePrice(net)'] = $oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($this->getRequest('pricetype')), false, true);
+            $aDataToSendToMarketplace['Marketplace Stock'] = $oProduct->getSuggestedMarketplaceStock($aStockConf['type'], $aStockConf['value'], isset($aStockConf['max']) ? $aStockConf['max'] : null);
+            $aDataToSendToMarketplace['Marketplace Price'] = $oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($this->getRequest('pricetype')), true, true);
+            $aDataToSendToMarketplace['Marketplace Price(net)'] = $oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($this->getRequest('pricetype')), false, true);
             $sShopGroupId = $this->getVolumePriceCustomerGroup($this);
-            $aDataToSendToMarketplace['getVolumePrices()'] = array(
+            $aDataToSendToMarketplace['Volume Prices'] = array(
                 'Gross' => $oProduct->getVolumePrices($sShopGroupId),
                 'Net'   => $oProduct->getVolumePrices($sShopGroupId, false),
             );
-            $aDataToSendToMarketplace['getEAN()'] = $oProduct->getEAN();
-            $aDataToSendToMarketplace['getManufacturer()'] = $oProduct->getManufacturer();
-            $aDataToSendToMarketplace['getManufacturerPartNumber()'] = $oProduct->getManufacturerPartNumber();
+            $aDataToSendToMarketplace['EAN'] = $oProduct->getEAN();
+            $aDataToSendToMarketplace['Manufacturer'] = $oProduct->getManufacturer();
+            $aDataToSendToMarketplace['Manufacturer Part Number'] = $oProduct->getManufacturerPartNumber();
             $sCountryCode = $this->getRequest('countrycode');
-            $aDataToSendToMarketplace['getTax('.$sCountryCode.')'] = $oProduct->getTax(empty($sCountryCode) ? null : array('Shipping' => array('CountryCode' => $sCountryCode)));
+            $aDataToSendToMarketplace['Tax(' . $sCountryCode . ')'] = $oProduct->getTax(empty($sCountryCode) ? null : array('Shipping' => array('CountryCode' => $sCountryCode)));
             $fPrice = $oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
-            $aDataToSendToMarketplace['getBasePriceString()'] = $oProduct->getBasePriceString($fPrice);
+            $aDataToSendToMarketplace['Base Price String'] = $oProduct->getBasePriceString($fPrice);
         } catch (\Exception $ex) {
             $this->aMessages[] = $ex;
-            $aDataToSendToMarketplace['getSuggestedMarketplacePrice(20)'] = 20;
-            $aDataToSendToMarketplace['getBasePriceString(20)'] = $oProduct->getBasePriceString(20);
+            $aDataToSendToMarketplace['MarketplacePrice(20)'] = 20;
+            $aDataToSendToMarketplace['Base Price String(20)'] = $oProduct->getBasePriceString(20);
         }
         return $aDataToSendToMarketplace;
     }
 
     public function getMasterProductModuleDependentFieldAndMethods(ML_Shop_Model_Product_Abstract $oProduct, array $aDataToSendToMarketplace) {
         try {
-            $aDataToSendToMarketplace['getEAN()'] = $oProduct->getEAN();
-            $aDataToSendToMarketplace['getManufacturer()'] = $oProduct->getManufacturer();
-            $aDataToSendToMarketplace['getManufacturerPartNumber()'] = $oProduct->getManufacturerPartNumber();
+            $aDataToSendToMarketplace['EAN'] = $oProduct->getEAN();
+            $aDataToSendToMarketplace['Manufacturer'] = $oProduct->getManufacturer();
+            $aDataToSendToMarketplace['Manufacturer Part Number'] = $oProduct->getManufacturerPartNumber();
             $sCountryCode = $this->getRequest('countrycode');
-            $aDataToSendToMarketplace['getTax('.$sCountryCode.')'] = $oProduct->getTax(empty($sCountryCode) ? null : array('Shipping' => array('CountryCode' => $sCountryCode)));
+            $aDataToSendToMarketplace['Tax(' . $sCountryCode . ')'] = $oProduct->getTax(empty($sCountryCode) ? null : array('Shipping' => array('CountryCode' => $sCountryCode)));
         } catch (\Exception $ex) {
             $this->aMessages[] = $ex;
         }

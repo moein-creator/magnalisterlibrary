@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -98,31 +98,9 @@ class ML_Idealo_Helper_Model_Service_Product {
         return $this->aData;
     }
 
-
-    protected function getCheckout(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('checkout');
-    }
-
     public function shippingCountryField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
     }
-
-    //    public function shippingCostMethodField(&$aField) {
-    //       /**
-    //        * @todo: is not in use?
-    //        */
-    //        $aField['values'] = array(
-    //            '__ml_lump' =>  array(
-    //                'title' => MLI18n::gi()->ML_COMPARISON_SHOPPING_LABEL_LUMP,
-    //                'textoption' => true
-    //            )
-    //	);
-    //        $aField['values']['__ml_weight'] = array(
-    //                'title' => MLI18n::gi()->idealo_config_shippingcosts_eq_articleweight,
-    //                'textoption' => false
-    //        );
-    //        $aField['value'] = $this->getFirstValue($aField);
-    //    }
 
     public function shippingCostField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);

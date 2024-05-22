@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -66,7 +66,6 @@ class ML_ShopwareAmazon_Helper_Model_Table_Amazon_ConfigData extends ML_Amazon_H
     public function orderimport_paymentstatusField (&$aField) {
         $aField['values'] = MLFormHelper::getShopInstance()->getPaymentStatusValues();
     }
-    
         
     public function orderstatus_carrier_defaultField(&$aField){
         $aField['ajax']=array(
@@ -82,5 +81,35 @@ class ML_ShopwareAmazon_Helper_Model_Table_Amazon_ConfigData extends ML_Amazon_H
                 MLFormHelper::getModulInstance()->getCarrierCodeValues();
         
     }
-    
+
+    /**
+     * A special customer group setting only visible as expert setting or when "RegisterLabelNoAccount" customer group is set
+     *
+     * @param $aField
+     */
+    public function orderimport_vatcustomergroupField(&$aField) {
+        $aField['values'] =
+            array('' => MLI18n::gi()->get('ML_LABEL_DONT_USE'))
+            + MLFormHelper::getShopInstance()->getCustomerGroupsOfShopware();
+    }
+
+    /**
+     * Set config values - shop document types
+     *
+     * @param $aField
+     * @return void
+     */
+    public function invoice_invoice_documentTypeField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getDocumentTypeValues();
+    }
+
+    /**
+     * Set config values - shop document types
+     *
+     * @param $aField
+     * @return void
+     */
+    public function invoice_creditNote_documentTypeField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getDocumentTypeValues();
+    }
 }

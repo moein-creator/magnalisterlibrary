@@ -78,13 +78,13 @@ MLI18n::gi()->add('formfields_otto', array(
     'orderstatus.open' => array(
         'label' => 'Processable Order Status (Webshop)',
         'help' => '
-            <p>The OTTO order status „processable" means that the Buyer has already paid for the items. It can therefore be shipped without risk.</p>
-            <p>Select the corresponding shop order status that an imported OTTO order with the status „processable" should receive.</p>
+            <p>The OTTO Market order status „processable" means that the Buyer has already paid for the items. It can therefore be shipped without risk.</p>
+            <p>Select the corresponding shop order status that an imported OTTO Market order with the status „processable" should receive.</p>
         ',
     ),
     'orderimport.paymentstatus' => array(
         'label' => 'Payment Status (Webshop)',
-        'help' => '<p>Otto does not assign any shipping method to imported orders.</p>
+        'help' => '<p>OTTO Market does not assign any shipping method to imported orders.</p>
             <p>Please choose here the available Web Shop shipping methods. The contents of the drop-down menu can be assigned in Shopware > Settings > Shipping Costs.</p>
             <p>This setting is important for bills and shipping notes, the subsequent processing of the order inside the shop, and for some ERPs.</p>'
     ),
@@ -101,21 +101,21 @@ MLI18n::gi()->add('formfields_otto', array(
     ),
     'paymentmethods' => array(
         'label' => 'Payment Methods',
-        'help' => 'Payment method that will apply to all orders imported from OTTO. Standard: "OTTO"<br><br>
+        'help' => 'Payment method that will apply to all orders imported from OTTO Market. Standard: "OTTO Market"<br><br>
             This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.'
     ),
     'shippingservice' => array(
         'label' => 'Shipping Service',
-        'help' => 'Shipping methods that will be assigned to all OTTO orders. Standard: "Marketplace"<br><br>
+        'help' => 'Shipping methods that will be assigned to all OTTO Market orders. Standard: "Marketplace"<br><br>
             This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.'
     ),
     'orderstatus.standardshipping' => array(
         'label' => 'Send Carrier Option',
-        'hint' => 'Otto.de only allows certain carriers.Please make sure to provide valid data only.'
+        'hint' => 'OTTO Market only allows certain carriers. Please make sure to provide valid data only.'
     ),
     'orderstatus.forwardershipping' => array(
         'label' => 'Forwarding Carrier Option',
-        'hint' => 'Otto.de only allows certain carriers.Please make sure to provide valid data only.'
+        'hint' => 'OTTO Market only allows certain carriers. Please make sure to provide valid data only.'
     ),
     //Do not change translation keys
     'orderstatus.shippedaddress' => array(
@@ -145,7 +145,7 @@ MLI18n::gi()->add('formfields_otto', array(
     ),
     'return.carrier' => array(
         'label' => 'Return Carrier Option',
-        'hint' => 'Otto.de only allows certin carriers.Please make sure to provide valid data only.'
+        'hint' => 'OTTO Market only allows certain carriers. Please make sure to provide valid data only.'
     ),
     'return.trackingkey' => array(
         'label' => 'Return Tracking Key Option',
@@ -161,11 +161,11 @@ MLI18n::gi()->add('formfields_otto', array(
 MLI18n::gi()->add('otto_prepare_form', array(
     'field' => array(
         'variationgroups' => array(
-            'label' => 'Marktplatz-Kategorie<span class="bull">•</span>',
+            'label' => 'Marketplace-Category<span class="bull">•</span>',
             'hint' => '',
         ),
         'variationgroups.value' => array(
-            'label' => 'Marktplatz-Kategorie:',
+            'label' => 'Marketplace-Category:',
         ),
     ),
 ), false);

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -23,16 +23,19 @@ class ML_Hitmeister_Model_Modul extends ML_Modul_Model_Modul_Abstract {
     }
 
     public function getConfig($sName = null) {
-        if ($sName == 'currency') {
+        $mReturn = parent::getConfig($sName);
+
+        if (    $sName == 'currency'
+             && empty($mReturn)
+        ) {
+            // Fallback
             $mReturn = 'EUR';
-        } else {
-            $mReturn = parent::getConfig($sName);
         }
         
         if ($sName === null) {// merge
             $mReturn = MLHelper::getArrayInstance()->mergeDistinct($mReturn, array(
-                'lang' => parent::getConfig('lang'), 
-                'currency' => 'EUR'
+                'lang' => parent::getConfig('lang'),
+                'currency' => $this->getConfig('currency'),
             ));
         }
         
@@ -59,6 +62,7 @@ class ML_Hitmeister_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         $sMinimumPrice = $this->getConfig('minimumpriceautomatic');
         return array_merge(
             array(
+                'site'=>array('api' => 'Access.Site', 'value' => ($this->getConfig('site'))),
                 'import'                  => array('api' => 'Orders.Import', 'value' => ($this->getConfig('import') ? 'true' : 'false')),
                 'preimport.start'         => array('api' => 'Orders.Import.Start', 'value' => $sDate),
                 'stocksync.tomarketplace' => array('api' => 'Callback.SyncInventory', 'value' => isset($sSync) ? $sSync : 'no'),
@@ -85,33 +89,31 @@ class ML_Hitmeister_Model_Modul extends ML_Modul_Model_Modul_Abstract {
 
     }
 
-    /**
-     * @param $oShop ML_Shopware_Model_Product|ML_Shopware6_Model_Product
-     * @param $mAttributeCode
-     * @return |null
+    /** 
+     * configures price-object
+     * special case 'lowest' (minimumprice), otherwise default
+     * @return ML_Shop_Model_Price_Interface
      */
-    public function shopProductGetAttributeValue($oShop, $mAttributeCode) {
-        // pd_Weight in Shopware 5 & Shopify
-        if (strpos('pd_', $mAttributeCode) === 0) {
-            $aAttribute = explode('_', $mAttributeCode, 2);
-            $sAttributeCode = $aAttribute[1];
-
-            $sFunction = 'get'.ucfirst($sAttributeCode);
-
-            if (in_array($mAttributeCode, array('pd_Weight')) && method_exists($oShop, $sFunction)) {
-                return $oShop->$sFunction();
-            }
-        } elseif ($mAttributeCode === 'Weight' && $oShop instanceof ML_Shopware6_Model_Product) { // $mAttributeCode == 'Weight' in Shopware 6
-            $weightArray = $oShop->getWeight();
-
-            // check if it is only inherited by parent
-            if (empty($weightArray)) {
-                return $oShop->getParent()->getWeight();
-            }
-            return $weightArray;
+    public function getPriceObject($sType = null, $aSettings = null) {
+        if (    empty($sType)
+             || ($sType !== 'lowest')
+        ) {
+            return parent::getPriceObject();
         }
+        $this->aPrice['lowest'] =  MLPrice::factory();
 
-        return null;
+        // "signal" must be null if none set
+        $sSignal = (string)$this->getConfig('price.lowest.signal');
+        if (empty($sSignal)) $sSignal = null;
+
+        $this->aPrice['lowest']->setPriceConfig(
+            $this->getConfig('price.lowest.addkind'),
+            $this->getConfig('price.lowest.factor'),
+            $sSignal,
+            $this->getConfig('price.lowest.group'),
+            $this->getConfig('price.lowest.usespecialoffer')
+       );
+       return $this->aPrice['lowest'];
     }
 
     /**
@@ -119,5 +121,20 @@ class ML_Hitmeister_Model_Modul extends ML_Modul_Model_Modul_Abstract {
      */
     public function submitFirstTrackingNumber() {
         return false;
+    }
+
+    public function isConfigured() {
+        $bReturn = parent::isConfigured();
+        $sCurrency = $this->getConfig('currency');
+
+        if (empty($sCurrency)) {
+        // Fallback
+            $this->setConfig('currency', 'EUR');
+        }
+
+        if (!empty($sCurrency) && !in_array($sCurrency, array_keys(MLCurrency::gi()->getList()))) {
+            MLMessage::gi()->addWarn(sprintf(MLI18n::gi()->ML_GENERIC_ERROR_CURRENCY_NOT_IN_SHOP , $sCurrency));
+        }
+        return $bReturn;
     }
 }

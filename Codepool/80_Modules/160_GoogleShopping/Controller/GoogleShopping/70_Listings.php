@@ -23,6 +23,6 @@ class ML_GoogleShopping_Controller_GoogleShopping_Listings extends ML_Tabs_Contr
         return MLI18n::gi()->get('ML_GENERIC_LISTINGS');
     }
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

@@ -158,7 +158,7 @@ class ML_Hitmeister_Controller_Hitmeister_Prepare_Match_Manual extends ML_Form_C
         ob_start();
         ?>
         <?php foreach ($aProduct['Results'] as $aResult) : ?>
-        <tr class="odd last">
+        <tr class="last">
             <td class="input">
                 <input type="radio" name="<?php echo MLHTTP::gi()->parseFormFieldName('match['.$aProduct['Id'].']') ?>" id="match_<?php echo $aProduct['Id'] . '_' . $aResult['id_item'] ?>" value="<?php echo $aResult['id_item'] ?>" data-id="<?php echo $aProduct['Id'] ?>"
                     data-ean="<?php echo reset($aResult['eans']) ?>" <?php echo $iCheckedProductId === $aResult['id_item'] ? 'checked' : '' ?>>
@@ -229,10 +229,13 @@ class ML_Hitmeister_Controller_Hitmeister_Prepare_Match_Manual extends ML_Form_C
 				</tr>
 			<?php endif ?>
 			<?php if (empty($aProduct['Description']) === false) : ?>
-				<tr>
+                <tr>
+                    <td style="border: 2px solid transparent;"></td>
+                </tr>
+                <tr>
 					<th colspan="2"><?php echo ML_GENERIC_MY_PRODUCTDESCRIPTION ?></th>
 				</tr>
-				<tr class="desc">
+				<tr  class="desc">
                     <td colspan="2">
                         <div class="mlDesc"><?php echo $aProduct['Description'] ?></div>
                     </td>
@@ -352,7 +355,6 @@ class ML_Hitmeister_Controller_Hitmeister_Prepare_Match_Manual extends ML_Form_C
                 if ($blRedirect) {
                     MLDatabase::factory('selection')->getList()->getQueryObject()->where('pid in ('.  implode(',', $aSelectionToDelete).')')->doDelete();
                     MLHttp::gi()->redirect($this->getParentUrl());
-                    exit();
                 }
             } catch(Exception $oEx) {
                 MLMessage::gi()->addError($oEx);

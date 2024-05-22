@@ -65,8 +65,8 @@ if (!class_exists('ML', false))
                                     var eDialog=jqml('#recursiveAjaxDialog');
                                     if (eDialog.find(".requestErrorBox").is(':hidden')) {
                                         window.location.href = '<?php
-                                                $sMpId = MLModul::gi()->getMarketPlaceId();
-                                                $sMpName = MLModul::gi()->getMarketPlaceName();
+                                            $sMpId = MLModule::gi()->getMarketPlaceId();
+                                            $sMpName = MLModule::gi()->getMarketPlaceName();
                                                 echo $this->getUrl(array('controller' => "{$sMpName}:{$sMpId}_errorlog"));
                                                 ?>';
                                     } else {

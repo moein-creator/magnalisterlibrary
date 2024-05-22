@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,9 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2018 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -72,8 +70,40 @@ class ML_Etsy_Helper_Model_Table_Etsy_PrepareData extends ML_Form_Helper_Model_T
         $aField['value'] = $this->getFirstValue($aField);
     }
 
-    public function shippingtemplateField(&$aField) {
+    public function shippingprofileField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
+    }
+
+    public function shippingprofileorigincountryField(&$aField) {
+        $this->getShippingProfileCountry($aField);
+    }
+
+    public function shippingprofiledestinationcountryField(&$aField) {
+        $this->getShippingProfileCountry($aField);
+    }
+
+    public function shippingprofiledestinationregionField(&$aField) {
+        $regions = MagnaConnector::gi()->submitRequestCached(array('ACTION' => 'GetShippingDestinationRegions'), 12 * 12 * 60);
+
+        if (isset($regions)) {
+            foreach ($regions['DATA'] as $value => $name) {
+                $aField['values'][$value] = $name;
+            }
+        } else {
+            $aField['values'][] = 'No regions available';
+        }
+    }
+
+    private function getShippingProfileCountry(&$aField) {
+        $countries = MagnaConnector::gi()->submitRequestCached(array('ACTION' => 'GetCountries', 'SUBSYSTEM' => 'Core'), 12 * 12 * 60);
+
+        if (isset($countries)) {
+            foreach ($countries['DATA'] as $iso => $countryName) {
+                $aField['values'][$iso] = $countryName;
+            }
+        } else {
+            $aField['values'][] = 'No country available';
+        }
     }
 
     public function shippingtemplatecountryField(&$aField) {
@@ -85,7 +115,7 @@ class ML_Etsy_Helper_Model_Table_Etsy_PrepareData extends ML_Form_Helper_Model_T
     }
 
     public function marketplacecategoryField(&$aField) {
-        $sLang = MLModul::gi()->getConfig('shop.language');
+        $sLang = MLModule::gi()->getConfig('shop.language');
         $sLang = strtoupper(substr($sLang, 0, 2));
 
         $categories = MagnaConnector::gi()->submitRequestCached(array(
@@ -109,7 +139,7 @@ class ML_Etsy_Helper_Model_Table_Etsy_PrepareData extends ML_Form_Helper_Model_T
         }
         foreach ($aImages as $sImage) {
             try {
-                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 60, 60);
+                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 80, 80);
             } catch (Exception $oEx) {
                 //$this->aErrors[] = 'etsy_prepare_images_not_exist';
             }

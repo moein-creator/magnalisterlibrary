@@ -61,7 +61,7 @@ MLI18n::gi()->priceminister_config_orderstatus_autoacceptance = 'Bitte beachten:
 MLI18n::gi()->add('priceminister_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
@@ -251,14 +251,14 @@ MLI18n::gi()->add('priceminister_config_orderimport', array(
         ),
         'orderstatus.accepted' => array(
             'label' => 'Bestellung akzeptieren mit',
-            'hint' => '<span style="color:red;">Bitte lesen Sie die Hilfe im Info-Icon für weitere Erklärungen.</span>',
+            'hint' => '<span style="color:#e31a1c;">Bitte lesen Sie die Hilfe im Info-Icon für weitere Erklärungen.</span>',
             'help' => 'Bevor Sie den Versand bestätigen, wählen Sie bitte den Bestellstatus für die Auftragsannahme auf PriceMinister.<br/><br/>
                        <b>WICHTIG:</b><br/><br/> 
                        Eine Annahme oder Ablehnung der Bestellung muss innerhalb von 2 Tagen nach Erhalt der Bestellung erfolgen, ansonsten wird Ihr Konto auf PriceMinister deaktiviert.',
         ),
         'orderstatus.refused' => array(
             'label' => 'Bestellung ablehnen mit',
-            'hint' => '<span style="color:red;">Bitte lesen Sie die Hilfe im Info-Icon für weitere Erklärungen.</span>',
+            'hint' => '<span style="color:#e31a1c;">Bitte lesen Sie die Hilfe im Info-Icon für weitere Erklärungen.</span>',
             'help' => 'Bitte wählen Sie einen Shop-Bestellstatus, um die Bestellung auf PriceMinister zu abzulehnen.<br/><br/>
                        <b>WICHTIG:</b><br/><br/> 
                         Eine Annahme oder Ablehnung der Bestellung muss innerhalb von 2 Tagen nach Erhalt der Bestellung erfolgen, ansonsten wird Ihr Konto auf PriceMinister deaktiviert.',

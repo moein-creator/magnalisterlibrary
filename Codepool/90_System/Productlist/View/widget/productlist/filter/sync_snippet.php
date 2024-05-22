@@ -7,7 +7,7 @@ if (!class_exists('ML', false))
 <select name="<?php echo MLHttp::gi()->parseFormFieldName('filter['.$aFilter['name'].']') ?>">
     <?php foreach (array() as $sKey => $sI18n) { ?>
         <option value="<?php echo $sKey; ?>"<?php echo($sFilter != null && ($sFilter == $sKey) ? ' selected="selected"' : '') ?>>
-            <?php echo sprintf($sI18n, MLModul::gi()->getMarketPlaceName(false)); ?>
+            <?php echo sprintf($sI18n, MLModule::gi()->getMarketPlaceName(false)); ?>
         </option>
     <?php } ?>
 </select>

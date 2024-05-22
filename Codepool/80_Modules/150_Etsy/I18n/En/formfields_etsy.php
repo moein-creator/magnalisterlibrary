@@ -41,27 +41,55 @@ MLI18n::gi()->add('formfields__stocksync.tomarketplace', array('help' => '
 '));
 
 MLI18n::gi()->add('formfields_etsy', array(
-    'shippingtemplatetitle' => array(
-        'label' => 'Shipping template title',
+    'shippingprofiletitle'             => array(
+        'label' => 'Delivery profile title',
     ),
-    'shippingtemplatecountry' => array(
+    'shippingprofileorigincountry'           => array(
         'label' => 'Origin country',
-        'help' => 'Country from which the listing ships',
+        'help'  => 'Country from which the listing ships',
     ),
-    'shippingtemplateprimarycost' => array(
+    'shippingprofiledestinationcountry'           => array(
+        'label' => 'Destination country',
+        'help'  => 'Country where the listing is shipped',
+    ),
+    'shippingprofiledestinationregion'           => array(
+        'label' => 'Destination region',
+        'help'  => 'Region where the listing is shipped available values (inside EU, Outside EU and none)',
+    ),
+    'shippingprofileprimarycost'       => array(
         'label' => 'Primary cost',
-        'help' => 'The shipping fee for this item, if shipped alone',
+        'help'  => 'The shipping fee for this item, if shipped alone',
     ),
-    'shippingtemplatesecondarycost' => array(
+    'shippingprofilesecondarycost'     => array(
         'label' => 'Secondary cost',
-        'help' => 'The shipping fee for this item, if shipped with another item',
+        'help'  => 'The shipping fee for this item, if shipped with another item',
     ),
-    'shippingtemplatesend' => array(
-        'label' => 'Save shipping template',
+    'shippingprofileminprocessingtime' => array(
+        'label' => 'Minimum days for processing',
+        'help'  => 'The minimum number of days for processing the listing.',
     ),
-    'paymentmethod' => array(
-        'label' => 'Payment Methods',
-        'help' => '
+    'shippingprofilemaxprocessingtime' => array(
+        'label' => 'Maximum days for processing',
+        'help'  => 'The maximum number of days for processing the listing.',
+    ),
+    'shippingprofilemindeliverydays'   => array(
+        'label' => 'Minimum days for delivery',
+        'help'  => 'The minimum number of days for delivery the listing.',
+    ),
+    'shippingprofilemaxdeliverydays'   => array(
+        'label' => 'Maximum days of delivery',
+        'help'  => 'The minimum delivery time that a shipment will take, in days.',
+    ),
+    'shippingprofileoriginpostalcode'  => array(
+        'label' => 'Postal code of the location',
+        'help'  => 'The postal code string (not necessarily a number) for the location from which the listing ships.',
+    ),
+    'shippingprofilesend'              => array(
+        'label' => 'Save delivery profile',
+    ),
+    'paymentmethod'                     => array(
+        'label'  => 'Payment Methods',
+        'help'   => '
             Select here the default payment methods for comparison shopping portal and direct-buy (multi selection is possible).<br />
             You can change these payment methods during item preparation.<br />
             <br />
@@ -93,10 +121,11 @@ MLI18n::gi()->add('formfields_etsy', array(
     'whenmade' => array(
         'values' => array(
             'made_to_order' => 'Made to order',
-            '2020_2021' => '2020-2021',
+            '2020_'.date('Y') => '2020-'.date('Y'),
             '2010_2019' => '2010-2019',
-            '2002_2009' => '2002-2009',
-            'before_2002' => 'Before 2002',
+            '2004_2009' => '2004-2009',
+            'before_2004' => 'Before 2004',
+            '2000_2003' => '2000-2003',
             '1990s' => '1990s',
             '1980s' => '1980s',
             '1970s' => '1970s',
@@ -117,12 +146,6 @@ MLI18n::gi()->add('formfields_etsy', array(
             'false' => 'A finished product',
             'true' => 'A supply or tool to make things',
         ),
-    ),
-    'access.username' => array(
-        'label' => 'Etsy Username',
-    ),
-    'access.password' => array(
-        'label' => 'Etsy Password',
     ),
     'access.token' => array(
         'label' => 'Etsy Token',
@@ -190,9 +213,9 @@ MLI18n::gi()->add('formfields_etsy', array(
     'prepare.language' => array(
         'label' => 'Language',
     ),
-    'shippingtemplate' => array(
-        'label' => 'Default shipping template',
-        'hint' => '<button id="shippingtemplateajax" class="mlbtn action add-matching" value="Secondary_color" style="display: inline-block;">+</button>',
+    'shippingprofile' => array(
+        'label' => 'Default delivery profile',
+        'hint' => '<button id="shippingprofileajax" class="mlbtn action add-matching" value="Secondary_color" style="display: inline-block; width: 45px;">+</button>',
     ),
     'prepare_title' => array(
         'label' => 'Title',
@@ -215,6 +238,11 @@ MLI18n::gi()->add('formfields_etsy', array(
         'label' => 'Product Images',
         'hint' => 'Maximum 10 images',
         'help' => 'A maximum 10 images can be set.<br/>The maximum allowed image size is 3000 x 3000 px.',
+        'optional' => array(
+            'checkbox' => array(
+                'labelNegativ' => 'Always use product description from web-shop',
+            )
+        ),
     ),
     'category' => array(
         'label' => 'Category',

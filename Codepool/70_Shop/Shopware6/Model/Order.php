@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -67,7 +67,8 @@ class ML_Shopware6_Model_Order extends ML_Shop_Model_Order_Abstract {
             'transactions.paymentMethod',
             'lineItems',
             'currency',
-            'addresses.country'
+            'addresses.country',
+            'stateMachineState',
         ]
     ): ?OrderEntity {
         if (Uuid::isValid($this->get('current_orders_id'))) {
@@ -242,7 +243,7 @@ class ML_Shopware6_Model_Order extends ML_Shop_Model_Order_Abstract {
             ->from(MLShopware6Alias::getRepository('order')->getDefinition()->getEntityName(), 'so')
             ->join(array(MLShopware6Alias::getRepository('state_machine_state')->getDefinition()->getEntityName(), 'sms', 'so.state_id = sms.id'), ML_Database_Model_Query_Select::JOIN_TYPE_INNER)
             ->join(array('magnalister_orders', 'mo', 'HEX(so.id) = mo.current_orders_id'), ML_Database_Model_Query_Select::JOIN_TYPE_INNER)
-            ->where("sms.technical_name != mo.status AND mo.mpID='".MLModul::gi()->getMarketPlaceId()."' AND so.`version_id` =  UNHEX('".Context::createDefaultContext()->getVersionId()."')");
+            ->where("sms.technical_name != mo.status AND mo.mpID='" . MLModule::gi()->getMarketPlaceId() . "' AND so.`version_id` =  UNHEX('" . Context::createDefaultContext()->getVersionId() . "')");
 
         if ($blCount) {
             return $oQueryBuilder->getCount();
@@ -337,11 +338,40 @@ class ML_Shopware6_Model_Order extends ML_Shop_Model_Order_Abstract {
             }
             foreach ($this->getShopOrderObject(['documents.documentMediaFile', 'documents.documentType'])->getDocuments()->getElements() as $oDocument) {
                 if ($this->isInvoiceDocumentType($sType) && $oDocument->getDocumentType()->getTechnicalName() === $configInvoiceType) {
-                    $sFileContent = base64_encode(MagnalisterController::getDocumentService()->getDocument($oDocument, Context::createDefaultContext())->getFileBlob());
+                    if(version_compare(MLSHOPWAREVERSION, '6.5.0.0', '>=')){
+                        //\Shopware\Core\Checkout\Document\Renderer\RenderedDocument
+                        //\Shopware\Core\Checkout\Document\Controller\DocumentController::downloadDocument
+
+                        $shopwareDocument = MagnalisterController::getDocumentService()->readDocument($oDocument->getId(), Context::createDefaultContext());
+                        if (null == $shopwareDocument) {
+                            throw new Exception('The invoice document could not be received from Shopware, the file could be corrupted.');
+                        }
+                        $sFileContent = base64_encode($shopwareDocument->getContent());
+                        //file_put_contents(__DIR__.'/invoice-'.time().'.pdf', MagnalisterController::getDocumentService()->readDocument($oDocument->getId(), Context::createDefaultContext())->getContent());
+                    }else{
+                        //\Shopware\Core\Checkout\Document\GeneratedDocument
+                        //\Shopware\Core\Checkout\Document\Controller\DocumentController::downloadDocument
+                        $sFileContent = base64_encode(MagnalisterController::getDocumentService()->getDocument($oDocument, Context::createDefaultContext())->getFileBlob());
+                    }
                     //file_put_contents(__DIR__.'/invoice-'.time().'.pdf', MagnalisterController::getDocumentService()->getDocument($oDocument, Context::createDefaultContext())->getFileBlob());
+                    //echo print_m('/var/www/php81/swdev65rc3.test/development/custom/plugins/RedMagnalisterSW6/src/Controller');
+                    //file_put_contents('/var/www/php81/swdev65rc3.test/development/custom/plugins/RedMagnalisterSW6/src/Controller'.'/invoice-'.time().'.pdf', MagnalisterController::getDocumentService()->readDocument($oDocument->getId(), Context::createDefaultContext())->getContent());
                     break;
                 } elseif ($this->isCreditNoteDocumentType($sType) && $oDocument->getDocumentType()->getTechnicalName() === $configCreditNoteType) {
-                    $sFileContent = base64_encode(MagnalisterController::getDocumentService()->getDocument($oDocument, Context::createDefaultContext())->getFileBlob());
+                    if(version_compare(MLSHOPWAREVERSION, '6.5.0.0', '>=')){
+                        //New:\Shopware\Core\Checkout\Document\Renderer\RenderedDocument
+                        //\Shopware\Core\Checkout\Document\Controller\DocumentController::downloadDocument
+
+                        $shopwareDocument = MagnalisterController::getDocumentService()->readDocument($oDocument->getId(), Context::createDefaultContext());
+                        if (null == $shopwareDocument) {
+                            throw new Exception('The credit note document could not be received from Shopware, the file could be corrupted.');
+                        }
+                        $sFileContent = base64_encode($shopwareDocument->getContent());
+                    }else{
+                        //\Shopware\Core\Checkout\Document\GeneratedDocument
+                        //\Shopware\Core\Checkout\Document\Controller\DocumentController::downloadDocument
+                        $sFileContent = base64_encode(MagnalisterController::getDocumentService()->getDocument($oDocument, Context::createDefaultContext())->getFileBlob());
+                    }
                     //file_put_contents(__DIR__.'/cancelling_invoice-'.time().'.pdf', MagnalisterController::getDocumentService()->getDocument($oDocument, Context::createDefaultContext())->getFileBlob());
                     break;
                 }
@@ -358,11 +388,20 @@ class ML_Shopware6_Model_Order extends ML_Shop_Model_Order_Abstract {
     public function getShopOrderInvoiceNumber($sType) {
         $sInvoiceNumber = '';
         try {
-            foreach ($this->getShopOrderObject(['documents'])->getDocuments()->getElements() as $oDocument) {
-                if ($this->isInvoiceDocumentType($sType) && $oDocument->getConfig()['name'] === 'invoice') {
+            $configInvoiceType = MLModule::gi()->getConfig('invoice.invoice_documenttype');
+            if ($configInvoiceType === null) {
+                $configInvoiceType = 'invoice';
+            }
+            //use configuration value from expert settings if provided - fallback is "cancellation"
+            $configCreditNoteType = MLModule::gi()->getConfig('invoice.creditnote_documenttype');
+            if ($configCreditNoteType === null) {
+                $configCreditNoteType = 'storno';
+            }
+            foreach ($this->getShopOrderObject(['documents', 'documents.documentType'])->getDocuments()->getElements() as $oDocument) {
+                if ($this->isInvoiceDocumentType($sType) && $oDocument->getDocumentType()->getTechnicalName() === $configInvoiceType) {
                     $sInvoiceNumber = $oDocument->getConfig()['documentNumber'];
                     break;
-                } elseif ($this->isCreditNoteDocumentType($sType) && $oDocument->getConfig()['name'] === 'storno') {
+                } elseif ($this->isCreditNoteDocumentType($sType) && $oDocument->getDocumentType()->getTechnicalName() === $configCreditNoteType) {
                     $sInvoiceNumber = $oDocument->getConfig()['documentNumber'];
                     break;
                 }
@@ -371,5 +410,21 @@ class ML_Shopware6_Model_Order extends ML_Shop_Model_Order_Abstract {
             MLMessage::gi()->addDebug($exc);
         }
         return $sInvoiceNumber;
+    }
+
+    public function getAttributeValue($sName) {
+        $sReturn = null;
+        if (strpos($sName, 'a_') === 0) {
+            $sName = substr($sName, 2);
+            $oOrder = $this->getShopOrderObject(['customFields']);
+            if (isset($oOrder->getCustomFields()[$sName])) {
+                $sReturn = $oOrder->getCustomFields()[$sName];
+            }
+        }
+        return $sReturn;
+    }
+
+    public function getShopOrderProducts() {
+        return array();
     }
 }

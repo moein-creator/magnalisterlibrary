@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,10 +11,8 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id:
- *
- * (c) 2010 RedGecko GmbH -- http://www.redgecko.de
- *     Released under the GNU General Public License v2 or later
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 if (!defined('_ML_INSTALLED'))
@@ -44,7 +42,7 @@ class InventoryView extends ML_Listings_Controller_Widget_Listings_ListingAbstra
         $aPost = $this->getRequest();
 
         $this->marketplace = $marketplace;
-        $oModul = MLModul::gi();
+        $oModul = MLModule::gi();
         $this->currentPlatform = $oModul->getMarketPlaceName(false);
         $this->mpID = $oModul->getMarketPlaceId();
 

@@ -1,5 +1,6 @@
 <?php
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 $requests = ML_Shopify_Helper_ShopifyInterfaceRequestHelper::gi()->getLogPerRequest();
 if (!empty($requests)) {
     $totaltime = 0;

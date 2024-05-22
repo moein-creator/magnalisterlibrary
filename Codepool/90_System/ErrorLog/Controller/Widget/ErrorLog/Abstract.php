@@ -37,9 +37,9 @@ class ML_ErrorLog_Controller_Widget_ErrorLog_Abstract extends ML_Listings_Contro
     public function __construct() {
         parent::__construct();
         $this->setCurrentState();
-        $aConfig = MLModul::gi()->getConfig();
+        $aConfig = MLModule::gi()->getConfig();
         $this->aPostGet = MLRequest::gi()->data();
-        $this->sMarketplace = MLModul::gi()->getMarketPlaceName();
+        $this->sMarketplace = MLModule::gi()->getMarketPlaceName();
         $this->aSetting['maxTitleChars'] = 40;
         $this->aSetting['itemLimit'] = 50;
         $this->aSetting['language'] = $aConfig['lang'];

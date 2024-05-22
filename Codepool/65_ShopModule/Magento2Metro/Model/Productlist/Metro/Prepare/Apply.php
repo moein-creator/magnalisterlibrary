@@ -11,7 +11,7 @@
  *                                       boost your Online-Shop
  *
  *  -----------------------------------------------------------------------------
- *  (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ *  (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *      Released under the MIT License (Expat)
  *  -----------------------------------------------------------------------------
  */
@@ -27,7 +27,9 @@ class ML_Magento2Metro_Model_ProductList_Metro_Prepare_Apply extends ML_Magento2
             ->registerDependency('categoryfilter')
             ->registerDependency('preparestatusfilter')
             ->registerDependency('productstatusfilter')
-            ->registerDependency('manufacturerfilter');
+            ->registerDependency('manufacturerfilter')
+            ->registerDependency('producttypefilter');
+
         return $this;
     }
 

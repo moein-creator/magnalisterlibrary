@@ -220,11 +220,11 @@ class ML_Statistics_Model_Report {
     }
 
     protected function getDateBack() {
-        $curMonth = date('n');
         $dateBack = (int) getDBConfigValue('general.stats.backwards', '0', 6);
-        return date('Y-m-d H:i:s', mktime(
-                        0, 0, 0, mod(($curMonth - $dateBack), 12), 1, (date('Y') - (int) ($curMonth < mod(($curMonth - $dateBack), 12)))
-        ));
+
+        $date = new DateTime();
+        $date->modify('- '.$dateBack.' month');
+        return $date->format('Y-m-01 00:00:00');
     }
 
     protected function getData(){

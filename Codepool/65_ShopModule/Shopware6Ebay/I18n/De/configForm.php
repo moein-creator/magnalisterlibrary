@@ -64,8 +64,8 @@ ul.magna_properties_list li span.magna_property_value {
 <p>#PICTURE3#</p>
 <p>#DESCRIPTION#</p>
 <p>#MOBILEDESCRIPTION#</p>
-<p>#Bezeichnung1# #Freitextfeld1#</p>
-<p>#Bezeichnung2# #Freitextfeld2#</p>
+<p>#Bezeichnung1# #Zusatzfeld1#</p>
+<p>#Bezeichnung2# #Zusatzfeld2#</p>
 <div>#PROPERTIES#</div>';
 
 MLI18n::gi()->add('ebay_config_orderimport', array(
@@ -163,20 +163,13 @@ Liste verf&uuml;gbarer Platzhalter f&uuml;r die Produktbeschreibung:
     <dt>#SHORTDESCRIPTION#</dt>
         <dd>Kurzbeschreibung aus dem Shop</dd>
     <dt>#DESCRIPTION#</dt>
-        <dd>Beschreibung aus dem Shop</dd>
+        <dd>Beschreibung aus dem Shop</dd><br>
     <dt>#MOBILEDESCRIPTION#</dt>
-        <dd>Kurzbeschreibung für mobile Ger&auml;te, falls hinterlegt</dd>
+        <dd>Kurzbeschreibung für mobile Ger&auml;te, falls hinterlegt</dd><br>
     <dt>#PICTURE1#</dt>
-        <dd>erstes Produktbild</dd>
+        <dd>erstes Produktbild</dd><br>
     <dt>#PICTURE2# usw.</dt>
             <dd>zweites Produktbild; mit #PICTURE3#, #PICTURE4# usw. k&ouml;nnen weitere Bilder &uuml;bermittelt werden, so viele wie im Shop vorhanden.</dd>'
-        .'<br><dt>Artikel-Freitextfelder:</dt><br>'
-        .'<dt>#Bezeichnung1#&nbsp;#Freitextfeld1#</dt>'
-        .'<dt>#Bezeichnung2#&nbsp;#Freitextfeld2#</dt>'
-        .'<dt>#Bezeichnung..#&nbsp;#Freitextfeld..#</dt><br>'
-        .'<dd>&Uuml;bernahme der Artikel-Freitextfelder:&nbsp;'
-        .'Die Ziffer hinter dem Platzhalter (z.B. #Freitextfeld1#) entspricht der Position des Freitextfelds.
-                <br> Siehe Einstellungen > Grundeinstellungen > Artikel > Artikel-Freitextfelder</dd>'
         .'<dt>#PROPERTIES#</dt>'
         .'<dd>Eine Liste aller Produkteigenschaften des Produktes. Aussehen kann &uuml;ber CSS gesteuert werden (siehe Code vom Standard Template)</dd>'.
         '</dl>',
@@ -184,3 +177,5 @@ Liste verf&uuml;gbarer Platzhalter f&uuml;r die Produktbeschreibung:
     ),
 ), true);
 MLI18n::gi()->{'ebay_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+MLI18n::gi()->set('ebay_config_producttemplate__field__template.content__hint', MLI18n::gi()->{'ebay_prepare_apply_form__field__description__hint'}, true);
+MLI18n::gi()->set('ebay_prepare_apply_form_field_description_hint_customfield', '<dt>Zusatzfelder:</dt><dt>#LABEL_{Technischer Name}# #VALUE_{Technischer Name}#</dt><dt>Z. B.</dt>', true);

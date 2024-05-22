@@ -26,7 +26,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_Prepare_Product {
 
     public function __construct() {
         $this->oPrepare = MLDatabase::factory('amazon_prepare');
-        $this->aModulConfig = MLModul::gi()->getConfig();
+        $this->aModulConfig = MLModule::gi()->getConfig();
     }
 
     public function apply(ML_Shop_Model_Product_Abstract $oProduct, $aData = array()) {
@@ -102,8 +102,8 @@ class ML_Amazon_Helper_Model_Table_Amazon_Prepare_Product {
         return $this;
     }
 
-    public function auto(ML_Shop_Model_Product_Abstract $oProduct, $aData = array()) {
-        $aData['iscomplete'] = true;
+    public function auto(ML_Shop_Model_Product_Abstract $oProduct, $aData = array(),$complete= true) {
+        $aData['iscomplete'] = $complete ? 'true' : 'false';
         $this->oProduct = $oProduct;
         $this->init('auto')->matching();
         $sEan = $this->oProduct->getModulField('general.ean', true);
@@ -115,7 +115,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_Prepare_Product {
     }
 
     public function manual(ML_Shop_Model_Product_Abstract $oProduct, $aData = array()) {
-        $aData['iscomplete'] = true;
+        $aData['iscomplete'] = "true";
         $this->oProduct = $oProduct;
         $this->init('manual')->matching();
         $this->oPrepare
@@ -143,10 +143,14 @@ class ML_Amazon_Helper_Model_Table_Amazon_Prepare_Product {
         $this->oPrepare
             ->set('lowestprice', 0.0)
             //->set('shipping', $this->aModulConfig['internationalshipping'])
-            ->set('LeadtimeToShip', $this->aModulConfig['leadtimetoship'])
             ->set('ShippingTime', $this->aModulConfig['leadtimetoship'])
             ->set('ShippingTemplate', $sDefaultTemplate)
         ;
+
+        $shopData = MLShop::gi()->getShopInfo();
+        if ($shopData['DATA']['IsBopisPilot'] === 'yes') {
+            $this->oPrepare->set('BopisStores', array());
+        }
     }
 
     protected function init($sPrepareType) {

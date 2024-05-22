@@ -19,6 +19,9 @@
  * @var $this ML_Tools_Controller_Main_Tools_Orders
  */
 ?>
+<table class="attributesTable">
+<tr>
+    <td>
     <form method="post" action="<?php echo $this->getCurrentUrl(); ?>">
         <div style="display:none">
             <?php foreach (MLHttp::gi()->getNeededFormFields() as $sKey => $sValue) { ?>
@@ -38,30 +41,23 @@
                 </td>
             </tr>
         </table>
+        <?php if (!$this->isExpert()) { ?>
         <table style="float: right;">
             <tr>
                 <td>
-
-                </td>
-                <td>
-
-                </td>
-                <td> <?php if (!$this->isExpert()) { ?>
                         <button type="submit" class="mlbtn" name="<?php echo MLHttp::gi()->parseFormFieldName('mode') ?>" value="expert">
                             Show expert tool
                         </button>
-                    <?php } ?>
+
                 </td>
             </tr>
         </table>
+        <?php } ?>
         <?php if ($this->isExpert()) { ?>
             <table style="float: right">
                 <tr>
                     <td>
                         <h3 style="color: red">Expert tools, be careful to use them</h3>
-                    </td>
-                    <td>
-
                     </td>
                     <td>
 
@@ -120,7 +116,7 @@ if (is_array($aData)) { ?>
             ?>
             <td style="vertical-align:top">
                 <h3> Shop Order Data</h3><?php
-                !Kint::dump($aData['Shop']); ?>
+                    Kint::dump($aData['Shop']); ?>
             </td>
         </tr>
 
@@ -131,7 +127,7 @@ if (is_array($aData)) { ?>
             <td></td>
             <td style="vertical-align:top">
                 <h3> Shop Order Freetext Attributes</h3><?php
-                !Kint::dump($aData['Attributes']);
+                Kint::dump($aData['Attributes']);
                 ?>
             </td>
             </tr><?php
@@ -161,6 +157,11 @@ if (is_array($aData)) { ?>
     </table>
     <?php
 }
+?>
+    </td>
+</tr>
+</table>
+<?php
 //foreach (MLShop::gi()->getMarketplaces() as $iMarketPlace => $sMarketplace) {
 //    try {
 //        ML::gi()->init(array('mp' => $iMarketPlace));

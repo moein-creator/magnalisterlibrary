@@ -11,20 +11,31 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 abstract class ML_Modul_Model_Service_ImportCategories_Abstract extends ML_Modul_Model_Service_Abstract {
 
-    const iExpiresLiveTime = 86400;
-
     /**
      * name of table
      * @var string $sTableName
      */
     protected $sTableName = '';
+
+    /**
+     *
+     *
+     * @var array
+     */
+    protected $aTableColumns = array(
+        'CategoryID',
+        'CategoryName',
+        'ParentID',
+        'LeafCategory',
+        'ImportOrUpdateTime'
+    );
 
     protected $aRequestTimeouts = array(
         'iGetCategoriesTimeout' => 0,
@@ -59,13 +70,22 @@ abstract class ML_Modul_Model_Service_ImportCategories_Abstract extends ML_Modul
     }
 
     public function execute() {
-        $timestamp = date('Y-m-d H:i:s', time() + self::iExpiresLiveTime);
 
         $aRequest = $this->getGetCategoriesRequest();
+        // one timestamp needs to be set on the import start,
+        // so we do not delete newly imported categories
+        if (MLHttp::gi()->isAjax() && $aRequest['OFFSET'] == 0) {
+            $timestamp = date('Y-m-d H:i:s', time());
+            MLModule::gi()->setConfig('categoryImportTime', $timestamp);
+        } else if (MLHttp::gi()->isAjax() && $aRequest['OFFSET'] != 0) {
+            $timestamp = MLModule::gi()->getConfig('categoryImportTime');
+        } else {
+            $timestamp = date('Y-m-d H:i:s', time());
+        }
         $this->log('FetchCategories'."\n\n", self::LOG_LEVEL_LOW);
         try {
             do {
-                $dCategory = array();
+                $dCategories = array();
                 MagnaConnector::gi()->setTimeOutInSeconds($this->aRequestTimeouts['iGetCategoriesTimeout']);
                 $aResponse = MagnaConnector::gi()->submitRequest($aRequest);
                 $this->log(
@@ -77,18 +97,19 @@ abstract class ML_Modul_Model_Service_ImportCategories_Abstract extends ML_Modul
                 $aResponse['DATA'] = empty($aResponse['DATA']) ? array() : $aResponse['DATA'];
 
                 //prepare data for insert in database
-                foreach ($aResponse['DATA'] as $rCategory) {
-                    $dCategory[] = array(
-                        'CategoryID' => $rCategory['CategoryID'],
-                        'CategoryName' => $rCategory['CategoryName'],
-                        'ParentID' => $rCategory['ParentID'],
-                        'LeafCategory' => $rCategory['LeafCategory'],
-                        'Expires' => $timestamp,
-                    );
+                foreach ($aResponse['DATA'] as $rCategoryKey => $rCategory) {
+                    foreach ($this->aTableColumns as $sTableColumn) {
+                        if (isset($rCategory[$sTableColumn])) {
+                            $dCategories[$rCategoryKey][$sTableColumn] = $rCategory[$sTableColumn];
+                        }
+                    }
                 }
+                $this->extendCategoryData($dCategories, $timestamp);
+
+
                 //Insert categories in the database
-                $this->log('InsertCategories'."\n\n".'Inserted  '.count($dCategory).' categories ', self::LOG_LEVEL_LOW);
-                $chunks = array_chunk($dCategory, 100);
+                $this->log('InsertCategories'."\n\n".'Inserted  '.count($dCategories).' categories ', self::LOG_LEVEL_LOW);
+                $chunks = array_chunk($dCategories, 100);
                 foreach ($chunks as $chunk) {
                     MLDatabase::getDbInstance()->batchinsert($this->sTableName, $chunk, true);
                 }
@@ -124,11 +145,21 @@ abstract class ML_Modul_Model_Service_ImportCategories_Abstract extends ML_Modul
                     ));
                     $blNext = false;
                 }
+
+                //in ajax we have one request per page because we need to update percent bar
+                if (MLHttp::gi()->isAjax()) {
+                    break;
+                }
             } while ($blNext);
 
-            // delete old categories from the database
-            $this->log('RemoveOldCategories'."\n\n", self::LOG_LEVEL_LOW);
-            MLDatabase::getDbInstance()->query('DELETE FROM `'.$this->sTableName.'` WHERE Expires <> "'.$timestamp.'"');
+            if (!$blNext) {
+                // delete old categories from the database
+                $this->log('RemoveOldCategories'."\n\n", self::LOG_LEVEL_LOW);
+                $this->deleteOldCategories($timestamp);
+                // delete config set in the db for category import time
+                MLModule::gi()->setConfig('categoryImportTime', '');
+                $this->createCategoriesPath();
+            }
 
         } catch (MagnaExeption $oEx) {
             $this->log($oEx->getMessage(), self::LOG_LEVEL_MEDIUM);
@@ -138,13 +169,20 @@ abstract class ML_Modul_Model_Service_ImportCategories_Abstract extends ML_Modul
         return $this;
     }
 
+    protected function extendCategoryData(&$dCategories, $timestamp) {
+
+    }
+
+    protected function deleteOldCategories($timestamp) {
+        MLDatabase::getDbInstance()->query('DELETE FROM `'.$this->sTableName.'` WHERE ImportOrUpdateTime <> "'.$timestamp.'"');
+    }
+
     protected function out($mValue) {
         if (!MLHttp::gi()->isAjax()) {
-            echo is_array($mValue) ? "\n{#".base64_encode(json_encode(array_merge(array('Marketplace' => MLModul::gi()->getMarketPlaceName(), 'MPID' => MLModul::gi()->getMarketPlaceId(),), $mValue)))."#}\n\n" : $mValue."\n";
+            echo is_array($mValue) ? "\n{#" . base64_encode(json_encode(array_merge(array('Marketplace' => MLModule::gi()->getMarketPlaceName(), 'MPID' => MLModule::gi()->getMarketPlaceId(),), $mValue))) . "#}\n\n" : $mValue . "\n";
             flush();
         } else {
-            if (isset($mValue['Done']) && $mValue['Finished'] && $mValue['Total'] ) {
-                MLModul::gi()->setConfig('importcategoriesoffset', $mValue['Done']);
+            if (isset($mValue['Done']) && isset($mValue['Finished']) && isset($mValue['Total'])) {
                 MLSetting::gi()->add(
                     'aAjax',
                     array(
@@ -162,6 +200,9 @@ abstract class ML_Modul_Model_Service_ImportCategories_Abstract extends ML_Modul
         }
 
         return $this;
+    }
+
+    protected function createCategoriesPath() {
     }
 
 }

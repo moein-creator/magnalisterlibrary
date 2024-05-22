@@ -15,7 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 $sDataMlAlert =
     (
         isset($aField['i18n']) && is_array($aField['i18n']) && array_key_exists('alert', $aField['i18n'])

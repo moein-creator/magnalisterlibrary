@@ -29,7 +29,7 @@ class ML_Etsy_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                 if ($this->oList->isSelected($oVariant)) {
                     $oHelper->resetData();
                     $aData = $oHelper->setVariant($oVariant)->getData();
-                    if (empty($aData['CategoryAttributes']) || !$this->variationShouldBeExcluded(json_decode($aData['CategoryAttributes'], true))) {
+                    if (empty($aData['CategoryAttributes']) || !$this->variationShouldBeExcluded($aData['CategoryAttributes'])) {
                         $aMasterProducts[$oVariant->get('id')] = $aData;
                     }
 

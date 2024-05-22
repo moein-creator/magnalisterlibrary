@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -27,7 +27,7 @@ MLI18n::gi()->add('hitmeister_prepare_apply_form', array(
     ),
     'field' => array(
         'variationgroups' => array(
-            'label' => 'Kaufland.de Kategorie',
+            'label' => 'Kaufland Kategorie',
         ),
         'variationgroups.value' => array(
             'label' => '1. Marktplatz-Kategorie:',
@@ -77,11 +77,15 @@ MLI18n::gi()->add('hitmeister_prepare_apply_form', array(
         'itemcondition' => array(
             'label' => 'Zustand',
         ),
-        'shippingtime' => array(
-            'label' => 'Lieferzeit',
+        'handlingtime' => array(
+            'label' => 'Bearbeitungszeit',
         ),
         'itemcountry' => array(
             'label' => 'Artikel wird versandt aus',
+        ),
+        'shippinggroup' => array(
+            'label' => 'Verkäufer-Versandgruppe',
+            'help' => 'Die Kaufland Verkäufer-Versandgruppen enthalten Angaben zum Versand.',
         ),
         'comment' => array(
             'label' => 'Hinweise zu Ihrem Artikel',
@@ -91,8 +95,8 @@ MLI18n::gi()->add('hitmeister_prepare_apply_form', array(
 
 MLI18n::gi()->add('hitmeister_prepare_variations', array(
     'legend' => array(
-        'variations' => 'Kategorie von Kaufland.de ausw&auml;hlen',
-        'attributes' => 'Attributsnamen von Kaufland.de ausw&auml;hlen',
+        'variations' => 'Kategorie von Kaufland ausw&auml;hlen',
+        'attributes' => 'Attributsnamen von Kaufland ausw&auml;hlen',
         'variationmatching' => array('{#i18n:attributes_matching_required_attributes#}', '{#i18n:attributes_matching_title#}'),
         'variationmatchingoptional' => array('{#i18n:attributes_matching_optional_attributes#}', '{#i18n:attributes_matching_title#}'),
         'variationmatchingcustom' => array('{#i18n:attributes_matching_custom_attributes#}', '{#i18n:attributes_matching_title#}'),
@@ -100,7 +104,7 @@ MLI18n::gi()->add('hitmeister_prepare_variations', array(
     ),
     'field' => array(
         'variationgroups' => array(
-            'label' => 'Kaufland.de Kategorie',
+            'label' => 'Kaufland Kategorie',
         ),
         'variationgroups.value' => array(
             'label' => '1. Marktplatz-Kategorie:',
@@ -124,7 +128,7 @@ MLI18n::gi()->add('hitmeister_prepare_variations', array(
             'label' => '{#i18n:attributes_matching_web_shop_attribute#}',
         ),
         'saveaction' => array(
-            'label' => 'SPEICHERN UND SCHLIESSEN',
+            'label' => 'Speichern und schliessen',
         ),
         'resetaction' => array(
             'label' => '{#i18n:hitmeister_varmatch_reset_matching#}',
@@ -147,14 +151,14 @@ MLI18n::gi()->hitmeister_prepareform_description = 'Bitte geben Sie eine Artikel
 MLI18n::gi()->hitmeister_prepareform_category_attribute = ' (Kategorie Attribute) ist erforderlich und kann nicht leer sein.';
 MLI18n::gi()->hitmeister_category_no_attributes= 'Es sind keine Attribute f&uuml;r diese Kategorie vorhanden.';
 MLI18n::gi()->hitmeister_prepare_variations_title = '{#i18n:attributes_matching_tab_title#}';
-MLI18n::gi()->hitmeister_prepare_variations_groups = 'Kaufland.de Gruppen';
+MLI18n::gi()->hitmeister_prepare_variations_groups = 'Kaufland Gruppen';
 MLI18n::gi()->hitmeister_prepare_variations_groups_custom = 'Eigene Gruppen';
 MLI18n::gi()->hitmeister_prepare_variations_groups_new = 'Eigene Gruppe anlegen';
 MLI18n::gi()->hitmeister_prepare_match_variations_no_selection = '{#i18n:attributes_matching_matching_variations_no_category_selection#}';
 MLI18n::gi()->hitmeister_prepare_match_variations_custom_ident_missing = 'Bitte w&auml;hlen Sie Bezeichner.';
 MLI18n::gi()->hitmeister_prepare_match_variations_attribute_missing = 'Bitte w&auml;hlen Sie Attributsnamen.';
 MLI18n::gi()->hitmeister_prepare_match_variations_category_missing = 'Bitte w&auml;hlen Sie Variantengruppe.';
-MLI18n::gi()->hitmeister_prepare_match_variations_not_all_matched = 'Bitte weisen Sie allen Kaufland.de Attributen ein Shop-Attribut zu.';
+MLI18n::gi()->hitmeister_prepare_match_variations_not_all_matched = 'Bitte weisen Sie allen Kaufland Attributen ein Shop-Attribut zu.';
 MLI18n::gi()->hitmeister_prepare_match_notice_not_all_auto_matched = 'Es konnten nicht alle ausgewählten Werte gematcht werden. Nicht-gematchte Werte werden weiterhin in den DropDown-Feldern angezeigt. Bereits gematchte Werte werden in der Produktvorbereitung berücksichtigt.';
 MLI18n::gi()->hitmeister_prepare_match_variations_saved = '{#i18n:attributes_matching_prepare_variations_saved#}';
 MLI18n::gi()->hitmeister_prepare_variations_saved = '{#i18n:attributes_matching_matching_variations_saved#}';
@@ -162,7 +166,7 @@ MLI18n::gi()->hitmeister_prepare_variations_reset_success = 'Das Matching wurde 
 MLI18n::gi()->hitmeister_prepare_match_variations_delete = 'Wollen Sie die eigene Gruppe wirklich l&ouml;schen? Alle zugeh&ouml;rigen Variantenmatchings werden dann ebenfalls gel&ouml;scht.';
 MLI18n::gi()->hitmeister_error_checkin_variation_config_empty = 'Variationen sind nicht konfiguriert.';
 MLI18n::gi()->hitmeister_error_checkin_variation_config_cannot_calc_variations = 'Es konnten keine Variationen errechnet werden.';
-MLI18n::gi()->hitmeister_error_checkin_variation_config_missing_nameid = 'Es konnte keine Zuordnung f&uuml;r das Shop Attribut "{#Attribute#}" bei der gew&auml;hlten Kaufland.de Variantengruppe "{#MpIdentifier#}" f&uuml;r den Varianten Artikel mit der SKU "{#SKU#}" gefunden werden.';
+MLI18n::gi()->hitmeister_error_checkin_variation_config_missing_nameid = 'Es konnte keine Zuordnung f&uuml;r das Shop Attribut "{#Attribute#}" bei der gew&auml;hlten Kaufland Variantengruppe "{#MpIdentifier#}" f&uuml;r den Varianten Artikel mit der SKU "{#SKU#}" gefunden werden.';
 MLI18n::gi()->hitmeister_prepare_variations_free_text = '{#i18n:attributes_matching_option_free_text#}';
 MLI18n::gi()->hitmeister_prepare_variations_additional_category = '{#i18n:attributes_matching_additional_category#}';
 MLI18n::gi()->hitmeister_prepare_variations_error_text = '{#i18n:attributes_matching_attribute_required_error#}';

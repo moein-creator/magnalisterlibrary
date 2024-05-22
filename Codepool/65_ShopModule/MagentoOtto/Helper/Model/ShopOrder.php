@@ -48,7 +48,7 @@ class ML_MagentoOtto_Helper_Model_ShopOrder extends ML_Magento_Helper_Model_Shop
                 $oProduct = MLProduct::factory();
                 foreach ($this->aCurrentOrderData['Products'] as $product)
                     if ($oProduct->getByMarketplaceSKU($product['SKU'])->exists()
-                        && MLModul::gi()->getConfig('stocksync.frommarketplace') === 'rel') {
+                        && MLModule::gi()->getConfig('stocksync.frommarketplace') === 'rel') {
                         $oProduct->setStock($oProduct->getStock() + $product['Quantity']);
                     }
             }

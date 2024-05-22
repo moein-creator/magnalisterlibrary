@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -39,22 +39,24 @@ class ML_Idealo_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         return $blIntern ? 'idealo' : MLI18n::gi()->get('sModuleNameIdealo');
     }
 
-    public function idealoHaveDirectBuy ($blResetCache = false) {
-        return $this->getConfig('directbuyactive') === 'true' && parent::isAuthed($blResetCache);
-    }
-
     public function getConfig($sName = null) {
         if ($sName == 'currency') {
-            $mReturn = MLCurrency::gi()->getDefaultIso();
+            $mReturn = parent::getConfig('currency');
+            if ($mReturn === null) {
+                $mReturn = MLCurrency::gi()->getDefaultIso();
+            }
         } else {
             // old config
             $mReturn = parent::getConfig($sName);
             $aTranslateOldConf = array(
-                'checkout' => 'checkout.status',
                 'paymentmethod' => 'payment.methods',
             );
             if ($sName === null) {
-                $mReturn = MLHelper::getArrayInstance()->mergeDistinct($mReturn, array('currency' => MLCurrency::gi()->getDefaultIso()));
+                $currency = parent::getConfig('currency');
+                if ($currency === null) {
+                    $currency = MLCurrency::gi()->getDefaultIso();
+                }
+                $mReturn = MLHelper::getArrayInstance()->mergeDistinct($mReturn, array('currency' => $currency));
                 foreach ($aTranslateOldConf as $sNew => $sOld) {
                     if (!array_key_exists($sNew, $mReturn) && array_key_exists($sOld, $mReturn)) {
                         $mReturn[$sNew] = $mReturn[$sOld];
@@ -62,9 +64,6 @@ class ML_Idealo_Model_Modul extends ML_Modul_Model_Modul_Abstract {
                 }
             } elseif ($mReturn === null && in_array($sName, array_keys($aTranslateOldConf))) {
                 $mReturn = parent::getConfig($aTranslateOldConf[$sName]);
-            }
-            if ($sName === 'orderimport.paymentmethod' && $mReturn === null) {
-                $mReturn = 'matching';
             }
         }
 
@@ -81,11 +80,7 @@ class ML_Idealo_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         $sDate = date('Y-m-d', strtotime($sDate));
         $sSync = $this->getConfig('stocksync.tomarketplace');
         $aKeys = array(
-            'import' => array('api' => 'Orders.Import', 'value' => ($this->getConfig('import'))),
-            'checkout' => array('api' => 'Checkout.Enabled', 'value' => $this->getConfig('checkout') == '1'),
-            'preimport.start' => array('api' => 'Orders.Import.Start', 'value' => $sDate),
             'stocksync.tomarketplace' => array('api' => 'Callback.SyncInventory', 'value' => isset($sSync) ? $sSync : 'no'),
-            'directbuyactive' => array('api' => 'Access.DirectCheckoutActive', 'value' => $this->getConfig('directbuyactive')),
         );
 
         return $aKeys;
@@ -109,59 +104,8 @@ class ML_Idealo_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         return array(
             'type' => $this->getConfig('quantity.type'), 
             'value' => $this->getConfig('quantity.value'),
-            'max' => $this->idealoHaveDirectBuy() ? $this->getConfig('maxquantity') : null,
+            'max' => null,
         );
     }
-    
-    public function getIdealoCancellationReasons() {
-        try {
-            $result = MagnaConnector::gi()->submitRequest(array(
-                'ACTION' => 'GetCancellationReasons',
-            ));
 
-            if (isset($result['DATA'])) {
-                return $result['DATA'];
-            }
-        } catch (MagnaException $e) {
-        }
-        return array('noselection' => MLI18n::gi()->idealo_methods_not_available);
-    }
-
-
-    public function isOrderShippingMethodAvailable() {
-        return true;
-    }
-
-    public function isOrderPaymentMethodAvailable(){
-        return true;
-    }
-
-    public function addRequiredConfigurationKeys($aRequiredConfig) {
-        if (
-            $this->getConfig('directbuyactive') === 'true' &&
-            (
-                $this->getConfig('OLD_checkout.token') === null // if old token exists
-                ||
-                MLRequest::gi()->data('do') === null // by running cron (order import)
-            )
-        ) {
-            $aNewRequiredConfig = array(
-                'idealoclientid',
-                'idealopassword'
-            );
-            return array_merge($aNewRequiredConfig, $aRequiredConfig);
-        }
-        return $aRequiredConfig;
-    }
-
-
-    public function addAuthenticationKeys($aAuthenticationKeys) {
-        if ($this->getConfig('directbuyactive') === 'true') {
-            return array_merge($aAuthenticationKeys,  array(
-                'idealoclientid' => 'Access.ClientID', // only for direct checkout
-                'idealopassword' => 'Access.ClientSecret', // only for direct checkout
-            ));
-        }
-        return $aAuthenticationKeys;
-    }
 }

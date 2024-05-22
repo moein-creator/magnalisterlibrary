@@ -1,13 +1,29 @@
 <?php
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
 
+use Redgecko\Magnalister\Controller\MagnalisterController;
+use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
+use Shopware\Core\Checkout\Order\OrderStates;
+use Shopware\Core\Defaults;
+use Shopware\Core\Framework\Api\Context\SystemSource;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Redgecko\Magnalister\Controller\MagnalisterController;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\Framework\Api\Context\SystemSource;
-use Shopware\Core\Defaults;
-use Shopware\Core\Checkout\Order\OrderStates;
-use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
 
 class ML_Shopware6_Helper_Model_ProductList_Filter{
     protected $sPrefix='';
@@ -50,24 +66,32 @@ class ML_Shopware6_Helper_Model_ProductList_Filter{
         $this->iPage=(int)$iPage;
         return $this;
     }
-    public function setOrder($sOrder){      
-         $aOrder = explode('_' , $sOrder) ;
-          $aConf = MLModul::gi()->getConfig();
-          $iLangId = $aConf['lang']; 
-         if ( count($aOrder) == 2 && $aOrder[0] != '' && $aOrder[1] != '' ) {
-            if ($aOrder[0] == 'ManufacturerNumber') {
-                 $aOrder[0] = 'p.manufacturer_number';                 
-             }elseif ($aOrder[0] == 'name' ) {                
-                $aOrder[0] = 't.`name`';
-                $this->oSelect->join(array(MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getEntityName().'_translation', 't', 't.`product_id` = p.`id` AND HEX(t.`language_id`)=\''.(string)$iLangId.'\''), 1);                
-            }elseif ($aOrder[0] == 'quantity' ) {                
-                $aOrder[0] = 'p.`stock`';
+
+    public function setOrder($sOrder) {
+        // "_" means no filter set
+        if ($sOrder == '_') {
+            return;
+        }
+        $lastUnderscore = strrpos($sOrder, '_');
+        $aConf = MLModule::gi()->getConfig();
+        $iLangId = $aConf['lang'];
+        if ($lastUnderscore !== false) {
+            $column = substr($sOrder, 0, $lastUnderscore);
+            $sort = substr($sOrder, $lastUnderscore + 1);
+
+            if ($column == 'ManufacturerNumber') {
+                $column = 'p.`manufacturer_number`';
+            } elseif ($column == 'name') {
+                $column = 't.`name`';
+                $this->oSelect->join(array(MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getEntityName().'_translation', 't', 't.`product_id` = p.`id` AND HEX(t.`language_id`)=\''.(string)$iLangId.'\''), 1);
+            } elseif ($column == 'quantity') {
+                $column = 'p.`stock`';
             }
-            $this->aOrder = array ('name' => $aOrder[0] , 'direction' => $aOrder[1]) ;
-            $this->oSelect->orderBy("{$aOrder[0]} {$aOrder[1]}") ;
-             //echo $this->oSelect->getQuery(false);  
-         }
-     }
+            $this->aOrder = array('name' => $column, 'direction' => $sort);
+            $this->oSelect->orderBy("{$column} {$sort}");
+        }
+    }
+
     public function setPrefix($sPrefix){
         $this->sPrefix=$sPrefix;
         return $this;
@@ -75,14 +99,18 @@ class ML_Shopware6_Helper_Model_ProductList_Filter{
     public function getOutput(){
         return $this->aFilterOutput;
     }
-    public function getStatistic(){
-        $iCountTotal = (int)$this->oSelect->getCount(true, 'Distinct p.`id`') ;
-        $iCountPerPage=isset($this->aFilterOutput[$this->sPrefix.'limit']['value'])?$this->aFilterOutput[$this->sPrefix.'limit']['value']:$iCountTotal;
+
+    public function getStatistic() {
+        $iCountTotal = (int)$this->oSelect->getCount(true, 'DISTINCT p.`id`');
+        $iCountPerPage = isset($this->aFilterOutput[$this->sPrefix.'limit']['value'])
+            ? $this->aFilterOutput[$this->sPrefix.'limit']['value']
+            : $iCountTotal;
+
         return array(
-            'iCountPerPage'=>$iCountPerPage,
-            'iCurrentPage'=>$this->iPage,
-            'iCountTotal'=>$iCountTotal,
-            'aOrder'=>$this->aOrder,
+            'iCountPerPage' => $iCountPerPage,
+            'iCurrentPage' => $this->iPage,
+            'iCountTotal' => $iCountTotal,
+            'aOrder' => $this->aOrder,
         );
     }
     
@@ -125,7 +153,7 @@ class ML_Shopware6_Helper_Model_ProductList_Filter{
      * adds a ML_Productlist_Model_ProductListDependency_Abstract instance to filter
      * @param string $sDependency ident-name of dependency
      * @param array $aDependecyConfig config for dependency
-     * @return \ML_Shopware_Helper_Model_ProductList_Filter
+     * @return \ML_Shopware6_Helper_Model_ProductList_Filter
      */
     public function registerDependency ($sDependency, $aDependecyConfig = array()) {
         $oDependency = MLProductList::dependencyInstance($sDependency)->setConfig($aDependecyConfig);

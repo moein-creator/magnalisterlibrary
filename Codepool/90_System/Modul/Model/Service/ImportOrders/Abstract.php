@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -57,8 +57,8 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
     }
 
     protected function isMutex() {
-        $oCache = MLCache::gi();
-        $sLock = get_class($this).'.lock';
+        $oCache = MLShop::gi()->getCacheObject();
+        $sLock = get_class($this) . '.lock';
         if (!$oCache->exists($sLock)) {
             usleep(rand(200, 800));
             if (!$oCache->exists($sLock)) {
@@ -88,8 +88,8 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
 
     protected function cleanMutex() {
         if ($this->isMutex()) {
-            $oCache = MLCache::gi();
-            $sLock = get_class($this).'.lock';
+            $oCache = MLShop::gi()->getCacheObject();
+            $sLock = get_class($this) . '.lock';
             $oCache->delete($sLock);
         }
         return $this;
@@ -108,7 +108,7 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
         $aProcessedOrders = array();
         $oModul = $this->oModul;
         foreach ($this->aOrders as $iKey => $aOrder) {
-            $sOrderId = $this->aOrdersList[$iKey]->get('orders_id');
+            $sOrderId = $this->aOrdersList[$iKey]->getOrderIdForAcknowledge();
             if (!empty($sOrderId)) {
                 $aOrderParameters = array();
                 $aOrderParameters['MOrderID'] = $aOrder['MPSpecific']['MOrderID'];
@@ -343,7 +343,7 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
         $aTabIdents = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.tabident')->get('value');
         foreach ($this->aOrders as $iOrder => $aOrder) {
             $this->blUpdateMode = $this->getUpdateMode($aOrder);
-            $sMpId = MLModul::gi()->getMarketPlaceId();
+            $sMpId = MLModule::gi()->getMarketPlaceId();
             MLSetting::gi()->set('sCurrentOrderImportLogFileName', 'OrderImport_'.$sMpId, true);
             MLSetting::gi()->set('sCurrentOrderImportMarketplaceOrderId', isset($aOrder['MPSpecific']) && isset($aOrder['MPSpecific']['MOrderID']) ? $aOrder['MPSpecific']['MOrderID'] : 'unknown', true);
             MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
@@ -376,16 +376,16 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
                 $sInfo = $this->canDoOrder($oOrder, $aOrder);
                 if ($oOrder->get('special') === null) {
                     $oOrder
-                        ->set('mpid', MLModul::gi()->getMarketPlaceId())
-                        ->set('platform', MLModul::gi()->getMarketPlaceName())
+                        ->set('mpid', MLModule::gi()->getMarketPlaceId())
+                        ->set('platform', MLModule::gi()->getMarketPlaceName())
                         ->set('special', $this->aOrders[$iOrder]['MPSpecific']['MOrderID'])
                         ->set('logo', null)//reset oder-logo when order is updated
                     ;
                 }
                 $this->aOrders[$iOrder] = $oOrder->shopOrderByMagnaOrderData($aOrder);
                 $oOrder
-                    ->set('mpid', MLModul::gi()->getMarketPlaceId())
-                    ->set('platform', MLModul::gi()->getMarketPlaceName())
+                    ->set('mpid', MLModule::gi()->getMarketPlaceId())
+                    ->set('platform', MLModule::gi()->getMarketPlaceName())
                     ->set('logo', null)//reset oder-logo when order is updated
                     ->set('status', $this->aOrders[$iOrder]['Order']['Status'])
                     ->set('data', $this->aOrders[$iOrder]['MPSpecific'])
@@ -395,7 +395,7 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
                     ->triggerAfterShopOrderByMagnaOrderData()
                 ;
                 if (   $blSendmail
-                    && (MLModul::gi()->getConfig('mail.send') == 'true' || MLModul::gi()->getConfig('mail.send') == '1') //some times config value is not a string
+                    && (MLModule::gi()->getConfig('mail.send') == 'true' || MLModule::gi()->getConfig('mail.send') == '1') //some times config value is not a string
                     && !$this->blUpdateMode
                 ) {
                     $this->sendPromotionMail($this->aOrders[$iOrder], $oOrder);//we should use $this->aOrders, because some important data like user password is filled by shopspecific
@@ -403,7 +403,7 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
                 MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
                     'MOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
                     'PHP' => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
-                    'Info' => 'imported in '.$this->aOrders[$iOrder]['MPSpecific']['MOrderID'].'.'.($blSendmail && (MLModul::gi()->getConfig('mail.send') == 'true' || MLModul::gi()->getConfig('mail.send') == '1') ? ' Promotion mail sended.' : ''),
+                    'Info' => 'imported in ' . $this->aOrders[$iOrder]['MPSpecific']['MOrderID'] . '.' . ($blSendmail && (MLModule::gi()->getConfig('mail.send') == 'true' || MLModule::gi()->getConfig('mail.send') == '1') ? ' Promotion mail sended.' : ''),
                     'FinalTableData' => $oOrder->data(),
                 ));
                 // $aData=$oOrder->data();
@@ -431,7 +431,7 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
                 MLLog::gi()->add('ordersSync', array(
                     'display' => array(
                         'info' => $sInfo,
-                        'marketplace' => MLModul::gi()->getMarketPlaceName().' ('.(isset($aTabIdents[MLModul::gi()->getMarketPlaceId()]) && $aTabIdents[MLModul::gi()->getMarketPlaceId()] != '' ? $aTabIdents[MLModul::gi()->getMarketPlaceId()].' - ' : '').MLModul::gi()->getMarketPlaceId().')',
+                        'marketplace' => MLModule::gi()->getMarketPlaceName() . ' (' . (isset($aTabIdents[MLModule::gi()->getMarketPlaceId()]) && $aTabIdents[MLModule::gi()->getMarketPlaceId()] != '' ? $aTabIdents[MLModule::gi()->getMarketPlaceId()] . ' - ' : '') . MLModule::gi()->getMarketPlaceId() . ')',
                         'orderno_marketplace' => $aOrder['MPSpecific']['MOrderID'],
                         'orderno_shop' => (isset($oOrder) && $oOrder->exists() )? '<div class="order-link"><a class="ml-js-noBlockUi" target="_blank" href="'.$oOrder->getEditLink().'">'.$oOrder->get('orders_id').'</a></div>' : '&mdash;',
                         'status' => (isset($oOrder) && $oOrder->exists() )?$aOrder['Order']['Status']." - ".$oOrder->getShopOrderStatusName():'&mdash;'
@@ -541,7 +541,7 @@ abstract class ML_Modul_Model_Service_ImportOrders_Abstract extends ML_Modul_Mod
                 'ORIGINATORADRESS' => $sMailFrom,
                 'SUBJECT' => fixHTMLUTF8Entities($sMailSubject),
                 'CONTENT' => $sMailContent,
-                'BCC' => ($oModule->getConfig('mail.copy') == 'true' || MLModul::gi()->getConfig('mail.copy') == '1') && $sMailFrom != $sMailTo
+                'BCC' => ($oModule->getConfig('mail.copy') == 'true' || MLModule::gi()->getConfig('mail.copy') == '1') && $sMailFrom != $sMailTo
             ));
         } catch (Exception $oEx) {
             return false;

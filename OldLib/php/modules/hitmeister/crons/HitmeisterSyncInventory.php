@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -37,12 +37,39 @@ class HitmeisterSyncInventory extends MagnaCompatibleSyncInventory {
 		parent::process();
 	}
 
-    protected function getPriceObject(){
-        return MLModul::gi()->getPriceObject();
+    protected function getPriceObject($sType = null){
+        return MLModule::gi()->getPriceObject($sType);
+    }
+
+    // Update MinimumPrice, if enabled & different
+    protected function updateCustomFields(&$data) {
+        if (!$this->oProduct->exists() || !$this->syncPrice) {
+            return;
+        }
+        if (    MLModule::gi()->getConfig('minimumpriceautomatic') !== '2'
+             || MLModule::gi()->getConfig('price.lowest.addkind')  === null) {
+            return;
+        }
+        try {
+            $minimumPrice = $this->oProduct->getSuggestedMarketplacePrice($this->getPriceObject('lowest'));
+            $minimumPrice = number_format($minimumPrice, 4, '.', '');
+            if (($minimumPrice > 0) && ((float) $this->cItem['MinimumPrice'] != $minimumPrice)) {
+                $this->log("\n\t" .
+                    'Minimum Price changed (old: ' . $this->cItem['MinimumPrice'] . '; new: ' . $minimumPrice . ')'
+                );
+                $data['MinimumPrice'] = $minimumPrice;
+            } else {
+                $this->log("\n\t" .
+                    'Minimum Price not changed (' . $minimumPrice . ')'
+                );
+            }
+        }  catch (Exception $oExc){
+                $this->log("\n\t" .$oExc->getMessage());
+        }
     }
 
     protected function getStockConfig() {
-        return MLModul::gi()->getStockConfig();
+        return MLModule::gi()->getStockConfig();
     }
 
     protected function uploadItems() {

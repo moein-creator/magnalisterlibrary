@@ -31,7 +31,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_ShippingMethod extends ML
     }
     
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
     
     public static function getTabDefault() {
@@ -76,7 +76,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_ShippingMethod extends ML
             }
             foreach ($this->getRequest('weight') as $sOrderId => $sValue){
                     $aOrders[$sOrderId]['Weight']['Value']= (float)$sValue;
-                    $aOrders[$sOrderId]['Weight']['Unit']= MLModul::gi()->getConfig('shippinglabel.weight.unit') ;
+                $aOrders[$sOrderId]['Weight']['Unit'] = MLModule::gi()->getConfig('shippinglabel.weight.unit');
                     $aOrders[$sOrderId]['AmazonOrderId'] = $sOrderId;
             }
             
@@ -131,7 +131,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_ShippingMethod extends ML
     
     public function getAddressById($iAddressId) {
         $aAddress = array();
-        $aConfigAddress = MLModul::gi()->getOneFromMultiOptionConfig('shippinglabel.address', $iAddressId);
+        $aConfigAddress = MLModule::gi()->getOneFromMultiOptionConfig('shippinglabel.address', $iAddressId);
 
         if (empty($aConfigAddress['name'])) {
             $aAddress["Name"] = $aConfigAddress['company'];

@@ -11,20 +11,14 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 MLI18n::gi()->amazon_config_carrier_other = 'Autres';
-MLI18n::gi()->{'amazon_config_general_mwstoken_help'} = '<p>Afin de transférer des données entre votre boutique et un compte vendeur Amazon, une authentification est nécessaire.
-Saisissez ici les différents identifiants dans leurs champs respectifs. Les identifiants peuvent être obtenus dans votre compte vendeur Amazon.
-</p><p>
-Cliquez sur le lien suivant pour ouvrir un tutoriel vous indiquant étape par étape comment obtenir les codes requis :
-</p><p>
-<a href="https://otrs.magnalister.com/otrs/public.pl?Action=PublicFAQZoom;ItemID=1176;" target="_blank">Comment obtenir ou renouveler le "MWS Token" Amazon?</a>
-</p>
-';
+MLI18n::gi()->{'amazon_config_general_mwstoken_help'} ='Amazon requiert une authentification pour transférer des données via magnalister. Une fois que vous avez demandé avec succès votre token, cette valeur sera auto-remplie.<br>
+<br>';
 MLI18n::gi()->{'amazon_config_general_autosync'} = 'Synchronisation automatique via CronJob (recommandée)';
 MLI18n::gi()->{'amazon_config_general_nosync'} = 'Aucune synchronisation';
 MLI18n::gi()->{'amazon_config_account_title'} = 'Mes coordonnées';
@@ -34,8 +28,8 @@ MLI18n::gi()->{'amazon_configform_orderstatus_sync_values__auto'} = '{#i18n:amaz
 MLI18n::gi()->{'amazon_configform_orderstatus_sync_values__no'} = '{#i18n:amazon_config_general_nosync#}';
 MLI18n::gi()->{'amazon_configform_sync_values__auto'} = 'Synchronisation automatique via CronJob (recommandée)';
 MLI18n::gi()->{'amazon_configform_sync_values__no'} = 'Aucune synchronisation';
-MLI18n::gi()->{'amazon_configform_stocksync_values__rel'} = 'Une commande (pas de commande FBA) réduit les stocks en boutique (recommandée)';
-MLI18n::gi()->{'amazon_configform_stocksync_values__fba'} = 'Une commande (également une commande FBA) réduit les stocks en boutique';
+MLI18n::gi()->{'amazon_configform_stocksync_values__rel'} = 'Une commande (hormis les commandes FBA) réduit les stocks en boutique (recommandée)';
+MLI18n::gi()->{'amazon_configform_stocksync_values__fba'} = 'Une commande (également les commandes FBA) réduit les stocks en boutique';
 MLI18n::gi()->{'amazon_configform_stocksync_values__no'} = 'Aucune synchronisation';
 MLI18n::gi()->{'amazon_configform_pricesync_values__auto'} = 'Synchronisation automatique via CronJob (recommandée)';
 MLI18n::gi()->{'amazon_configform_pricesync_values__no'} = 'Aucune synchronisation';
@@ -48,6 +42,8 @@ MLI18n::gi()->{'amazon_config_account_sync'} = 'Synchronisation';
 MLI18n::gi()->{'amazon_config_account_orderimport'} = 'Importation des commandes';
 MLI18n::gi()->{'amazon_config_account_emailtemplate'} = '{#i18n:configform_emailtemplate_legend#}';
 MLI18n::gi()->{'amazon_config_account_shippinglabel'} = 'Etiquettes d\'expédition';
+MLI18n::gi()->{'amazon_config_account_vcs'} = 'Factures | VCS';
+MLI18n::gi()->{'amazon_config_account_bopis'} = 'Click & Collect en magasin';
 MLI18n::gi()->{'amazon_config_account_emailtemplate_sender'} = 'Nom de votre boutique, de votre société, ...';
 MLI18n::gi()->{'amazon_config_account_emailtemplate_sender_email'} = 'exemple@votre-boutique.fr';
 MLI18n::gi()->{'amazon_config_account_emailtemplate_subject'} = 'Votre commande sur #SHOPURL#';
@@ -97,13 +93,32 @@ table.ordersummary tbody td.qty {
 <p>Votre équipe #ORIGINATOR#</p>';
 MLI18n::gi()->{'amazon_config_tier_error'} = 'Amazon Business (B2B): votre configuration (#{#TierNumber#}) n\'est pas correcte!';
 
+MLI18n::gi()->{'amazon_config_how_to_authorize_magnalister_header'} = 'Autoriser magnalister pour Amazon';
+MLI18n::gi()->{'amazon_config_how_to_authorize_magnalister_body'} = '
+    Pour utiliser magnalister en conjonction avec Amazon, votre consentement est requis.<br />
+    <br />
+    En autorisant magnalister dans votre portail Seller Central, vous nous permettez d\'interagir avec votre boutique Amazon.
+    Plus précisément, cela signifie : récupérer des commandes, télécharger des produits, synchroniser l\'inventaire et bien plus encore.
+    <br />
+    <br />
+    Pour autoriser magnalister, veuillez effectuer les étapes suivantes :<br />
+    <ol>
+        <li>Après avoir sélectionné le site Amazon et cliqué sur Request Token, une fenêtre vers Amazon s\'ouvrira juste après cette fenêtre d\'indices. Veuillez vous y connecter.</li>
+        <li>Suivez les instructions sur Amazon même et complétez l\'autorisation.</li>
+        <li>Cliquez ensuite sur "Continuer la préparation de l\'article"</li>.
+    </ol>
+    <br />
+    <strong>Important:</strong> Après avoir demandé votre jeton, vous n\'êtes pas autorisé à changer leur site Amazon. Si, par erreur, vous avez un 
+    mauvais site Amazon et que vous avez déjà demandé votre jeton, veuillez sélectionner le bon site et demander un nouveau jeton.<br />
+    <br />
+    <strong>Remarque:</strong> magnalister peut traiter les données non personnelles transmises à et par Amazon à des fins statistiques internes.
+';
+
 MLI18n::gi()->{'amazon_config_amazonvcsinvoice_invoicenumberoption_values_magnalister'} = 'Charger magnalister de la création des numéros de commande';
-MLI18n::gi()->{'amazon_config_amazonvcsinvoice_invoicenumberoption_values_matching'} = 'Tirer le numéro de commande d’un champ de texte libre Shopware';
 MLI18n::gi()->{'amazon_config_amazonvcsinvoice_reversalinvoicenumberoption_values_magnalister'} = 'Charger magnalister de la création des numéros de commande';
-MLI18n::gi()->{'amazon_config_amazonvcsinvoice_reversalinvoicenumberoption_values_matching'} = 'Tirer le numéro de commande d’un champ de texte libre Shopware';
 
 MLI18n::gi()->{'amazon_config_account__legend__account'} = 'Mes coordonnées';
-MLI18n::gi()->{'amazon_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'amazon_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'amazon_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'amazon_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'amazon_config_account__field__username__label'} = 'Adresse courriel';
@@ -112,6 +127,11 @@ MLI18n::gi()->{'amazon_config_account__field__password__label'} = 'Mot de passe 
 MLI18n::gi()->{'amazon_config_account__field__password__help'} = 'Saisissez ici, votre mot de passe Amazon';
 MLI18n::gi()->{'amazon_config_account__field__mwstoken__label'} = 'MWS Token';
 MLI18n::gi()->{'amazon_config_account__field__mwstoken__help'} = '{#i18n:amazon_config_general_mwstoken_help#}';
+MLI18n::gi()->{'amazon_config_account__field__spapitoken__label'} = 'SP-API Token';
+MLI18n::gi()->{'amazon_config_account__field__spapitoken__help'} = 'Pour demander un nouveau jeton Amazon, veuillez cliquer sur le bouton.<br>
+                        Si aucune fenêtre vers Amazon ne s\'affiche lorsque vous cliquez sur le bouton, il se peut qu\'un bloqueur de fenêtres pop-up soit actif.<br><br>
+                        Le jeton est nécessaire pour publier et gérer des articles sur Amazon par le biais d\'interfaces électroniques telles que le magnalister.<br><br>
+                        Dès lors, suivez les instructions de la page Amazon pour demander le jeton et connecter votre boutique en ligne à Amazon via magnalister.';
 MLI18n::gi()->{'amazon_config_account__field__merchantid__label'} = 'Commerçant-ID';
 MLI18n::gi()->{'amazon_config_account__field__merchantid__help'} = '{#i18n:amazon_config_general_mwstoken_help#}';
 MLI18n::gi()->{'amazon_config_account__field__marketplaceid__label'} = 'Place de marché-ID';
@@ -123,7 +143,7 @@ MLI18n::gi()->{'amazon_config_prepare__legend__apply'} = 'Création de nouveaux 
 MLI18n::gi()->{'amazon_config_prepare__legend__shipping'} = 'Expédition';
 MLI18n::gi()->{'amazon_config_prepare__legend__upload'} = 'Préréglages de téléchargement';
 MLI18n::gi()->{'amazon_config_prepare__legend__shippingtemplate'} = 'Profils d’expédition par région d’expédition';
-MLI18n::gi()->{'amazon_config_prepare__legend__b2b'} = 'Amazon Business (B2B)';
+MLI18n::gi()->{'amazon_config_prepare__field__itemcondition__label'} = 'État du produit';
 MLI18n::gi()->{'amazon_config_prepare__field__prepare.status__label'} = 'Statut de filtre';
 MLI18n::gi()->{'amazon_config_prepare__field__prepare.status__valuehint'} = 'Ne prendre en charge que les articles actifs';
 MLI18n::gi()->{'amazon_config_prepare__field__checkin.status__label'} = 'Statut du filtre';
@@ -168,6 +188,14 @@ Cliquez sur  l’onglet  "Configuration globale";
 </li>
 </ol>
 ';
+MLI18n::gi()->{'amazon_config_prepare__field__maxquantity__label'} = 'Nombre d\'unité maximale';
+MLI18n::gi()->{'amazon_config_prepare__field__maxquantity__help'} = 'Cette fonction vous permet de limiter la quantité disponible d’un article, sur votre marché Amazon.
+<br /><br /><strong>
+Exemple</strong> : Sous la rubrique "Quantité", choisissez l’option "Prendre en charge (cas) le stock de la boutique" puis inscrivez “20” sous la rubrique “Quantité limitée”. Ainsi ne seront vendables sur Amazon, que 20 pièces d’un article donné, disponible dans le stock de votre boutique. 
+<br />La synchronisation du stock (si elle est activée) harmonisera dans ce cas les quantités entre vos différents stocks à concurrence de 20 pièces maximum. 
+<br /><br />
+Si vous ne souhaitez pas de limitation, laissez le champ vide ou inscrivez "0".
+<br /><br /><strong>Remarque</strong> : Si sous la rubrique "Quantité", vous avez choisi l’option "forfait (sur le côté droit)", la limitation n\'est pas applicable.';
 MLI18n::gi()->{'amazon_config_prepare__field__leadtimetoship__label'} = 'Délai de traitement (en jours)';
 MLI18n::gi()->{'amazon_config_prepare__field__leadtimetoship__help'} = 'Temps qui s\'écoule entre le moment où l\'acheteur passe commande et celui où vous remettez la commande à votre transporteur.<br>Si vous ne donnez ici aucune valeur, le délai de traitement, par défaut, entre 1 et 2 jours ouvrables.
 Utilisez ce champ si le délai de traitement pour un article dépasse les deux jours ouvrables prévus.';
@@ -191,40 +219,65 @@ MLI18n::gi()->{'amazon_config_prepare__field__shipping.template__help'} = 'Les v
 Selon les régions, des profils particuliers de condition d\'expédition peuvent être établis, - conditions et/ou coût d\'expédition, différents. 
 Lorsque le vendeur prépare un produit, il peut donner un des profils de réglages d\'expédition au préalable défini pour le produit à préparer. Les réglages d\'expédition de ce profil sont alors utilisés. Si aucun profil n’est mentionné les conditions d’expéditions standards seront utilisées.';
 MLI18n::gi()->{'amazon_config_prepare__field__shipping.template.name__label'} = 'Nom du profil de Paramètres d’expédition par région d’expédition.';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bactive__label'} = 'Utilisez Amazon B2B';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bactive__help'} = 'Pour pouvoir utiliser cette fonctionnalité, vous devez être inscrit au programme Amazon Business Seller. Si vous n\'êtes pas encore affilié à ce programme, connectez-vous d\'abord à votre compte Amazon vendeur et activez l\'option : Business seller. <br />
-La seule exigence est d\'avoir un «compte Amazon vendeur professionnel », si ce n\'est pas le cas, vous pouvez mettre à niveau votre compte existant).
-<br /><br />
-Lisez, s\'il vous plaît la note, en cliquant sur l\'icône d\'information de la rubrique : "importation de commande" > "Activer l\'importation des commandes".';
-MLI18n::gi()->{'amazon_config_prepare__field__itemcondition__label'} = 'Item Condition';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bactive__notification'} = 'Pour pouvoir utiliser Amazon Business, vous devez l\'activer sur votre compte Amazon. <b>Veuillez vous assurer, que sur votre compte Amazon, l\'option Amazon business est bien activée. </b>Si ce n\'est pas le cas, le téléchargement des articles B2B entraînera des messages d\'erreurs. <br> Pour activer votre compte Amazon Business, veuillez suivre les indications de cette <a href="https://sellercentral.amazon.fr/business/b2bregistration" target="_blank">page</a>.';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bactive__values__true'} = 'Oui';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bactive__values__false'} = 'Non';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code__label'} = 'TVA commerciale - Appariement ';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code__hint'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code__matching__titlesrc'} = 'TVA Boutique';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code__matching__titledst'} = 'TVA Amazon Business';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code_container__label'} = 'TVA commerciale par catégorie - Appariement';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code_container__hint'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code_specific__label'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code_specific__hint'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code_specific__matching__titlesrc'} = 'TVA Boutique';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code_specific__matching__titledst'} = 'TVA Amazon Business';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code_category__label'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.tax_code_category__hint'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bsellto__label'} = 'Vendu à';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bsellto__help'} = 'Si vous choisissez l\'option <i>B2B uniquement</i>, ne seront téléchargé que les produits compatibles avec ce marché. ';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bsellto__values__b2b_b2c'} = 'B2B et B2C';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bsellto__values__b2b_only'} = 'B2B uniquement';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price__label'} = 'Prix Business';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price__help'} = 'Indiquez un pourcentage, un prix fixe ou une remise. Les remises doivent être précédées du signe moins.';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.addkind__label'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.addkind__hint'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.factor__label'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.factor__hint'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.signal__label'} = 'Champ décimal';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.signal__hint'} = 'Champ décimal';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.signal__help'} = 'Cette zone de texte sera utilisée dans les transmissions de données vers la place de Amazon, (prix après la virgule).<br/><br/>
+MLI18n::gi()->{'amazon_config_price__field__b2bactive__label'} = 'Utilisation des services Amazon B2B';
+MLI18n::gi()->{'amazon_config_price__field__b2bactive__help'} = '
+<p>En tant que vendeur Amazon, vous pouvez enrichir votre compte avec des fonctionnalit&eacute;s destin&eacute;es aux entreprises. Cela vous permet de vendre vos produits aussi bien &agrave; des consommateurs finaux qu\'&agrave; des clients professionnels, en affichant clairement les taux de TVA applicables.</p>
+<p>Pour cela, il est n&eacute;cessaire d\'activer la fonctionnalit&eacute; "Amazon Business" sur votre compte. Cette activation peut &ecirc;tre r&eacute;alis&eacute;e depuis votre compte Amazon Seller Central.</p>
+<p>Il est important de noter que <strong>poss&eacute;der un compte Amazon Business activ&eacute; est une condition</strong> sine qua non pour l\'utilisation des fonctionnalit&eacute;s d&eacute;crites ci-apr&egrave;s. Vous devez &eacute;galement &ecirc;tre enregistr&eacute; en tant que "Vendeur Professionnel" chez Amazon.</p>
+<p>Plus d\'informations :</p>
+<ul>
+<li>Vous trouverez des instructions pour l\'importation de commandes B2B Amazon en cliquant sur l\'ic&ocirc;ne d\'information dans la section "Importation des commandes" -&gt; "Activer l\'importation des commandes".<br><br></li>
+<li>Les configurations mentionn&eacute;es ci-dessous sont pr&eacute;vues pour la configuration globale de votre environnement Amazon B2B. Des ajustements sp&eacute;cifiques au niveau des produits pourront &ecirc;tre faits ult&eacute;rieurement lors de la pr&eacute;paration des articles.</li>
+</ul>
+';
+MLI18n::gi()->{'amazon_config_price__field__b2bactive__notification'} = '<p>Pour pouvoir utiliser Amazon Business, vous devez l\'activer sur votre compte Amazon. <b>Veuillez vous assurer, que sur votre compte Amazon, l\'option Amazon business est bien activée. </b>Si ce n\'est pas le cas, le téléchargement des articles B2B entraînera des messages d\'erreurs.</p><p>Pour activer votre compte Amazon Business, veuillez suivre les indications de cette <a href="https://sellercentral.amazon.fr/business/b2bregistration" target="_blank">page</a>.</p>';
+MLI18n::gi()->{'amazon_config_price__field__b2bactive__values__true'} = '{#i18n:ML_BUTTON_LABEL_YES#}';
+MLI18n::gi()->{'amazon_config_price__field__b2bactive__values__false'} = '{#i18n:ML_BUTTON_LABEL_NO#}';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code__label'} = 'Harmonisation des classes fiscales Business';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code__hint'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code__help'} = '
+<p>Synchronisez les taux de taxe de votre syst&egrave;me de gestion de boutique avec ceux d&eacute;finis par Amazon Business. Cela garantit que les taux de TVA corrects soient affich&eacute;s aux acheteurs Amazon lors du processus de commande. De plus, cette harmonisation des classes fiscales permet la cr&eacute;ation de factures de TVA pr&eacute;cises, disponibles pour les clients B2B.</p>
+<p>Les taux de taxe configur&eacute;s dans votre syst&egrave;me sont affich&eacute;s dans la colonne de gauche. Pour proc&eacute;der &agrave; l\'harmonisation, s&eacute;lectionnez le taux de taxe appropri&eacute; d\'Amazon depuis les menus d&eacute;roulants de la colonne de droite.</p>
+<p>Pour plus de d&eacute;tails sur les taux de taxe sp&eacute;cifi&eacute;s par Amazon, consultez la section d\'aide du Amazon Seller Central sous "Taux de TVA et codes fiscaux des produits".</p>
+<p><strong>Note</strong> : Au prochain point du menu, il est possible de configurer des harmonisations fiscales au niveau cat&eacute;goriel, qui auront la priorit&eacute; sur les configurations pr&eacute;sentes ici.</p>
+';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code__matching__titlesrc'} = 'TVA Boutique';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code__matching__titledst'} = 'TVA Amazon Business';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_container__label'} = 'Harmonisation des classes fiscales - par catégories Amazon';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_container__hint'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_container__help'} = '
+<p>Dans cette section, vous pouvez aligner les taux de taxe de votre boutique avec ceux sp&eacute;cifi&eacute;s par Amazon Business selon les cat&eacute;gories Amazon (telles que "Bricolage" ou "V&ecirc;tements"). Vous pouvez ajouter autant de cat&eacute;gories que n&eacute;cessaire en utilisant le symbole "+".</p>
+<p><strong>Note importante</strong> : Les taux de taxe associ&eacute;s &agrave; des cat&eacute;gories sp&eacute;cifiques ont pr&eacute;s&eacute;ance sur ceux que vous avez d&eacute;finis individuellement dans les options pr&eacute;c&eacute;dentes.</p>
+';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_specific__label'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_specific__hint'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_specific__matching__titlesrc'} = 'TVA Boutique';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_specific__matching__titledst'} = 'TVA Amazon Business';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_category__label'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.tax_code_category__hint'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2bsellto__label'} = 'Options de vente';
+MLI18n::gi()->{'amazon_config_price__field__b2bsellto__help'} = '
+<p>Vous disposez des options suivantes :</p>
+<ul>
+<li><strong>B2B et B2C</strong> : Les produits charg&eacute;s via magnalister sont visibles sur Amazon tant pour les acheteurs B2B (business-to-business) que B2C (business-to-consumer).<br><br></li>
+<li><strong>Exclusivement B2B</strong> : Les produits charg&eacute;s via magnalister sont accessibles sur Amazon exclusivement aux acheteurs B2B.</li>
+</ul>
+<p><strong>Remarque</strong> : Durant la phase de pr&eacute;paration des produits, vous pouvez ajuster ces r&eacute;glages au niveau individuel de chaque article.</p>
+';
+MLI18n::gi()->{'amazon_config_price__field__b2bsellto__values__b2b_b2c'} = 'B2B et B2C';
+MLI18n::gi()->{'amazon_config_price__field__b2bsellto__values__b2b_only'} = 'Exclusivement B2B';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price__label'} = 'Prix Business';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price__help'} = '
+<p>Dans cette section, vous pouvez d&eacute;finir une majoration ou une minoration du prix, soit en pourcentage soit fixe, pour le "Prix Business" qui est affich&eacute; sur Amazon et r&eacute;serv&eacute; exclusivement aux clients B2B.</p>
+<p>Vous avez &eacute;galement la possibilit&eacute; de personnaliser les d&eacute;cimales pour le Prix Business. Par exemple, ins&eacute;rez "99" dans le champ correspondant si vous d&eacute;sirez que tous les prix Business sur Amazon se terminent par ",99" (comme dans 2,99 euros).</p>
+';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.addkind__label'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.addkind__hint'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.factor__label'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.factor__hint'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.signal__label'} = 'Champ décimal';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.signal__hint'} = 'Champ décimal';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.signal__help'} = 'Cette zone de texte sera utilisée dans les transmissions de données vers la place de Amazon, (prix après la virgule).<br/><br/>
                 <strong>Par exemple :</strong> <br /> 
                  Valeur dans la zone de texte: 99 <br />
                  Prix d\'origine: 5.58 <br />
@@ -232,32 +285,65 @@ MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.signal__help'} = 'Cette 
                  La fonction aide en particulier, pour les majorations ou les rabais en pourcentage sur les prix. <br/>
                  Laissez le champ vide si vous souhaitez ne pas transmettre de prix avec une virgule.<br/>
                  Le format d\'entrée est un chiffre entier avec max. 2 chiffres.';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.priceoptions__label'} = 'Option prix du programme Business';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.group__label'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.group__hint'} = '';
-MLI18n::gi()->{'amazon_config_prepare__field__b2b.price.usespecialoffer__label'} = 'Utiliser aussi les prix spéciaux';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttype__label'} = 'Calcul des prix';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttype__help'} = '<b>Calcul des prix</b><br>
-Avec cette option, Les commerçants participant au programme Business Seller peuvent déterminer des tarifs particuliers en fonction des quantités commandées.<br><br>';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttype__values__'} = 'Ne pas tenir compte';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttype__values__percent'} = 'Pourcentage';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier1__label'} = 'Prix plancher 1';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier1__help'} = 'La remise doit être supérieure à 0';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier2__label'} = 'Prix plancher 2';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier3__label'} = 'Prix plancher 3';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier4__label'} = 'Prix plancher 4';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier5__label'} = 'Prix plancher 5';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier1quantity__label'} = 'Nombre de pièce';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier2quantity__label'} = 'Nombre de pièce';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier3quantity__label'} = 'Nombre de pièce';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier4quantity__label'} = 'Nombre de pièce';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier5quantity__label'} = 'Nombre de pièce';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier1discount__label'} = 'Remise';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier2discount__label'} = 'Remise';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier3discount__label'} = 'Remise';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier4discount__label'} = 'Remise';
-MLI18n::gi()->{'amazon_config_prepare__field__b2bdiscounttier5discount__label'} = 'Remise';
+MLI18n::gi()->{'amazon_config_price__field__b2b.priceoptions__label'} = 'Options de Prix Business';
+MLI18n::gi()->{'amazon_config_price__field__b2b.priceoptions__help'} = '
+<p>Dans cette section, vous pouvez transmettre les prix Business bas&eacute;s sur les groupes de clients d&eacute;finis dans votre boutique. Si, par exemple, vous avez sp&eacute;cifi&eacute; un groupe de clients tel que "Clients du Magasin" pour un article, les prix associ&eacute;s &agrave; ce groupe seront repris et synchronis&eacute;s. S&eacute;lectionnez l\'option "utiliser aussi les prix sp&eacute;ciaux" si vous d&eacute;sirez que les prix sp&eacute;ciaux attribu&eacute;s &agrave; l\'article soient &eacute;galement envoy&eacute;s &agrave; Amazon.</p>
+';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.group__label'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.group__hint'} = '';
+MLI18n::gi()->{'amazon_config_price__field__b2b.price.usespecialoffer__label'} = 'Utiliser aussi les prix spéciaux';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttype__label'} = 'Calcul des prix progressifs';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttype__help'} = '
+<p>Les prix progressifs offrent des r&eacute;ductions aux clients professionnels qui ach&egrave;tent en grande quantit&eacute;. Les vendeurs qui participent au programme Vendeur Amazon Business peuvent d&eacute;finir des quantit&eacute;s minimales ("Quantit&eacute;") et des rabais ("Rabais").</p>
+<p>Options disponibles dans la section "Calcul des prix progressifs" :</p>
+<ul>
+    <li><strong>Ne pas utiliser</strong> : Cette option d&eacute;sactive les tarifs d&eacute;gressifs d\'Amazon Business.<br><br></li>
+    <li><strong>Pourcentage</strong> : Applique un rabais en pourcentage sur les tarifs d&eacute;gressifs &eacute;tablis (ex. : 10 % de rabais pour 100 unit&eacute;s, 15 % pour 500 unit&eacute;s, etc.).</li>
+</ul>
+<p>Entrez les &eacute;chelons de tarifs souhait&eacute;s dans les champs "Niveau de Prix Progressif 1 - 5". Exemple de structure de rabais en <strong>pourcentage</strong> :</p>
+<table>
+    <tr>
+        <td>Niveau de Prix Progressif 1</td>
+        <td>Quantit&eacute;: 100</td>
+        <td>Rabais: 10</td>
+    </tr>
+    <tr>
+        <td>Niveau de Prix Progressif 2</td>
+        <td>Quantit&eacute;: 500</td>
+        <td>Rabais: 15</td>
+    </tr>
+    <tr>
+        <td>Niveau de Prix Progressif 3</td>
+        <td>Quantit&eacute;: 1000</td>
+        <td>Rabais: 25</td>
+    </tr>
+</table>
+<p><strong>Informations compl&eacute;mentaires</strong> :&nbsp;</p>
+<ul>
+    <li>Lors de la pr&eacute;paration des produits avec magnalister, vous disposez &eacute;galement de l\'option "<strong>Fixe</strong>" pour les tarifs d&eacute;gressifs, qui vous permet de d&eacute;finir des ajustements de prix fixes pour chaque produit pr&eacute;par&eacute; (ex. : r&eacute;duction de 10 euros pour 100 unit&eacute;s, 50 euros pour 500 unit&eacute;s, etc.).<br><br></li>
+    <li>Si vous choisissez de ne pas appliquer les param&egrave;tres g&eacute;n&eacute;raux d\'Amazon Business d&eacute;finis pour le march&eacute; Amazon sur certains produits, vous pouvez les modifier lors de la pr&eacute;paration du produit.</li>
+</ul>
+';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttype__values__'} = 'Ne pas tenir compte';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttype__values__percent'} = 'Pourcentage';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier1__label'} = 'Prix plancher 1';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier1__help'} = 'La remise doit être supérieure à 0';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier2__label'} = 'Prix plancher 2';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier3__label'} = 'Prix plancher 3';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier4__label'} = 'Prix plancher 4';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier5__label'} = 'Prix plancher 5';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier1quantity__label'} = 'Nombre de pièce';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier2quantity__label'} = 'Nombre de pièce';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier3quantity__label'} = 'Nombre de pièce';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier4quantity__label'} = 'Nombre de pièce';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier5quantity__label'} = 'Nombre de pièce';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier1discount__label'} = 'Remise';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier2discount__label'} = 'Remise';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier3discount__label'} = 'Remise';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier4discount__label'} = 'Remise';
+MLI18n::gi()->{'amazon_config_price__field__b2bdiscounttier5discount__label'} = 'Remise';
 MLI18n::gi()->{'amazon_config_price__legend__price'} = 'Calcul du prix';
+MLI18n::gi()->{'amazon_config_price__legend__b2b'} = 'Amazon Business (B2B)';
 MLI18n::gi()->{'amazon_config_price__field__price__label'} = 'Prix';
 MLI18n::gi()->{'amazon_config_price__field__price__hint'} = '';
 MLI18n::gi()->{'amazon_config_price__field__price__help'} = 'Veuillez saisir un pourcentage, un prix majoré, un rabais ou un prix fixe prédéfini. 
@@ -341,7 +427,7 @@ MLI18n::gi()->{'amazon_config_sync__field__stocksync.frommarketplace__help'} = '
 <br>
 <b>Important :</b> Cette fonction n’est opérante que lors de l’importation des commandes.
 ';
-MLI18n::gi()->{'amazon_config_sync__field__inventorysync.price__label'} = 'Prix de l\'article';
+MLI18n::gi()->{'amazon_config_sync__field__inventorysync.price__label'} = 'Prix de l&apos;article';
 MLI18n::gi()->{'amazon_config_sync__field__inventorysync.price__hint'} = '';
 MLI18n::gi()->{'amazon_config_sync__field__inventorysync.price__help'} = '<b>Synchronisation automatique via CronJob (recommandée)</b><br>
 <br>
@@ -386,30 +472,22 @@ Par principe, pour l’importation des commandes et la facturation, magnalister 
 Afin que les TVA nationales soient automatiquement prisent en compte, il faut que l’article acheté soit trouvé grâce à son numéro d’unité de gestion des stocks (SKU); magnalister utilisant alors la TVA configurée dans la boutique. ';
 MLI18n::gi()->{'amazon_config_orderimport__field__importactive__label'} = 'Activer l\'importation des commandes';
 MLI18n::gi()->{'amazon_config_orderimport__field__importactive__hint'} = '';
-MLI18n::gi()->{'amazon_config_orderimport__field__importactive__help'} = 'Lorsque la fonction est activée, les commandes sont par défaut importées toutes les heures.<br />
-                <br />
-Vous pouvez déclencher une importation manuelle, en cliquant sur le bouton situé dans le groupe de boutons en haut à droite, face à l\'en-tête Magnalister.<br />
-                <br />
-À partir du tarif Flat, le déclenchement de l\'importation automatique des commandes peut être réglé au quart d’heure. Pour ce faire vous devez avoir installé, un système Cronjob sur votre serveur, puis l’appeler  à l’aide du lien suivant : <br />
-                <i>{#setting:sImportOrdersUrl#}</i><br />
-                <br />
-                <strong>TVA:</strong><br />
-                <br />
-Les différents taux de TVA des pays avec lesquels vous êtes  en relation commerciales ne peuvent être correctement appliqué à vos commandes, que si vous avez les avez, au préalable, enregistrées dans votre boutique, sous la rubrique : “Localisation”  —>   Règle de taxes.  Les articles concernés doivent être, dans votre boutique, identifiables avec leur numéro SKU.<br />
-                <br />
-Si pour un produit, il n\'est pas trouvé d’identification dans votre boutique, magnalister applique alors le taux de TVA, que vous aurez donné sous «Importation de commande» > «TVA d’articles non référencés en boutiques».<br />
-                <br />
-<strong>Régle de commandes et de facturation Amazon B2B</strong> (nécessite l’adhésion au programme Amazon Business seller) :<br />
-                <br />
-Lors de la transmission de commandes, Amazon ne transmet pas les informations légales de TVA. En conséquence, magnalister transmet les commandes B2B à votre boutique, mais la facturation n\'est pas toujours légalement correcte.<br />
-                <br />
-Toutefois, vous avez la possibilité de récupérer les informations légales de TVA, dans votre espace Amazon Seller Central et de les rentrer manuellement dans vos systèmes de gestion boutique et/ou de stock.<br />
-                <br />
-Vous pouvez également utiliser le service de facturation fourni par Amazon pour les commandes B2B, qui contient toutes les données légales.<br />
-                <br />
-En tant que commerçant adhérent au programme Amazon Business seller, tous les documents nécessaires pour établir des factures, y compris les informations de TVA, sont accessibles dans votre espace vendeur Amazon sous la rubrique, "rapports" > "documents fiscaux". La mise à disposition des documents varie de 3 ou 30 jours et dépend de votre contrat Amazon B2B.<br />
-                <br />
-Si vous adhérez au programme logistique FBA, vous obtiendrez également les informations légales de TVA sous la rubrique, "expédié par Amazon" > "rapports".
+MLI18n::gi()->{'amazon_config_orderimport__field__importactive__help'} = '
+<p>Lorsque la fonction est activ&eacute;e, les commandes sont par d&eacute;faut import&eacute;es toutes les heures.</p>
+<p>Vous pouvez d&eacute;clencher une importation manuelle, en cliquant sur le bouton situ&eacute; dans le groupe de boutons en haut &agrave; droite, face &agrave; l\'en-t&ecirc;te Magnalister.</p>
+<p>&Agrave; partir du tarif Flat, le d&eacute;clenchement de l\'importation automatique des commandes peut &ecirc;tre r&eacute;gl&eacute; au quart d&rsquo;heure. Pour ce faire vous devez avoir install&eacute;, un syst&egrave;me Cronjob sur votre serveur, puis l&rsquo;appeler &agrave; l&rsquo;aide du lien suivant :&nbsp;<br><em>{#setting:sImportOrdersUrl#}<br></em></p>
+<p><strong>TVA:</strong></p>
+<p>Les diff&eacute;rents taux de TVA des pays avec lesquels vous &ecirc;tes en relation commerciales ne peuvent &ecirc;tre correctement appliqu&eacute; &agrave; vos commandes, que si vous avez les avez, au pr&eacute;alable, enregistr&eacute;es dans votre boutique, sous la rubrique : &ldquo;Localisation&rdquo; &mdash;&gt; R&egrave;gle de taxes. Les articles concern&eacute;s doivent &ecirc;tre, dans votre boutique, identifiables avec leur num&eacute;ro SKU.</p>
+<p>Si pour un produit, il n\'est pas trouv&eacute; d&rsquo;identification dans votre boutique, magnalister applique alors le taux de TVA, que vous aurez donn&eacute; sous &laquo;Importation de commande&raquo; &gt; &laquo;TVA d&rsquo;articles non r&eacute;f&eacute;renc&eacute;s en boutiques&raquo;.</p>
+<p><strong>R&eacute;gle de commandes et de facturation Amazon B2B</strong> (n&eacute;cessite l&rsquo;adh&eacute;sion au programme Amazon Business seller) :</p>
+<p>Lors de la transmission de commandes, Amazon ne transmet pas les informations l&eacute;gales de TVA. En cons&eacute;quence, magnalister transmet les commandes B2B &agrave; votre boutique, mais la facturation n\'est pas toujours l&eacute;galement correcte.</p>
+<p>Toutefois, vous avez la possibilit&eacute; de r&eacute;cup&eacute;rer les informations l&eacute;gales de TVA, dans votre espace Amazon Seller Central et de les rentrer manuellement dans vos syst&egrave;mes de gestion boutique et/ou de stock.</p>
+<p>Vous pouvez &eacute;galement utiliser le service de facturation fourni par Amazon pour les commandes B2B, qui contient toutes les donn&eacute;es l&eacute;gales.</p>
+<p>En tant que commer&ccedil;ant adh&eacute;rent au programme Amazon Business seller, tous les documents n&eacute;cessaires pour &eacute;tablir des factures, y compris les informations de TVA, sont accessibles dans votre espace vendeur Amazon sous la rubrique, "rapports" &gt; "documents fiscaux". La mise &agrave; disposition des documents varie de 3 ou 30 jours et d&eacute;pend de votre contrat Amazon B2B.</p>
+<p>Si vous adh&eacute;rez au programme logistique FBA, vous obtiendrez &eacute;galement les informations l&eacute;gales de TVA sous la rubrique, "exp&eacute;di&eacute; par Amazon" &gt; "rapports".<br><br></p>
+<p><strong>Note pour l\'import de commandes Amazon FBA</strong></p>
+<p>Vous avez la possibilit&eacute; de bloquer l\'import de commandes Amazon FBA. Pour ce faire, ouvrez les param&egrave;tres avanc&eacute;s en bas. Sous "Import de commande" -&gt; "Import de commande FBA", vous pouvez d&eacute;sactiver l\'import.</p>
+<p><strong>Important</strong> : Malgr&eacute; l\'import de commande FBA d&eacute;sactiv&eacute;, le nombre de commandes FBA dans magnalister sera enregistr&eacute; en arri&egrave;re-plan et ajout&eacute; &agrave; votre contingent de listage. Cela emp&ecirc;che tout abus possible du plugin magnalister pour Amazon FBA."</p>
 ';
 MLI18n::gi()->{'amazon_config_orderimport__field__import__label'} = '';
 MLI18n::gi()->{'amazon_config_orderimport__field__import__hint'} = '';
@@ -418,48 +496,46 @@ MLI18n::gi()->{'amazon_config_orderimport__field__preimport.start__hint'} = 'Poi
 MLI18n::gi()->{'amazon_config_orderimport__field__preimport.start__help'} = 'Les commandes seront importées à partir de la date que vous saisissez dans ce champ. Veillez cependant à ne pas donner une date trop éloignée dans le temps pour le début de l’importation, car les données sur les serveurs d’Amazon ne peuvent être conservées, que quelques semaines au maximum. <br>
 <br>
 <b>Attention</b> : les commandes non importées ne seront après quelques semaines plus importables!';
-MLI18n::gi()->{'amazon_config_orderimport__field__customergroup__label'} = 'Groupes clients';
+MLI18n::gi()->{'amazon_config_orderimport__field__customergroup__label'} = 'Groupe clients';
 MLI18n::gi()->{'amazon_config_orderimport__field__customergroup__hint'} = '';
 MLI18n::gi()->{'amazon_config_orderimport__field__customergroup__help'} = 'Vous pouvez choisir ici un groupe dans lesquel vos clients Amazon seront classés. Pour créer des groupes, rendez-vous dans le menu de l\'administration de votre boutique PrestaShop ->Clients ->Groupes. Lorsqu\'ils sont créés, ils apparaissent dans la liste de choix proposée. ';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.open__label'} = 'Statut de la commande boutique';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.open__label'} = 'Statut de la commande';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.open__hint'} = '';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.open__help'} = '               Définissez ici, Le statut qui sera automatiquement attribué aux commandes importé d\'Amazon vers votre boutique. <br>
+MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.open__help'} = '               Définissez ici le statut qui sera attribué aux commandes importées d\'Amazon dans votre boutique. <br>
 Si vous utilisez un système interne de gestion des créances, il est recommandé, de définir le statut de la commande comme étant "payé".';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.fba__label'} = 'Statut pour les commandes FBA';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.fba__hint'} = '';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.fba__help'} = 'Une commande FBA est une commande livrée par le service d\'expédition d’Amazon.
 Cette fonction est uniquement réservée aux commerçants qui y ont souscrit.<br>
 <br>
-Définissez ici, le statut qui sera automatiquement attribué aux commandes importé d\'Amazon vers votre boutique. <br>
+Définissez ici, le statut qui sera automatiquement attribué aux commandes FBA importées d\'Amazon vers votre boutique. <br>
 Si vous utilisez un système interne de gestion des créances, il est recommandé, de définir le statut de la commande comme étant "payé". <br>
 
 ';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbablockimport__label'} = 'Importation de commandes FBA';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbablockimport__valuehint'} = 'N\'importez pas les commandes FBA';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbablockimport__help'} = '<b>Ne pas importer les commandes via Amazon FBA</b><br />.
-                <br />
-                Vous avez la possibilité d\'empêcher l\'importation de commandes FBA dans votre boutique.
-                <br />
-                Cochez la case pour activer cette fonctionnalité et l\'importation des commandes exclura toute commande FBA.
-                <br />
-                Si vous retirez à nouveau la coche, les nouvelles commandes FBA seront importées comme d\'habitude.
-                <br />
-                Notes importantes :
-                <br />
-                    <li>Si vous activez cette fonction, toutes les autres fonctions FBA dans le cadre de l\'importation de la commande ne sont pas disponibles pour vous pour ce moment.</li>
-                </ul>
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbablockimport__label'} = 'Importation des commandes FBA';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbablockimport__valuehint'} = 'Ne pas importer les commandes FBA';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbablockimport__help'} = '
+    <p><strong>Ne pas importer les commandes via Amazon FBA</strong></p>
+    <p>Vous avez la possibilit&eacute; d\'emp&ecirc;cher l\'importation de commandes FBA dans votre boutique.</p>
+    <p>Cochez la case pour activer cette fonctionnalit&eacute; et l\'importation des commandes exclura toute commande FBA.</p>
+    <p>Si vous retirez &agrave; nouveau la coche, les nouvelles commandes FBA seront import&eacute;es comme d\'habitude.</p>
+    <p><strong>Notes importantes</strong> :&nbsp;</p>
+    <ul>
+        <li>Si vous activez cette fonction, toutes les autres fonctions FBA dans le cadre de l\'importation de la commande ne sont pas disponibles pour vous pour ce moment.<br><br></li>
+        <li>Malgr&eacute; l\'import de commande FBA d&eacute;sactiv&eacute;, le nombre de commandes FBA dans magnalister sera enregistr&eacute; en arri&egrave;re-plan et ajout&eacute; &agrave; votre contingent de listage. Cela emp&ecirc;che tout abus possible du plugin magnalister pour Amazon FBA.</li>
+    </ul>
 ';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbapaymentmethod__label'} = 'Mode de paiement de la commande FBA';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbapaymentmethod__label'} = 'Mode de paiement des commandes FBA';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbapaymentmethod__help'} = 'Mode de paiement qui sera attribué à toutes les commandes expédiées par Amazon. Valeur par défaut : "Amazon".<br><br>
 Ce réglage est important pour l\'impression des bons de livraison et des factures, mais aussi pour le traitement ultérieur des commandes dans votre boutique ainsi que dans votre gestion des marchandises.';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbapaymentmethod__hint'} = '';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__label'} = 'Mode de livraison de la commande FBA';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__help'} = 'Mode de livraison qui sera attribué à chaque commande effectuée sur Amazon. Valeur par défaut : "amazon"<br><br>
-Ce réglage est important pour l\'impression des bons de livraison et des factures, mais aussi pour le traitement ultérieur des commandes dans votre boutique ainsi que dans votre gestion des marchandises.';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__label'} = 'Mode d\'expédition des commandes FBA';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__help'} = 'Mode d\'expédition qui sera attribué aux commande FBA lors de l\'importation des commandes. Mode d\'expédition par défaut : "amazon"<br><br>
+Ce réglage est important pour l\'impression des bons de livraison et des factures, mais aussi pour le traitement ultérieur des commandes dans votre boutique.';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__hint'} = '';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier__label'} = 'Société de livraison';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier__label'} = 'Transporteur';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier__help'} = '';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier__hint'} = 'Sélectionnez la société d’expédition qui sera indiquée dans toutes les commandes Amazon. Cette information doit obligatoirement être renseignée. Pour plus d’informations consultez l’infobulle.';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier__hint'} = 'Sélectionnez le transporteur qui sera indiqué dans toutes les commandes Amazon. Cette information doit obligatoirement être renseignée. Pour plus d’informations consultez l’infobulle.';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier.additional__label'} = '&nbsp;&nbsp;&nbsp;&nbsp;Transporteurs supplémentaires';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier.additional__help'} = 'Amazon propose plusieurs transporteurs standards à la présélection. Vous pouvez agrandir cette liste.
 Entrez alors d\'autres transporteurs, séparés par une virgule, dans la zone de texte.';
@@ -468,30 +544,48 @@ MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.cancelled__hint'} 
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.cancelled__help'} = 'Définissez ici le statut de la commamde en boutique, qui doit automatiquement annuler la commande  sur Amazon. <br>
 <br>
 Remarque : Une annulation partielle de commande via l\'API n\'est pas proposée par Amazon. La commande toute entière est annulée avec cette fonctionnalité et est créditée à l\'acheteur.';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazonpromotionsdiscount__label'} = 'Amazon Promotions';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazonpromotionsdiscount__help'} = '<p>magnalister importe les articles réduits dans le cadre des promotions Amazon. Dans les commandes importées la réduction sur le prix de l’article ainsi que celle sur l’expédition sont chacune affichées dans la commande en tant que produits.</p> <p>Dans cette option, vous pouvez définir vos propres numéros de poste pour ces remises promotionnelles.</p>';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazonpromotionsdiscount__label'} = 'Promotion Amazon';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazonpromotionsdiscount__help'} = '<p>Vous avez la possibilité de créer des actions promotionnelles sous forme de remises sur les produits ou sur l\'expédition dans Amazon Seller Central. Si un produit est vendu sur Amazon avec une remise correspondante, magnalister en tient compte lors de l\'importation de la commande :</p>
+<p>Dans le cadre de l\'importation de la commande, les remises sur les produits et les remises sur les frais d\'expédition sont enregistrées dans la boutique en ligne en tant que postes de produits distincts.</p>
+<p>Pour cela, magnalister crée la position de commande avec le numéro d\'article prédéfini (SKU), qui est enregistré ici dans le champ de saisie de droite. Par défaut, nous avons prédéfini les SKU suivants :</p>
+<ul>
+    <li>Remises sur les produits : "__AMAZON_DISCOUNT__".</li>
+    <li>Remises d\'expédition : "__AMAZON_SHIPPING_DISCOUNT__".</li>
+</ul>
+<p>Vous pouvez à tout moment écraser ces SKU et enregistrer vos propres désignations.</p>
+<p><strong>Remarque importante</strong> : lors de l\'attribution de vos propres SKU, assurez-vous qu\'ils ne sont pas identiques aux SKU des produits existants de la boutique, sinon le stock de ces produits sera involontairement réduit lors de l\'importation de la commande d\'une action promotionnelle.</p>
+';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazonpromotionsdiscount.products_sku__label'} = 'Référence pour remise sur l’article';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazonpromotionsdiscount.shipping_sku__label'} = 'Référence pour remise sur l’expédition';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazoncommunicationrules.blacklisting__label'} = 'Directives de communication Amazon';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazoncommunicationrules.blacklisting__valuehint'} = 'blacklister l’adresse e-mail Amazon de l’acheteur';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.amazoncommunicationrules.blacklisting__help'} = '
-<b>Éviter d\'envoyer des notifications d\'expédition aux acheteurs</b><br />
-<br />
-Les politiques de communication d’Amazon en vigueur stipulent entre autres que les vendeurs ne doivent pas communiquer directement aux acheteurs des informations sur l’expédition.<br />
-<br />
-L’option “blacklister l’adresse e-mail Amazon de l’acheteur” permet d\'empêcher l’envoi d’e-mails à l’acheteur directement depuis votre boutique. De cette façon, les e-mails ne pourront pas être envoyés.<br />
-<br />
-Si malgré les directives d’Amazon, vous souhaitez toutefois envoyer des e-mails directement à vos acheteurs, veuillez décocher la case “blacklister l’adresse e-mail Amazon de l’acheteur”. Cependant, cela peut avoir pour conséquence que vous soyez bloqué par Amazon. Nous déconseillons de désactiver cette option et déclinons toute responsabilité pour tout dommage qui pourrait survenir.<br />
-<br />
-Informations importantes :
-<ul>
-    <li>Le blacklisting des adresses mails Amazon est automatiquement activé. Vous recevrez un mailer deamon (avertissement de votre serveur mail, vous informant que l’e-mail n’a pas pu être envoyé), lorsque votre boutique essaye d’envoyer un e-mail à l’acheteur.<br /><br /></li>
-    <li>magnalister ajoute le préfixe “blacklisted-” à l’adresse e-mail  Amazon (e.g. blacklisted-12345@amazon.fr). Si vous souhaitez quand même contacter l’acheteur Amazon, supprimez le préfixe “blacklisted-”.</li>
-</ul>
+MLI18n::gi()->{'amazon_config_emailtemplate__field__orderimport.amazoncommunicationrules.blacklisting__label'} = 'Directives de communication Amazon';
+MLI18n::gi()->{'amazon_config_emailtemplate__field__orderimport.amazoncommunicationrules.blacklisting__valuehint'} = 'Respecter les directives d\'Amazon et éviter d\'envoyer des e-mails aux acheteurs Amazon';
+MLI18n::gi()->{'amazon_config_emailtemplate__field__orderimport.amazoncommunicationrules.blacklisting__help'} = '
+<p><strong>Respecter les directives d\'Amazon et &eacute;viter d\'envoyer des e-mails aux acheteurs Amazon</strong></p>
+<p>Les politiques de communication d\'Amazon interdisent l\'envoi de notifications par courriel (telles que les confirmations de commande ou d\'exp&eacute;dition) directement du vendeur &agrave; l\'acheteur, hors de la plateforme Amazon.</p>
+<p>En activant l\'option &ldquo;Respecter les directives d\'Amazon et &eacute;viter d\'envoyer des e-mails aux acheteurs Amazon&rdquo;, magnalister modifie l\'adresse courriel d\'Amazon pour la rendre inop&eacute;rante et ainsi emp&ecirc;cher sa livraison. Cela garantit le respect des politiques de communication d\'Amazon, m&ecirc;me si votre syst&egrave;me de gestion de boutique envoie automatiquement des courriels aux acheteurs.</p>
+<p>Pour envoyer des courriels directement depuis votre syst&egrave;me de gestion de boutique ou via magnalister, malgr&eacute; les r&egrave;gles d\'Amazon, il suffit de d&eacute;sactiver cette option.</p>
+<p><strong>Note importante</strong> : L\'envoi direct de courriels du vendeur &agrave; l\'acheteur peut vous exposer &agrave; un risque de suspension par Amazon. Nous recommandons vivement de maintenir l\'option par d&eacute;faut active et ne saurions &ecirc;tre tenus responsables de tout dommage &eacute;ventuel.</p>
+<p><strong>Comment magnalister bloque-t-il efficacement les e-mails ?</strong></p>
+<p>Lorsque votre syst&egrave;me de boutique ou magnalister d&eacute;clenche l\'envoi d\'un e-mail, magnalister pr&eacute;fixe l\'adresse e-mail de l\'acheteur Amazon avec &laquo; blacklisted &raquo;, rendant ainsi l\'e-mail non distribuable (par exemple : blacklisted-max-mustermann@amazon.de). En r&eacute;sultat, vous recevrez une alerte de non-distribution (appel&eacute;e Mailer Daemon) de la part de votre serveur de courrier &eacute;lectronique.</p>
+<p>Cette mesure s\'applique tant aux e-mails envoy&eacute;s directement par le syst&egrave;me de la boutique qu\'&agrave; la confirmation de commande que vous avez la possibilit&eacute; d\'activer dans la section suivante, intitul&eacute;e &laquo; Courriel &agrave; l\'acheteur &raquo;.</p>
 ';
 MLI18n::gi()->{'amazon_config_emailtemplate__legend__mail'} = '{#i18n:configform_emailtemplate_legend#}';
+MLI18n::gi()->{'amazon_config_emailtemplate__legend__guidelines'} = 'Directives de communication Amazon';
 MLI18n::gi()->{'amazon_config_emailtemplate__field__mail.send__label'} = '{#i18n:configform_emailtemplate_field_send_label#}';
-MLI18n::gi()->{'amazon_config_emailtemplate__field__mail.send__help'} = '{#i18n:configform_emailtemplate_field_send_help#}';
+MLI18n::gi()->{'amazon_config_emailtemplate__field__mail.send__help'} = '
+<p><strong>Envoyer un e-mail au client lors de la r&eacute;ception d\'une commande</strong></p>
+<p>Cette section vous permet de d&eacute;cider si des notifications par e-mail, comme les confirmations de commande, doivent &ecirc;tre envoy&eacute;es aux acheteurs Amazon directement depuis magnalister. Plus bas, vous avez la possibilit&eacute; de personnaliser le contenu de ces e-mails.</p>
+<p><strong>Avertissement crucial</strong> : Les politiques de communication d\'Amazon prohibent explicitement l\'&eacute;change direct de notifications par e-mail entre vendeurs et acheteurs. Afin d\'&eacute;viter toute sanction d\'Amazon, telles que la suspension de compte, nous recommandons fortement de ne pas envoyer d\'e-mails depuis magnalister ou votre syst&egrave;me de gestion de boutique aux clients Amazon. Nous d&eacute;clinons toute responsabilit&eacute; pour les pr&eacute;judices qui pourraient survenir de telles actions.</p>
+<p><strong>Attention sp&eacute;ciale</strong> : Si vous optez pour l\'envoi d\'e-mails aux clients via magnalister, il est imp&eacute;ratif de d&eacute;s&eacute;lectionner au pr&eacute;alable l\'option &ldquo;Adh&eacute;rer aux directives d\'Amazon et &eacute;viter les e-mails aux clients Amazon&rdquo; situ&eacute;e dans les param&egrave;tres pr&eacute;c&eacute;dents.</p>
+';
+MLI18n::gi()->{'amazon_config_emailtemplate__field__mail.send__modal__true'} = '
+<p>Avis important sur les directives de communication d&rsquo;Amazon</p>
+<p>Il est important de souligner que les politiques de communication d\'Amazon proscrivent toute forme de communication directe par e-mail entre vendeurs et acheteurs.</p>
+<p>Si, malgr&eacute; cela, vous d&eacute;sirez notifier vos clients par e-mail &agrave; l\'occasion de nouvelles commandes, il vous faudra alors retirer la s&eacute;lection de l\'option &ldquo;Respecter les directives d\'Amazon et &eacute;viter d\'envoyer des e-mails aux acheteurs Amazon&rdquo;.</p>
+<p>Merci de confirmer votre intention de r&eacute;aliser cette modification :</p>
+<p>{#i18n:ML_BUTTON_LABEL_OK#} : Oui, je choisis de ne pas respecter cette restriction et de communiquer par e-mail avec les clients Amazon</p>
+<p>{#i18n:ML_BUTTON_LABEL_ABORT#} : Non, je d&eacute;cide de me conformer aux normes de communication d\'Amazon</p>
+';
 MLI18n::gi()->{'amazon_config_emailtemplate__field__mail.originator.name__label'} = 'Nom de l\'expéditeur';
 MLI18n::gi()->{'amazon_config_emailtemplate__field__mail.originator.adress__label'} = 'Adresse de l\'expéditeur';
 MLI18n::gi()->{'amazon_config_emailtemplate__field__mail.subject__label'} = 'Objet';
@@ -542,7 +636,6 @@ MLI18n::gi()->{'amazon_config_shippinglabel__field__shippinglabel.default.dimens
 MLI18n::gi()->{'amazon_config_shippinglabel__field__shippinglabel.default.dimension.height__label'} = 'Hauteur';
 
 // Amazon VCS
-MLI18n::gi()->{'amazon_config_account_vcs'} = 'Factures | VCS';
 MLI18n::gi()->{'amazon_config_vcs__legend__amazonvcs'} = 'Solution de facturation automatisée d’Amazon';
 MLI18n::gi()->{'amazon_config_vcs__legend__amazonvcsinvoice'} = 'Données pour la création des factures via magnalister';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcs.option__label'} = 'Réglages effectués sur Amazon';
@@ -578,7 +671,6 @@ MLI18n::gi()->{'amazon_config_vcs__field__amazonvcs.option__help'} = '
     Notes importantes :
     <ul>
         <li>A chaque importation des commandes, magnalister vérifie si une facture a été créé pour les commandes importées via magnalister et les transmet à Amazon.<br><br></li>
-        <li>Si le montant de la taxe sur les ventes d\'une ou de plusieurs factures diffère de celui d\'Amazon, vous recevrez un E-Mail de magnalister (tous les jours entre 9 et 10 h) contenant toutes les données pertinentes telles que le numéro de commande Amazon, le numéro de commande Amazon et les données relatives à la taxe sur les ventes.<br><br></li>
     </ul>
 ';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcs.invoice__label'} = 'Transmission des factures';
@@ -597,72 +689,28 @@ MLI18n::gi()->{'amazon_config_vcs__field__amazonvcs.invoice__help'} = '
         <li>
             <p>Transmettre les factures créées dans la boutique</p>
             <p>Si votre système de e-boutique prend en charge la création des factures, vous pouvez les télécharger sur Amazon.</p>
-        </li>  
-        <li>
-            <p>Charger magnalister de la création et de la transmission des factures</p>
-            <p>Sélectionnez cette option si vous souhaitez que magnalister prenne en charge la création et la transmission des factures. Pour ce faire, veuillez remplir les champs sous “Données pour la création des factures via magnalister”.</p>
-        </li>        
+        </li>
         <li>
             <p>Les factures créées par des systèmes tiers (par exemple un système ERP) sont transmises à Amazon.</p>
             <p>Les factures que vous avez créées à l’aide d’un système tiers (par exemple un système ERP) peuvent être déposées sur le serveur de votre boutique en ligne, récupérées par magnalister et chargées sur la plateforme Amazon. Des informations complémentaires apparaissent après le choix de cette option dans l’icône info sous “Paramètres pour la transmission des factures créées à partir d’un système tiers [...]”.</p>
         </li> 
+        <li>
+            <p>Charger magnalister de la création et de la transmission des factures</p>
+            <p>Sélectionnez cette option si vous souhaitez que magnalister prenne en charge la création et la transmission des factures. Pour ce faire, veuillez remplir les champs sous “Données pour la création des factures via magnalister”.</p>
+        </li>
     </ol>
 ';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicedir__label'} = 'Factures téléchargées';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicedir__buttontext'} = 'Afficher';
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.language__label'} = 'Invoice language';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.mailcopy__label'} = 'Copie de la facture à';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.mailcopy__hint'} = 'Entrez votre adresse email pour recevoir une copie de la facture téléchargée sur Amazon';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoiceprefix__label'} = 'Préfixe numéro de facture';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoiceprefix__hint'} = 'Si vous définissez un préfixe, celui-ci sera placé automatiquement devant le numéro de facture. Exemple : R10000. Le numéro des factures générées par magnalister commence par 10000';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoiceprefix__default'} = 'R';
-MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumber__label'} = 'Numéro de facture';
-MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumber__help'} = '<p>
-Choisissez ici si les numéros de facture doivent être générés par magnalister ou si vous voulez qu’ils soient extraits d’un champ de texte libre de Shopware.
-</p><p>
-<b>Charger magnalister de la création des numéros de commande</b>
-</p><p>
-Lors de la création des factures par magnalister, des numéros de factures consécutifs sont automatiquement générés. Saisissez ici un préfixe qui sera automatiquement placé devant le numéro de facture.
-Exemple : F10000
-</p><p>
-Note : Les commandes créées par magnalister commencent par le numéro 10000.
-</p><p>
-<b>Tirer le numéro de commande d’un champ de texte libre Shopware</b>
-</p><p>
-Lors de la création de la facture, le numéro de commande est tirée du champ de texte libre Shopware que vous avez sélectionné.
-</p><p>
-Vous pouvez créer des champs de texte libre dans votre backend Shopware sous "Configuration" -> "Gestion des champs de texte libre" (tableau : commande) et les remplir sous "Clients" -> "Commandes". Pour ce faire, ouvrez la commande correspondante et faites défiler vers le bas jusqu’à "champs de texte libre".
-</p><p>
-<b>Important :</b> <br/>l’agrandisseur génère et transmet la facture dès que la commande est marquée comme expédiée. Veuillez vous assurer que le champ de texte libre est bien rempli, sinon une erreur sera causée (voir l’onglet "Journal des erreurs").
-<br/><br/>
-Si vous utilisez la correspondance des champs de texte libre, la société Magnalister n’est pas responsable de la création correcte et consécutive des numéros de facture.
-</p>';
-MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumberoption__label'} = '';
-MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumber.matching__label'} = 'Shopware order free text field';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoiceprefix__label'} = 'Préfixe numéro de facture d\'annulation';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoiceprefix__hint'} = 'Si vous définissez un préfixe, celui-ci sera placé automatiquement devant le numéro de facture d\'annulation. Exemple : S20000. Le numéro des factures d\'annulation générées par magnalister commence par 20000';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoiceprefix__default'} = 'S';
-MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoicenumber__label'} = 'Reversal invoice number';
-MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoicenumber__help'} = '<p>
-Choose here if you want to have your reversal invoice numbers generated by magnalister or if you want them to be taken from a Shopware free text field.
-</p><p>
-<b>Create reversal invoice numbers via magnalister</b>
-</p><p>
-magnalister generates consecutive reversal invoice numbers during the invoice creation. You can define a prefix that is set in front of the reversal invoice number. Example: R10000.
-</p><p>
-Note: Invoices created by magnalister start with the number 10000.
-</p><p>
-<b>Match reversal invoice numbers with Shopware free text field</b>
-</p><p>
-When creating the invoice, the value is taken from the Shopware free text field you selected.
-</p><p>
-You can create free text fields in your Shopware backend under "Configuration" -> "Free text field management" (table: order) and fill them under "Customers" -> "Orders". To do so, open the corresponding order and scroll down to "free text fields".
-</p><p>
-<b>Important:</b><br/> magnalister generates and transmits the invoice as soon as the order is marked as shipped. Please make sure that the free text field is filled, otherwise an error will be caused (see tab "Error Log").
-<br/><br/>
-If you use free text field matching, magnalister is not responsible for the correct, consecutive creation of reversal invoice numbers.
-</p>';
-MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoicenumberoption__label'} = MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumberoption__label'};
-MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoicenumber.matching__label'} = MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumber.matching__label'};
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.companyadressleft__label'} = 'Adresse de l’entreprise (champ d’adresse de gauche)';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.companyadressleft__default'} = 'Your name, Your street 1, 12345 Your town';
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.companyadressright__label'} = 'Champ d’adresse de l\'entreprise (droite)';
@@ -687,21 +735,19 @@ MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.preview__buttontext'}
 MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.preview__hint'} = 'Vous pouvez ici afficher un aperçu de votre facture avec les données que vous avez saisies.';
 
 // New Shipment Options
-MLI18n::gi()->{'amazon_config_carrier_option_group_marketplace_carrier'} = 'Sociétés de livraison Amazon';
-MLI18n::gi()->{'amazon_config_carrier_option_group_shopfreetextfield_option_carrier'} = 'Charger la société de livraison  depuis un champ libre dans la commande de votre boutique';
-MLI18n::gi()->{'amazon_config_carrier_option_group_shopfreetextfield_option_shipmethod'} = 'Charger le service d\'expédition depuis un champ de texte libre de votre boutique';
+MLI18n::gi()->{'amazon_config_carrier_option_group_marketplace_carrier'} = 'Transporteur Amazon';
 MLI18n::gi()->{'amazon_config_carrier_option_group_additional_option'} = 'Options supplémentaires';
-MLI18n::gi()->{'amazon_config_carrier_option_matching_option_carrier'} = 'Apparier les sociétés de livraison Amazon avec les sociétés de livraison de votre boutique';
+MLI18n::gi()->{'amazon_config_carrier_option_matching_option_carrier'} = 'Apparier les transporteur Amazon avec les transporteurs de votre boutique';
 MLI18n::gi()->{'amazon_config_carrier_option_matching_option_shipmethod'} = 'Apparier les services d’expédition Amazon avec les les services d’expédition de votre boutique';
 MLI18n::gi()->{'amazon_config_carrier_option_database_option'} = 'Correspondance des bases de données';
 MLI18n::gi()->{'amazon_config_carrier_option_orderfreetextfield_option'} = 'magnalister ajoute un champ supplémentaire dans les détails de la commande';
-MLI18n::gi()->{'amazon_config_carrier_option_freetext_option_carrier'} = 'Entrer le nom de la société de livraison manuellement dans un champ ';
+MLI18n::gi()->{'amazon_config_carrier_option_freetext_option_carrier'} = 'Entrer le nom du transporteur manuellement dans un champ ';
 MLI18n::gi()->{'amazon_config_carrier_option_freetext_option_shipmethod'} = 'Entrer le nom du service d’expédition manuellement dans un champ';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier.freetext__label'} = 'Société de livraison :';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier.freetext__label'} = 'Transporteur :';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.carrier.freetext__placeholder'} = 'Veuillez saisir le nom du service de livraison ici';
-MLI18n::gi()->{'amazon_config_carrier_matching_title_marketplace_carrier'} = 'Sociétés de livraisons Amazon';
-MLI18n::gi()->{'amazon_config_carrier_matching_title_marketplace_shipmethod'} = 'Freitext Versandart';
-MLI18n::gi()->{'amazon_config_carrier_matching_title_shop_carrier'} = 'Société de livraison définie dans votre boutique';
+MLI18n::gi()->{'amazon_config_carrier_matching_title_marketplace_carrier'} = 'Transporteur Amazon';
+MLI18n::gi()->{'amazon_config_carrier_matching_title_marketplace_shipmethod'} = 'Mode de livraison sur Amazon';
+MLI18n::gi()->{'amazon_config_carrier_matching_title_shop_carrier'} = 'Transporteur défini dans votre boutique';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.shipmethod__label'} = 'Service d’expédition';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.shipmethod__hint'} = 'Sélectionnez le service s’expédition qui sera attribué à toutes les commandes Amazon. Le service d’expédition doit obligatoirement être renseigné.';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.shipmethod.freetext__label'} = 'Service d’expédition :';
@@ -723,3 +769,281 @@ MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.shippedaddress.cou
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.shippedaddress.stateorregion__label'} = 'Département / région';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.shippedaddress.postalcode__label'} = 'Code postal';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderstatus.shippedaddress.countrycode__label'} = 'Pays';
+
+/** BOPIS */
+MLI18n::gi()->add('amazon_config_bopis', array(
+    'legend' => array(
+        'stores' => 'Magasins "Click & Collect en magasin"',
+    ),
+), false);
+
+MLI18n::gi()->{'amazon_config_bopis__legend__products'} = 'Gestion des stocks de magasin';
+MLI18n::gi()->{'amazon_config_bopis__legend__orders'} = 'Statut de commande';
+MLI18n::gi()->{'amazon_config_bopis__legend__orderimport'} = '{#i18n:amazon_config_account_orderimport#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.orderstatus.open__label'} = 'Statut pour les commandes "Click & Collect en magasin".';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.orderstatus.open__help'} = 'Définit le statut de commande qu\'une commande "Click & Collect en magasin" importée d\'Amazon devrait automatiquement recevoir dans le magasin.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.orderstatus.readyforpickup__label'} = 'Prêt à être récupéré';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.orderstatus.readyforpickup__help'} = 'Définissez ici le statut du magasin qui devrait automatiquement définir le statut "Prêt à être récupéré" sur Amazon.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.orderstatus.pickedup__label'} = 'Récupéré';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.orderstatus.pickedup__help'} = 'Définissez ici le statut du magasin qui devrait automatiquement définir le statut "Récupéré" sur Amazon.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.orderstatus.refund__label'} = 'Remboursement';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.orderstatus.refund__help'} = 'Définissez ici le statut du magasin qui devrait automatiquement définir le statut "Remboursement" sur Amazon.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.refund.reason__label'} = 'Raison du remboursement';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.refund.reason__help'} = 'Sélectionnez ici une raison par défaut pour les remboursements qui sera ensuite sélectionnée lors de la synchronisation cronjob lorsqu\'un remboursement est effectué.';
+MLI18n::gi()->{'amazon_bopis.refund.reason_NoInventory'} = 'Indisponibilité de stock';
+MLI18n::gi()->{'amazon_bopis.refund.reason_CustomerReturn'} = 'Retour client';
+MLI18n::gi()->{'amazon_bopis.refund.reason_GeneralAdjustment'} = 'Ajustement général';
+MLI18n::gi()->{'amazon_bopis.refund.reason_CouldNotShip'} = 'Impossible à expédier';
+MLI18n::gi()->{'amazon_bopis.refund.reason_DifferentItem'} = 'Article différent';
+MLI18n::gi()->{'amazon_bopis.refund.reason_Abandoned'} = 'Abandonné';
+MLI18n::gi()->{'amazon_bopis.refund.reason_CustomerCancel'} = 'Annulation client';
+MLI18n::gi()->{'amazon_bopis.refund.reason_PriceError'} = 'Erreur de prix';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.stores__label'} = 'Ajouter ou mettre à jour les points de retrait Click & Collect';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.status__label'} = 'Activer le point de retrait';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.status__help'} = 'Si la case est cochée, le point de retrait est considéré comme actif et les clients peuvent y retirer leur commande.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.stockmanagement__label'} = 'Quantité disponible en magasin';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.stockmanagement__help'} = '
+    Spécifiez ici la quantité d\'article disponible pour le magasin respectif.<br/>
+    <br/>
+    Pour éviter les survente, vous pouvez sélectionner l\option <br/>
+    "<i>Prendre en charge le stock de la boutique moins la valeur du champ de droite</i>".<br/>
+    <br/>
+    <strong>Exemple :</strong> valeur définie "<i>2</i>". Résultat : quatité disponible dans votre e-boutique : 10 → quantité disponible en magasin click and colleckt : 8<br/>
+    <br/>';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.stockmanagement.store__label'} = 'Magasin';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.stockmanagement.quantity__label'} = 'Stock disponible en magasin';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.supplysourcecode__label'} = 'Numéro d\'identification<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.supplysourcecode__help'} = 'Veuillez définir un identificateur pour votre point de retrait.
+Celui-ci est utilisé pour l’identification interne sur Amazon, c\'est pourquoi il doit être unique et ne peut plus être modifié.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.supplysourcecode_creation_error__label'} = 'En raison des raisons énumérées ci-dessous, nous n\'avons pas pu créer le magasin ';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.supplysourcecode_update_error__label'} = 'En raison des raisons énumérées ci-dessous, nous n\'avons pas pu mettre à jour le magasin ';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.supplysourcecode_creationAndUpdate_error__label'} = 'Nous avons pu ajouter le magasin, mais en raison des raisons énumérées ci-dessous, nous n\'avons pas pu mettre à jour le magasin ';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.alias__label'} = 'Nom du point de retrait<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.alias__help'} = 'Ce nom s\'affiche dans les cas d\'application pertinents. Le format doit être "nom du magasin - rue - code postal". ".';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.alias__placeholder'} = 'nom du magasin - rue - code postal';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address__label'} = 'Adresse<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_bopis_storename'} = 'Nom (ex. : "nom du magasin - rue - code postal")';
+MLI18n::gi()->{'amazon_bopis_addressline1'} = 'Adresse ligne 1<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_bopis_addressline2'} = 'Adresse ligne 2';
+MLI18n::gi()->{'amazon_bopis_addressline3'} = 'Adresse ligne 3';
+MLI18n::gi()->{'amazon_bopis_city'} = 'Ville<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_bopis_county'} = 'Comté';
+MLI18n::gi()->{'amazon_bopis_district'} = 'District';
+MLI18n::gi()->{'amazon_bopis_stateorregion'} = 'État ou région';
+MLI18n::gi()->{'amazon_bopis_postalcode'} = 'Code postal<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_bopis_country'} = 'Pays<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.createstoresuccess'} = 'Magasin créé avec succès avec le code de source d\'approvisionnement suivant: ';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.updatestoresuccess'} = 'Magasin mis à jour avec succès avec le code de source d\'approvisionnement suivant: ';
+
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.addressline1__label'} = '{#i18n:amazon_bopis_addressline1#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.addressline2__label'} = '{#i18n:amazon_bopis_addressline2#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.addressline3__label'} = '{#i18n:amazon_bopis_addressline3#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.city__label'} = '{#i18n:amazon_bopis_city#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.county__label'} = '{#i18n:amazon_bopis_county#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.district__label'} = '{#i18n:amazon_bopis_district#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.stateorregion__label'} = '{#i18n:amazon_bopis_stateorregion#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.postalcode__label'} = '{#i18n:amazon_bopis_postalcode#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.countrycode__label'} = '{#i18n:amazon_bopis_country#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.address.phone__label'} = '{#i18n:amazon_bopis_phone#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.timezone__label'} = 'Fuseau horaire<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.handlingtime__label'} = 'Temps de traitement<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.handlingtime__help'} = 'Le temps de traitement décrit la période de temps qu\'il vous faudra pour préparer la commande pour le ramassage.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.handlingtime__label'} = '{#i18n:amazon_config_bopis__field__bopis.array.configuration.handlingtime__label#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.handlingtime__help'} = '{#i18n:amazon_config_bopis__field__bopis.array.configuration.handlingtime__help#}';
+MLI18n::gi()->{'amazon_bopis.handling_time_Days'} = 'Jours';
+MLI18n::gi()->{'amazon_bopis.handling_time_Hours'} = 'Heures';
+MLI18n::gi()->{'amazon_bopis.handling_time_Minutes'} = 'Minutes';
+MLI18n::gi()->{'amazon_bopis_value'} = 'Valeur';
+MLI18n::gi()->{'amazon_bopis_timeunit'} = 'Unité de temps';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.handlingtime.value__label'} = '{#i18n:amazon_bopis_value#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.handlingtime.timeunit__label'} = '{#i18n:amazon_bopis_timeunit#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.handlingtime.value__label'} = '{#i18n:amazon_bopis_value#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.handlingtime.timeunit__label'} = '{#i18n:amazon_bopis_timeunit#}';
+MLI18n::gi()->{'amazon_bopis_operationalconfiguration'} = 'Coordonnées et heures d\'ouverture de la boutique<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_bopis_operationalconfiguration_hint'} = 'Si par exemple le magasin n\'est pas ouvert le samedi ou le dimanche, laissez les champs d\'heure d\'ouverture et de fermeture vides.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration__label'} = '{#i18n:amazon_bopis_operationalconfiguration#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration__hint'} = '{#i18n:amazon_bopis_operationalconfiguration_hint#}';
+MLI18n::gi()->{'amazon_bopis_contactdetails'} = 'Coordonnées de contact';
+MLI18n::gi()->{'amazon_bopis_email'} = 'Email';
+MLI18n::gi()->{'amazon_bopis_phone'} = 'Téléphone';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.contactdetails__label'} = '{#i18n:amazon_bopis_contactdetails#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.contactdetails.email__label'} = '{#i18n:amazon_bopis_email#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.contactdetails.phone__label'} = '{#i18n:amazon_bopis_phone#}';
+MLI18n::gi()->{'amazon_bopis_monday'} = 'Lundi';
+MLI18n::gi()->{'amazon_bopis_tuesday'} = 'Mardi';
+MLI18n::gi()->{'amazon_bopis_wednesday'} = 'Mercredi';
+MLI18n::gi()->{'amazon_bopis_thursday'} = 'Jeudi';
+MLI18n::gi()->{'amazon_bopis_friday'} = 'Vendredi';
+MLI18n::gi()->{'amazon_bopis_saturday'} = 'Samedi';
+MLI18n::gi()->{'amazon_bopis_sunday'} = 'Dimanche';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.monday__label'} = '{#i18n:amazon_bopis_monday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.tuesday__label'} = '{#i18n:amazon_bopis_tuesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.wednesday__label'} = '{#i18n:amazon_bopis_wednesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.thursday__label'} = '{#i18n:amazon_bopis_thursday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.friday__label'} = '{#i18n:amazon_bopis_friday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.saturday__label'} = '{#i18n:amazon_bopis_saturday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.sunday__label'} = '{#i18n:amazon_bopis_sunday#}';
+MLI18n::gi()->{'amazon_bopis_starttime'} = 'Heure de début';
+MLI18n::gi()->{'amazon_bopis_endtime'} = 'Heure de fin';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.monday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.monday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.tuesday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.tuesday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.wednesday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.wednesday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.thursday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.thursday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.friday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.friday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.saturday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.saturday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.sunday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.sunday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_bopis_throughputconfig'} = 'Configuration de la capacité';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.throughputconfig__label'} = '{#i18n:amazon_bopis_throughputconfig#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.throughputconfig.value__label'} = '{#i18n:amazon_bopis_value#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.configuration.operationalconfiguration.throughputconfig.timeunit__label'} = '{#i18n:amazon_bopis_timeunit#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities__label'} = 'Capacités';
+MLI18n::gi()->{'amazon_bopis_issupported'} = 'Est pris en charge?';
+MLI18n::gi()->{'amazon_bopis_usefrommaster'} = 'Utiliser depuis la boutique?';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.issupported__label'} = '{#i18n:amazon_bopis_issupported#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration__label'} = 'Sortie {#i18n:amazon_bopis_operationalconfiguration#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration__hint'} = '{#i18n:amazon_bopis_operationalconfiguration_hint#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.usefrommaster__label'} = '{#i18n:amazon_bopis_usefrommaster#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.monday__label'} = '{#i18n:amazon_bopis_monday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.tuesday__label'} = '{#i18n:amazon_bopis_tuesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.wednesday__label'} = '{#i18n:amazon_bopis_wednesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.thursday__label'} = '{#i18n:amazon_bopis_thursday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.friday__label'} = '{#i18n:amazon_bopis_friday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.saturday__label'} = '{#i18n:amazon_bopis_saturday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.sunday__label'} = '{#i18n:amazon_bopis_sunday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.throughputconfig__label'} = '{#i18n:amazon_bopis_throughputconfig#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.throughputconfig.value__label'} = '{#i18n:amazon_bopis_value#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.throughputconfig.timeunit__label'} = '{#i18n:amazon_bopis_timeunit#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.monday__label'} = '{#i18n:amazon_bopis_monday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.tuesday__label'} = '{#i18n:amazon_bopis_tuesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.wednesday__label'} = '{#i18n:amazon_bopis_wednesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.thursday__label'} = '{#i18n:amazon_bopis_thursday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.friday__label'} = '{#i18n:amazon_bopis_friday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.saturday__label'} = '{#i18n:amazon_bopis_saturday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.sunday__label'} = '{#i18n:amazon_bopis_sunday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.contactdetails__label'} = '{#i18n:amazon_bopis_contactdetails#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.contactdetails.email__label'} = '{#i18n:amazon_bopis_email#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.contactdetails.phone__label'} = '{#i18n:amazon_bopis_phone#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.monday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.monday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.tuesday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.tuesday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.wednesday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.wednesday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.thursday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.thursday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.friday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.friday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.saturday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.saturday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.sunday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.operationalconfiguration.sunday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation__label'} = 'Emplacement de retour';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address__label'} = 'Adresse';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.usefrommaster__label'} = '{#i18n:amazon_bopis_usefrommaster#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.contactdetails__label'} = '{#i18n:amazon_bopis_contactdetails#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.contactdetails.email__label'} = '{#i18n:amazon_bopis_email#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.contactdetails.phone__label'} = '{#i18n:amazon_bopis_phone#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.name__label'} = '{#i18n:amazon_bopis_storename#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.addressline1__label'} = '{#i18n:amazon_bopis_addressline1#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.addressline2__label'} = '{#i18n:amazon_bopis_addressline2#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.addressline3__label'} = '{#i18n:amazon_bopis_addressline3#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.city__label'} = '{#i18n:amazon_bopis_city#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.county__label'} = '{#i18n:amazon_bopis_county#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.district__label'} = '{#i18n:amazon_bopis_district#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.stateorregion__label'} = '{#i18n:amazon_bopis_stateorregion#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.postalcode__label'} = '{#i18n:amazon_bopis_postalcode#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.countrycode__label'} = '{#i18n:amazon_bopis_country#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.returnlocation.address.phone__label'} = '{#i18n:amazon_bopis_phone#}';
+
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel__label'} = 'Canal de livraison';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.issupported__label'} = '{#i18n:amazon_bopis_issupported#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration__label'} = '{#i18n:amazon_bopis_operationalconfiguration#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration__hint'} = '{#i18n:amazon_bopis_operationalconfiguration_hint#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.usefrommaster__label'} = '{#i18n:amazon_bopis_usefrommaster#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.monday__label'} = '{#i18n:amazon_bopis_monday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.tuesday__label'} = '{#i18n:amazon_bopis_tuesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.wednesday__label'} = '{#i18n:amazon_bopis_wednesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.thursday__label'} = '{#i18n:amazon_bopis_thursday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.friday__label'} = '{#i18n:amazon_bopis_friday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.saturday__label'} = '{#i18n:amazon_bopis_saturday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.sunday__label'} = '{#i18n:amazon_bopis_sunday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.throughputconfig__label'} = '{#i18n:amazon_bopis_throughputconfig#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.throughputconfig.value__label'} = '{#i18n:amazon_bopis_value#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.throughputconfig.timeunit__label'} = '{#i18n:amazon_bopis_timeunit#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.monday__label'} = '{#i18n:amazon_bopis_monday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.tuesday__label'} = '{#i18n:amazon_bopis_tuesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.wednesday__label'} = '{#i18n:amazon_bopis_wednesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.thursday__label'} = '{#i18n:amazon_bopis_thursday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.friday__label'} = '{#i18n:amazon_bopis_friday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.saturday__label'} = '{#i18n:amazon_bopis_saturday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.sunday__label'} = '{#i18n:amazon_bopis_sunday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.usefrommaster__label'} = '{#i18n:amazon_bopis_usefrommaster#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.contactdetails__label'} = '{#i18n:amazon_bopis_contactdetails#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.contactdetails.email__label'} = '{#i18n:amazon_bopis_email#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.contactdetails.phone__label'} = '{#i18n:amazon_bopis_phone#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.monday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.monday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.tuesday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.tuesday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.wednesday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.wednesday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.thursday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.thursday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.friday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.friday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.saturday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.saturday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.sunday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.deliverychannel.operationalconfiguration.sunday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel__label'} = 'Canal de ramassage';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.issupported__label'} = '{#i18n:amazon_bopis_issupported#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.inventoryholdperiod__label'} = 'Délai de conservation de la marchandise<span class="bull">•</span>';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.inventoryholdperiod__help'} = 'Décrit la durée pendant laquelle la marchandise est disponible pour l\'enlèvement avant que vous n\'annuliez la commande.';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.inventoryholdperiod.value__label'} = '{#i18n:amazon_bopis_value#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.inventoryholdperiod.timeunit__label'} = '{#i18n:amazon_bopis_timeunit#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration__label'} = '{#i18n:amazon_bopis_operationalconfiguration#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration__hint'} = '{#i18n:amazon_bopis_operationalconfiguration_hint#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.usefrommaster__label'} = '{#i18n:amazon_bopis_usefrommaster#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.monday__label'} = '{#i18n:amazon_bopis_monday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.tuesday__label'} = '{#i18n:amazon_bopis_tuesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.wednesday__label'} = '{#i18n:amazon_bopis_wednesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.thursday__label'} = '{#i18n:amazon_bopis_thursday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.friday__label'} = '{#i18n:amazon_bopis_friday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.saturday__label'} = '{#i18n:amazon_bopis_saturday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.sunday__label'} = '{#i18n:amazon_bopis_sunday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.throughputconfig__label'} = '{#i18n:amazon_bopis_throughputconfig#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.throughputconfig.value__label'} = '{#i18n:amazon_bopis_value#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.throughputconfig.timeunit__label'} = '{#i18n:amazon_bopis_timeunit#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.monday__label'} = '{#i18n:amazon_bopis_monday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.tuesday__label'} = '{#i18n:amazon_bopis_tuesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.wednesday__label'} = '{#i18n:amazon_bopis_wednesday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.thursday__label'} = '{#i18n:amazon_bopis_thursday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.friday__label'} = '{#i18n:amazon_bopis_friday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.saturday__label'} = '{#i18n:amazon_bopis_saturday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.sunday__label'} = '{#i18n:amazon_bopis_sunday#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.contactdetails__label'} = '{#i18n:amazon_bopis_contactdetails#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.contactdetails.email__label'} = '{#i18n:amazon_bopis_email#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.contactdetails.phone__label'} = '{#i18n:amazon_bopis_phone#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.monday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.monday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.tuesday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.tuesday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.wednesday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.wednesday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.thursday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.thursday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.friday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.friday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.saturday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.saturday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.sunday.starttime__label'} = '{#i18n:amazon_bopis_starttime#}';
+MLI18n::gi()->{'amazon_config_bopis__field__bopis.array.capabilities.pickupchannel.operationalconfiguration.sunday.endtime__label'} = '{#i18n:amazon_bopis_endtime#}';

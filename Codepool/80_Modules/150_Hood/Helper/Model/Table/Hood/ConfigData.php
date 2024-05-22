@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -89,14 +89,6 @@ class ML_Hood_Helper_Model_Table_Hood_ConfigData extends ML_Form_Helper_Model_Ta
         $aField['values'] = MLModul::gi()->getConditionValues();
     }
 
-    public function shippingTime_minField(&$aField) {
-        $aField['values'] = MLModul::gi()->getDaysValue();
-    }
-
-    public function shippingTime_maxField(&$aField) {
-        $aField['values'] = MLModul::gi()->getDaysValue();
-    }
-
     public function fixed_price_addKindField(&$aField) {
         $this->price_addKindField($aField);
     }
@@ -170,18 +162,26 @@ class ML_Hood_Helper_Model_Table_Hood_ConfigData extends ML_Form_Helper_Model_Ta
         
     public function orderstatus_canceled_nostockField(&$aField) {
         $this->orderstatus_canceledField($aField);
+
+        $aField['values'] = array('' => MLI18n::gi()->get('ML_LABEL_DONT_USE')) + $aField['values'];
     }
 
     public function orderstatus_canceled_defectField(&$aField) {
         $this->orderstatus_canceledField($aField);
+
+        $aField['values'] = array('' => MLI18n::gi()->get('ML_LABEL_DONT_USE')) + $aField['values'];
     }
 
     public function orderstatus_canceled_revokedField(&$aField) {
         $this->orderstatus_canceledField($aField);
+
+        $aField['values'] = array('' => MLI18n::gi()->get('ML_LABEL_DONT_USE')) + $aField['values'];
     }
 
     public function orderstatus_canceled_nopaymentField(&$aField) {
         $this->orderstatus_canceledField($aField);
+
+        $aField['values'] = array('' => MLI18n::gi()->get('ML_LABEL_DONT_USE')) + $aField['values'];
     }
 
     public function orderimport_shippingmethodField (&$aField) {

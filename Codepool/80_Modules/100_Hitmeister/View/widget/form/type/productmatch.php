@@ -1,18 +1,19 @@
-<?php class_exists('ML', false) or die(); ?>
-<input type="hidden" name="<?php echo MLHTTP::gi()->parseFormFieldName('matching_nextpage') ?>" value="<?php echo $this->oPrepareHelper->currentPage == $this->oPrepareHelper->totalPages ? 'null' : $this->oPrepareHelper->currentPage + 1 ?>" />
-<input type="hidden" name="<?php echo MLHTTP::gi()->parseFormFieldName('matching_totalpages') ?>" value="<?php echo $this->oPrepareHelper->totalPages ?>" />
-<div id="productDetailContainer" class="dialog2" title="<?php echo ML_LABEL_DETAILS ?>"></div>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
+    <input type="hidden" name="<?php echo MLHTTP::gi()->parseFormFieldName('matching_nextpage') ?>" value="<?php echo $this->oPrepareHelper->currentPage == $this->oPrepareHelper->totalPages ? 'null' : $this->oPrepareHelper->currentPage + 1 ?>"/>
+    <input type="hidden" name="<?php echo MLHTTP::gi()->parseFormFieldName('matching_totalpages') ?>" value="<?php echo $this->oPrepareHelper->totalPages ?>"/>
+    <div id="productDetailContainer" class="dialog2" title="<?php echo ML_LABEL_DETAILS ?>"></div>
 <?php foreach ($this->oPrepareHelper->currentChunk as $aProduct) : ?>
-<table class="matching">
-    <tbody class="product">
+    <table class="matching">
+        <tbody class="product">
         <tr>
             <th colspan="5">
                 <div class="title">
                     <span class="darker"><?php echo ML_LABEL_SHOP_TITLE ?>:</span>
-                         <?php echo $aProduct['Title'] ?>&nbsp;&nbsp;
+                    <?php echo $aProduct['Title'] ?>&nbsp;&nbsp;
                     <span>
-                        [<span style="color: #ddd;"><?php echo ML_LABEL_ARTICLE_NUMBER ?></span>: <?php echo $aProduct['Model'] ?>,
-                        <span style="color: #ddd;"><?php echo ML_LABEL_SHOP_PRICE_BRUTTO ?></span>: <?php echo $aProduct['Price'] ?>]
+                        [<span style="color: #000;"><?php echo ML_LABEL_ARTICLE_NUMBER ?></span>: <?php echo $aProduct['Model'] ?>,
+                        <span style="color: #000;"><?php echo ML_LABEL_SHOP_PRICE_BRUTTO ?></span>: <?php echo $aProduct['Price'] ?>]
                     </span>
                 </div>
                 <input type="hidden" name="<?php echo MLHTTP::gi()->parseFormFieldName('matching['.$aProduct['Id'].'][title]') ?>"
@@ -46,7 +47,7 @@
             </td>
         </tr>
     </tbody>
-    <tr class="spacer"><td colspan="4"></td></tr>
+    <!--<tr class="spacer"><td colspan="4"></td></tr>-->
     <script type="text/javascript">/*<![CDATA[*/
         var productDetailJson_<?php echo $aProduct['Id'] ?> = <?php echo $this->renderDetailView($aProduct); ?>
 
@@ -67,6 +68,10 @@
                     url: '<?php echo $this->getCurrentUrl() ?>',
 
                     data: ({
+                        <?php foreach (MLHttp::gi()->getNeededFormFields() as $key => $value) {
+                            echo "'".$key."': '".addslashes($value)."',\n";
+                        }
+                        ?>
                         '<?php echo MLHTTP::gi()->parseFormFieldName('method') ?>': 'ItemSearchByTitle',
                         '<?php echo MLHTTP::gi()->parseFormFieldName('ajax') ?>': true,
                         '<?php echo MLHTTP::gi()->parseFormFieldName('productID') ?>': <?php echo $aProduct['Id'] ?>,

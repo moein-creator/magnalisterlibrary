@@ -104,7 +104,7 @@ MLSetting::gi()->priceminister_prepare_variations = array(
     'action' => array(
         'legend' => array(
             'classes' => array(
-                'mlhidden',
+                '',
             ),
         ),
         'row' => array(

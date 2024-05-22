@@ -25,10 +25,6 @@ MLI18n::gi()->{'ebay_config_account_sync'} = 'Synchronisation';
 MLI18n::gi()->{'ebay_config_account_orderimport'} = 'Importation de commandes';
 MLI18n::gi()->{'ebay_config_account_emailtemplate'} = '{#i18n:configform_emailtemplate_legend#}';
 MLI18n::gi()->{'ebay_config_account_producttemplate'} = 'Gabarit pour fiche de produit';
-MLI18n::gi()->{'ebay_configform_prepare_hitcounter_values__NoHitCounter'} = 'Aucun';
-MLI18n::gi()->{'ebay_configform_prepare_hitcounter_values__BasicStyle'} = 'simple';
-MLI18n::gi()->{'ebay_configform_prepare_hitcounter_values__RetroStyle'} = 'Style rétro';
-MLI18n::gi()->{'ebay_configform_prepare_hitcounter_values__HiddenStyle'} = 'caché';
 MLI18n::gi()->{'ebay_configform_prepare_gallerytype_values__None'} = 'Pas d\'image';
 MLI18n::gi()->{'ebay_configform_prepare_gallerytype_values__Gallery'} = 'Standard';
 MLI18n::gi()->{'ebay_configform_prepare_gallerytype_values__Plus'} = 'Galerie plus';
@@ -40,29 +36,11 @@ MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__4'} = '4 jours';
 MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__5'} = '5 jours';
 MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__6'} = '6 jours';
 MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__7'} = '7 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__8'} = '8 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__9'} = '9 jours';
 MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__10'} = '10 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__11'} = '11 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__12'} = '12 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__13'} = '13 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__14'} = '14 jours';
 MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__15'} = '15 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__16'} = '16 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__17'} = '17 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__18'} = '18 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__19'} = '19 jours';
 MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__20'} = '20 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__21'} = '21 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__22'} = '22 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__23'} = '23 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__24'} = '24 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__25'} = '25 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__26'} = '26 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__27'} = '27 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__28'} = '28 jours';
-MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__29'} = '29 jours';
 MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__30'} = '30 jours';
+MLI18n::gi()->{'ebay_configform_prepare_dispatchtimemax_values__40'} = '40 jours';
 MLI18n::gi()->{'ebay_configform_price_chinese_quantityinfo'} = 'Lors d\'une augmentation de prix pour des ventes aux enchères, le nombre doit être seulement que de 1.';
 MLI18n::gi()->{'ebay_configform_account_sitenotselected'} = 'Choisissez d\'abord le site eBay';
 MLI18n::gi()->{'ebay_configform_orderstatus_sync_values__auto'} = '{#i18n:ebay_config_general_autosync#}';
@@ -81,20 +59,18 @@ MLI18n::gi()->{'ebay_configform_orderimport_payment_values__matching__title'} = 
 MLI18n::gi()->{'ebay_configform_orderimport_shipping_values__textfield__title'} = 'De la zone de texte';
 MLI18n::gi()->{'ebay_configform_orderimport_shipping_values__textfield__textoption'} = '1';
 MLI18n::gi()->{'ebay_configform_orderimport_shipping_values__matching__title'} = 'Classement automatique';
-MLI18n::gi()->{'ebay_config_sync_inventory_import__true'} = 'Oui';
-MLI18n::gi()->{'ebay_config_sync_inventory_import__false'} = 'Non';
 MLI18n::gi()->{'configform_strikeprice_kind_values__OldPrice'} = 'Ancien prix';
 /*MLI18n::gi()->{'configform_strikeprice_kind_values__OldeBayPrice'} = 'Ancien prix eBay';*/
 MLI18n::gi()->{'configform_strikeprice_kind_values__ManufacturersPrice'} = 'Prix de d&eacute;tail';
 MLI18n::gi()->{'ebay_config_price__field__strikeprice.active__label'} = '';
 MLI18n::gi()->{'ebay_config_price__field__strikeprice.active__valuehint'} = 'Activer les prix barr&eacute;s';
-MLI18n::gi()->{'ebay_config_price__field__strikeprice.active__alert'} = '<span style="color:red;font-weight:bold">Activer les prix barr&eacute;s</span><br /><br />Important: Les prix barr&eacute;s ne sont disponibles que pour certains site eBay (Allemagne: <b>Platin Shop</b> ou <b>Premium Shop</b>). Veuillez consulter les pages d&apos;aide d&apos;eBay pour plus de d&eacute;tails.<br /><br />Si vous envoyez des produits sur eBay avec un prix barré sans être détenteur d’une boutique Premium ou Platinum, <b>ils seront rejetés et vous recevrez un message d’erreur.</b>';
+MLI18n::gi()->{'ebay_config_price__field__strikeprice.active__alert'} = '<span style="color:#e31a1c;font-weight:bold">Activer les prix barr&eacute;s</span><br /><br />Important: Les prix barr&eacute;s ne sont disponibles que pour certains site eBay (Allemagne: <b>Platin Shop</b> ou <b>Premium Shop</b>). Veuillez consulter les pages d&apos;aide d&apos;eBay pour plus de d&eacute;tails.<br /><br />Si vous envoyez des produits sur eBay avec un prix barré sans être détenteur d’une boutique Premium ou Platinum, <b>ils seront rejetés et vous recevrez un message d’erreur.</b>';
 MLI18n::gi()->{'ebay_config_price__field__strikepriceoptions__label'} = '{#i18n:configform_price_field_strikeprice_label#}';
 MLI18n::gi()->{'ebay_config_price__field__strikepriceoptions__help'} = '{#i18n:configform_price_field_strikeprice_help#}';
 MLI18n::gi()->{'ebay_config_price__field__strikeprice.group__label'} = '';
 MLI18n::gi()->{'ebay_config_price__field__strikeprice.kind__label'} = '{#i18n:configform_price_field_priceoptions_kind_label#}';
 MLI18n::gi()->{'ebay_config_price__field__strikeprice.kind__hint'} = '';
-MLI18n::gi()->{'ebay_config_price__field__strikeprice.kind__help'} = '<span style="color:red;font-weight:bold">Le prix barré correspond au prix de détail suggéré par le fabricant (PDSF)</span><br /><br />Cochez la case, si le prix barré correspond au au prix de détail suggéré par le fabricant (PDSF).';
+MLI18n::gi()->{'ebay_config_price__field__strikeprice.kind__help'} = '<span style="color:#e31a1c;font-weight:bold">Le prix barré correspond au prix de détail suggéré par le fabricant (PDSF)</span><br /><br />Cochez la case, si le prix barré correspond au au prix de détail suggéré par le fabricant (PDSF).';
 MLI18n::gi()->{'ebay_config_account_emailtemplate_sender'} = 'Nom de votre boutique, de votre société, ...';
 MLI18n::gi()->{'ebay_config_account_emailtemplate_sender_email'} = 'exemple@votre-boutique.fr';
 MLI18n::gi()->{'ebay_config_account_emailtemplate_subject'} = 'Votre commande #SHOPURL#';
@@ -150,7 +126,7 @@ Nous vous remercions d\'avoir effectué une commande sur #MARKETPLACE# et d’av
 <p>Notre équipe #ORIGINATOR#</p>
 ';
 MLI18n::gi()->{'ebay_config_account__legend__account'} = 'Mes coordonnées';
-MLI18n::gi()->{'ebay_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'ebay_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'ebay_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'ebay_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'ebay_config_account__field__username__label'} = 'Pseudo';
@@ -184,6 +160,7 @@ MLI18n::gi()->{'ebay_config_prepare__field__postalcode__help'} = 'Saisissez ici 
 MLI18n::gi()->{'ebay_config_prepare__field__location__label'} = 'Ville';
 MLI18n::gi()->{'ebay_config_prepare__field__country__label'} = 'Pays';
 MLI18n::gi()->{'ebay_config_prepare__field__mwst__label'} = 'TVA';
+MLI18n::gi()->{'ebay_config_prepare__field__mwst.always__label'} = '&quot;inkl. MwSt.&quot; immer anzeigen';
 MLI18n::gi()->{'ebay_config_prepare__field__mwst__help'} = '<p>Here you can set the default value for VAT (percentage), which will be shown in your eBay listings. You can adjust the VAT rate later for each product individually in the magnalister product preparation.</p>
                         <p><b>Important:</b><br/>Please only fill in this field if you charge VAT.</p>';
 MLI18n::gi()->{'ebay_config_prepare__field__mwst__hint'} = 'VAT rate in %';
@@ -226,7 +203,7 @@ MLI18n::gi()->{'ebay_config_prepare__field__gallerytype__hint'} = 'L\'option "Ga
 MLI18n::gi()->{'ebay_config_prepare__field__gallerytype__alert__Plus__title'} = 'Notez que';
 MLI18n::gi()->{'ebay_config_prepare__field__gallerytype__alert__Plus__content'} = 'Avec l\'activation de l\'option <b>Galerie plus</b> les images de vos articles seront agrandit dans l\'aperçus de votre offre et dans la liste de résultats de recherche.<br>
     <br> Les images téléchragés doivent au-moins avoir une résolution de 800 x 800 pixels.<br>
-<br> Des <span style="color:red;">frais supplémentaires</span> peuvent-être facturés par eBay!<br>
+<br> Des <span style="color:#e31a1c;">frais supplémentaires</span> peuvent-être facturés par eBay!<br>
 <br> Pour plus d\'informations, reportez-vous à l\'aide en ligne de eBay, sous la rubrique galerie d\'images.<br> <br>
 <br>RedGecko GmbH n\'assume aucune responsabilité quant aux frais supplémentaires.<br>
 <br>
@@ -330,10 +307,8 @@ MLI18n::gi()->{'ebay_config_prepare__field__useprefilledinfo__help'} = 'Activez 
 MLI18n::gi()->{'ebay_config_prepare__field__useprefilledinfo__valuehint'} = 'Afficher les informations sur l\'article d\'eBay';
 MLI18n::gi()->{'ebay_config_prepare__field__privatelisting__label'} = 'Listing privé (liste)';
 MLI18n::gi()->{'ebay_config_prepare__field__privatelisting__hint'} = '{#i18n:ebay_prepare_apply_form__field__privatelisting__hint#}';
-MLI18n::gi()->{'ebay_config_prepare__field__privatelisting__help'} = 'Si la fonction est activée, la liste des enchérisseurs et des acheteurs n’est pas publique. <span style="color:red">option payante</span>';
+MLI18n::gi()->{'ebay_config_prepare__field__privatelisting__help'} = 'Si la fonction est activée, la liste des enchérisseurs et des acheteurs n’est pas publique. <span style="color:#e31a1c">option payante</span>';
 MLI18n::gi()->{'ebay_config_prepare__field__privatelisting__valuehint'} = 'Vendeur / liste d\'enchérisseurs n\'est pas accessible au public.';
-MLI18n::gi()->{'ebay_config_prepare__field__hitcounter__label'} = 'Compteur de visiteurs';
-MLI18n::gi()->{'ebay_config_prepare__field__hitcounter__help'} = 'Paramètres du compteur de visiteurs pour les listings.';
 MLI18n::gi()->{'ebay_config_prepare__field__restrictedtobusiness__label'} = 'Clients commerciaux uniquement';
 MLI18n::gi()->{'ebay_config_prepare__field__restrictedtobusiness__help'} = 'Les articles ne peuvent être achetés que par des clients commerciaux.';
 MLI18n::gi()->{'ebay_config_prepare__field__restrictedtobusiness__valuehint'} = 'Si la fonction est activée, seuls les clients commerciaux pourront acheter les articles';
@@ -361,11 +336,15 @@ Après activation de la fonction, les images téléchargées sont d’abord trai
 plus d’informations (en Allemand uniquement disponible) sous : <br>http://pages.ebay.de/help/sell/gallery-upgrade.html<br>
 <br>
 <b>Délai d’actualisation</b> <br>
-Immédiate si vous avez souscrit à l’option, dans le cas contraire, vous devez actualiser manuellement vos images. <br>
-<br>
-<b>Attention : </b>L’option “Pack d’images” n’est pas disponible pour les pays francophones. Si vous vendez sur d’autres marchés nationaux, consulter les pages d’informations des différentes places de marché eBay pour savoir si l’option est disponible.';
+Immédiate si vous avez souscrit à l’option, dans le cas contraire, vous devez actualiser manuellement vos images.';
 MLI18n::gi()->{'ebay_config_prepare__field__picturepack__valuehint'} = 'Activer';
 MLI18n::gi()->{'ebay_config_prepare__field__productfield.brand__label'} = 'Nom de l\'article';
+MLI18n::gi()->{'ebay_config_prepare__field__productfield.tecdocktype__label'} = 'TecDoc KType';
+MLI18n::gi()->{'ebay_config_prepare__field__productfield.tecdocktype__help'} = '<strong>For Motor parts only</strong><br /><br />
+                If you store the TecDoc KType in your Shop`s database, and you want to use it also for eBay listings, 
+                choose the database table and column where the KType is stored.<br /><br />
+                The KType will be then (if existent for the given item) transferred to eBay,
+                 so that the item can be found easily on the basis of the TecDoc compatibility list.';
 MLI18n::gi()->{'ebay_config_prepare__field__fixed.quantity__label'} = 'Nombre d\'unité';
 MLI18n::gi()->{'ebay_config_prepare__field__fixed.quantity__help'} = 'Cette rubrique vous permet d’indiquer les quantités disponibles d’un article de votre stock, pour une place de marché particulière.
 <br/><br/>
@@ -600,7 +579,7 @@ MLI18n::gi()->{'ebay_config_sync__field__stocksync.frommarketplace__hint'} = '';
 MLI18n::gi()->{'ebay_config_sync__field__stocksync.frommarketplace__help'} = 'Si cette fonction est activée le nombre de commandes effectués et payés sur eBay sera soustrait de votre stock boutique.<br>
 <br>
 <b>Attention :</b> cette fonction ne s’exécute que si  l’importation des commandes est activée!';
-MLI18n::gi()->{'ebay_config_sync__field__inventorysync.price__label'} = 'Prix de l\'article';
+MLI18n::gi()->{'ebay_config_sync__field__inventorysync.price__label'} = 'Prix de l&apos;article';
 MLI18n::gi()->{'ebay_config_sync__field__inventorysync.price__hint'} = '';
 MLI18n::gi()->{'ebay_config_sync__field__inventorysync.price__help'} = '<b>Synchronisation automatique via CronJob (recommandée)</b><br>
 <br>
@@ -614,8 +593,6 @@ Pour opérer la synchronisation utilisez le lien suivant:<br>
 <b>Attention<b>, toute importation provenant d’un client n’utilisant pas le tarif “flat” ou ne respectant pas le délai de 15 minute sera bloqué.<br>
 <br>
 <b>Remarque :<b> Cette fonction est effective, après règlement des paramètres configurés dans “Configuration” &rarr; “calcul du prix”.';
-MLI18n::gi()->{'ebay_config_sync__field__inventory.import__label'} = 'Synchronisez les articles ne venant pas de la boutique';
-MLI18n::gi()->{'ebay_config_sync__field__inventory.import__help'} = 'Est-ce que des articles, non enregistrés sur magnalister, doivent être affichés et synchronisés?<br/><br/>Si la fonction est activée, tous les articles sur ce compte eBay, seront proposés sur eBay, et seront chargés tous les soirs dans la base de données magnalister et affichés dans les \'Listings\' du Plugin.<br/><br/>.<br/><br/>La synchronisation des prix et des inventaires fonctionne aussi pour ces articles, si le code SKU (unité de gestion des stocks) sur eBay correspond à un numéro d\'article dans la boutique en ligne.<br/><br/>En outre vous devez avoir tout réglé sur "configuration  globale" > "Synchronisation du processus de numérotation" > "Numéro d\'article (en boutique) = SKU (Place de marché)".<br/>Veuillez noter, s\'il vous plaît, que si vous modifiez le processus de numérotation, tout doit être également renouvelé sur les places de marché, afin d\'assurer une synchronisation correcte et stable.<br/>Demandez conseil ici, si nécessaire.<br/><br/>Cette fonctionnalité n\'est pas actuellement disponible pour les articles avec variantes, extérieurs au magasin.';
 MLI18n::gi()->{'ebay_config_sync__field__chinese.stocksync.tomarketplace__label'} = 'Variation du stock boutique';
 MLI18n::gi()->{'ebay_config_sync__field__chinese.stocksync.tomarketplace__help'} = '<b>Synchronisation automatique via CronJob (recommandée)</b><br>
 Utilisez la fonction “synchronisation automatique” pour que votre stock eBay soit mis à jour par rapport à votre stock en boutique. Cette mise à jour aura lieu toutes les quatre heures à moins que vous ayez définit d’autres paramètres de configuration. Les données de votre base de données seront  appliquées sur eBay même si les changements ont uniquement eut lieu dans votre bases de donnée.<br>
@@ -835,6 +812,7 @@ MLI18n::gi()->{'ebay_config_emailtemplate__field__mail.copy__help'} = 'Activez c
 MLI18n::gi()->{'ebay_config_producttemplate__legend__product__title'} = 'Template d\'articles';
 MLI18n::gi()->{'ebay_config_producttemplate__legend__product__info'} = 'Template pour une personnalisation de la présentation de vos article sur vos pages eBay (Vous pouvez désactiver l\'éditeur sous "Configuartion générale"&rarr;"Réglages expert".)';
 MLI18n::gi()->{'ebay_config_producttemplate__field__template.name__label'} = 'Nom du template d\'articles';
+// For shopify this help is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyEbay/I18n/Fr/configForm.php
 MLI18n::gi()->{'ebay_config_producttemplate__field__template.name__help'} = '<b>Nom du produit sur eBay </b><br>
 Saisissez dans ce champ le nom de l’article, tel que vous voulez qu’il apparaisse sur votre page eBay. <br>
 paramètre générique possible : <br>
@@ -861,6 +839,7 @@ Dans le cas des déclinaisons d’articles,  eBay ne prévoit pas l’indication
 </ul>
 
 Dans ce cas également, il faut désactiver la synchronisation des prix, étant donné que les titres des différentes versions d’article ne peuvent pas être modifiés sur eBay.';
+// For shopify this hint is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyEbay/I18n/Fr/configForm.php
 MLI18n::gi()->{'ebay_config_producttemplate__field__template.name__hint'} = 'Liste des champs disponibles pour la rubrique
 <BLOCKQUOTE>
   <p>#TITLE# - nom du produit</p>
@@ -879,7 +858,7 @@ MLI18n::gi()->{'ebay_config_producttemplate__field__template.mobile.content__hin
 <dt>#DESCRIPTION#</dt><dd>Description importé de la boutique </dd>
 <dt>#WEIGHT#</dt><dd>Poids du produit</dd>
 </dl>';
-MLI18n::gi()->{'ebay_config_producttemplate__field__template.mobile.content__hint2'} = '<b>Indication</b>:<br />L’utilisation des tags HTLM n’est autorisée, que pour la mise en forme des listes et les retours à la ligne, aucune autre ne sera prise en compte.';
+MLI18n::gi()->{'ebay_config_producttemplate__field__template.mobile.content__hint2'} = '<span>Indication</span><span style="color:#000">:</span><br />L’utilisation des tags HTLM n’est autorisée, que pour la mise en forme des listes et les retours à la ligne, aucune autre ne sera prise en compte.';
 MLI18n::gi()->{'ebay_config_producttemplate__field__template.content__label'} = 'Template standard';
 MLI18n::gi()->{'ebay_config_producttemplate__field__template.content__hint'} = 'Liste des champs disponibles pour la rubrique: <br>
 <br>

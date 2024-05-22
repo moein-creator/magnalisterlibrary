@@ -33,7 +33,7 @@ MLI18n::gi()->{'ricardo_config_producttemplate__field__template.content__hint'} 
 <p>deuxième image de l’article; vous pouvez ajouter plus d’images de l’article (autant que dans votre boutique) en saisissant #PICTURE3#, #PICTURE4# etc.</p>
 </BLOCKQUOTE>
 <br>
-<p><font color="red">(les paramètres suivants ne sont pas disponibles sur Shopware)</font></p>
+
 <br>
 <br>
 

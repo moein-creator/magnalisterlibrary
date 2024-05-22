@@ -17,7 +17,7 @@
  */
 MLFilesystem::gi()->loadClass('GoogleShopping_Helper_Model_Table_GoogleShopping_ConfigData');
 
-class ML_Shopware6GoogleShopping_Helper_Model_Table_GoogleShopping_ConfigData extends ML_Googleshopping_Helper_Model_Table_GoogleShopping_ConfigData {
+class ML_Shopware6GoogleShopping_Helper_Model_Table_GoogleShopping_ConfigData extends ML_GoogleShopping_Helper_Model_Table_GoogleShopping_ConfigData {
     public function orderimport_paymentmethodField(&$aField) {
         $aField['values'] = MLFormHelper::getShopInstance()->getPaymentMethodValues();
     }

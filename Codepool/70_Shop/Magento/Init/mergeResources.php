@@ -17,6 +17,6 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-//magnalister loads this dynamicly
+//magnalister loads this dynamically
 Mage::app()->getStore()->setConfig('dev/css/merge_css_files', 0);
 Mage::app()->getStore()->setConfig('dev/js/merge_files', 0);

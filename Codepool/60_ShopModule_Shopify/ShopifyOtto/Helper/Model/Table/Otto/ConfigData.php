@@ -20,4 +20,5 @@ MLFilesystem::gi()->loadClass('Otto_Helper_Model_Table_Otto_ConfigData');
 
 class ML_ShopifyOtto_Helper_Model_Table_Otto_ConfigData extends ML_Otto_Helper_Model_Table_Otto_ConfigData {
 
+
 }

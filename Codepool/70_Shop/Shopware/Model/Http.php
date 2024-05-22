@@ -33,13 +33,16 @@ class ML_Shopware_Model_Http extends ML_Shop_Model_Http_Abstract {
         if (empty($libPath)) {
             $path = str_replace(DIRECTORY_SEPARATOR, '/', dirname(__FILE__));
             $m = array();
-             if (!preg_match('(\/engine\/.*\/[^\/]*Magnalister\/Lib\/)', $path, $m)) {
-                 if (strpos($path, '/Plugins/Community/Backend/RedMagnalister/Lib/') !== false) {// if using Shopware git installation
-                     return '/Plugins/Community/Backend/RedMagnalister/Lib/';
-                 } else {// if we are using symbolic link for magnalister in another directory
-                     return '/engine/Shopware/Plugins/Community/Backend/RedMagnalister/Lib/';
-                 }
-             }
+            if (
+                !preg_match('(\/engine\/.*\/[^\/]*Magnalister\/Lib\/)', $path, $m) &&
+                !preg_match('(\/Plugins\/.*\/[^\/]*Magnalister\/Lib\/)', $path, $m)//in Shopware Composer Plugin isn't stored under engine directory
+            ) {
+                if (strpos($path, '/Plugins/Community/Backend/RedMagnalister/Lib/') !== false) {// if using Shopware git installation
+                    return '/Plugins/Community/Backend/RedMagnalister/Lib/';
+                } else {// if we are using symbolic link for magnalister in another directory
+                    return '/engine/Shopware/Plugins/Community/Backend/RedMagnalister/Lib/';
+                }
+            }
             $libPath = $m[0];
         }
         return $libPath;
@@ -58,15 +61,15 @@ class ML_Shopware_Model_Http extends ML_Shop_Model_Http_Abstract {
         $sExt = pathinfo($sFile, PATHINFO_EXTENSION);
         $aExt = explode('?', $sExt);//separate extention of file from url query that most of the time is current version of magnalister
         try{
-            $aResource = empty($sFile) ? array('path' => '') : MLFilesystem::gi()->findResource('resource_' . $sFile);  
+            $aResource = empty($sFile) ? array('path' => '') : MLFilesystem::gi()->findResource('resource_'.$sFile);
         }  catch (Exception $oExc){//if file was not found , try to find resource by its type
             try{
-                $aResource = MLFilesystem::gi()->findResource('resource_'.$aExt[0].'_' . $sFile); 
+                $aResource = MLFilesystem::gi()->findResource('resource_'.$aExt[0].'_'.$sFile);
             }  catch (Exception $oExc){
                 return '';//no file is found
             }
         }
-        
+
         $sLibPath = MLFilesystem::getLibPath();
         $aResourcePath = explode($sLibPath, $aResource['path']);
         $sUrl = $sPath . $aResourcePath[1];
@@ -80,7 +83,7 @@ class ML_Shopware_Model_Http extends ML_Shop_Model_Http_Abstract {
      * just used for cUrl referer for api request .
      * @return string
      */
-    public function getBaseUrl() { 
+    public function getBaseUrl() {
         try {
             return MLSetting::gi()->get('sDebugHost');
         } catch (Exception $ex) {
@@ -97,7 +100,7 @@ class ML_Shopware_Model_Http extends ML_Shop_Model_Http_Abstract {
         $sBaseUrl = $reffer . Shopware()->Front()->Request()->getHttpHost() . Shopware()->Front()->Request()->getBaseUrl();
         return $sBaseUrl;
     }
-    
+
     /**
      * Gets the backend url of the magnalister app.
      * @param array $aParams
@@ -153,7 +156,7 @@ class ML_Shopware_Model_Http extends ML_Shop_Model_Http_Abstract {
      * @return string
      */
     public function getFrontendDoUrl($aParams = array()) {
-        $sConfig = $this->getConfigFrontCornURL($aParams);
+        $sConfig = $this->getConfigFrontCronURL($aParams);
         if ($sConfig !== '') {
             return $sConfig;
         }
@@ -167,8 +170,8 @@ class ML_Shopware_Model_Http extends ML_Shop_Model_Http_Abstract {
         $aUrl[] = empty($sBasePath) ? Shopware()->Front()->Request()->getBaseUrl() : $sBasePath; // path to shop
         $aUrl[] = '/Magnalister/index?';// path to magnalister front controller
         $aUrl[] = $sParent; // parameter
-        return implode('', $aUrl);        
-    }     
+        return implode('', $aUrl);
+    }
 
     /**
      * return directory or path (file system) of specific shop images
@@ -177,39 +180,40 @@ class ML_Shopware_Model_Http extends ML_Shop_Model_Http_Abstract {
     public function getShopImagePath() {
         return 'media/image/';
     }
-    
+
     /**
      * return url of specific shop images
      * @param string $sFiles
      */
-    public function getShopImageUrl(){
-        return rtrim($this->getShopwareDefaultShopURL() ,"/").'/media/image/';
+    public function getShopImageUrl() {
+        return rtrim($this->getShopwareDefaultShopURL(), "/").'/media/image/';
     }
 
     /**
      * return default shop in shopware
      * @return Shopware\Models\Shop\Shop
      */
-  public function getDefaultShop() {
-        
-        
+    public function getDefaultShop() {
+
+
         if ($this->oDefaultShop === null) {
-            try {$oBbuilder = Shopware()->Models()->createQueryBuilder();
-                $this->oDefaultShop = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop')->getActiveDefault();  
+            try {
+                $oBbuilder = Shopware()->Models()->createQueryBuilder();
+                $this->oDefaultShop = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop')->getActiveDefault();
             } catch (Exception $exc) {
                 try {
                     $oBbuilder = Shopware()->Models()->createQueryBuilder();
                     $oQuery = $oBbuilder->select(array('shop'))
-                ->from('Shopware\Models\Shop\Shop', 'shop');
+                        ->from('Shopware\Models\Shop\Shop', 'shop');
                     $aShops = $oQuery
-                                    ->getQuery()->getArrayResult();
+                        ->getQuery()->getArrayResult();
                     foreach ($aShops as $aShop) {
                         if($aShop['host'] != null){
                             $this->oDefaultShop = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop')->find($aShop['id']);
                         }
                     }
                 } catch (Exception $exc) {
-                    
+
                 }
             }
         }

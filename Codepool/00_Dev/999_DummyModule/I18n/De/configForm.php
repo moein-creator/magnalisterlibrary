@@ -1,4 +1,21 @@
 <?php
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
+
 MLI18n::gi()->dummymodule_config_general_mwstoken_help = '
 DummyModule ben&ouml;tigt eine Authentifizierung zum &uuml;bermitteln von Daten &uuml;ber die Schnittstelle. Bitte tragen Sie unter "H&auml;ndler-ID", "Marktplatz-ID" und "MWS Token“ die jeweiligen Schl&uuml;ssel ein. Sie k&ouml;nnen diese Schl&uuml;ssel auf dem jeweiligen DummyModule Marketplace beantragen, auf dem Sie einstellen wollen.<br>
 <br>
@@ -302,85 +319,6 @@ Die Quelldateien werden aus dem Bildordner {#setting:sSourceImagePath#} verarbei
                 Das Eingabe-Format ist eine ganzstellige Zahl mit max. 2 Ziffern.
             '
         ),
-        'b2b.priceoptions' => array(
-            'label' => 'Business Preisoptionen',
-        ),
-        'b2b.price.group' => array(
-            'label' => '',
-            'hint' => '',
-        ),
-        'b2b.price.usespecialoffer' => array(
-            'label' => 'auch Sonderpreise verwenden',
-        ),
-        'b2bdiscounttype' => array(
-            'label' => 'Staffelpreis-Berechnung',
-            'help' => '<b>Staffelpreise</b><br>
-          Staffelpreise sind erm&auml;&szlig;igte Preise, die f&uuml;r Business-Kunden beim Kauf
-          gr&ouml;&szlig;erer St&uuml;ckzahlen verf&uuml;gbar sind. Verk&auml;ufer, die am DummyModule
-          Business Seller Program teilnehmen, k&ouml;nnen entsprechende Mindestmengen
-          und Preisabschl&auml;ge definieren.<br><br>
-          <b>Beispiel</b>:
-          F&uuml;r ein Produkt, das 100 &euro; kostet, k&ouml;nnten folgende
-          Prozent-Abschl&auml;ge (f&uuml;r Gesch&auml;ftskunden) definiert werden:
-          <table><tr>
-              <th style="background-color: #ddd;">Mindestmenge</th>
-              <th style="background-color: #ddd;">Abschlag</th>
-              <th style="background-color: #ddd;">Endpreis pro St&uuml;ck</th>
-		  <tr><td>5 (or more)</td><td style="text-align: right;">10</td><td style="text-align: right;">$90</td></tr>
-		  <tr><td>8 (or more)</td><td style="text-align: right;">12</td><td style="text-align: right;">$88</td></tr>
-		  <tr><td>12 (or more)</td><td style="text-align: right;">15</td><td style="text-align: right;">$85</td></tr>
-		  <tr><td>20 (or more)</td><td style="text-align: right;">20</td><td style="text-align: right;">$80</td></tr>
-	  </table>',
-            'values' => array(
-                '' => 'Nicht verwenden',
-                'percent' => 'Prozent',
-            ),
-        ),
-        'b2bdiscounttier1' => array(
-            'label' => 'Staffelpreis Ebene 1',
-        ),
-        'b2bdiscounttier2' => array(
-            'label' => 'Staffelpreis Ebene 2',
-        ),
-        'b2bdiscounttier3' => array(
-            'label' => 'Staffelpreis Ebene 3',
-        ),
-        'b2bdiscounttier4' => array(
-            'label' => 'Staffelpreis Ebene 4',
-        ),
-        'b2bdiscounttier5' => array(
-            'label' => 'Staffelpreis Ebene 5',
-        ),
-        'b2bdiscounttier1quantity' => array(
-            'label' => 'St&uuml;ckzahl',
-        ),
-        'b2bdiscounttier2quantity' => array(
-            'label' => 'St&uuml;ckzahl',
-        ),
-        'b2bdiscounttier3quantity' => array(
-            'label' => 'St&uuml;ckzahl',
-        ),
-        'b2bdiscounttier4quantity' => array(
-            'label' => 'St&uuml;ckzahl',
-        ),
-        'b2bdiscounttier5quantity' => array(
-            'label' => 'St&uuml;ckzahl',
-        ),
-        'b2bdiscounttier1discount' => array(
-            'label' => 'Rabatt',
-        ),
-        'b2bdiscounttier2discount' => array(
-            'label' => 'Rabatt',
-        ),
-        'b2bdiscounttier3discount' => array(
-            'label' => 'Rabatt',
-        ),
-        'b2bdiscounttier4discount' => array(
-            'label' => 'Rabatt',
-        ),
-        'b2bdiscounttier5discount' => array(
-            'label' => 'Rabatt',
-        )
     )
 ), false);
 
@@ -501,24 +439,6 @@ MLI18n::gi()->add('dummymodule_config_orderimport', array(
         'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu DummyModule',
     ),
     'field' => array(
-        'orderstatus.sync' => array(
-            'label' => 'Status Synchronisierung',
-            'hint' => '',
-            'help' => '
-                <dl>
-                    <dt>Automatische Synchronisierung per CronJob (empfohlen)</dt>
-                    <dd>
-                        Die Funktion "Automatische Synchronisierung per CronJob" &uuml;bermittelt alle 2 Stunden den aktuellen Versendet-Status zu DummyModule.<br/>
-                        Dabei werden die Status-Werte aus der Datenbank gepr&uuml;ft und &uuml;bernommen, auch wenn die &Auml;nderungen durch z.B. eine Warenwirtschaft nur in der Datenbank erfolgten.<br/><br/>
-                        Einen manuellen Abgleich k&ouml;nnen Sie ansto&szlig;en, indem Sie die Bestellung direkt im Web-Shop bearbeiten, dort  den gew&uuml;nschten Status setzen, und dann auf "Aktualisieren" klicken.<br/>
-                        Sie k&ouml;nnen auch den entsprechenden Funktionsbutton in der Kopfzeile vom magnalister anklicken (links von der Ameise), um den Status sofort zu &uuml;bergeben.<br/><br/>
-                        Zus&auml;tzlich k&ouml;nnen Sie den Bestellstatus-Abgleich (ab Tarif Flat - maximal viertelst&uuml;ndlich) auch durch einen eigenen CronJob ansto&szlig;en, indem Sie folgenden Link zu Ihrem Shop aufrufen: <br/><br/>
-                        <i>{#setting:sSyncOrderStatusUrl#}</i><br/><br/>
-                        Eigene CronJob-Aufrufe durch Kunden, die nicht im Tarif Flat sind, oder die h&auml;ufiger als viertelst&uuml;ndlich laufen, werden geblockt.
-                    </dd>
-                </dl>
-            ',
-        ),
         'orderstatus.shipped' => array(
             'label' => 'Versand best&auml;tigen mit',
             'hint' => '',

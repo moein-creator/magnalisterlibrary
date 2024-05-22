@@ -27,7 +27,7 @@ class ML_ShopwareCrowdfox_Helper_Model_Table_Crowdfox_PrepareData extends ML_Cro
         $sShopValue = '';
 
         if ($this->oProduct) {
-            $sCode = MLModul::gi()->getConfig('gtincolumn');
+            $sCode = MLModule::gi()->getConfig('gtincolumn');
             $sValue = $this->oProduct->getModulField($sCode);
         }
 

@@ -37,7 +37,7 @@ MLI18n::gi()->{'etsy_configform_sync_zerostock_popup_text'} = 'Cette option acti
 
 MLI18n::gi()->{'etsy_config_carrier_option_group_additional_option'} = 'Additional option:';
 MLI18n::gi()->{'etsy_config_carrier_option_group_marketplace_carrier'} = 'Select Marketplace Supported Carrier:';
-MLI18n::gi()->{'etsy_config_free_text_attributes_opt_group'} = 'Additional fields';
+MLI18n::gi()->{'etsy_config_free_text_attributes_opt_group'} = 'Free text fields';
 MLI18n::gi()->{'etsy_config_free_text_attributes_opt_group_value'} = 'Match it to free text field on specific order';
 MLI18n::gi()->{'etsy_config_carrier_option_matching_option'} = 'Match marketplace supported carrier with carriers defined in shop-system';
 MLI18n::gi()->{'etsy_config_carrier_matching_title_marketplace_carrier'} = 'Marketplace supported carriers';

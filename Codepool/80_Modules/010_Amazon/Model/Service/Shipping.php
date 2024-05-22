@@ -1,21 +1,21 @@
 <?php
-
-/**
- * 888888ba                 dP  .88888.                    dP                
- * 88    `8b                88 d8'   `88                   88                
- * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b. 
- * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88 
- * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88 
- * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P' 
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
  *                          m a g n a l i s t e r
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2018 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 class ML_Amazon_Model_Service_Shipping {
 
     protected $aOrders = array();
@@ -42,7 +42,7 @@ class ML_Amazon_Model_Service_Shipping {
             if (isset($aData['ShippingServiceId'])) {
                 unset($aData['ShippingServiceId']);
             }
-            $aData[$iOrderId]["PackageDimensions"]['Unit'] = MLModul::gi()->getConfig('shippinglabel.size.unit');
+            $aData[$iOrderId]["PackageDimensions"]['Unit'] = MLModule::gi()->getConfig('shippinglabel.size.unit');
 //            $aData[$iOrderId]["ShipFromAddress"] = $this->getDefaultAddress();
         }
 
@@ -75,7 +75,7 @@ class ML_Amazon_Model_Service_Shipping {
         $aOriginalData = $oOrder->get('data');
         $aData = $aOriginalData;
         unset($aData['globalinfo']);
-        $aData["PackageDimensions"]['Unit'] = MLModul::gi()->getConfig('shippinglabel.size.unit');
+        $aData["PackageDimensions"]['Unit'] = MLModule::gi()->getConfig('shippinglabel.size.unit');
 //        $aData["ShipFromAddress"] = $this->getDefaultAddress();
 
         try {
@@ -121,8 +121,8 @@ class ML_Amazon_Model_Service_Shipping {
         }
         if($sDownloadLink === null){
             //if plugin doesn't receive any download link from api because of any reason, we will redirect customer to errorlog
-            $sMpId = MLModul::gi()->getMarketPlaceId();
-            $sMpName = MLModul::gi()->getMarketPlaceName();
+            $sMpId = MLModule::gi()->getMarketPlaceId();
+            $sMpName = MLModule::gi()->getMarketPlaceName();
             $sDownloadLink = MLHttp::gi()->getUrl(array('controller' => "{$sMpName}:{$sMpId}_errorlog"));
         }
         return $sDownloadLink;

@@ -73,7 +73,7 @@ class ML_ProductList_Model_ProductListDependency_PrepareStatusFilter extends ML_
             return MLDatabase::getDbInstance()->fetchOne("
                 SELECT COUNT(*)
                   FROM ".MLDatabase::getPrepareTableInstance()->getTableName()."
-                 WHERE     ".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()." = '".MLModul::gi()->getMarketPlaceId()."'
+                 WHERE     " . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . " = '" . MLModule::gi()->getMarketPlaceId() . "'
                        AND ".$this->getWhereConditionForVariantIsActive($sValue)."
                        AND ".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = '".(int)$oProduct->get('id')."'
             ") > 0 ? true : false;
@@ -81,7 +81,7 @@ class ML_ProductList_Model_ProductListDependency_PrepareStatusFilter extends ML_
             return MLDatabase::getDbInstance()->fetchOne("
                 SELECT COUNT(*)
                   FROM ".MLDatabase::getPrepareTableInstance()->getTableName()."
-                 WHERE     ".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()." = '".MLModul::gi()->getMarketPlaceId()."'
+                 WHERE     " . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . " = '" . MLModule::gi()->getMarketPlaceId() . "'
                        AND ".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = '".(int)$oProduct->get('id')."'
             ") == 0 ? true : false;
         }
@@ -109,7 +109,7 @@ class ML_ProductList_Model_ProductListDependency_PrepareStatusFilter extends ML_
             : 'productssku'
         );
         if (in_array($sValue, array_keys(MLDatabase::getPrepareTableInstance()->getPreparedFieldFilterValues()))) {
-            $sProductTable = MLDatabase::getTableInstance('product')->getTableName();
+            $sProductTable = MLProduct::factory()->getTableName();
             // get masterarticles which have prepared variants
             $sSql = "
                 SELECT master.".$sField."
@@ -117,7 +117,7 @@ class ML_ProductList_Model_ProductListDependency_PrepareStatusFilter extends ML_
                 INNER JOIN ".$sProductTable." variant ON prepare.".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = variant.id
                 INNER JOIN ".$sProductTable." master ON variant.parentid = master.id
                 WHERE ".$this->getWhereConditionForGetMasterIdents($sValue)."
-                AND prepare.".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()."='".MLModul::gi()->getMarketPlaceId()."'
+                AND prepare." . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . "='" . MLModule::gi()->getMarketPlaceId() . "'
                 GROUP BY master.id
             ";
             return array(
@@ -126,7 +126,7 @@ class ML_ProductList_Model_ProductListDependency_PrepareStatusFilter extends ML_
                 'inQuery' => array($sField => $sSql),
             );
         } elseif ($sValue == 'not') {
-            $sProductTable = MLDatabase::getTableInstance('product')->getTableName();
+            $sProductTable = MLProduct::factory()->getTableName();
             // get masterarticles which have no/missing prepared variant
             $sSql = "
                 SELECT master.".$sField."
@@ -134,7 +134,7 @@ class ML_ProductList_Model_ProductListDependency_PrepareStatusFilter extends ML_
                 INNER JOIN ".$sProductTable." variant ON prepare.".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = variant.id
                 INNER JOIN ".$sProductTable." master ON variant.parentid = master.id
                 INNER JOIN ".$sProductTable." variantTotal ON master.id = variantTotal.parentid
-                WHERE prepare.".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()."='".MLModul::gi()->getMarketPlaceId()."'
+                WHERE prepare." . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . "='" . MLModule::gi()->getMarketPlaceId() . "'
                 GROUP BY master.id
                 HAVING COUNT(DISTINCT variant.id) >= COUNT(DISTINCT variantTotal.id) 
             ";

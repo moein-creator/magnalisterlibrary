@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -22,7 +22,7 @@ class ML_Magento2_Model_Order extends ML_Shop_Model_Order_Abstract {
 
     /**
      *
-     * @return mixed
+     * @return Magento\Sales\Model\Order
      * @throws Exception
      */
     public function getShopOrderObject(){
@@ -127,13 +127,18 @@ class ML_Magento2_Model_Order extends ML_Shop_Model_Order_Abstract {
 
     public function getShopOrderId() {
         try {
-            return $this->getShopOrderObject()->getId();
+            return $this->getShopOrderObject()->getIncrementId();
         } catch (Exception $oEx) {//if order deosn't exist in magento 2
             return $this->get('orders_id');
         }
-
     }
-
+    public function getShopAlternativeOrderId() {
+        try {
+            return $this->getShopOrderObject()->getId();
+        } catch (Exception $oEx) {//if order deosn't exist in magento 2
+            return $this->get('current_orders_id');
+        }
+    }
     public function setSpecificAcknowledgeField(&$aOrderParameters, $aOrder) {
 
     }
@@ -167,7 +172,7 @@ class ML_Magento2_Model_Order extends ML_Shop_Model_Order_Abstract {
         $oSelect = $oCollection->getSelect();
         $oSelect
             ->joinRight(array('magnalister_orders' => 'magnalister_orders'), 'main_table.entity_id = magnalister_orders.current_orders_id')
-            ->where("main_table.status != magnalister_orders.status and magnalister_orders.mpID = '".MLModul::gi()->getMarketPlaceId()."'");
+            ->where("main_table.status != magnalister_orders.status and magnalister_orders.mpID = '" . MLModule::gi()->getMarketPlaceId() . "'");
 
 
         if($blCount){
@@ -246,5 +251,13 @@ class ML_Magento2_Model_Order extends ML_Shop_Model_Order_Abstract {
             }
         }
         return '';
+    }
+
+    public function getShopOrderProducts() {
+        return array();
+    }
+
+    public function getOrderIdForAcknowledge() {
+        return $this->getShopOrderObject()->getIncrementId();
     }
 }

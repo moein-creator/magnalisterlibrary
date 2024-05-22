@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -20,7 +20,6 @@ MLFilesystem::gi()->loadClass('Listings_Controller_Widget_Listings_InventoryAbst
 
 class ML_Metro_Controller_Metro_Listings_Inventory extends ML_Listings_Controller_Widget_Listings_InventoryAbstract {
 
-
     protected $aParameters = array('controller');
 
     public function __construct() {
@@ -28,6 +27,9 @@ class ML_Metro_Controller_Metro_Listings_Inventory extends ML_Listings_Controlle
         $this->saveDeletedLocally = false;
     }
 
+    public static function getTabTitle() {
+        return MLI18n::gi()->get('ML_GENERIC_INVENTORY');
+    }
 
     protected function getFields() {
         $oI18n = MLI18n::gi();
@@ -57,7 +59,8 @@ class ML_Metro_Controller_Metro_Listings_Inventory extends ML_Listings_Controlle
                 'Field' => null,
             ),
             'Price' => array(
-                'Label' => 'Shop-'.$oI18n->ML_GENERIC_PRICE.' / METRO '.$oI18n->ML_GENERIC_PRICE.'<br>'.$oI18n->ML_LABEL_SHOP_PRICE_NETTO.' / METRO '.$oI18n->ML_LABEL_NETTO.'-'.$oI18n->ML_GENERIC_PRICE,
+                'Label' => $oI18n->ML_LABEL_SHOP_PRICE.' / '.MLModule::gi()->getMarketPlaceName(false).' '.$oI18n->ML_GENERIC_PRICE.
+                    '<br>'.$oI18n->ML_LABEL_SHOP_PRICE_NETTO.' / '.MLModule::gi()->getMarketPlaceName(false).' '.$oI18n->ML_LABEL_NETTO.'-'.$oI18n->ML_GENERIC_PRICE,
                 'Sorter' => 'NetPrice',
                 'Getter' => 'getItemPrice',
                 'Field' => null,
@@ -131,7 +134,7 @@ class ML_Metro_Controller_Metro_Listings_Inventory extends ML_Listings_Controlle
             foreach ($this->aData as &$item) {
                 $item['SKU'] = html_entity_decode(fixHTMLUTF8Entities($item['SKU']));
                 $item['aProductData'] = unserialize($item['ProductData']);
-                $item['ItemTitle'] = fixHTMLUTF8Entities($item['aProductData']['Title']);
+                $item['ItemTitle'] = !empty($item['ProductData']) ? fixHTMLUTF8Entities($item['aProductData']['Title']) : '';
                 $item['Currency'] = 'EUR'; //always EUR for now
                 $item['DateAdded'] = strtotime($item['DateAdded']);
                 $item['LastSync'] = strtotime($item['DateUpdated']);
@@ -173,8 +176,14 @@ class ML_Metro_Controller_Metro_Listings_Inventory extends ML_Listings_Controlle
                         'ShippingCost' => array('optional' => array('active' => true)),
                     ), 'value');
                     $item['ShippingCost'] = $aPrepareData['ShippingCost'];
+
+                    // Shipping costs are not numeric or empty
+                    if (!is_numeric($item['ShippingCost'])) {
+                        throw new Exception();
+                    }
+
                     // remove tax from ShippingCost to get NetShippingCost
-                    $item['NetShippingCost'] = round(($item['ShippingCost'] / ((100 + (float)$item['Tax']) / 100)), 2);
+                    $item['NetShippingCost'] = round(((float)$item['ShippingCost'] / ((100 + (float)$item['Tax']) / 100)), 2);
 
                 } catch (Exception $oExcc) {
                     $item['ShippingCost'] = 0.00;

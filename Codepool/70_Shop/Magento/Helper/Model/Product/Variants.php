@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -157,7 +157,7 @@ class ML_Magento_Helper_Model_Product_Variants {
             $this->getVariantCount();
             if (empty($this->aMessages)) {
                 try {
-                    $iStoreId = (int)MLModul::gi()->getConfig('lang');
+                    $iStoreId = (int)MLModule::gi()->getConfig('lang');
                     $this->oProduct->setStoreId($iStoreId)->load($this->oProduct->getId());
                 } catch (ML_Filesystem_Exception $oEx) {//no modul
                 }
@@ -183,7 +183,7 @@ class ML_Magento_Helper_Model_Product_Variants {
                             ->addAttributeToSelect('*')
                             ->addFilterByRequiredOptions();
                     try {
-                        $iStoreId = (int)MLModul::gi()->getConfig('lang');
+                        $iStoreId = (int)MLModule::gi()->getConfig('lang');
                         $oCollection->setStore($iStoreId)
                             ->joinField(
                                 'store_id',
@@ -206,7 +206,7 @@ class ML_Magento_Helper_Model_Product_Variants {
                     }
                     if (count($aChilds) != 0) {
                         try {//initialize magento shop for loading attributes in defined language
-                            MLShop::gi()->initMagentoStore((int)MLModul::gi()->getConfig('lang'));
+                            MLShop::gi()->initMagentoStore((int)MLModule::gi()->getConfig('lang'));
                         } catch (Exception $oEx) {//no modul
                         }
                         $_attributes = $this->oProduct->getTypeInstance(true)->getConfigurableAttributes($this->oProduct);
@@ -216,7 +216,7 @@ class ML_Magento_Helper_Model_Product_Variants {
                             //in some magentos label is null
                             $aLabels = $aData['product_attribute']->getStoreLabels();
                             try {
-                                $sLabel = isset($aLabels[(int)MLModul::gi()->getConfig('lang')]) ? $aLabels[(int)MLModul::gi()->getConfig('lang')] : current($aLabels);
+                                $sLabel = isset($aLabels[(int)MLModule::gi()->getConfig('lang')]) ? $aLabels[(int)MLModule::gi()->getConfig('lang')] : current($aLabels);
                             } catch (Exception $oEx) {
                                 $sLabel = current($aLabels);
                             }
@@ -273,7 +273,7 @@ class ML_Magento_Helper_Model_Product_Variants {
 
     public function getVariantCount() {
         try {
-            $iStoreId = (int)MLModul::gi()->getConfig('lang');
+            $iStoreId = (int)MLModule::gi()->getConfig('lang');
             $this->oProduct->setStoreId($iStoreId)->load($this->oProduct->getId());
         } catch (ML_Filesystem_Exception $oEx) {//no modul
         }

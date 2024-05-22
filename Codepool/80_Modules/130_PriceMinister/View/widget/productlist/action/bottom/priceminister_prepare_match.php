@@ -1,49 +1,47 @@
-<?php 
-    /* @var $this  ML_Productlist_Controller_Widget_ProductList_Abstract */
-    /* @var $oList ML_Productlist_Model_ProductList_Abstract */
-    /* @var $aStatistic array */
-    class_exists('ML',false) or die();
+<?php
+/* @var $this  ML_Productlist_Controller_Widget_ProductList_Abstract */
+/* @var $oList ML_Productlist_Model_ProductList_Abstract */
+/* @var $aStatistic array */
+if (!class_exists('ML', false))
+    throw new Exception();
 ?>
 <?php if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) { ?>
-        <table class="actions">
-            <tbody class="firstChild">
-                <tr>
-                    <td>
-                        <div class="actionBottom">
-                            <div class="left">
-                                <div>
-                                    <form action="<?php echo $this->getCurrentUrl() ?>" method="post">
-                                        <?php foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) { ?>
-                                            <input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue ?>" />
-                                        <?php } ?>
-                                        <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName('execute') ?>" value="unprepare" />
-                                        <input class="mlbtn" type="submit" value="<?php echo $this->__('ML_AMAZON_BUTTON_MATCHING_DELETE'); ?>">
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="right" style="padding-right: 6px">
-                                <div>
-                                    <a class="mlbtn action" style="margin: 0px 3px 3px 3px;" href="<?php echo $this->getUrl(array('controller' => $this->getRequest('controller') . '_manual')); ?>">
-                                       <?php echo $this->__('ML_AMAZON_LABEL_MANUAL_MATCHING') ?>
-                                    </a>
-                                    <div class="desc" id="desc_man_match" title="<?php echo ML_LABEL_INFOS; ?>"><span><?php echo ML_AMAZON_LABEL_MANUAL_MATCHING; ?></span></div>
-                                </div>
-                                <div>
-                                    <input type="button" class="mlbtn action" style="margin: 0px 3px 3px 3px;" value="<?php echo ML_AMAZON_LABEL_AUTOMATIC_MATCHING; ?>" id="automatching" name="automatching"/>
-                                    <div class="desc" id="desc_auto_match" title="<?php echo ML_LABEL_INFOS; ?>"><span><?php echo ML_AMAZON_LABEL_AUTOMATIC_MATCHING; ?></span></div>
-                                </div>
-                            </div>
-                            <div class="clear"></div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div id="finalInfo" class="dialog2" title="<?php echo ML_LABEL_INFORMATION; ?>"></div>
-        <div id="noItemsInfo" class="dialog2" title="<?php echo ML_LABEL_NOTE; ?>"><?php echo ML_AMAZON_TEXT_MATCHING_NO_ITEMS_SELECTED; ?></div>
-        <div id="manMatchInfo" class="dialog2" title="<?php echo ML_LABEL_INFORMATION.' '.ML_AMAZON_LABEL_MANUAL_MATCHING; ?>"><?php echo MLI18n::gi()->get('PriceMinister_Productlist_Match_Manual_Desc'); ?></div>
-        <div id="autoMatchInfo" class="dialog2" title="<?php echo ML_LABEL_INFORMATION.' '.ML_AMAZON_LABEL_AUTOMATIC_MATCHING; ?>"><?php echo MLI18n::gi()->get('PriceMinister_Productlist_Match_Auto_Desc'); ?></div>
-        <div id="confirmDiag" class="dialog2" title="<?php echo ML_LABEL_NOTE; ?>"><?php echo MLI18n::gi()->get('PriceMinister_Productlist_Match_Auto_Confirm'); ?></div>
+    <div class="ml-container-action-head">
+        <h4>
+            <?php echo $this->__('ML_LABEL_ACTIONS') ?>
+        </h4>
+    </div>
+    <div class="ml-container-action">
+        <div class="ml-container-inner ml-container-md">
+            <form action="<?php echo $this->getCurrentUrl() ?>" method="post">
+                <?php foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) { ?>
+                    <input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue ?>"/>
+                <?php } ?>
+                <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName('execute') ?>" value="unprepare"/>
+                <input class="mlbtn-gray" type="submit" value="<?php echo $this->__('ML_AMAZON_BUTTON_MATCHING_DELETE'); ?>">
+            </form>
+        </div>
+        <div class="ml-container-inner ml-container-md">
+            <div style="display: flex; flex-direction: row-reverse">
+                <a class="mlbtn-red action" style="margin: 0px 3px 3px 3px;" href="<?php echo $this->getUrl(array('controller' => $this->getRequest('controller').'_manual')); ?>">
+                    <?php echo $this->__('ML_AMAZON_LABEL_MANUAL_MATCHING') ?>
+                </a>
+                <div class="desc" id="desc_man_match" title="<?php echo ML_LABEL_INFOS; ?>" style="flex-grow: 0;flex-shrink: 0;margin-right: 6px;margin-top: 13px;">
+                    <span><?php echo ML_AMAZON_LABEL_MANUAL_MATCHING; ?></span></div>
+            </div>
+            <div style="display: flex; flex-direction: row-reverse">
+                <input type="button" class="mlbtn-red action" style="margin: 0px 3px 3px 3px;" value="<?php echo ML_AMAZON_LABEL_AUTOMATIC_MATCHING; ?>" id="automatching" name="automatching"/>
+                <div class="desc" id="desc_auto_match" title="<?php echo ML_LABEL_INFOS; ?>" style="flex-grow: 0;flex-shrink: 0;margin-right: 6px;margin-top: 13px;">
+                    <span><?php echo ML_AMAZON_LABEL_AUTOMATIC_MATCHING; ?></span></div>
+            </div>
+        </div>
+    </div>
+    <div class="spacer"></div>
+    <div id="finalInfo" class="dialog2" title="<?php echo ML_LABEL_INFORMATION; ?>"></div>
+    <div id="noItemsInfo" class="dialog2" title="<?php echo ML_LABEL_NOTE; ?>"><?php echo ML_AMAZON_TEXT_MATCHING_NO_ITEMS_SELECTED; ?></div>
+    <div id="manMatchInfo" class="dialog2" title="<?php echo ML_LABEL_INFORMATION.' '.ML_AMAZON_LABEL_MANUAL_MATCHING_POPUP; ?>"><?php echo MLI18n::gi()->get('PriceMinister_Productlist_Match_Manual_Desc'); ?></div>
+    <div id="autoMatchInfo" class="dialog2" title="<?php echo ML_LABEL_INFORMATION.' '.ML_AMAZON_LABEL_AUTOMATIC_MATCHING_POPUP; ?>"><?php echo MLI18n::gi()->get('PriceMinister_Productlist_Match_Auto_Desc'); ?></div>
+    <div id="confirmDiag" class="dialog2" title="<?php echo ML_LABEL_NOTE; ?>"><?php echo MLI18n::gi()->get('PriceMinister_Productlist_Match_Auto_Confirm'); ?></div>
 <script type="text/javascript">/*<![CDATA[*/
 var selectedItems = 0;
 var progressInterval = null;

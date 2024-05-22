@@ -25,7 +25,7 @@ class MLFormHelper {
     
     /**
      * Returns the instance of the config form shop model.
-     * @return ML_Shop_Model_ConfigForm_Shop_Abstract|ML_Shopware_Model_ConfigForm_Shop|ML_Magento_Model_ConfigForm_Shop|ML_Magento2_Model_ConfigForm_Shop|ML_Shopify_Model_ConfigForm_Shop|ML_WooCommerce_Model_ConfigForm_Shop|ML_Prestashop_Model_ConfigForm_Shop
+     * @return ML_Shop_Model_ConfigForm_Shop_Abstract|ML_Shopware_Model_ConfigForm_Shop|ML_Shopware6_Model_ConfigForm_Shop|ML_Magento_Model_ConfigForm_Shop|ML_Magento2_Model_ConfigForm_Shop|ML_Shopify_Model_ConfigForm_Shop|ML_WooCommerce_Model_ConfigForm_Shop|ML_Prestashop_Model_ConfigForm_Shop
      */
     public static function getShopInstance() {
         return ML::gi()->instance('model_configform_shop', array('Shop_Model_ConfigForm_Shop_Abstract'));
@@ -38,12 +38,20 @@ class MLFormHelper {
     public static function getModulInstance() {
         return ML::gi()->instance('model_configform_modul', array('Modul_Model_ConfigForm_Modul_Abstract'));
     }
-    
+
     /**
      * Returns the instance of the config form shop model.
      * @return ML_Form_Helper_Controller_Widget_Form_PrepareAMCommon
      */
     public static function getPrepareAMCommonInstance() {
         return MLHelper::gi('controller_widget_form_prepareamcommon');
+    }
+
+    /**
+     * Returns the instance of the config form shop model.
+     * @return ML_Form_Helper_Controller_Widget_Form_Config
+     */
+    public static function getConfigCotrollerHelper() {
+        return MLHelper::gi('controller_widget_form_config');
     }
 }

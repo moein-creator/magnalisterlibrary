@@ -232,13 +232,18 @@ class ML_Core_Model_Message {
         }
         if (!empty($aMessage['message'])) {
             foreach ($aMessage['additional']['trace'] as $iTrace => $aTrace) {
-                if (isset($aTrace['file']) && (substr($aTrace['file'], 0, strlen(MLFilesystem::getLibPath())) == MLFilesystem::getLibPath())) {
-                    $aMessage['additional']['trace'][$iTrace] = array(
-                        'file' => './' . substr($aTrace['file'], strlen(MLFilesystem::getLibPath()), strlen($aTrace['file'])),
-                        'line' => $aTrace['line']
-                    );
+                if (MLSetting::gi()->blDev === null) {
+                    if (isset($aTrace['file']) && (substr($aTrace['file'], 0, strlen(MLFilesystem::getLibPath())) == MLFilesystem::getLibPath())) {
+                        $aMessage['additional']['trace'][$iTrace] = array(
+                            'file' => './' . substr($aTrace['file'], strlen(MLFilesystem::getLibPath()), strlen($aTrace['file'])),
+                            'line' => $aTrace['line']
+                        );
+                    } else {
+                        unset($aMessage['additional']['trace'][$iTrace]);
+                    }
                 } else {
-                    unset($aMessage['additional']['trace'][$iTrace]);
+
+                    $aMessage['additional']['trace'][$iTrace] = (isset($aTrace['file']) ? $aTrace['file'] : '') . ':' . (isset($aTrace['line']) ? $aTrace['line'] : '');
                 }
             }
             if (substr($aMessage['additional']['file'], 0, strlen(MLFilesystem::getLibPath())) == MLFilesystem::getLibPath()) {

@@ -17,7 +17,7 @@
     </thead>
     <tbody>
         <?php foreach($aOrder['Products'] as $aProduct){ ?>
-            <tr class="<?php echo ($blOdd=!$blOdd)?'odd':'even' ?>">
+            <tr>
                 <td class="qty"><?php echo $aProduct['Quantity'] ?></td>
 		<td class="name"><?php echo $aProduct['ItemTitle'] ?></td>
                 <td class="price"><?php echo $oPrice->format($aProduct['Price'], $aOrder['Order']['Currency']) ?></td>

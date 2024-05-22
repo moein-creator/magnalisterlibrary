@@ -82,3 +82,4 @@ MLI18n::gi()->{'metro_prepare_match_variations_saved'} = '{#i18n:attributes_matc
 MLI18n::gi()->{'metro_prepare_match_variations_category_missing'} = 'Bitte w&auml;hlen Sie Variantengruppe.';
 
 MLI18n::gi()->{'metro_prepare_variations_saved'} = '{#i18n:attributes_matching_matching_variations_saved#}';
+MLI18n::gi()->{'metro_prepare_match_variations_not_all_matched'} = 'Bitte weisen Sie allen amazon Attributen ein Shop-Attribut zu.';

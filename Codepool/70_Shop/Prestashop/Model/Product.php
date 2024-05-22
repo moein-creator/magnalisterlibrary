@@ -7,14 +7,13 @@
  * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
  * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
- *                            m a g n a l i s t e r
- *                                        boost your Online-Shop
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
  *
- *   -----------------------------------------------------------------------------
- *   @author magnalister
- *   @copyright 2010-2022 RedGecko GmbH -- http://www.redgecko.de
- *   @license Released under the MIT License (Expat)
- *   -----------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
  */
 
 class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
@@ -104,7 +103,7 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
             if ($sKey == 'pID') {
                 $oShopProduct = $this->loadPrestashopProduct($oProduct->get('productsid'), true);
             } else {
-                $oShopProduct = MLHelper::gi('model_product')->getProductByReference($oProduct->get('productssku'),true);
+                $oShopProduct = MLPrestashopAlias::getProductHelper()->getProductByReference($oProduct->get('productssku'), true);
             }
             if (empty($oShopProduct->id) && $this->get('id') != 0) { // $this->get('id')!= 0 because of OldLib/php/modules/amazon/application/applicationviews.php line 556
                 $iId = $this->get('id');
@@ -135,7 +134,6 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
         $this->set('parentid', $iParentId)->aKeys[] = 'parentid';
         $sMessage = array();
         if ($iParentId == 0) {
-            $this->addSku($this->oProduct);
             $this
                 ->set('marketplaceidentid', $this->oProduct->id)
                 ->set('marketplaceidentsku', $this->oProduct->reference)
@@ -144,8 +142,12 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
                 ->set('shopdata', array())
                 ->set('data', array('messages' => $sMessage))
                 ->save()
-                ->aKeys = array('id')
-            ;
+                ->aKeys = array('id');
+            if ($sKey !== 'pID' && empty($this->oProduct->reference)) {
+                MLMessage::gi()->addObjectMessage(
+                    $this, MLI18n::gi()->data('Productlist_Cell_Product_NoSku')
+                );
+            }
         } else {
             if (isset($mData['id_product_attribute'])) {
                 $oVariation = $this->loadPrestashopVariation($mData['id_product_attribute']);
@@ -159,20 +161,23 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
                 MLMessage::gi()->addDebug('Child ::One of selected product was deleted from shop now it is deleted from magnalister list too, please refresh the page');
                 throw new Exception;
             }
-            $this->addSku($oVariation);            
             $this
-                    ->set('marketplaceidentid', $oVariation->id . (isset($mData['id_product'])?'':'_' . $this->oProduct->id))
-                    ->set('marketplaceidentsku', $oVariation->reference)
-                    ->set("productsid", $oVariation->id)
-                    ->set("productssku", $oVariation->reference)
-                    ->set('shopdata', $mData)
-                    ->set('data', array('messages' => $sMessage))
-            ;
+                ->set('marketplaceidentid', $oVariation->id.(isset($mData['id_product']) ? '' : '_'.$this->oProduct->id))
+                ->set('marketplaceidentsku', $oVariation->reference)
+                ->set("productsid", $oVariation->id)
+                ->set("productssku", $oVariation->reference)
+                ->set('shopdata', $mData)
+                ->set('data', array('messages' => $sMessage));
             if ($this->exists()) {
                 $this->aKeys = array('id');
                 $this->save();
             } else {
                 $this->save()->aKeys = array('id');
+            }
+            if ($sKey !== 'pID' && empty($oVariation->reference)) {
+                MLMessage::gi()->addObjectMessage(
+                    $this, MLI18n::gi()->data('Productlist_Cell_ProductVariant_NoSku')
+                );
             }
 
         }
@@ -278,11 +283,12 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
         if (($iAttributeId = $this->getAttributeId()) !== null) {
             $sPostFix .= Product::getProductName($this->getId(), $iAttributeId);
         }
-
-        if($this->blProductListMode && isset($this->getLoaddedProduct()->name[ContextCore::getContext()->employee->id_lang])) {
-            $sProductName = $this->getLoaddedProduct()->name[Context::getContext()->employee->id_lang];
-        } else {
-            $sProductName = $this->getLoaddedProduct()->name[Context::getContext()->language->id];
+        $sProductName = '';
+        $aProductName = $this->getLoaddedProduct()->name;
+        if ($this->blProductListMode && isset($aProductName[ContextCore::getContext()->employee->id_lang])) {
+            $sProductName = $aProductName[Context::getContext()->employee->id_lang];
+        } elseif (isset($aProductName[Context::getContext()->language->id])) {
+            $sProductName = $aProductName[Context::getContext()->language->id];
         }
         return (!empty($sProductName) && strpos($sPostFix, $sProductName) !== false) ? $sPostFix : $sProductName . $sPostFix;
     }
@@ -297,8 +303,28 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
     }
     
     public function getFrontendLink() {
-        $oLink = new Link();
-        return $oLink->getProductLink($this->getLoaddedProduct());
+        $id_product_attribute = null;
+        $mData = $this->get('shopdata');
+        if (isset($mData['id_product_attribute'])) {
+            $id_product_attribute = $mData['id_product_attribute'];
+        }
+        $category = null;
+        if(!empty($this->getLoaddedProduct()->id_category_default)){
+            $category = Category::getLinkRewrite($this->getLoaddedProduct()->id_category_default, Context::getContext()->language->id);
+        }
+
+        return Context::getContext()->link->getProductLink(
+            $this->getLoaddedProduct(),
+            null,
+            $category,
+            null,
+            null,
+            null,
+            $id_product_attribute,
+            null,
+            false,
+            true);
+
     }
 
     public function getShopPrice($blGros = true, $blFormated = false) {
@@ -309,7 +335,7 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
 
     public function getSuggestedMarketplaceStock($sType, $fValue, $iMax = null){
         if(
-            MLModul::gi()->getConfig('inventar.productstatus') == 'true'
+            MLModule::gi()->getConfig('inventar.productstatus') == 'true'
             && !$this->isActive()
         ) {
             return 0;
@@ -333,7 +359,7 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
     protected function prepareProductForMarketPlace() {  
         $aConf = null;
         try {
-            $aConf = MLModul::gi()->getConfig();
+            $aConf = MLModule::gi()->getConfig();
         } catch(Exception $oExc) {
             MLMessage::gi()->addDebug($oExc);
         }      
@@ -341,8 +367,10 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
             $context = Context::getContext();
             /* @var  $context  ContextCore */
             if(array_key_exists('orderimport.shop', $aConf)){
-                Shop::setContext(Shop::CONTEXT_SHOP,$aConf['orderimport.shop']); 
+                Shop::setContext(Shop::CONTEXT_SHOP, $aConf['orderimport.shop']);
                 $context->shop = new Shop($aConf['orderimport.shop']);
+                /* lang parameter shouldn't be set here because it can cause that for name, description and ... product
+                has single value instead of array of all language and it can break several function that expect array */
                 $this->oProduct = new Product($this->oProduct->id, true, null, $context->shop->id);
             }else{
                 Shop::setContext(Shop::CONTEXT_SHOP,$context->shop->id);
@@ -371,12 +399,71 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
         return $mReturn;
     }
 
+    public function getVolumePrices($sGroup, $blGross = true, $sPriceKind = '', $fPriceFactor = 0.0, $iPriceSignal = null) {
+        $context = Context::getContext();
+        $id_product_attribute = $this->getAttributeId();
+        $id_product = (int)$this->oProduct->id;
+        $id_currency = $context->currency->id;
+        $quantity_discounts = SpecificPrice::getQuantityDiscounts(
+            $id_product, $context->shop->id, $id_currency, Configuration::get('PS_COUNTRY_DEFAULT', null, null, $context->shop->id),
+            $sGroup, $id_product_attribute);
+        $aVolumePrices = array();
+
+        $fTax = $this->getTax();
+
+        foreach ($quantity_discounts as $quantity_discount) {
+            if ($quantity_discount['from_quantity'] > 1) {
+                $specific_price = null;
+                $fPrice = Product::priceCalculation(
+                    $context->shop->id, (int)$this->oProduct->id, $this->getAttributeId(),
+                    Configuration::get('PS_COUNTRY_DEFAULT', null, null, $context->shop->id),
+                    0/*$id_state*/, 0/*$zipcode*/, $context->currency->id /*$id_currency*/,
+                    $sGroup/*$id_group*/, (int)$quantity_discount['from_quantity']/*$quantity*/, $blGross /*use_tax*/, 2 /*$decimals*/,
+                    false/*$only_reduc*/, true/*$use_reduc*/, true/*$with_ecotax*/,
+                    $specific_price, true/*$use_group_reduction*/, null/*$id_customer*/, null/*$use_customer_price*/,
+                    null/*$id_cart*/, (int)$quantity_discount['from_quantity']/*$real_quantity*/
+                );
+
+                $oPrice = MLPrice::factory();
+                $fGrossPrice = $fPrice;
+                if (!$blGross) {
+                    $fGrossPrice = $oPrice->calcPercentages(null, $fPrice, $fTax);
+                }
+
+                // price kind
+                if ($sPriceKind == 'percent') {
+                    $fGrossPrice = $oPrice->calcPercentages(null, $fGrossPrice, $fPriceFactor);
+                } elseif ($sPriceKind == 'addition') {
+                    $fGrossPrice = $fGrossPrice + $fPriceFactor;
+                }
+
+                // price signal
+                if ($iPriceSignal !== null) {
+                    //If price signal is single digit then just add price signal as last digit
+                    if (strlen((string)$iPriceSignal) == 1) {
+                        $fGrossPrice = (0.1 * (int)($fGrossPrice * 10)) + ((int)$iPriceSignal / 100);
+                    } else {
+                        $fGrossPrice = ((int)$fGrossPrice) + ((int)$iPriceSignal / 100);
+                    }
+                }
+
+                if ($blGross) {
+                    $aVolumePrices[$quantity_discount['from_quantity']] = $fGrossPrice;
+                } else {
+                    $aVolumePrices[$quantity_discount['from_quantity']] = $oPrice->calcPercentages($fGrossPrice, null, $fTax);
+                }
+
+            }
+        }
+        return $aVolumePrices;
+    }
+
     protected function getPrice($blGros, $blFormated, $sPriceKind = '', $fPriceFactor = 0.0, $iPriceSignal = null, $fTax = null) {
         $context = Context::getContext();
         $fPercent = (float)$this->getLoaddedProduct()->getTaxesRate();
-        $iGroupId = $this->blSpecialPrice && is_object($context->customer)  ? $context->customer->id_default_group : 0;
+        $iGroupId = $this->blSpecialPrice && is_object($context->customer) ? $context->customer->id_default_group : 0;
         $oCurrency = Currency::getCurrencyInstance($context->currency->id);
-        if($oCurrency->conversion_rate == 0){
+        if ($oCurrency->conversion_rate == 0) {
             $oDBCurrency = new Currency($context->currency->id);
             $oCurrency->conversion_rate = $oDBCurrency->conversion_rate;
         }
@@ -423,12 +510,12 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
      * @param type $blGeneral
      * @return null
      */
-    public function getModulField($sFieldName, $blGeneral = false) {
+    public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false) {
         $this->load();
         if ($blGeneral) {
             $sValue = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', $sFieldName)->get('value');
         } else {
-            $sValue = MLModul::gi()->getConfig($sFieldName);
+            $sValue = MLModule::gi()->getConfig($sFieldName);
         }
 		if(strpos($sValue,'product_feature_') === 0){
 			$sValue = str_replace('product_feature_', '', $sValue);
@@ -439,19 +526,27 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
     }
 
     public function getDescription() {
-        return $this->getLoaddedProduct()->description[Context::getContext()->language->id];
+        $aLanguageValue = $this->getLoaddedProduct()->description;
+        $languageId = Context::getContext()->language->id;
+        return isset($aLanguageValue[$languageId]) ? $aLanguageValue[$languageId] : '';
     }
 
     public function getShortDescription() {
-        return $this->getLoaddedProduct()->description_short[Context::getContext()->language->id];
+        $aLanguageValue = $this->getLoaddedProduct()->description_short;
+        $languageId = Context::getContext()->language->id;
+        return isset($aLanguageValue[$languageId]) ? $aLanguageValue[$languageId] : '';
     }
 
     public function getMetaDescription() {
-        return $this->getLoaddedProduct()->meta_description[Context::getContext()->language->id];
+        $aLanguageValue = $this->getLoaddedProduct()->meta_description;
+        $languageId = Context::getContext()->language->id;
+        return isset($aLanguageValue[$languageId]) ? $aLanguageValue[$languageId] : '';
     }
 
     public function getMetaKeywords() {
-        return $this->getLoaddedProduct()->meta_keywords[Context::getContext()->language->id];
+        $aLanguageValue = $this->getLoaddedProduct()->meta_keywords;
+        $languageId = Context::getContext()->language->id;
+        return isset($aLanguageValue[$languageId]) ? $aLanguageValue[$languageId] : '';
     }
 
     /**
@@ -543,8 +638,8 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
 
     /**
      * return current master product object of Prestashop
-     * it is public because it is used in some individual programming 
-     * @return ProductCore
+     * it is public because it is used in some individual programming
+     * @return Product
      */
     public function getLoaddedProduct() {
         if ($this->oProduct === null) {
@@ -658,14 +753,14 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
             $sIdent = 'marketplaceidentsku';
             $oProduct = MLPrestashopAlias::getProductHelper()->getProductByReference($sSku);
             if ($oProduct !== null) {
-                if($oProduct instanceof Combination){
-                    $oShopProduct = $this->loadPrestashopProduct($oProduct->id_product,true);
-                }else{
+                if ($oProduct instanceof Combination) {
+                    $oShopProduct = $this->loadPrestashopProduct($oProduct->id_product, true);
+                } else {
                     $oShopProduct = $oProduct;
                 }
             }
         }
-        if($oShopProduct !== null){
+        if ($oShopProduct !== null && $oShopProduct->id !== null) {
             $oMyTable->loadByShopProduct($oShopProduct);
             if ($oMyTable->get($sIdent) === $sSku) {
                 $aOut['master'] = $oMyTable;
@@ -711,28 +806,6 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
 
         }
         return 0;
-    }
-
-    protected function addSku($oProduct) {
-        if (empty($oProduct->reference)) {
-            $iLoopLimit = 1000;
-            do {
-                $sNewSku = $oProduct->id.'_'.rand(0, getrandmax());
-                $oProduct->reference = $sNewSku;
-                $aProduct = MLHelper::gi('model_product')->getProductByReference($sNewSku);
-                $iLoopLimit--;
-            } while ($aProduct != null && $iLoopLimit > 0);
-            if (isset($oProduct) && isset($oProduct->id)) {
-                $sPostFix = $oProduct instanceof Product ? '' : '_attribute';
-                MLDatabase::getDbInstance()->update(
-                    _DB_PREFIX_.'product'.$sPostFix, 
-                    array('reference' => $oProduct->reference), 
-                    array('id_product'.$sPostFix => $oProduct->id)
-                );
-                $oProduct->clearCache();
-            }
-        }
-        return $this;
     }
 
     public function getAttributeId($mReturn = null) {
@@ -800,35 +873,48 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
     }
 
     public function getAttributeValue($mAttributeCode) {
+        $mValue = null;
         $aAttributeCode = explode('_', $mAttributeCode);
         if ($aAttributeCode[0] === 'a') {
             $oPV = $this->getRealProduct();
-            if($oPV instanceof Combination){
+            if ($oPV instanceof Combination) {
                 $attributes = $oPV->getAttributesName(Context::getContext()->language->id);
                 foreach ($attributes as $attribute) {
                     $result = MLDatabase::factorySelectClass()
                         ->select('id_attribute_group')
-                        ->from(_DB_PREFIX_ . 'attribute')
+                        ->from(_DB_PREFIX_.'attribute')
                         ->where("id_attribute = {$attribute['id_attribute']}")
                         ->getResult();
                     if ($result[0]['id_attribute_group'] === $aAttributeCode[1]) {
-                        return $attribute['name'];
+                        $mValue = $attribute['name'];
+                        break;
                     }
                 }
             }
         } else if ($aAttributeCode[0] === 'f') {
             $ifeatureValue = MLDatabase::factorySelectClass()
                 ->select('l.value')
-                ->from(_DB_PREFIX_ . 'feature_product', 'p')
-                ->join(array(_DB_PREFIX_ . 'feature_value_lang', 'l', 'p.id_feature_value = l.id_feature_value', ML_Database_Model_Query_Select::JOIN_TYPE_LEFT))
-                ->where("l.id_lang = " . Context::getContext()->language->id . " and p.id_feature = $aAttributeCode[1] and p.id_product = {$this->getLoaddedProduct()->id}")
+                ->from(_DB_PREFIX_.'feature_product', 'p')
+                ->join(array(_DB_PREFIX_.'feature_value_lang', 'l', 'p.id_feature_value = l.id_feature_value', ML_Database_Model_Query_Select::JOIN_TYPE_LEFT))
+                ->where("l.id_lang = ".Context::getContext()->language->id." and p.id_feature = $aAttributeCode[1] and p.id_product = {$this->getLoaddedProduct()->id}")
                 ->getResult();
-            return isset($ifeatureValue[0]['value']) ? $ifeatureValue[0]['value'] : NULL;
+            $mValue = isset($ifeatureValue[0]['value']) ? $ifeatureValue[0]['value'] : NULL;
+        } else if (isset($aAttributeCode[1]) && in_array($aAttributeCode[0], array('width', 'height', 'depth', 'weight'))) {
+            if (strpos($aAttributeCode[1], 'WithUnit') !== false) {//e.g. WidthWithUnit
+                $mValue = $this->getAttributeValue($aAttributeCode[0]).' '.$this->getAttributeValue($aAttributeCode[0].'_Unit');
+            } else if (strpos($aAttributeCode[1], 'Unit') !== false) {//e.g. WidthUnit
+                if ($aAttributeCode[0] === 'weight') {
+                    $mValue = Configuration::get('PS_WEIGHT_UNIT');
+                } else {
+                    $mValue = Configuration::get('PS_DIMENSION_UNIT');
+                }
+            }
+        } else if ($this->getRealProduct() instanceof Combination && in_array($mAttributeCode, array('weight'))) {//if the product is a variation
+            $mValue = $this->getParent()->getRealProduct()->$mAttributeCode + $this->getRealProduct()->$mAttributeCode;
         } else {
-            return $this->__get($mAttributeCode);
+            $mValue = $this->__get($mAttributeCode);
         }
-
-        return null;
+        return $mValue;
     }
 
     public function getManufacturer() {
@@ -926,7 +1012,7 @@ class ML_Prestashop_Model_Product extends ML_Shop_Model_Product_Abstract  {
     public function initShopContext() {
         $aConf = null;
         try {
-            $aConf = MLModul::gi()->getConfig();
+            $aConf = MLModule::gi()->getConfig();
         } catch(Exception $oExc) {
             MLMessage::gi()->addDebug($oExc);
         }      

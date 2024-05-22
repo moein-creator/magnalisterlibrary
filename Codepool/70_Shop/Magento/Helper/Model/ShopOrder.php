@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -119,8 +119,9 @@ class ML_Magento_Helper_Model_ShopOrder{
     }
     
     protected function checkForUpdate(){
-        if(
-            count($this->aExistingOrderData) == 0
+        if (
+            !is_array($this->aExistingOrderData)
+            || count($this->aExistingOrderData) == 0
             || count($this->aCurrentOrderData['Products']) > 0
         ) {
             return false;
@@ -270,7 +271,7 @@ class ML_Magento_Helper_Model_ShopOrder{
     protected function createOrder(){
         try{
             $oTransaction = Mage::getModel('core/resource_transaction');
-            $oStore = MLShop::gi()->initMagentoStore(MLModul::gi()->getConfig('orderimport.shop'));//Mage::app()->getStore(MLModul::gi()->getConfig('orderimport.shop'));
+            $oStore = MLShop::gi()->initMagentoStore(MLModule::gi()->getConfig('orderimport.shop'));//Mage::app()->getStore(MLModule::gi()->getConfig('orderimport.shop'));
             $this->oCurrentShopOrder = Mage::getModel('sales/order');
             $sGlobalCurrencyCode  = Mage::app()->getBaseCurrencyCode();
             $oBaseCurrency = $oStore->getBaseCurrency();
@@ -372,7 +373,7 @@ class ML_Magento_Helper_Model_ShopOrder{
                     'MOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
                     'PHP' => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
                     'NewIncrementId' => array(
-                        'Shop' => MLModul::gi()->getConfig('orderimport.shop'),
+                        'Shop' => MLModule::gi()->getConfig('orderimport.shop'),
                         'OrderStoreId' => $this->oCurrentShopOrder->getStoreId(),
                         'StoreId' => $oStore->getId(),
                         'IncrementId' => $iIncrementId
@@ -661,7 +662,7 @@ class ML_Magento_Helper_Model_ShopOrder{
                             $sCarrier = $aTotal['Data']['Carrier'];
                             $sCarrierType = strtolower($sCarrier) == 'dhl' ? 'dhlint' : 'custom';
                         } else {
-                            $sCarrier = !in_array($aTotal['Code'], array('', 'none', 'None', null))? $aTotal['Code'] : MLModul::gi()->getMarketPlaceName().' ('.MLModul::gi()->getMarketPlaceId().')';
+                            $sCarrier = !in_array($aTotal['Code'], array('', 'none', 'None', null)) ? $aTotal['Code'] : MLModule::gi()->getMarketPlaceName() . ' (' . MLModule::gi()->getMarketPlaceId() . ')';
                             $sCarrierType = 'custom';
                         }
 
@@ -689,10 +690,10 @@ class ML_Magento_Helper_Model_ShopOrder{
     
     protected function addCustomerToOrder($oOrder, $aData){
         $oCustomer = Mage::getModel('customer/customer');/* @var $oCustomer Mage_Customer_Model_Customer */
-        $sCustomerGroupId = 
-            MLModul::gi()->getConfig('CustomerGroup') === null 
-            ? MLModul::gi()->getConfig('customergroup') 
-            : MLModul::gi()->getConfig('CustomerGroup')
+        $sCustomerGroupId =
+            MLModule::gi()->getConfig('CustomerGroup') === null
+                ? MLModule::gi()->getConfig('customergroup')
+                : MLModule::gi()->getConfig('CustomerGroup')
         ;
         $blGuest = empty($sCustomerGroupId);
         $oCustomer->setStore($oOrder->getStore());
@@ -841,10 +842,10 @@ class ML_Magento_Helper_Model_ShopOrder{
             ;
         } else {
             $oOrderItem->setProductType('simple');
-            $fDefaultProductTax = 
-                MLModul::gi()->getConfig('mwst.fallback') === null 
-                ? MLModul::gi()->getConfig('mwstfallback') 
-                : MLModul::gi()->getConfig('mwst.fallback')
+            $fDefaultProductTax =
+                MLModule::gi()->getConfig('mwst.fallback') === null
+                    ? MLModule::gi()->getConfig('mwstfallback')
+                    : MLModule::gi()->getConfig('mwst.fallback')
             ;
             $fTaxPercent = $aProduct['Tax'] === false ? $fDefaultProductTax : $aProduct['Tax'];
         }

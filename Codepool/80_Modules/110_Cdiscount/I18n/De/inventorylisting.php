@@ -12,7 +12,7 @@
  * STATUS_ACTIVE = 'Active';
 */
 
-MLI18n::gi()->cdiscount_inventory_listing_quantity = 'Bestand<br />Shop / Cdiscount';
+MLI18n::gi()->cdiscount_inventory_listing_quantity = 'Bestand: Shop / Cdiscount';
 MLI18n::gi()->cdiscount_inventory_listing_price = 'Cdiscount Preis';
 MLI18n::gi()->cdiscount_inventory_listing_status = 'Status';
 MLI18n::gi()->cdiscount_inventory_listing_status_new = 'Produkt wird erstellt';

@@ -11,12 +11,13 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-
-class_exists('ML',false) or die();
+/** @var $this ML_Rookie_Controller_Rookie */
+ if (!class_exists('ML', false))
+     throw new Exception();
 
 $requestTariff = MLRequest::gi()->data('Tariff');
 

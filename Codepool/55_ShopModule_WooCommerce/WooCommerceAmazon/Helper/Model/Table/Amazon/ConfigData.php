@@ -46,11 +46,11 @@ class ML_WooCommerceAmazon_Helper_Model_Table_Amazon_ConfigData extends ML_Amazo
     public function orderimport_fbapaymentmethodField (&$aField) {
         $aMatching = MLI18n::gi()->get('amazon_configform_orderimport_payment_values');
         $aPayment = MLFormHelper::getShopInstance()->getPaymentMethodValues();       
-        $aField['values'] = 
-                array('Amazon' => $aMatching['Amazon']['title'])
-                +
-                $aPayment;       
-        
+        $aField['values'] =
+            array('Amazon' => $aMatching['Amazon']['title'])
+            +
+            $aPayment;
+
     }
 
     public function amazonvcs_invoiceField(&$aField) {

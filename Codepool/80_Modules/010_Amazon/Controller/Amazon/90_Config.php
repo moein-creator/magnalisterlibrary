@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -23,18 +23,24 @@ class ML_Amazon_Controller_Amazon_Config extends ML_Tabs_Controller_Widget_Tabs_
     public function __construct() {
         parent::__construct();
         if (MLSetting::gi()->data('invoiceConfig') === true) {
-            MLSetting::gi()->add('aJs', 'magnalister.shopware.config.form.invoice.js');
+            MLSetting::gi()->add('aJs', 'magnalister.shopware.config.form.invoice.js?%s');
         }
-        MLSetting::gi()->add('aJs', 'magnalister.amazon.config.form.js');
-        MLSetting::gi()->add('aJs', 'magnalister.config.form.invoice.js');
+        MLSetting::gi()->add('aJs', 'magnalister.amazon.config.form.js?%s');
+        MLSetting::gi()->add('aJs', 'magnalister.config.form.invoice.js?%s');
+
+        $shopData = MLShop::gi()->getShopInfo();
+        if ($shopData['DATA']['IsBopisPilot'] === 'yes') {
+        //if (MLSetting::gi()->data('invoiceConfig') === true) {
+            MLSetting::gi()->add('aJs', 'magnalister.shopware.config.form.bopis.js?%s');
+        }
+
     }
     
     public static function getTabTitle() {
         return MLI18n::gi()->get('ML_GENERIC_CONFIGURATION');
     }
 
-    public static function getTabTitleTranslationData()
-    {
+    public static function getTabTitleTranslationData() {
         return MLI18n::gi()->getTranslationData('ML_GENERIC_CONFIGURATION');
     }
 }

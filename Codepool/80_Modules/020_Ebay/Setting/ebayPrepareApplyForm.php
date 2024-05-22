@@ -109,6 +109,15 @@ MLSetting::gi()->ebay_prepare_apply_form = array(
                 'name' => 'ConditionID',
             ),
             array(
+                'name' => 'ConditionDescriptors',
+                #'type' => 'ebay_conditiondescriptors',
+                #'subfields' => array(
+                #    'd1' => array('label' => '', 'name' => 'conditiondescriptors.1', 'type' => 'select'),
+                #    'd2' => array('label' => '', 'name' => 'conditiondescriptors.2', 'type' => 'select'),
+                #    'd3' => array('label' => '', 'name' => 'conditiondescriptors.3', 'type' => 'text'),
+                #)
+            ),
+            array(
                 'name' => 'ConditionDescription',
                 'type' => 'string',
             ),
@@ -120,9 +129,6 @@ MLSetting::gi()->ebay_prepare_apply_form = array(
             ),
             array(
                 'name' => 'eBayPlus',
-            ),
-            array(
-                'name' => 'hitcounter',
             ),
             array(
                 'name' => 'startTime',
@@ -206,9 +212,9 @@ MLSetting::gi()->ebay_prepare_variations = array(
         'fields' => array(
             array(
                 'name' => 'variationgroups',
-                'type' => 'categoryselect',
+                'type' => 'ebay_categoryselect',
                 'subfields' => array(
-                    'variationgroups.value' => array('name' => 'variationgroups.value', 'type' => 'categoryselect', 'cattype' => ''),
+                    'variationgroups.value' => array('name' => 'variationgroups.value', 'type' => 'ebay_categoryselect', 'cattype' => ''),
                 ),
             ),
         ),
@@ -226,7 +232,7 @@ MLSetting::gi()->ebay_prepare_variations = array(
     'action' => array(
         'legend' => array(
             'classes' => array(
-                'mlhidden',
+                '',
             ),
         ),
         'row' => array(

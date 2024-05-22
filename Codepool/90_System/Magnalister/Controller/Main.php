@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -66,7 +66,7 @@ class ML_Magnalister_Controller_Main extends ML_Tabs_Controller_Widget_Tabs_Abst
 
         if (array_key_exists($sCurrentModul, $aModules)) {
             try {
-                $blConf = MLModul::gi()->isConfigured();
+                $blConf = MLModule::gi()->isConfigured();
             } catch (Exception $oEx) {//no modul
                 $blConf = true;
             }
@@ -105,6 +105,10 @@ class ML_Magnalister_Controller_Main extends ML_Tabs_Controller_Widget_Tabs_Abst
 
     public function getTabsWidget() {
         $this->includeView('widget_tabs');
+    }
+
+    public function getTabsWidgetBuffered() {
+        return $this->includeViewBuffered('widget_tabs');
     }
 
     public function getTabs() {
@@ -210,7 +214,7 @@ class ML_Magnalister_Controller_Main extends ML_Tabs_Controller_Widget_Tabs_Abst
                 'class'    => isset($aMp[1]) && $aMp[1] == 'tools' ? 'selected' : ''
             );
         }
-        return $aStructure;
+        return $this->tabsClasses($aStructure);
     }
 
     /**
@@ -222,10 +226,10 @@ class ML_Magnalister_Controller_Main extends ML_Tabs_Controller_Widget_Tabs_Abst
             $shopData = MLShop::gi()->getShopInfo();
 
             // controller is set but IsRookieLimitExceeded is true - only redirect when it's not already rookie
-            if (MLRequest::gi()->data('mp') != 'rookie'
-                && !empty($sRequestController)
+            if (
+                is_string($sRequestController)
                 && !in_array($sRequestController, array('configuration', 'guide', 'rookie'))
-                && !preg_match('/main_tools_*/', $sRequestController)
+                && !preg_match('/configuration|guide|rookie|main_tools_*/', $sRequestController)
                 && isset($shopData['DATA']['IsRookieLimitExceeded'])
                 && $shopData['DATA']['IsRookieLimitExceeded'] == 'yes'
             ) {

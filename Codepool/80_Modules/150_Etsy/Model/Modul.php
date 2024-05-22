@@ -83,4 +83,75 @@ class ML_Etsy_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         return array('noselection' => MLI18n::gi()->ML_ERROR_API);
     }
 
+    public function saveShippingProfile() {
+        $aData = MLRequest::gi()->data();
+        $results = array(
+            'title'               => $aData['title'],
+            'origin_country_iso'   => $aData['originCountry'],
+            'destination_country_iso' => $aData['destinationCountry'],
+            'destination_region'  => $aData['destinationRegion'],
+            'primary_cost'        => $aData['primaryCost'],
+            'secondary_cost'      => $aData['secondaryCost'],
+            'min_processing_time' => $aData['minProcessingTime'],
+            'max_processing_time' => $aData['maxProcessingTime'],
+            'min_delivery_days'   => $aData['minDeliveryDays'],
+            'max_delivery_days'   => $aData['maxDeliveryDays'],
+            'origin_postal_code'  => $aData['originPostalCode'],
+        );
+        MagnaConnector::gi()->submitRequest(array(
+            'ACTION' => 'SaveShippingProfile',
+            'DATA'   => $results
+        ));
+    }
+
+    public function isAuthed($blResetCache = false) {
+
+        return parent::isAuthed($blResetCache) && $this->tokenAvailable();
+    }
+
+    public function tokenAvailable($blResetCache = false) {
+        $sCacheKey = strtoupper(__class__).'__'.$this->getMarketPlaceId().'_ebaytoken';
+        $oCache = MLCache::gi();
+        if ($blResetCache) {
+            $oCache->delete($sCacheKey);
+        }
+        if (!$oCache->exists($sCacheKey) || !((bool)$oCache->get($sCacheKey))) {
+            $blToken = false;
+            try {
+                $result = MagnaConnector::gi()->submitRequest(array(
+                    'ACTION' => 'CheckIfTokenAvailable'
+                ));
+                if ('true' == $result['DATA']['TokenAvailable']) {
+                    $this->setConfig('token', '__saved__');
+                    $this->setConfig('token.expires', $result['DATA']['TokenExpirationTime']);
+                    if (array_key_exists('OauthTokenExpirationTime', $result['DATA'])) {
+                        // actually, it's the expiration time for the "refresh token" - but we handle these things within the API (the customer only needs to know when it's time to renew the auth process)
+                        $this->setConfig('oauth.token.expires', $result['DATA']['OauthTokenExpirationTime']);
+                    }
+                    $blToken = true;
+                }
+            } catch (MagnaException $e) {
+            }
+            $oCache->set($sCacheKey, $blToken, 60 * 15);
+        }
+        return (bool)$oCache->get($sCacheKey);
+    }
+
+    public function getCategoryDetails($sCategoryId) {
+        $aCategoryDetails = MagnaConnector::gi()->submitRequestCached(
+            array(
+                'ACTION' => 'GetCategoryDetails',
+                'DATA' => array(
+                    'CategoryID' => $sCategoryId,
+                    'Language' => $this->getConfig('shop.language'),
+                )
+            ), 60 * 60 * 24
+        );
+        foreach ($aCategoryDetails['DATA']['attributes'] as &$aAttribute) {
+            if (empty($aAttribute['values'])) {
+                $aAttribute['type'] = 'text';
+            }
+        }
+        return $aCategoryDetails;
+    }
 }

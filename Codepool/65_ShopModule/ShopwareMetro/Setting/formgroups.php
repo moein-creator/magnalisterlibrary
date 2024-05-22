@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,30 +11,35 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 $Config = MLSetting::gi()->get('formgroups__orderimport');
 MLSetting::gi()->add('formgroups__orderimport__fields__orderimport.shippingmethod', array(
-        'i18n' => '{#i18n:formfields__orderimport.shippingmethod#}',
-        'name' => 'orderimport.shippingmethod',
-        'type' => 'select',
-        'expert' => false,
+        'i18n'       => '{#i18n:formfields__orderimport.shippingmethod#}',
+        'name'       => 'orderimport.shippingmethod',
+        'type'       => 'select',
+        'expert'     => false,
         'cssclasses' => array('mljs-directbuy',),
     )
 );
 MLSetting::gi()->add('formgroups__orderimport__fields__orderimport.paymentmethod', array(
-    'i18n' => '{#i18n:formfields__orderimport.paymentmethod#}',
-    'name' => 'orderimport.paymentmethod',
-    'type' => 'select',
-    'expert' => false,
+    'i18n'       => '{#i18n:formfields__orderimport.paymentmethod#}',
+    'name'       => 'orderimport.paymentmethod',
+    'type'       => 'select',
+    'expert'     => false,
     'cssclasses' => array('mljs-directbuy',),
 ));
 MLSetting::gi()->add('formgroups__orderimport__fields__orderimport.paymentstatus', array(
-    'i18n' => '{#i18n:formfields__orderimport.paymentstatus#}',
-    'name' => 'orderimport.paymentstatus',
-    'type' => 'select',
+    'i18n'       => '{#i18n:formfields__orderimport.paymentstatus#}',
+    'name'       => 'orderimport.paymentstatus',
+    'type'       => 'select',
     'cssclasses' => array('mljs-directbuy',),
 ));
+
+if (version_compare(MLSHOPWAREVERSION, '5.6.0', '>=')) {
+    MLSetting::gi()->set('formgroups_metro__invoice__fields__invoiceDocumentType', '{#setting:formfields__config_shopware5_invoice_documenttype#}');
+    MLSetting::gi()->set('formgroups_metro__invoice__fields__creditnoteDocumentType', '{#setting:formfields__config_shopware5_creditnote_documenttype#}');
+}

@@ -61,12 +61,14 @@ Please note! The synchronization of stocks and prices is dependent on this setti
                 '9' => '10 months ago',
                 '10' => '11 months ago',
                 '11' => '12 months ago',
+                '12' => '13 months ago',
+                '13' => '14 months ago',
             ),
         ),
         'general.order.information'                       => array(
             'label' => 'Order Information',
-            'valuehint' => 'Save order number and marketplace name in customer comments.',
-            'help' => 'When this function is activated, the marketplace order number and the marketplace name will be saved in the customer comments after order import.<br />
+            'valuehint' => 'Save order number, marketplace name and buyer&apos;s message (if any) in customer comments.',
+            'help' => 'When this function is activated, the marketplace order number, the marketplace name and the message entered by buyer (if available) will be saved in the customer comments after order import.<br />
 The customer comments can be transferred to the invoice on many systems, so the customer automatically receives the information about the origin of the order.<br />
 This also allows you to provide space for further statistical sales overviews.<br />
 <b>Important:</b> Some ERPs do not import orders that have customer comments. Please speak to your ERP provider for any further information.',
@@ -89,12 +91,6 @@ Addresses of pictures or links which don\'t start with <strong>http://</strong>,
             'label' => 'CRON Url',
             'help'  => 'This URL is automatically calculated from the store system settings and called to perform inventory synchronization, order import and ... from magnalister servers.This URL called for executing inventory synchronization, order import and ... from magnalister servers, and it automatically get from shop-system. Only if the current URL is not callable, you can change the URL here. To reset the URL to the original, clear the input and save the configuration.',
         ),
-        'general.trigger.checkoutprocess.inventoryupdate' => array(
-            'label'     => 'Synchro Trigger for Orders',
-            'help'      => 'Synchronize the inventory on connected marketplaces immediately, when an order is placed in the shop? This avoids overselling nonexistent stock.<br /><br />
-<b>Please note</b>: The synchronization can take a few seconds, slowing down the ordering process.<br />',
-            'valuehint' => 'Synchronize the stock as soon as an order is placed.',
-        ),
         'general.inventar.productstatus'                  => array(
             'label'  => 'Product Status',
             'help'   => 'Determine whether an item in your web shop should be marked "<i>inactive</i>", or if the sale on the marketplace has ended (eBay) or become inactive. <br/>
@@ -106,11 +102,6 @@ Addresses of pictures or links which don\'t start with <strong>http://</strong>,
                 'true' => 'If the product status is inactive, the stock will be set to 0<br>',
                 'false' => 'Always use current stock values'
             ),
-        ),
-        'general.manufacturer'                            => array(
-            'label' => 'Manufacturer',
-            'help' => 'Manufacturer<br/><br/>
-			<b>Note:</b> The data will not be reviewed. Incorrect data can cause database problems!',
         ),
         'general.manufacturer'                            => array(
             'label' => 'Manufacturer',

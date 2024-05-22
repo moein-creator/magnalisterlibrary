@@ -24,7 +24,7 @@ if (isset($aField['subfields']) && is_array($aField['subfields'])) {
         $aSubfield['subtype'] = (isset($aSubfield['subtype']) ? $aSubfield['subtype'] : 'subField');
         if ($blInColumn) {
             ?>
-            <div style="display: table-row;">
+            <div style="display: inline-block; padding-bottom: 0.5em; width: 100%">
             <?php
         }
         $this->includeView('widget_form_type_'.$aSubfield['subtype'], array('aField' => $aSubfield, 'iValue' => isset($iValue) ? $iValue : null));

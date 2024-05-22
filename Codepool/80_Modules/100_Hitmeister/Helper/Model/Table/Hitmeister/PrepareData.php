@@ -1,17 +1,17 @@
 <?php
 /*
- * 888888ba                 dP  .88888.                    dP                
- * 88    `8b                88 d8'   `88                   88                
- * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b. 
- * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88 
- * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88 
- * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P' 
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
  *                          m a g n a l i s t e r
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -181,10 +181,10 @@ class ML_Hitmeister_Helper_Model_Table_Hitmeister_PrepareData extends ML_Form_He
 				}
 				
 				try {
-					$aUrl = MLImage::gi()->resizeImage($sImagePath, 'products', 60, 60);
+					$aUrl = MLImage::gi()->resizeImage($sImagePath, 'products', 80, 80);
 					$aField['values'][$sId] = array(
-						'height' => '60',
-						'width' => '60',
+						'height' => '80',
+						'width' => '80',
 						'alt' => $sId,
 						'url' => $aUrl['url'],
 					);
@@ -211,10 +211,45 @@ class ML_Hitmeister_Helper_Model_Table_Hitmeister_PrepareData extends ML_Form_He
     protected function shippingTimeField(&$aField) {
 		$aField['value'] = $this->getFirstValue($aField);
 	}
+
+    /**
+     * Handling Time in working days
+     *
+     * @param $aField
+     * @return void
+     */
+    protected function handlingTimeField(&$aField) {
+        $aField['values'] = array(
+            '0' => MLI18n::gi()->get('hitmeister_handlingtime_0workingdays'),
+            '1' => MLI18n::gi()->get('hitmeister_handlingtime_1workingdays'),
+        );
+
+        for ($i = 2; $i <= 100; $i++) {
+            $aField['values'][(string)$i] = $i." ".MLI18n::gi()->get('hitmeister_handlingtime_workingdays');
+        }
+        $aField['value'] = $this->getFirstValue($aField);
+    }
     
     protected function itemCountryField(&$aField) {
 		$aField['value'] = $this->getFirstValue($aField);
 	}
+
+    protected function shippinggroupField(&$aField) {
+        $shippingGroups = MagnaConnector::gi()->submitRequestCached(array('ACTION' => 'GetListOfShippingGroups'), 12 * 12 * 60);
+        #MLMessage::gi()->addDebug('$shippingGroups = '.var_export($shippingGroups, true));
+        if (    is_array($shippingGroups)
+             && array_key_exists('DATA', $shippingGroups)
+             && is_array($shippingGroups['DATA'])
+             && is_array(current($shippingGroups['DATA']))
+             && array_key_exists('ShippingGroupId', current($shippingGroups['DATA']))) {
+            foreach ($shippingGroups['DATA'] as $shippingGroup) {
+                $aField['values'][$shippingGroup['ShippingGroupId'].''] = $shippingGroup['Name'];
+            }
+        } else {
+            $aField['values'][] = 'No shipping group created';
+        }
+        $aField['value'] = $this->getFirstValue($aField);
+    }
     
     protected function commentField(&$aField) {
 		$aField['value'] = $this->getFirstValue($aField);
@@ -236,6 +271,8 @@ class ML_Hitmeister_Helper_Model_Table_Hitmeister_PrepareData extends ML_Form_He
 	}
 
 	private function sanitizeDescription($sDescription) {
+        // Helper for php8 compatibility - can't pass null to preg_replace 
+        $sDescription = MLHelper::gi('php8compatibility')->checkNull($sDescription);
 		$sDescription = preg_replace("#(<\\?div>|<\\?li>|<\\?p>|<\\?h1>|<\\?h2>|<\\?h3>|<\\?h4>|<\\?h5>|<\\?blockquote>)([^\n])#i", "$1\n$2", $sDescription);
 		// Replace <br> tags with new lines
 		$sDescription = preg_replace('/<[h|b]r[^>]*>/i', "\n", $sDescription);

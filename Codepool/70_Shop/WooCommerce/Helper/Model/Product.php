@@ -88,7 +88,7 @@ class ML_WooCommerce_Helper_Model_Product {
      *
      * @return array
      */
-    public function getProductDetails($iProductId) {
+    public function getProductDetails($iProductId, $iVariationId = null) {
         $product = new WC_Product_Variable($iProductId);
 
         /*
@@ -102,6 +102,9 @@ class ML_WooCommerce_Helper_Model_Product {
         if (count($productVariations) > 0) {
             foreach ($productVariations as $key => $variation) {
                 if (empty($variation['attributes'])) {
+                    unset($productVariations[$key]);
+                }
+                if ($iVariationId !== null && $variation['variation_id'] != $iVariationId) {
                     unset($productVariations[$key]);
                 }
             }

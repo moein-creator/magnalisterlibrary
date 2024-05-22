@@ -38,6 +38,9 @@ if (!class_exists('ML', false))
     throw new Exception();
 ?>
 <?php
+if(!isset($sClass)){
+    $sClass = '';
+}
     if(!isset($aField['id'])){
         return;
     }

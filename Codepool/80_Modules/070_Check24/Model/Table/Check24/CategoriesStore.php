@@ -34,7 +34,7 @@ class ML_Check24_Model_Table_Check24_CategoriesStore extends ML_Modul_Model_Tabl
     }
     
     protected function setDefaultValues() {
-        $this->set('mpid', MLModul::gi()->getMarketPlaceId());
+        $this->set('mpid', MLModule::gi()->getMarketPlaceId());
         return $this;
     }
     

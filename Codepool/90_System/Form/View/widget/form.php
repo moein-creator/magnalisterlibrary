@@ -42,4 +42,4 @@ if (!class_exists('ML', false))
 </form>
 <?php
     MLSettingRegistry::gi()->addJs('jquery.magnalister.form.js');
-    MLSetting::gi()->add('aCss','magnalister.form.css', true);
+MLSetting::gi()->add('aCss', 'magnalister.form.css?%s', true);

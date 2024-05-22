@@ -184,10 +184,6 @@ class ML_Hood_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
 
                 }
 
-
-                // $aOut[$oMaster->get('id')]['Price'] = array($aOut[$oMaster->get('id')]['Price']);
-                //                        echo print_m($aOut[$oMaster->get('id')]);
-                //                        die();
             } else {
 
                 foreach ($this->oList->getList() as $oMaster) {
@@ -240,7 +236,13 @@ class ML_Hood_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
 
                         //categorise start
                         if (isset($aOut[$oMaster->get('id')]['PrimaryCategory']) || isset($aOut[$oMaster->get('id')]['SecondaryCategory'])) {
-                            $aOut[$oMaster->get('id')]['MarketplaceCategories'] = array($aOut[$oMaster->get('id')]['PrimaryCategory'], $aOut[$oMaster->get('id')]['SecondaryCategory']);
+                            $aOut[$oMaster->get('id')]['MarketplaceCategories'] = array();
+                            if (isset($aOut[$oMaster->get('id')]['PrimaryCategory'])) {
+                                $aOut[$oMaster->get('id')]['MarketplaceCategories'][] = $aOut[$oMaster->get('id')]['PrimaryCategory'];
+                            }
+                            if (isset($aOut[$oMaster->get('id')]['SecondaryCategory'])) {
+                                $aOut[$oMaster->get('id')]['MarketplaceCategories'][] = $aOut[$oMaster->get('id')]['SecondaryCategory'];
+                            }
                             foreach ($aOut[$oMaster->get('id')]['MarketplaceCategories'] as $key => $value) {
                                 if ($value == "") {
                                     unset($aOut[$oMaster->get('id')]['MarketplaceCategories'][$key]);
@@ -634,6 +636,10 @@ class ML_Hood_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                 if (empty($aService['ShippingService'])) { // config value = no-shipping
                     unset($mValue['InternationalShippingServiceOption'][$iService]);
                 } else {
+                    if ($aService['ShippingServiceCost'] == '=GEWICHT') {
+                        $aWeight = $this->oCurrentProduct->getWeight();
+                        $aService['ShippingServiceCost'] = empty($aWeight) ? '0' : (string)$aWeight['Value'];
+                    }
                     $aService['ShippingServiceCost'] = MLPrice::factory()->unformat($aService['ShippingServiceCost']);
                 }
             }
@@ -673,7 +679,7 @@ class ML_Hood_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
      * @param array $aData
      * @return string
      */
-    protected function replaceTitle($mValue, $aData, $iMaxChars = 80) {
+    protected function replaceTitle($mValue, $aData, $iMaxChars = 85) {
         /* @var $oPrepareHelper ML_Hood_Helper_Model_Table_Hood_PrepareData */
         $oPrepareHelper = MLHelper::gi('Model_Table_Hood_PrepareData');
         return $oPrepareHelper->basePriceReplace($mValue, $aData, $iMaxChars);

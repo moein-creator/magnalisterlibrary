@@ -176,7 +176,7 @@ class ML_GoogleShopping_Helper_Model_Service_Product {
             return $this->images;
         }
 
-        $sSize = MLModul::gi()->getConfig('imagesize');
+        $sSize = MLModule::gi()->getConfig('imagesize');
         $iSize = $sSize == null ? 500 : (int)$sSize;
 
         $aImagesPrepare = $this->oPrepare->get('Image');
@@ -236,11 +236,11 @@ class ML_GoogleShopping_Helper_Model_Service_Product {
     }
 
     protected function getContentLanguage() {
-        return MLModul::gi()->getConfig('googleshopping.language');
+        return MLModule::gi()->getConfig('googleshopping.language');
     }
 
     protected function getTargetCountry() {
-        return MLModul::gi()->getConfig('googleshopping.targetcountry');
+        return MLModule::gi()->getConfig('googleshopping.targetcountry');
     }
 
     protected function getOfferId() {
@@ -268,11 +268,11 @@ class ML_GoogleShopping_Helper_Model_Service_Product {
     }
 
     protected function getLanguage() {
-        return MLModul::gi()->getConfig('lang');
+        return MLModule::gi()->getConfig('lang');
     }
 
     protected function getCurrency() {
-        return MLModul::gi()->getConfig('currency');
+        return MLModule::gi()->getConfig('currency');
     }
 
     protected function getChannel() {
@@ -334,8 +334,8 @@ class ML_GoogleShopping_Helper_Model_Service_Product {
                     'ACTION' => 'GetCategoryDetails',
                     'DATA' => [
                         'categoryId' => $category,
-                        'targetCountry' => MLModul::gi()->getConfig('targetcountry'),
-                        'Language' => MLModul::gi()->getConfig('language')
+                        'targetCountry' => MLModule::gi()->getConfig('targetcountry'),
+                        'Language' => MLModule::gi()->getConfig('language')
                     ])
             )['DATA']['attributes'];
         } catch (Exception $e) {

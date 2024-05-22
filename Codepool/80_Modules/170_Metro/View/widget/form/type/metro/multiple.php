@@ -1,4 +1,5 @@
-<?php class_exists('ML', false) or die();?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
 <?php
 /**
  * this view is used to display feature in prepare for like amazon bullet point

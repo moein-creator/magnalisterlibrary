@@ -50,7 +50,7 @@ MLI18n::gi()->check24_config_account_emailtemplate_content = '
 MLI18n::gi()->add('check24_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
@@ -59,7 +59,7 @@ MLI18n::gi()->add('check24_config_account', array(
         ),
         'mpusername' => array(
             'label' => 'Benutzername',
-            'help' => 'Die Zugangsdaten für die Check24 Schnittstelle finden Sie nach dem Login auf Check24 unter "Einstellungen" -> "Bestellübermittlung" -> Konfiguration und dort in der Sektion "Ihre Schnittstellen-Zugangsdaten".',
+            'help' => 'Die Zugangsdaten für die CHECK24 Schnittstelle finden Sie nach dem Login auf CHECK24 unter "Einstellungen" -> "Bestellübermittlung" -> Konfiguration und dort in der Sektion "Ihre Schnittstellen-Zugangsdaten".',
         ),
         'ftpserver' => array(
             'label' => 'FTP Server',
@@ -88,6 +88,14 @@ MLI18n::gi()->add('check24_config_prepare', array(
         'lang' => array(
             'label' => '<nobr>Artikelbeschreibung <span class="bull">•</span></nobr>',
         ),
+        'imagesize' => array(
+            'label' => 'Bildgr&ouml;&szlig;e',
+            'help' => '<p>Geben Sie hier die Pixel-Breite an, die Ihr Bild auf dem Marktplatz haben soll.
+Die H&ouml;he wird automatisch dem urspr&uuml;nglichen Seitenverh&auml;ltnis nach angepasst.</p>
+<p>
+Die Quelldateien werden aus dem Bildordner <i>{#setting:sSourceImagePath#}</i> verarbeitet und mit der hier gew&auml;hlten Pixelbreite im Ordner <i>{#setting:sImagePath#}</i> f&uuml;r die &Uuml;bermittlung zum Marktplatz abgelegt.</p>',
+            'hint' => 'Gespeichert unter: {#setting:sImagePath#}'
+        ),
         'quantity' => array(
             'label' => 'St&uuml;ckzahl Lagerbestand <span class="bull">•</span>',
             'hint' => '',
@@ -97,7 +105,7 @@ MLI18n::gi()->add('check24_config_prepare', array(
 				Um &Uuml;berverk&auml;ufe zu vermeiden, k&ouml;nnen Sie den Wert<br/>
 				"<i>Shop-Lagerbestand &uuml;bernehmen abzgl. Wert aus rechtem Feld</i>" aktivieren.<br/>
 				<br/>
-				<strong>Beispiel:</strong> Wert auf "<i>2</i>" setzen. Ergibt &#8594; Shoplager: 10 &#8594; Check24-Lager: 8<br/>
+				<strong>Beispiel:</strong> Wert auf "<i>2</i>" setzen. Ergibt &#8594; Shoplager: 10 &#8594; CHECK24-Lager: 8<br/>
 				<br/>
 				<strong>Hinweis:</strong>Wenn Sie Artikel, die im Shop inaktiv gesetzt werden, unabh&auml;ngig der verwendeten Lagermengen<br/>
 				auch auf dem Marktplatz als Lager "<i>0</i>" behandeln wollen, gehen Sie bitte wie folgt vor:<br/>
@@ -172,7 +180,7 @@ MLI18n::gi()->add('check24_config_price', array(
             'label' => 'Nachkommastelle',
             'hint' => 'Nachkommastelle',
             'help' => '
-                Dieses Textfeld wird beim &Uuml;bermitteln der Daten zu Check24 als Nachkommastelle an Ihrem Preis &uuml;bernommen.<br/><br/>
+                Dieses Textfeld wird beim &Uuml;bermitteln der Daten zu CHECK24 als Nachkommastelle an Ihrem Preis &uuml;bernommen.<br/><br/>
                 <strong>Beispiel:</strong> <br />
                 Wert im Textfeld: 99 <br />
                 Preis-Ursprung: 5.58 <br />
@@ -232,10 +240,10 @@ MLI18n::gi()->add('check24_config_sync', array(
             ',
         ),
         'stocksync.frommarketplace' => array(
-            'label' => 'Lagerveränderung Check24',
+            'label' => 'Lagerveränderung CHECK24',
             'hint' => '',
             'help' => '
-                Wenn z. B. bei Check24 ein Artikel 3 mal gekauft wurde, wird der Lagerbestand im Shop um 3 reduziert.<br /><br />
+                Wenn z. B. bei CHECK24 ein Artikel 3 mal gekauft wurde, wird der Lagerbestand im Shop um 3 reduziert.<br /><br />
                 <strong>Wichtig:</strong> Diese Funktion l&auml;uft nur, wenn Sie den Bestellimport aktiviert haben!
             ',
         ),
@@ -267,19 +275,19 @@ MLI18n::gi()->add('check24_config_orderimport', array(
     'legend' => array(
         'importactive' => 'Bestellimport',
         'mwst' => 'Mehrwertsteuer',
-        'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu Check24',
+        'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu CHECK24',
     ),
     'field' => array(
         'orderstatus.shipped' => array(
             'label' => 'Versand bestätigen mit',
             'hint' => '',
-            'help' => 'Setzen Sie hier den Shop-Status, der auf Check24 automatisch den Status "Versand bestätigen" setzen soll.',
+            'help' => 'Setzen Sie hier den Shop-Status, der auf CHECK24 automatisch den Status "Versand bestätigen" setzen soll.',
         ),
         'orderstatus.canceled' => array(
             'label' => 'Bestellung stornieren mit',
             'hint' => '',
             'help' => '
-                Setzen Sie hier den Shop-Status, der auf Check24 automatisch den Status "Bestellung stornieren" setzen soll. <br/><br/>
+                Setzen Sie hier den Shop-Status, der auf CHECK24 automatisch den Status "Bestellung stornieren" setzen soll. <br/><br/>
                 Hinweis: Teilstorno ist hier&uuml;ber nicht m&ouml;glich. Die gesamte Bestellung wird &uuml;ber diese Funktion storniert
                 und dem K&auml;ufer gutgeschrieben.
             ',
@@ -322,7 +330,7 @@ MLI18n::gi()->add('check24_config_orderimport', array(
         'preimport.start' => array(
             'label' => 'erstmalig ab Zeitpunkt',
             'hint' => 'Startzeitpunkt',
-            'help' => 'Startzeitpunkt, ab dem die Bestellungen erstmalig importiert werden sollen. Bitte beachten Sie, dass dies nicht beliebig weit in die Vergangenheit möglich ist, da die Daten bei Check24 höchstens einige Wochen lang vorliegen.',
+            'help' => 'Startzeitpunkt, ab dem die Bestellungen erstmalig importiert werden sollen. Bitte beachten Sie, dass dies nicht beliebig weit in die Vergangenheit möglich ist, da die Daten bei CHECK24 höchstens einige Wochen lang vorliegen.',
         ),
         'customergroup' => array(
             'label' => 'Kundengruppe',
@@ -333,13 +341,13 @@ MLI18n::gi()->add('check24_config_orderimport', array(
             'label' => 'Bestellstatus im Shop',
             'hint' => '',
             'help' => '
-                Der Status, den eine von Check24 neu eingegangene Bestellung im Shop automatisch bekommen soll.<br />
+                Der Status, den eine von CHECK24 neu eingegangene Bestellung im Shop automatisch bekommen soll.<br />
                 Sollten Sie ein angeschlossenes Mahnwesen verwenden, ist es empfehlenswert, den Bestellstatus auf "Bezahlt" zu setzen (Konfiguration → Bestellstatus).
             ',
         ),
         'orderimport.shippingmethod' => array(
             'label' => 'Versandart der Bestellungen',
-            'help' => 'Versandart, die allen Check24-Bestellungen zugeordnet wird. Standard: "Check24".<br><br>'
+            'help' => 'Versandart, die allen CHECK24-Bestellungen zugeordnet wird. Standard: "CHECK24".<br><br>'
                 . 'Diese Einstellung ist wichtig f&uuml;r den Rechnungs- und Lieferscheindruck und f&uuml;r '
                 . 'die nachtr&amul;gliche Bearbeitung der Bestellung im Shop sowie einige Warenwirtschaften.',
         ),

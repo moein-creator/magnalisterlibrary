@@ -25,7 +25,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Variations extends ML_Form_Controller_
     {
         $aField['values'] = array_merge(
             array('none' => MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT')),
-            MLModul::gi()->getMainCategories()
+            MLModule::gi()->getMainCategories()
         );
     }
 
@@ -63,7 +63,8 @@ class ML_Amazon_Controller_Amazon_Prepare_Variations extends ML_Form_Controller_
 
         try {
             $aValues = MagnaConnector::gi()->submitRequestCached(array('ACTION' => 'GetCategoryDetails', 'CATEGORY' => $category));
-        } catch (Exception $e) {
+        } catch (Exception $oEx) {
+            MLMessage::gi()->addDebug($oEx);
             $aValues = array();
         }
         return !empty($aValues['DATA']['productTypes']) ? $aValues['DATA']['productTypes'] : array();

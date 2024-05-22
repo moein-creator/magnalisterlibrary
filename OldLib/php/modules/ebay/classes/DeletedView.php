@@ -1,20 +1,18 @@
 <?php
-/**
- * 888888ba                 dP  .88888.                    dP                
- * 88    `8b                88 d8'   `88                   88                
- * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b. 
- * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88 
- * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88 
- * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P' 
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
  *                          m a g n a l i s t e r
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id:
- *
- * (c) 2010 RedGecko GmbH -- http://www.redgecko.de
- *     Released under the GNU General Public License v2 or later
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
@@ -135,15 +133,17 @@ class DeletedView extends ML_Core_Controller_Abstract{
 	            $this->sort['order'] = 'End';
 	            $this->sort['type']  = 'DESC';
 	            break;
-	        case 'dateadded-desc':
+            case 'dateadded':
+	            $this->sort['order'] = 'DateAdded';
+	            $this->sort['type']  = 'ASC';
+	            break;
+            case 'dateadded-desc':
 	            $this->sort['order'] = 'DateAdded';
 	            $this->sort['type']  = 'DESC';
 	            break;
-			case 'dateadded':
-	        default:
-	            $this->sort['order'] = 'DateAdded';
-	            $this->sort['type']  = 'DESC';
-	            break;
+            default:
+                $this->sort['order'] = 'End';
+                $this->sort['type']  = 'DESC';
 	    }
 	}
 	
@@ -219,7 +219,7 @@ class DeletedView extends ML_Core_Controller_Abstract{
 						: fixHTMLUTF8Entities($item['ItemTitle']);
                 $item['VariationAttributesText'] = fixHTMLUTF8Entities($item['VariationAttributesText']);
 				$item['DateAdded'] = strtotime($item['DateAdded']);
-				$item['DateEnd'] = ('1'==$item['GTC']?'&mdash;':strtotime($item['End']));
+				$item['DateEnd'] = strtotime($item['End']);
 				$item['LastSync'] = strtotime($item['LastSync']);
 			}
 			unset($result);
@@ -395,7 +395,7 @@ jqml(document).ready(function() {
 	}
 
 	public function renderView() {
-		$html = '<form action="'.$this->getCurrentUrl().'" id="ebayDeletedView" method="post">';
+		$html = '<form action="'.$this->getCurrentUrl().'" id="ebayDeletedView" method="post" class=ml-plist ml-js-plist">';
                 foreach(MLHttp::gi()->getNeededFormFields() as $sName=>$sValue){
                     $html .= "<input type='hidden' name='$sName' value='$sValue' />";
                 }

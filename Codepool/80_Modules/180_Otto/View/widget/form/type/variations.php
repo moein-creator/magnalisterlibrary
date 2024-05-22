@@ -17,7 +17,8 @@
  * -----------------------------------------------------------------------------
  */
 /** @var ML_Form_Controller_Widget_Form_VariationsAbstract $this */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 $marketplaceName = MLModul::gi()->getMarketPlaceName();
 // if there are more than 5 optional attributes, they are displayed as a dropdown
 $optionalAttributesMaxSize = 5;
@@ -164,7 +165,7 @@ if (!empty($mParentValue) && $mParentValue !== 'none' && $mParentValue !== 'new'
         if ($bError == true) {
             $aSelectField['cssclass'] = 'error';
             $aCustomSelectField['cssclass'] = 'error';
-            $style = 'color:red';
+            $style = 'color:#e31a1c';
         }
 
         $aAjaxField = $this->getField($sId . '_ajax');
@@ -414,7 +415,7 @@ if (!empty($mParentValue) && $mParentValue !== 'none' && $mParentValue !== 'new'
         </table>
     <?php  $aHeadlineAdded = true; }
     if (!empty($aFieldsetOptional['fields'])) { ?>
-        <table class=" <?php if($aHeadlineAdded) { ?> marginTopMinus<?php } ?> attributesTable ml-js-attribute-matching" id="attributesTableOptional">
+        <table class="attributesTable ml-js-attribute-matching" id="attributesTableOptional">
             <?php $this->includeView('widget_form_type_attributefield', array('aFieldset' => $aFieldsetOptional, 'aHeadLine' => !$aHeadlineAdded ? $aHeadline : array() )); ?>
         </table>
     <?php $aHeadlineAdded = true; }

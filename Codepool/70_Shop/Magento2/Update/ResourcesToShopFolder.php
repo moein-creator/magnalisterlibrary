@@ -35,8 +35,8 @@ class ML_Magento2_Update_ResourcesToShopFolder extends ML_Core_Update_Abstract {
     protected function copy() {
         foreach (MLFilesystem::glob(MLFilesystem::getLibPath('Codepool') . '/*/*/[rR]esource' . DIRECTORY_SEPARATOR . '*') as $sSrcPath) {
             $sBasePath = substr($sSrcPath, strlen(MLFilesystem::gi()->getLibPath('codepool')) + 1);
-            $fileSystem = MLMagento2Alias::ObjectManagerProvider('\Magento\Framework\Filesystem');
-            $mediaPath = $fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)->getAbsolutePath();
+            $fileSystem = MLMagento2Alias::ObjectManagerProvider('\Magento\Framework\Filesystem\DirectoryList');
+            $mediaPath = $fileSystem->getPath(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
             if (isset($mediaPath)) {
                 $sDstPath = $mediaPath . '/magnalister' . (strpos($sBasePath, '/') === 0 ? '' : '/') . $sBasePath;
             }

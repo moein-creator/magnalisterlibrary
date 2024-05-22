@@ -37,9 +37,9 @@
                  * @example <select data-ml-alert='{"ok": "ok-button-title", "abort": "abort-button-title"}'>
                  */
                 var oButtons = self.data('ml-alert');
-                $('<div title="' + oAlert.title + '">' + oAlert.content + '</div>').dialog({
+                $('<div class="dialog2" title="' + oAlert.title + '">' + oAlert.content + '</div>').dialog({
                     modal: true,
-                    width: '600px',
+                    width: (window.innerWidth > 1000) ? '580px' : '500px',
                     buttons: [
                         {
                             text: oButtons.abort,

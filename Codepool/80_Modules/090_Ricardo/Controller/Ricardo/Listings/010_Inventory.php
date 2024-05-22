@@ -110,7 +110,7 @@ class ML_Ricardo_Controller_Ricardo_Listings_Inventory extends ML_Listings_Contr
                 'Field' => null
             ),
             'Price' => array(
-                'Label' => $oI18n->ML_GENERIC_PRICE,
+                'Label' => $oI18n->ML_LABEL_SHOP_PRICE.' / '.MLModule::gi()->getMarketPlaceName(false).' '.$oI18n->ML_GENERIC_PRICE,
                 'Sorter' => 'price',
                 'Getter' => 'getItemPrice',
                 'Field' => null

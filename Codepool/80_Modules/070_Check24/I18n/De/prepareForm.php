@@ -21,7 +21,7 @@
 MLI18n::gi()->add('check24_prepare_form',array(
     'legend' => array(
         'details' => 'Produktdetails',
-        'categories' => 'Check24 Kategorien',
+        'categories' => 'CHECK24 Kategorien',
     ),
     'field' => array(
         'shippingtime' => array(
@@ -74,6 +74,7 @@ MLI18n::gi()->add('check24_prepare_form',array(
         ),
     )
 ),false);
+MLI18n::gi()->check24_deliverymode_sperrgut = 'Sperrgut';
 MLI18n::gi()->check24_deliverymode_spedition = 'Spedition';
 MLI18n::gi()->check24_deliverymode_paket = 'Paket';
 MLI18n::gi()->check24_deliverymode_warensendung = 'Warensendung';

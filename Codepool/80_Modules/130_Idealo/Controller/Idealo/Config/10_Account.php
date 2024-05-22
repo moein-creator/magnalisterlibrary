@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -30,14 +30,6 @@ class ML_Idealo_Controller_Idealo_Config_Account extends ML_Form_Controller_Widg
 
     public static function getTabActive() {
         return self::calcConfigTabActive(__class__, true);
-    }
-
-    public function saveAction($blExecute = true) {
-        $aParent = parent::saveAction($blExecute);
-        if ($blExecute) {
-            MLModule::gi()->idealoHaveDirectBuy(true);
-        }
-        return $aParent;
     }
 
     protected function callAjaxDontShowWarning() {

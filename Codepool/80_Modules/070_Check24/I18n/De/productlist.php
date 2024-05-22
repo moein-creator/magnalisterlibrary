@@ -9,5 +9,5 @@ MLI18n::gi()->Check24_Productlist_Filter_aPreparedStatus__OPEN='Vorbereitete ung
 
 MLI18n::gi()->Check24_Productlist_Cell_aPreparedType__Chinese='Steigerungsauktion (Chinese)';
 MLI18n::gi()->Check24_Productlist_Cell_aPreparedType__FixedPriceItem='Festpreis';
-MLI18n::gi()->Check24_Productlist_Cell_aPreparedType__StoresFixedPrice='Festpreis (Check24 Store)';
+MLI18n::gi()->Check24_Productlist_Cell_aPreparedType__StoresFixedPrice='Festpreis (CHECK24 Store)';
 MLI18n::gi()->Check24_Productlist_Header_sPreparedType='Art der Auktion';

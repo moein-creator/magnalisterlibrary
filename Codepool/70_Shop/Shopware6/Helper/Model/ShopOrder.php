@@ -34,6 +34,7 @@ use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
 use Shopware\Core\Checkout\CheckoutRuleScope;
 use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressEntity;
 use Shopware\Core\Checkout\Customer\CustomerEntity;
+use Shopware\Core\Checkout\Order\Aggregate\OrderAddress\OrderAddressEntity;
 use Shopware\Core\Checkout\Order\Aggregate\OrderDelivery\OrderDeliveryStates;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
 use Shopware\Core\Checkout\Order\Event\OrderStateMachineStateChangeEvent;
@@ -129,6 +130,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
     protected $productLastPosition = 0;
 
     protected $aCuttedField = [];
+    protected $aItemLines = [];
     /**
      * set oder object in initializing the order helper
      * @param ML_Shopware6_Model_Order $oOrder
@@ -137,6 +139,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
      */
     public function setOrder($oOrder) {
         $this->aCuttedField = [];
+        $this->aItemLines = [];
         $this->fTotalAmount = 0.00;
         $this->fTotalAmountNet = 0.00;
         $this->fMaxProductTax = 0.00;
@@ -269,7 +272,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
             $oTaxRuleCollection = new TaxRuleCollection([new TaxRule($this->fMaxProductTax)]);
             $oCustomer = $this->getCustomer();
 
-            $aLineItems = $this->addProductsAndTotals();
+            $this->aItemLines = $this->addProductsAndTotals();
             //$fTotalPrice = (float)$aData['Order']['TotalPrice'];
             $oShippingCost = $this->getShippingCost();
             $configPaymentStatus = $this->getPaymentStatus();
@@ -287,7 +290,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
                 'id'              => $this->oExistingOrder === null ? Uuid::randomHex() : $this->oExistingOrder->getId(),
                 'orderNumber'     => $this->getShopwareOrderNumber(),
                 'currencyId'      => $oCurrency->getId(),
-                'languageId'      => Defaults::LANGUAGE_SYSTEM,
+                'languageId'      => $this->getSalesChannel()->getLanguageId(), //Defaults::LANGUAGE_SYSTEM use default from SalesChannel
                 'deepLinkCode'    => Random::getBase64UrlString(32),
                 'salesChannelId'  => $this->getSalesChannel()->getId(),
                 'currencyFactor'  => $oCurrency->getFactor(),
@@ -324,7 +327,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
 
                     ]
                 ],
-                'lineItems'       => $aLineItems,
+                'lineItems'       => $this->aItemLines,
                 'deliveries'      => [
                     [
                         'id'                     => $this->oExistingOrder === null ? Uuid::randomHex() : $this->getExistingDeliveryId(),
@@ -335,7 +338,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
                         'shippingDateEarliest'   => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
                         'shippingDateLatest'     => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
                         'shippingCosts'          => $oShippingCost,
-                        'positions'              => $this->getDeliveryPosition($aLineItems),
+                        'positions'              => $this->getDeliveryPosition($this->aItemLines),
                     ],
                 ],
 
@@ -526,20 +529,20 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
                     $product = $oProductEntity;
                 }
                 $payload = [
-                    'isNew'           => method_exists($product, 'isNew') ? $product->isNew() : null,
-                    'isCloseout'      => $product->getIsCloseout(),
-                    'customFields'    => $product->getCustomFields(),
-                    'createdAt'       => $product->getCreatedAt()->format(Defaults::STORAGE_DATE_TIME_FORMAT),
-                    'releaseDate'     => $product->getReleaseDate() ? $product->getReleaseDate()->format(Defaults::STORAGE_DATE_TIME_FORMAT) : null,
+                    'isNew' => method_exists($product, 'isNew') ? $product->isNew() : null,
+                    'isCloseout' => $product->getIsCloseout(),
+                    'customFields' => $product->getCustomFields(),
+                    'createdAt' => $product->getCreatedAt() ? $product->getCreatedAt()->format(Defaults::STORAGE_DATE_TIME_FORMAT) : null,
+                    'releaseDate' => $product->getReleaseDate() ? $product->getReleaseDate()->format(Defaults::STORAGE_DATE_TIME_FORMAT) : null,
                     'markAsTopseller' => $product->getMarkAsTopseller(),
-                    'productNumber'   => $product->getProductNumber(),
-                    'manufacturerId'  => $product->getManufacturerId(),
-                    'taxId'           => $product->getTaxId(),
-                    'tagIds'          => $product->getTagIds(),
-                    'categoryIds'     => $product->getCategoryTree(),
-                    'propertyIds'     => $product->getPropertyIds(),
-                    'optionIds'       => $product->getOptionIds(),
-                    'options'         => $product->getVariation(),
+                    'productNumber' => $product->getProductNumber(),
+                    'manufacturerId' => $product->getManufacturerId(),
+                    'taxId' => $product->getTaxId(),
+                    'tagIds' => $product->getTagIds(),
+                    'categoryIds' => $product->getCategoryTree(),
+                    'propertyIds' => $product->getPropertyIds(),
+                    'optionIds' => $product->getOptionIds(),
+                    'options' => $product->getVariation(),
                 ];
 
                 $aItem['payload'] = $payload;
@@ -572,9 +575,6 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
             }
             [$aItem['price'], $aItem['priceDefinition']] = $this->getProductPrice($fProductPrice, $iProductQuantity, $fProductTaxRate);
 
-            //Position of item (used same logic like shopware 6) increase before usage
-            $aItem['position'] = ++$this->productLastPosition;
-
             if (!$blFound) {
                 //Position of item (used same logic like shopware 6) increase before usage
                 $aItem['position'] = ++$this->productLastPosition;
@@ -595,13 +595,24 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
      * @throws Exception
      */
     protected function getTaxRate(): float {
+        $fMaxProductTax = null;
         $fDefaultProductTax = 0.00;
+        if (!empty($this->aItemLines)) {
+            foreach ($this->aItemLines as $item) {
+                foreach ($item['price']->getCalculatedTaxes()->getIterator() as $oTax) {
+                    $fMaxProductTax = max($this->fMaxProductTax, $oTax->getTaxRate());
+                }
+            }
+        }
         if ($this->oExistingOrder !== null && $this->oExistingOrder->getLineItems() !== null) {
             foreach ($this->oExistingOrder->getLineItems()->getIterator() as $item) {
                 foreach ($item->getPrice()->getCalculatedTaxes()->getIterator() as $oTax) {
-                    $this->fMaxProductTax = max($this->fMaxProductTax, $oTax->getTaxRate());
+                    $fMaxProductTax = max($this->fMaxProductTax, $oTax->getTaxRate());
                 }
             }
+        }
+        if ($fMaxProductTax !== null) {
+            $this->fMaxProductTax = $fMaxProductTax;
         } else {
             // fallback
             $fDefaultProductTax = $this->getFallbackTax();
@@ -613,14 +624,6 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
         //        }
         return max((float)$fDefaultProductTax, $this->fMaxProductTax);
 
-    }
-
-    protected function getFallbackTax() {
-        $fDefaultProductTax = MLModule::gi()->getConfig('mwst.fallback');
-        if ($fDefaultProductTax === null) {
-            $fDefaultProductTax = MLModule::gi()->getConfig('mwstfallback'); // some modules have this, other that
-        }
-        return $fDefaultProductTax;
     }
 
     /**
@@ -647,8 +650,9 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
             $aAddress['Firstname'] = '--';
         }
 
+        // VAT Ids needs to be an array since shopware 6 can handle multiple vat ids
         $vatIds = null;
-        if (isset($aAddress['UstId'])) {
+        if (!empty($aAddress['UstId'])) {
             $vatIds = [$aAddress['UstId']];
         }
 
@@ -657,21 +661,18 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
                 'id'                     => $sCustomerId,
                 'salesChannelId'         => $this->getSalesChannel()->getId(),
                 'defaultPaymentMethodId' => $mPaymentMethodId,
-                'email'                  => $aAddress['EMail'],
-                'password'               => 'not',
                 'firstName'              => $aAddress['Firstname'],
                 'lastName'               => $aAddress['Lastname'],
                 'salutationId'           => $sSalutationId,
-                'customerNumber'         => MagnalisterController::getNumberRangeValueGenerator()->getValue(
-                    $this->getContainer()->get('customer.repository')->getDefinition()->getEntityName(),
-                    Context::createDefaultContext(),
-                    $this->getSalesChannel()->getId()
-                ),
-                'guest'                  => $sConfigCustomerGroup === '-',
-                'groupId'                => $sConfigCustomerGroup === '-' ? $this->getSalesChannel()->getId() : $sConfigCustomerGroup,
+                'groupId'                => $sConfigCustomerGroup === '-' ? $this->getSalesChannel()->getCustomerGroupId() : $sConfigCustomerGroup,
                 'vatIds'                 => $vatIds,
             ];
 
+        // if company field is not empty set company for customer account so account type is then a business account
+        // see also \Shopware\Core\Checkout\Customer\SalesChannel\RegisterRoute::register -> accountType
+        if (!empty($aAddress['Company'])) {
+            $customer['company'] = $aAddress['Company'];
+        }
 
         $blNewShippingAddress = $this->checkForDuplicateAddress('customer', $mDefaultShippingAddress, $sCustomerId);
         $blNewBillingAddress = $this->checkForDuplicateAddress('customer', $mDefaultBillingAddress, $sCustomerId);
@@ -690,6 +691,15 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
         $sError = '';
         try {
             if ($blNewCustomer) {
+
+                $customer['email'] = $aAddress['EMail'];
+                $customer['password'] = $this->generateNewPasseword();
+                $customer['guest'] = $sConfigCustomerGroup === '-';
+                $customer['customerNumber'] = MagnalisterController::getNumberRangeValueGenerator()->getValue(
+                    MLShopware6Alias::getRepository('customer')->getDefinition()->getEntityName(),
+                    Context::createDefaultContext(),
+                    $this->getSalesChannel()->getId()
+                );
                 MLShopware6Alias::getRepository('customer.repository')->create([$customer], Context::createDefaultContext());
             } else {
                 MLShopware6Alias::getRepository('customer.repository')->update([$customer], Context::createDefaultContext());
@@ -711,6 +721,19 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
 
     }
 
+    protected function generateNewPasseword() {
+        $sPassword = "";
+        for ($i = 0; $i < 12; $i++) {
+            $iRandomNumber = function_exists('random_int') ? random_int(0, 35) : mt_rand(0, 35);
+            if ($iRandomNumber < 10) {
+                $sPassword .= $iRandomNumber;
+            } else {
+                $sPassword .= chr($iRandomNumber + 87);
+            }
+        }
+        return $sPassword;
+    }
+
     /**
      * Transforms address data format to the required format for shopware 6 order model.
      * @param $addressSets Array with all address sets, addressType decides if its shipping, billing or main
@@ -718,7 +741,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
      * @return []|array
      * @throws Exception
      */
-    protected function getAddress($addressSets, $addressType=null) {
+    protected function getAddress($addressSets, $addressType = null) {
         $aAddress = $addressSets[$addressType];
         $sCountryId = $this->getCountryId($aAddress['CountryCode']);
         $sSalutationId = $this->getSalutationId($aAddress['Gender']);
@@ -736,6 +759,9 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
         if ($aAddress['Lastname'] === '') {
             $aAddress['Lastname'] = '--';
         }
+        if ($aAddress['StreetAddress'] === '') {
+            $aAddress['StreetAddress'] = '--';
+        }
 
         if ($aAddress['Company'] == false) {
             $aAddress['Company'] = null;
@@ -743,6 +769,9 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
 
         if ($aAddress['AddressAddition'] == false) {
             $aAddress['AddressAddition'] = null;
+        }
+        if (empty($aAddress['Postcode'])) {
+            $aAddress['Postcode'] = '-';
         }
 
         // Necessary to be null or a string - [/0/defaultBillingAddress/phoneNumber] Dieser Wert sollte vom Typ string sein.
@@ -811,17 +840,18 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
             ->getEntities();
 
         $blNewAddress = true;
+        /** @var CustomerAddressEntity|OrderAddressEntity $existingAddress */
         foreach ($oExistingAddresses as $existingAddress) {
             if (
                 (
-                    $existingAddress->phoneNumber === $address['phoneNumber']
-                    || (empty($existingAddress->phoneNumber) && empty($address['phoneNumber'])) // phoneNumber in shop could be empty string or null
+                    $existingAddress->getPhoneNumber() === $address['phoneNumber']
+                    || (empty($existingAddress->getPhoneNumber()) && empty($address['phoneNumber'])) // phoneNumber in shop could be empty string or null
                 )
-                && ($existingAddress->firstName === $address['firstName'])
-                && ($existingAddress->lastName === $address['lastName'])
-                && ($existingAddress->street === $address['street'])
-                && ($existingAddress->zipcode === $address['zipcode'])
-                && ($existingAddress->city === $address['city'])
+                && ($existingAddress->getFirstName() === $address['firstName'])
+                && ($existingAddress->getLastName() === $address['lastName'])
+                && ($existingAddress->getStreet() === $address['street'])
+                && ($existingAddress->getZipcode() === $address['zipcode'])
+                && ($existingAddress->getCity() === $address['city'])
             ) {
                 $blNewAddress = false;
             }
@@ -935,19 +965,20 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
      */
     protected function getSalutationId($sGender) {
         // 'mrs' and 'mr' are default values of shopware 6 that can be adjusted
-        $sGender = $sGender === 'f' ? 'mrs' : 'mr';
-        $salutationCriteria = new Criteria();
-        $salutationId = MagnalisterController::getShopwareMyContainer()
-            ->get('salutation.repository')
-            ->searchIds($salutationCriteria->addFilter(new EqualsFilter('salutationKey', $sGender)), Context::createDefaultContext())
-            ->getIds()[0];
-
-        // use fallback for shopware 6 default for unspecified gender original key "not_specified"
-        if (empty($salutationId)) {
+        if ($sGender !== false) {
+            $sGender = $sGender === 'f' ? 'mrs' : 'mr';
+            $salutationCriteria = new Criteria();
             $salutationId = MagnalisterController::getShopwareMyContainer()
-                ->get('salutation.repository')
-                ->searchIds($salutationCriteria->addFilter(new EqualsFilter('salutationKey', 'not_specified')), Context::createDefaultContext())
-                ->getIds()[0];
+                                ->get('salutation.repository')
+                                ->searchIds($salutationCriteria->addFilter(new EqualsFilter('salutationKey', $sGender)), Context::createDefaultContext())
+                                ->getIds()[0];
+
+        } else {
+            $salutationId = MagnalisterController::getShopwareMyContainer()
+                                ->get('salutation.repository')
+                                ->searchIds((new Criteria())->addFilter(new EqualsFilter('salutationKey', 'not_specified')), Context::createDefaultContext())
+                                ->getIds()[0];
+
         }
 
         // if "not_specified" is also not found use one of the available salutations
@@ -1022,6 +1053,17 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
                     ],
                 ];
                 $context = Context::createDefaultContext();
+                /**
+                 * @var $oDefaultLanguage \Shopware\Core\System\Language\LanguageEntity
+                 */
+                $oDefaultLanguage = MLShopware6Alias::getRepository('language')
+                    ->search((new Criteria([Defaults::LANGUAGE_SYSTEM]))->addAssociation('locale'), $context)->first();
+                if (isset($oDefaultLanguage)) {
+                    $data['translations'][$oDefaultLanguage->getLocale()->getCode()] = [
+                        'name' => $sPaymentMethod,
+                    ];
+                }
+
                 MLShopware6Alias::getRepository('payment_method')->create([$data], $context);
 
                 //Add new payment method to sale channel
@@ -1089,20 +1131,27 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
     }
 
 
-
     public function getOrderStateId(string $state, string $machine) {
-        return $this->getContainer()->get(Connection::class)
-            ->fetchColumn('
+        $sSql = '
                 SELECT LOWER(HEX(`state_machine_state`.id))
                 FROM `state_machine_state`
                     INNER JOIN  `state_machine`
                     ON `state_machine`.`id` = `state_machine_state`.`state_machine_id`
                     AND `state_machine`.`technical_name` = :machine
                 WHERE `state_machine_state`.`technical_name` = :state
-            ', [
-                'state'   => $state,
-                'machine' => $machine,
-            ]);
+            ';
+        $aParams = [
+            'state'   => $state,
+            'machine' => $machine,
+        ];
+        if (version_compare(MLSHOPWAREVERSION, '6.5.0.0', '>=')) {
+            //fetchColumn method has been deprecated and replaced by  fetchOne method in Doctrine
+            return $this->getContainer()->get(Connection::class)
+                ->fetchOne($sSql, $aParams);
+        } else {
+            return $this->getContainer()->get(Connection::class)
+                ->fetchColumn($sSql, $aParams);
+        }
     }
 
     protected function getDeliveryPosition($aLineItems): array {
@@ -1133,7 +1182,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
         $oTaxRuleCollection = new TaxRuleCollection([$oTaxRule]);
         $this->oTotalTaxRuleCollection->add($oTaxRule);
         $this->addTotalAmount($fProductTotalPrice, $fProductTotalPriceNet);
-        $oCalculatedTax = new CalculatedTax($fProductTotalPrice - $fProductTotalPriceNet, $fProductTaxRate, $fProductPrice);
+        $oCalculatedTax = new CalculatedTax($fProductTotalPrice - $fProductTotalPriceNet, $fProductTaxRate, $fProductTotalPrice);
         $oCalculatedTaxCollection = new CalculatedTaxCollection([$oCalculatedTax]);
         $this->addTotalCalculatedTaxCollection($oCalculatedTax);
 
@@ -1192,6 +1241,9 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
             $context
         );
         MagnalisterController::getStockUpdater()->stateChanged($event);
+        //In shopware 6.5 it is necessary to run the "StockUpdater::update" to reduced stock and stock available after importing order with complete status.
+        //In shopware 6.4 it is not necessary to run the "StockUpdater::update" to reduced stock and stock available after importing order with complete status.
+        MagnalisterController::getStockUpdater()->update(array($this->oOrder->getShopOrderObject()->getId()),Context::createDefaultContext());
     }
 
     /**
@@ -1237,7 +1289,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
      * @param array $aData
      * @see \Shopware\Core\Content\Flow\Dispatching\FlowDispatcher::callFlowExecutor
      */
-    private function handleOrderEvents($aData) {
+    protected function handleOrderEvents($aData) {
         $oConfig = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.shopware6flowskipped');
         $sEscape = $oConfig->get('value');
         if ($sEscape === '1') {
@@ -1246,7 +1298,20 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
         $oConfig->set('value', 1)->save();
         try {
             $context = $this->getContextWithOrderParameter($aData);
-            $event = new CheckoutOrderPlacedEvent($context, $this->oOrder->getShopOrderObject(), $this->getSalesChannel()->getId());
+            $OrderFixedQuantity = $this->oOrder->getShopOrderObject();
+            //in Showpare 6.5, setting the quantity of order with complete status as '0' will avoid available stock reduction
+            //in Showpare 6.4 it is ok to set the quantity of order with complete status as '0', and it will reduce stock and available stock
+            if (version_compare(MLSHOPWAREVERSION, '6.5.0.0', '>=')) {
+                if ($OrderFixedQuantity->getStateMachineState()->getTechnicalName() !== OrderStates::STATE_COMPLETED) {
+                    // by calling CheckoutOrderPlacedEvent event the Shopware run \Shopware\Core\Content\Product\DataAbstractionLayer\StockUpdater::orderPlaced
+                    // and this function trys to reduce the quantity of existing product again, but it has benn already reduced in stockManagement function
+                    //It is mandatory to add the quantity as 0 to prevent additional reduction in existing product
+                    foreach ($OrderFixedQuantity->getLineItems() as $lineItem) {
+                        $lineItem->setQuantity(0);
+                    }
+                }
+            }
+            $event = new CheckoutOrderPlacedEvent($context, $OrderFixedQuantity, $this->getSalesChannel()->getId());
             /** @var Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher $eventDispatcher */
             $eventDispatcher = MagnalisterController::getShopwareMyContainer()->get('event_dispatcher');
             $eventDispatcher->dispatch($event);
@@ -1268,7 +1333,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
      * @param array $aData
      * @see \Shopware\Core\Content\Flow\Dispatching\FlowDispatcher::callFlowExecutor
      */
-    private function handleStatusEvents($aData, $sStatus = 'open', $sStatusGroup = 'order') {
+    protected function handleStatusEvents($aData, $sStatus = 'open', $sStatusGroup = 'order') {
         $oConfig = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.shopware6flowskipped');
         $sEscape = $oConfig->get('value');
         if ($sEscape === '1') {
@@ -1301,7 +1366,7 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
      * @return Context
      * @throws Exception
      */
-    private function getContextWithOrderParameter($aData): Context {
+    protected function getContextWithOrderParameter($aData): Context {
         $currencyCode = $aData['Order']['Currency'];
         $aConfig = MLModule::gi()->getConfig();
         $iLangId = Uuid::isValid($aConfig['lang']) ? $aConfig['lang'] : null;
@@ -1311,10 +1376,34 @@ class ML_Shopware6_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder
         $basicContext = MLShopware6Alias::getContext($iLangId, $currencyId);
         /** @var \Shopware\Core\Content\Rule\RuleEntity[] $aRules */
         $aRules = MLShopware6Alias::getRepository('rule')->search(new Criteria(), $basicContext)->getEntities();
-        $oCustomerGroup = MLShopware6Alias::getRepository('customer_group')->search(new Criteria([$this->getCustomerGroup()]), $basicContext)->first();
+        $sConfigCustomerGroup = $this->getCustomerGroup();
+        $customerGroupId = $sConfigCustomerGroup === '-' ? $this->getSalesChannel()->getCustomerGroupId() : $sConfigCustomerGroup;
+        $oCustomerGroup = MLShopware6Alias::getRepository('customer_group')->search(new Criteria([$customerGroupId]), $basicContext)->first();
 
         $customer = $this->getCustomer();
-        if (version_compare(MLSHOPWAREVERSION, '6.4.0.0', '>=')) {
+        if(version_compare(MLSHOPWAREVERSION, '6.5.0.0', '>=')){
+            $salesChannelContext = new SalesChannelContext(
+                $basicContext,
+                '',
+                null,
+                $this->getSalesChannel(),
+                $currency,
+                $oCustomerGroup,
+                new TaxCollection([]),
+                MLShopware6Alias::getRepository('payment_method')->search(new Criteria([$this->getPaymentMethodId()]), $basicContext)->first(),
+                MLShopware6Alias::getRepository('shipping_method')->search(new Criteria([$this->getShippingMethod()]), $basicContext)->first(),
+                new ShippingLocation(
+                    $customer->getDefaultShippingAddress()->getCountry(),
+                    $customer->getDefaultShippingAddress()->getCountryState(),
+                    $customer->getDefaultShippingAddress()
+                ),
+                $customer,
+                new CashRoundingConfig(2, 0.01, true),
+                new CashRoundingConfig(2, 0.01, true),
+                []
+            );
+        }
+        elseif (version_compare(MLSHOPWAREVERSION, '6.4.0.0', '>=')) {
             $salesChannelContext = new SalesChannelContext(
                 $basicContext,
                 '',

@@ -1,6 +1,5 @@
 <?php
-
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,12 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Form_Helper_Model_Table_ConfigData_Abstract');
 
 class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helper_Model_Table_ConfigData_Abstract {
@@ -38,15 +36,15 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helpe
 
     public function primaryCategoryField(&$aField) {
         $aRequest = MLRequest::gi()->data();
-        if (MLModul::gi()->getMarketPlaceName().':'.MLModul::gi()->getMarketPlaceId().'_prepare_variations' === $aRequest['controller']) {
-            $aField['values'] = MLDatabase::factory(MLModul::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
+        if (MLModule::gi()->getMarketPlaceName() . ':' . MLModule::gi()->getMarketPlaceId() . '_prepare_variations' === $aRequest['controller']) {
+            $aField['values'] = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
         } else {
-            $aField['values'] = MLDatabase::factory( MLModul::gi()->getMarketPlaceName() . '_prepare')->getTopPrimaryCategories();
+            $aField['values'] = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_prepare')->getTopPrimaryCategories();
         }
     }
 
     public function checkin_currencyField(&$aField) {
-        $currencies = MLModul::gi()->getConfig('site.currencies');
+        $currencies = MLModule::gi()->getConfig('site.currencies');
         $aField['values'][''] = ML_AMAZON_LABEL_APPLY_PLEASE_SELECT;
         foreach ($currencies as $code => $symbol) {
             $aField['values'][$code] = $code;
@@ -54,7 +52,7 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helpe
     }
 
     public function checkin_listingTypeField(&$aField) {
-        $aListingTypes = MLModul::gi()->getConfig('site.listing_types');
+        $aListingTypes = MLModule::gi()->getConfig('site.listing_types');
         $aField['values'][''] = ML_AMAZON_LABEL_APPLY_PLEASE_SELECT;
         foreach ($aListingTypes as $code => $name) {
             $aField['values'][$code] = $name;
@@ -179,10 +177,8 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helpe
     }
 
     public function orderstatus_autoacceptanceField(&$aField) {
-        if( MLModul::gi()->getConfig('orderstatus.autoacceptance') === null ){
+        if( MLModule::gi()->getConfig('orderstatus.autoacceptance') === null ){
             $aField['value'] = true;
-        }else{
-            $aField['value'] = MLModul::gi()->getConfig('orderstatus.autoacceptance');
         }
     }
 
@@ -198,28 +194,20 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helpe
         $aField['values'] = MLI18n::gi()->get('cdiscount_configform_orderimport_payment_values');
     }
 
-    public function orderstatus_carrier_defaultField (&$aField) {
-        $aField['values'] = MLModul::gi()->getCarriers();
-    }
-
-    // TODO: Check with Tim
-
-    protected $shipmethodOptions = array(
-        'shopFreeTextField',
-        'matchShopShippingOptions',
-        'databaseMatching',
-        'orderFreeTextField',
-        'freeText',
-    );
-
+    /**
+     * @param $options
+     * @param $aField
+     * @param $matchType
+     * @return mixed
+     * @throws MLAbstract_Exception
+     */
     protected function selectWithMatchingOptionsFromTypeValueGenerator($options, $aField, $matchType) {
         // list of available options
         if (empty($options)) {
             $options = array(
                 'marketplaceCarrier',
-                'shopFreeTextField',
+                //'shopFreeTextField', -> only shopware 5 & 6
                 'matchShopShippingOptions',
-                'databaseMatching',
                 'orderFreeTextField',
                 'freeText',
             );
@@ -233,11 +221,8 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helpe
 
         // Marketplace carriers
         if (in_array('marketplaceCarrier', $options)) {
-            $apiMarketplaceCarriers = $this->callApi(array('ACTION' => 'GetDeliveryModes'), 60);
+            $apiMarketplaceCarriers = $this->callApi(array('ACTION' => 'GetCarriers'), 60);
             foreach ($apiMarketplaceCarriers as $key => $marketplaceCarrier) {
-                if ($marketplaceCarrier === 'Other') {
-                    continue;
-                }
                 $marketplaceCarriers[$marketplaceCarrier] = $marketplaceCarrier;
             }
 
@@ -262,7 +247,7 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helpe
         }
 
         // Check for Order FreeText Field Option
-        if (in_array('orderFreeTextField', $options)) {
+        if (in_array('shopFreeTextField', $options) && !method_exists(MLFormHelper::getShopInstance(), 'getOrderFreeTextFieldsAttributes')) {
             $matchingElement['orderFreetextField'] = MLI18n::gi()->get('cdiscount_config_carrier_option_orderfreetextfield_option');
         }
 
@@ -279,21 +264,26 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helpe
         return $aField;
     }
 
-    public function orderstatus_shipmethod_selectField(&$field) {
-        $field = $this->selectWithMatchingOptionsFromTypeValueGenerator($this->shipmethodOptions, $field, 'shipmethod');
+    /**
+     * Populate Dropdown for Carrier select option
+     *
+     * @param $field
+     * @throws MLAbstract_Exception
+     */
+    public function orderstatus_carrier_selectField(&$field) {
+        $field = $this->selectWithMatchingOptionsFromTypeValueGenerator(array(), $field, 'carrier');
     }
 
     /**
-     * Populates two drop downs for select
+     * There is no field for "ship method" currently on cdiscount, so we use this field for carrier on cdiscount
      *
      * @param $field
-     * @param bool $carrierMatching
-     * @return mixed
+     * @return array
      * @throws MLAbstract_Exception
      */
-    public function carrierOrShipMethodMatching($field, $carrierMatching = true) {
+    public function orderstatus_carrier_matchingField(&$field) {
         $field['i18n']['matching'] = array(
-            'titlesrc' => MLI18n::gi()->get('cdiscount_config_carrier_matching_title_marketplace_shipmethod'),
+            'titlesrc' => MLI18n::gi()->get('cdiscount_config_carrier_matching_title_marketplace_carrier'),
             'titledst' => MLI18n::gi()->get('cdiscount_config_carrier_matching_title_shop_carrier')
         );
         $field['valuesdst'] = array('' => MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT'));
@@ -304,31 +294,13 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Form_Helpe
             $field['valuesdst'] = $field['valuesdst'] + $shopCarriers;
         }
 
-        if ($carrierMatching) {
-            $field['i18n']['matching']['titlesrc'] = MLI18n::gi()->get('cdiscount_config_carrier_matching_title_marketplace_carrier');
-            $aMarketplaceCarriers = array();
-            foreach ($this->callApi(array('ACTION' => 'GetDeliveryModes'), 60) as $key => $marketplaceCarrier) {
-                $aMarketplaceCarriers[$marketplaceCarrier] = $marketplaceCarrier;
-            }
-            $aMarketplaceCarriers['Other'] = MLI18n::gi()->cdiscount_config_carrier_other;
-            if (!empty($aMarketplaceCarriers)) {
-                $field['valuessrc'] = $field['valuessrc'] + $aMarketplaceCarriers;
-            }
-        } else {
-            $aMarketplaceDeliveryModes = array();
-            foreach ($this->callApi(array('ACTION' => 'GetDeliveryModes'), 60) as $key => $marketplaceDeliveryMode) {
-                $aMarketplaceDeliveryModes[$marketplaceDeliveryMode] = $marketplaceDeliveryMode;
-            }
-            $aMarketplaceDeliveryModes['Other'] = MLI18n::gi()->cdiscount_config_carrier_other;
-            if (!empty($aMarketplaceDeliveryModes)) {
-                $field['valuessrc'] = $field['valuessrc'] + $aMarketplaceDeliveryModes;
-            }
+        // Pull Carriers from API
+        $marketplaceDeliveryModes = $this->callApi(array('ACTION' => 'GetCarriers'), 60);
+        $marketplaceDeliveryModes['UseShopValue'] = MLI18n::gi()->cdiscount_config_use_shop_value;
+        if (!empty($marketplaceDeliveryModes)) {
+            $field['valuessrc'] = $field['valuessrc'] + $marketplaceDeliveryModes;
         }
 
         return $field;
-    }
-
-    public function orderstatus_shipmethod_matchingField(&$field) {
-        $field = $this->carrierOrShipMethodMatching($field, false);
     }
 }

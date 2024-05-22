@@ -15,13 +15,14 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <table class="attributesTable">
     <?php foreach ($aField['subfields'] as $aSubField){ ?>
         <?php $aSubField['type'] = 'select'; ?>
         <tr>
-            <td style="width:90%; border:none;"><?php $this->includeType($aSubField); ?></td>
+            <td style="width:95%; border:none;"><?php $this->includeType($aSubField); ?></td>
             <td style="border:none;">
                 <button class="mlbtn ml-js-category-btn" type="button" data-ml-catselector="#modal-<?php echo $aSubField['id']; ?>">
                     <?php echo MLI18n::gi()->get('form_text_choose'); ?>
@@ -63,13 +64,12 @@ class_exists('ML', false) or die();
 
         $lastImportTime = '-';
         $tableName = 'magnalister_'.MLModul::gi()->getMarketPlaceName().'_categories_marketplace';
-        $sql = "SELECT Expires FROM $tableName ORDER BY Expires DESC LIMIT 1";
+        $sql = "SELECT ImportOrUpdateTime FROM $tableName ORDER BY ImportOrUpdateTime DESC LIMIT 1";
 
         $result = MLDatabase::getDbInstance()->fetchRow($sql);
 
         if ($result) {
-            $date = new DateTime($result['Expires']);
-            $date->modify("-1 day");
+            $date = new DateTime($result['ImportOrUpdateTime']);
             $lastImportTime = $date->format("F d, Y, H:i a");
         }
 
@@ -88,7 +88,7 @@ class_exists('ML', false) or die();
                         var eModal = jqml(element.attr("data-ml-catselector"));
                         var eSelect = element.closest("tr").find("select");
                         eModal.jDialog({
-                            width : '430px',
+                            width : '530px',
                             buttons: [
                                 {
                                     "text": "<?php echo MLI18n::gi()->get('ML_BUTTON_LABEL_ABORT'); ?>",
@@ -147,9 +147,8 @@ class_exists('ML', false) or die();
         font-weight: normal;
         left: 0;
         float: left;
-        margin-right: 7px;
-        float: left;
-        padding-top: 8px;
+        margin-right: 24px;
+        padding-top: 0px;
         text-align: right
     }
 
@@ -158,7 +157,6 @@ class_exists('ML', false) or die();
         font-size: 9px !important;
         font-weight: normal;
         left: 0;
-        float: left;
         float: left;
         text-align: right;
     }
@@ -171,15 +169,23 @@ class_exists('ML', false) or die();
         padding-right: 0 !important
     }
 
-    #ui-id-1 {
-        margin-top: 13px;
+    .ui-dialog-buttonset {
+        margin-top: 10px;
     }
 
-    .mlbtnreset {
+    #ui-id-1 {
+        margin-top: 0px;
+    }
+
+    #select2-mlfilter-container {
+        margin-left: -2px;
+    }
+
+/*    .mlbtnreset {
         background-color: #E31A1C !important;
         color: #fff !important;
         border: 1px solid #E31A1C !important;
-    }
+    }*/
 
     .mlbtnreset:hover {
         background-color: #666666 !important;

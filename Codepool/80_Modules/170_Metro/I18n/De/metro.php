@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -113,7 +113,7 @@ MLI18n::gi()->ML_METRO_MANDATORY_FIELDS_INFO = '{#i18n:attributes_matching_manda
 /*
  * Error Messages of prepare
  */
-MLI18n::gi()->ML_METRO_ERROR_MISSING_GTIN = 'Das Feld GTIN ist ein Pflichtfeld und darf nicht leer sein.';
+MLI18n::gi()->ML_METRO_ERROR_MISSING_GTIN_MPN_MANUFACTURER = 'METRO verlangt entweder eine GTIN oder den Hersteller + Herstellerartikelnummer. Da Sie die Felder “Hersteller” und “Herstellerartikelnummer” leer gelassen haben, müssen Sie in das GTIN-Feld einen Wert eintragen, um die Produktvorbereitung abzuschließen.';
 MLI18n::gi()->ML_METRO_ERROR_MISSING_CATEGORY = 'Die Marktplatz-Kategorie ist ein Pflichtfeld und darf nicht leer sein.';
 MLI18n::gi()->ML_METRO_ERROR_MISSING_TITLE = 'Der Produkttitel für METRO ist ein Pflichtfeld und darf nicht leer sein.';
 MLI18n::gi()->ML_METRO_ERROR_MISSING_DESCRIPTION = 'Die Produktbeschreibung für METRO ist ein Pflichtfeld und darf nicht leer sein.';
@@ -127,3 +127,8 @@ MLI18n::gi()->ML_METRO_DELETED_OFFER_PURGE_INFO = 'Gel&ouml;schte Artikel werden
 MLI18n::gi()->metro_upload_explanation = 'Bitte beachten Sie, dass es bis zu einer Stunde dauern kann bis Ihre Artikel im Inventar von magnalister sichtbar sind.<br>Sollte es ein Problem mit einem Produkt geben, finden Sie weitere Informationen dann im Fehlerlog.<br><br>In der Regel dauert die Verarbeitung für neue Produkte auf METRO ca. 2 - 3 Werktage.';
 
 MLI18n::gi()->{'metro_prepare_apply'} = "Neue Produkte erstellen";
+
+/** Volume Prices */
+MLI18n::gi()->ML_METRO_VOLUMEPRICES_START_AT_PLACEHOLDER = 'z.B.: 10';
+MLI18n::gi()->ML_METRO_PRICE_PLACEHOLDER = 'z.B.: 0.00';
+MLI18n::gi()->ML_METRO_PRICE_SIGNAL_PLACEHOLDER = 'z.B.: 99';

@@ -45,6 +45,8 @@ Please note! The synchronization of stocks and prices is dependent on this setti
                 '9' => '10 meses',
                 '10' => '11 meses',
                 '11' => '12 meses',
+                '12' => '13 meses',
+                '13' => '14 meses',
             ),
         ),
         'general.order.information' => array(
@@ -68,12 +70,6 @@ Addresses of pictures or links which don\'t start with <strong>http://</strong>,
                 'none' => 'Campo de texto simples, expandir links locais<br>',
                 'none_none' => 'Campo de texto simples, repassar dados diretamente'
             ),
-        ),
-        'general.trigger.checkoutprocess.inventoryupdate' => array(
-            'label' => 'Gatilho de sincronização<br /> nos pedidos',
-            'help' => 'Synchronize the inventory on connected marketplaces immediately, when an order is placed in the shop? This avoids overselling nonexistent stock.<br /><br />
-<b>Please note</b>: The synchronization can take a few seconds, slowing down the ordering process.<br />',
-            'valuehint' => 'Atualizar estoque no Marketplace imediatamente no caso de pedidos efetuados na loja',
         ),
         'general.inventar.productstatus' => array(
             'label' => 'Situação de Produto',

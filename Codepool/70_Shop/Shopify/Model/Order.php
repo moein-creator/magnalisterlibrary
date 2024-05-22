@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -124,9 +124,7 @@ class ML_Shopify_Model_Order extends ML_Shop_Model_Order_Abstract {
      * @throws Exception
      */
     public function getShippingCarrier() {
-        $sDefaultCarrier = MLModule::gi()->getConfig('orderstatus.carrier.default');
-        $sDefaultCarrier = $sDefaultCarrier === null ? MLModule::gi()->getConfig('orderstatus.carrier') : $sDefaultCarrier;
-
+        $sDefaultCarrier = $this->getDefaultCarrier();
         if ($sDefaultCarrier == '-1') {
             $oOrder = $this->getShopOrderObject();
             if (count($oOrder->fulfillments) > 0) {
@@ -160,10 +158,13 @@ class ML_Shopify_Model_Order extends ML_Shop_Model_Order_Abstract {
     public function getShippingTrackingCode() {
         $oOrder = $this->getShopOrderObject();
         if (count($oOrder->fulfillments) > 0) {
-            $sTrackingCode = $oOrder->fulfillments[0]->tracking_number;
-
-            if ($sTrackingCode !== null) {
-                return $sTrackingCode;
+            foreach ($oOrder->fulfillments as $fulfillment) {
+                if ($fulfillment->status === 'success') {
+                    $sTrackingCode = $fulfillment->tracking_number;
+                    if ($sTrackingCode !== null) {
+                        return $sTrackingCode;
+                    }
+                }
             }
         }
 
@@ -272,6 +273,8 @@ class ML_Shopify_Model_Order extends ML_Shop_Model_Order_Abstract {
         if (count($aListOfStatus) > 0) {
             $oMLOrderQuery->where("status NOT IN ('".implode("','", $aListOfStatus)."')");
         }
+        //$oMLOrderQuery->where('order_exists_in_shop = 1');
+        $oMLOrderQuery->orderBy('order_status_sync_last_check_date ASC');
         $iCount = $oMLOrderQuery->getCount();
         $iLimit = 50;
         if ($blCount) {
@@ -298,8 +301,6 @@ class ML_Shopify_Model_Order extends ML_Shop_Model_Order_Abstract {
                 }
                 $i++;
             }
-            //            var_dump($aListOfOrderIds);
-            //                        $line = __FILE__.__LINE__;die($line);
             return $aListOfOrderIds;
         }
 
@@ -308,8 +309,8 @@ class ML_Shopify_Model_Order extends ML_Shop_Model_Order_Abstract {
     private static function getConfirmedAndCancelledStatuses() {
         $aListOfStatus = array();
         try {
-            foreach (MLModul::gi()->getStatusConfigurationKeyToBeConfirmedOrCanceled() as $sKey) {
-                $sListOfStatus = MLModul::gi()->getConfig($sKey);
+            foreach (MLModule::gi()->getStatusConfigurationKeyToBeConfirmedOrCanceled() as $sKey) {
+                $sListOfStatus = MLModule::gi()->getConfig($sKey);
                 if (is_array($sListOfStatus)) {
                     $aListOfStatus = array_merge($aListOfStatus, $sListOfStatus);
                 } else if ($sListOfStatus !== null) {
@@ -371,6 +372,32 @@ class ML_Shopify_Model_Order extends ML_Shop_Model_Order_Abstract {
             }
             return null;
         }
+    }
+
+    /**
+     * Return a formatted array of product data
+     *
+     * @return array[]
+     * @throws Exception
+     */
+    public function getShopOrderProducts() {
+        $oOrder = $this->getShopOrderObject();
+        $baseArray = array(
+            'SKU' => '',
+            'VAT' => 0.00,
+        );
+        $result = array();
+
+        foreach ($oOrder->line_items as $item) {
+            $vat = current($item->tax_lines)->rate * 100;
+
+            $result[] = array_merge($baseArray, array(
+                'SKU' => $item->sku,
+                'VAT' => $vat,
+            ));
+        }
+
+        return $result;
     }
 
 }

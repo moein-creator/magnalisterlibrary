@@ -1,21 +1,22 @@
-<?php class_exists('ML', false) or die() ?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
 <?php
 MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true);
 /* @var $this   ML_Listings_Controller_Widget_Listings_InventoryAbstract */
 $this->includeView('widget_listings_misc_listingbox');
 $this->includeView('widget_listings_misc_lastreport');
 ?>
-<form action="<?php echo $this->getCurrentUrl() ?>"  method="post" class="ml-plist ml-js-plist">
+<form action="<?php echo $this->getCurrentUrl() ?>" method="post" class="ml-plist ml-js-plist">
     <div>
-        <?php 
-            foreach(MLHttp::gi()->getNeededFormFields() as $sName=>$sValue ){
-                ?><input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue?>" /><?php
-            }
-            
-            if (isset($this->aPostGet['sorting'])) { ?>
-                <input type="hidden" name="ml[sorting]" value="<?php echo $this->aPostGet['sorting'] ?>" />
-            <?php 
-            }
+        <?php
+        foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) {
+            ?><input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue ?>" /><?php
+        }
+
+        if (isset($this->aPostGet['sorting'])) { ?>
+            <input type="hidden" name="ml[sorting]" value="<?php echo $this->aPostGet['sorting'] ?>"/>
+            <?php
+        }
         ?>
     </div>
     <?php
@@ -24,19 +25,26 @@ $this->includeView('widget_listings_misc_lastreport');
     $this->includeView('widget_listings_misc_pagination'); ?>
     <table class="datagrid ml-plist-old-fix">
         <thead>
-            <tr>
-                <td class="nowrap" style="width: 5px;">
-                    <input type="checkbox" id="selectAll"/><label for="selectAll"><?php echo $this->__('ML_LABEL_CHOICE') ?></label>
+        <tr>
+            <td class="nowrap" style="width: 5px;">
+                <input type="checkbox" id="selectAll"/><label for="selectAll"><?php echo $this->__('ML_LABEL_CHOICE') ?></label>
                 </td>
                 <?php foreach ($this->getFields() as $aFiled) { ?>            
-                    <td> <?php
-                        echo $aFiled['Label'];
-                        if (isset($aFiled['Sorter'])) {
-                            if ($aFiled['Sorter'] != null) {
+                    <td>
+                        <div class="ml-inventory-th">
+                            <div>
+                                <?php
+                                echo $aFiled['Label'];
+                                if (isset($aFiled['Sorter'])) {
+                                if ($aFiled['Sorter'] != null) {
                                 ?>
+                            </div>
+                            <div style="width: 42px; flex-shrink: 0">
                                 <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
                                 <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
-                        <?php } } ?>
+                            </div>
+                            <?php } } ?>
+                        </div>
                     </td>
                 <?php } ?>
             </tr>
@@ -59,7 +67,7 @@ $this->includeView('widget_listings_misc_lastreport');
                         'Price' => $item['Price'],
                         'Currency' => isset($item['Currency']) ? $item['Currency'] : '',
                     ))));
-                    $addStyle = empty($item['ShopProductTitle']) ? 'style="color:#900;"' : '';
+                    $addStyle = empty($item['ShopProductTitle']) ? 'style="color:#e31a1c;"' : '';
                     ?>
                     <tr class="<?php echo (($oddEven = !$oddEven) ? 'odd' : 'even') ?>" <?php echo $addStyle ?>>
                         <td>

@@ -97,6 +97,7 @@ class ML_Metro_Controller_Metro_Listings_Deleted extends ML_Listings_Controller_
                     $item['editUrl'] = $oProduct->getEditLink();
                     $item['category'] = $oProduct->getCategoryPath();
                 } catch (Exception $oExc) {
+                    $item['ShopQuantity'] = $item['ArticleSKU'] = $item['category'] = $item['ShopPrice'] = $item['ShopTitle'] = '&mdash;';
                     $item['ProductsID'] = 0;
                     $item['editUrl'] = '';
                 }
@@ -123,7 +124,7 @@ class ML_Metro_Controller_Metro_Listings_Deleted extends ML_Listings_Controller_
     }
 
     protected function getItemShopTitle($item) {
-        return '<td>' . $item['ShopTitle'] . '<br /><span class="small">' . $item['ShopVarText'] . '</span></td>';
+        return '<td>' . $item['ShopTitle'] . '</td>';
     }
 
     protected function getCategoryPath($item) {

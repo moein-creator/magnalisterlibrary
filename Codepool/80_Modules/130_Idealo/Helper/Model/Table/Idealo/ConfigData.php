@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -22,10 +22,6 @@ class ML_Idealo_Helper_Model_Table_Idealo_ConfigData extends ML_Form_Helper_Mode
     
     public function access_inventorypathField(&$aField) {
         $aField['value'] = MLModul::gi()->getIdealoCSVInfo();
-    }
-    
-    public function orderstatus_cancelreasonField(&$aField) {
-        $aField['values'] = MLModul::gi()->getIdealoCancellationReasons(); 
     }
     
     /**
@@ -44,18 +40,7 @@ class ML_Idealo_Helper_Model_Table_Idealo_ConfigData extends ML_Form_Helper_Mode
     }
     
     public function shippingTimeProductFieldField(&$aField) {
-        
         $aField['values'] = MLFormHelper::getShopInstance()->getShippingTime();
-    }
-    
-    public function checkoutenabledField(&$aField) {
-        $aField['value'] = MLModul::gi()->idealoHaveDirectBuy();
-    }
-    
-    public function checkout_TokenField(&$aField) {
-        if (array_key_exists('value', $aField) && !empty($aField['value']) && !MLModul::gi()->idealoHaveDirectBuy()) {
-            $aField['cssclasses'][] = 'ml-error';
-        }
     }
     
     /**
@@ -88,7 +73,8 @@ class ML_Idealo_Helper_Model_Table_Idealo_ConfigData extends ML_Form_Helper_Mode
             )
         ), 60 * 60 * 24 * 30);
     }
-    
+
+
     public function orderimport_paymentmethodField (&$aField) {
         $aField['values'] = MLI18n::gi()->get('idealo_configform_orderimport_payment_values');
     }
@@ -100,11 +86,13 @@ class ML_Idealo_Helper_Model_Table_Idealo_ConfigData extends ML_Form_Helper_Mode
      * @return mixed
      */
     public function primaryCategoryField(&$aField) {
-
+        return;
     }
 
-
-    public function orderstatus_refundField (&$aField) {
-        $aField['values'] = MLFormHelper::getShopInstance()->getOrderStatusValues();
+    public function currencyField(&$aField) {
+        foreach (MLCurrency::gi()->getList() as $iso => $currency) {
+            $aField['values'][$iso] = $currency['title'];
+        }
     }
+
 }

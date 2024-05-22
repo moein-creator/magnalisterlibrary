@@ -19,9 +19,6 @@ tbody.odd .ml-ebay-itemsearch .content td{border:1px solid gray}
 .ml-ebay-itemsearch .category{width:20%}
 .ml-ebay-itemsearch .price{width:5%;}
 .ml-ebay-itemsearch .asin{width:10%;}
-.ml-ebay-itemsearch td.select{}
-.ml-ebay-itemsearch td.title{}
-.ml-ebay-itemsearch td.category{}
 .ml-ebay-itemsearch td.price{white-space: initial;}
 .ml-ebay-itemsearch td.asin{white-space: initial;}
 

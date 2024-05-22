@@ -22,6 +22,11 @@ MLFilesystem::gi()->loadClass('Tabs_Controller_Widget_Tabs_Filesystem_Abstract')
 
 class ML_Hitmeister_Controller_Hitmeister_Config extends ML_Tabs_Controller_Widget_Tabs_Filesystem_Abstract {
 
+    public function __construct() {
+        parent::__construct();
+        MLSetting::gi()->add('aJs', 'hitmeister.config.form.js');
+    }
+
     public static function getTabTitle() {
         return MLI18n::gi()->get('ML_GENERIC_CONFIGURATION');
     }

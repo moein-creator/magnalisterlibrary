@@ -63,7 +63,7 @@ class ML_Magento_Helper_Model_ProductList_Filter{
     }
     public function setOrder($sOrder){
         $aOrder=explode('_',$sOrder);
-        if(count($aOrder)==2){
+        if (is_array($aOrder) && count($aOrder) == 2 && !empty($aOrder[0])) {
             $this->aOrder=array('name'=>$aOrder[0],'direction'=>$aOrder[1]);
             if($aOrder[0]=='price'){
                 /*

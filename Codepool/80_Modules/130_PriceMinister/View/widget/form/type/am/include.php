@@ -35,7 +35,7 @@ if ($tabType !== 'variations') {
             $style = '';
             if ($bError == true) {
                 $aSelectField['cssclass'] = 'error';
-                $style = 'color:red';
+                $style = 'color:#e31a1c';
             }
 
             $aSubfield = $this->getField($sId . '_sub');

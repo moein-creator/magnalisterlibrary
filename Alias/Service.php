@@ -100,7 +100,7 @@ class MLService {
 
     /**
      * Return the instance of the UploadInvoices service model
-     * @return ML_Modul_Model_Service_Abstract|object
+     * @return ML_Modul_Model_Service_Abstract|ML_Modul_Model_Service_UploadInvoices_Abstract|object
      */
     public static function getUploadInvoices () {
         return ML::gi()->instance('model_service_uploadinvoices', array(

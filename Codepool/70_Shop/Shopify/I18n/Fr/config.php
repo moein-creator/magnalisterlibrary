@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -23,6 +23,7 @@ MLI18n::gi()->Description = 'Description de l\'article';
 MLI18n::gi()->ItemName = 'Titre de l\'article';
 MLI18n::gi()->Weight = 'Poid';
 MLI18n::gi()->ProductType = 'Type de produit';
+MLI18n::gi()->Shopify_Carrier_Other = 'Other';
 MLI18n::gi()->{'form_config_orderimport_exchangerate_update_help'} = '<strong>Généralités:</strong>
 <p>
 Si la monnaie utilisée dans votre boutique en ligne diffère de celle en vigueur sur la place de marché, magnalister calcule le prix de l’article à l’aide d’un convertisseur de monnaie automatique.
@@ -65,6 +66,29 @@ MLI18n::gi()->FinancialStatus_Paid = 'Payé';
 MLI18n::gi()->FinancialStatus_PartiallyRefunded = 'Partiellement remboursé';
 MLI18n::gi()->FinancialStatus_Refunded = 'Remboursé';
 MLI18n::gi()->FinancialStatus_Voided = 'Annulé';
+MLI18n::gi()->CustomerGroupSettingNotSupported = 'Cette option n\'est pas prise en charge par Shopify.';
 
 MLI18n::gi()->set('formfields_config_uploadInvoiceOption_help_erp', '', true);
 MLI18n::gi()->set('formfields_config_uploadInvoiceOption_help_webshop', '', true);
+
+//shopify collection vat matching
+MLI18n::gi()->set('orderimport_shopify_vatmatching_label', 'Matching de la TVA');
+MLI18n::gi()->set('orderimport_shopifyvatmatching_help', '
+<p>Shopify ne permet pas aux applications tierces d\'accéder aux paramètres fiscaux. Vous pouvez donc effectuer ces réglages directement dans magnalister afin d\'importer les commandes avec le taux de TVA correspondant.
+</p>
+<p>Pour cela, il suffit de faire correspondre une "Shopify Collection" avec le pays de destination et le taux de TVA souhaités. Les taux de TVA sont enregistrés dans les détails de la commande lorsque la commande remonte dans votre boutique Shopify.</p>
+<b>Remarques : </b>
+<ul>
+<li>Si plusieurs Collections Shopify contenant des taux de TVA différents sont attribuées à des produits, seul le taux de TVA qui a été apparié en premier sera appliqué lors de l\'importation de la commande.</li>
+<li>Si aucun taux de TVA défini dans la configuration ne correspond au produit dans la commande, le taux de TVA par défaut de l\'API Shopify sera appliqué (exemple : pour les commandes dont le pays d’expédition est la France : 20 %)</li>
+<li>Si vous sélectionnez l\'option "{#i18n:shopify_global_configuration_vat_matching_option_all#}" dans le menu déroulant " Collection Shopify ", vous pouvez attribuer un taux de TVA uniforme à tous les produits, indépendamment de la collection attribuée par Shopify.</li>
+</ul>
+');
+
+
+MLI18n::gi()->{'orderimport_shopify_vatmatching_collection_label'} = 'Collection Shopify';
+
+MLI18n::gi()->{'orderimport_shopify_vatmatching_shipping_country_label'} = 'Pays de destination de la commande';
+MLI18n::gi()->{'orderimport_shopifyvatmatching_vatrate_label'} = '% de TVA';
+MLI18n::gi()->{'shopify_global_configuration_vat_matching_option_all'} = 'Toutes les collections';
+MLI18n::gi()->{'shopify_global_configuration_vat_matching_option_all_countries'} = 'Toutes les collections';

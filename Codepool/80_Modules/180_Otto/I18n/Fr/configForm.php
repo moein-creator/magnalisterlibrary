@@ -20,20 +20,15 @@ MLI18n::gi()->otto_config_account_title = 'Access Data';
 MLI18n::gi()->add('otto_config_account', array(
     'legend' => array(
         'account' => 'Access Data',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
             'label' => '{#i18n:ML_LABEL_TAB_IDENT#}',
             'help' => '{#i18n:ML_TEXT_TAB_IDENT#}'
         ),
-        'clientkey' => array(
-            'label' => 'OTTO Market Username',
-            'help' => 'Enter your OTTO Market Username',
-        ),
-        'secretkey' => array(
-            'label' => 'OTTO Market Password',
-            'help' => 'Enter your OTTO Market Password',
+        'token' => array(
+            'label' => 'OTTO API-Token'
         ),
     ),
 ), false);
@@ -43,7 +38,7 @@ MLI18n::gi()->add('otto_config_prepare__field__vat', array(
     'hint' => '',
     'matching' => array(
         'titlesrc' => 'Shop Tax Classes',
-        'titledst' => 'OTTO Tax Codes',
+        'titledst' => 'OTTO Market Tax Codes',
     )
 ));
 MLI18n::gi()->otto_config_account_prepare = 'Product Preparation';
@@ -75,7 +70,7 @@ MLI18n::gi()->otto_config_account_orderimport = 'Bestellungen';
 MLI18n::gi()->otto_config_account_orderimport_returntrackingkey_title = 'Return Tracking Key';
 MLI18n::gi()->{'otto_config_free_text_attributes_opt_group'} = 'Champs supplémentaires';
 MLI18n::gi()->{'otto_config_free_text_attributes_opt_group_value'} = 'Associez-le au champ de texte libre sur une commande spécifique';
-MLI18n::gi()->otto_config_account_orderimport_returntrackingkey_info = 'For Standard Shipping Service "Return Tracking Key" is required filed on OTTO marketplace. Since shop system does not provide such fields as standard option we need to match it to custom filed.';
+MLI18n::gi()->otto_config_account_orderimport_returntrackingkey_info = 'For Standard Shipping Service "Return Tracking Key" is required filed on OTTO Market marketplace. Since shop system does not provide such fields as standard option we need to match it to custom filed.';
 
 MLI18n::gi()->{'otto_config_carrier_option_group_marketplace_carrier'} = 'Select Marketplace Supported Carrier:';
 MLI18n::gi()->{'otto_config_carrier_option_group_additional_option'} = 'Additional option:';
@@ -121,7 +116,7 @@ MLI18n::gi()->{'formfields__stocksync.tomarketplace__help'} = '
 ';
 
 MLI18n::gi()->add('formgroups_otto', array(
-    'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu OTTO',
+    'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu OTTO Market',
 ));
 
 MLI18n::gi()->add('otto_config_order', array(
@@ -135,7 +130,7 @@ MLI18n::gi()->add('otto_config_order', array(
     'field' => array(
         'importactive' => array(
             'label' => 'Activate Import',
-            'hint' => 'Please note: Orders from the OTTO marketplace are automatically accepted when they are handed over to the web shop (order import).',
+            'hint' => 'Please note: Orders from the OTTO Market marketplace are automatically accepted when they are handed over to the web shop (order import).',
         ),
     )
 ));
@@ -143,7 +138,7 @@ MLI18n::gi()->{'sOtto_automatically'} = '-- allocate automatically --';
 
 MLI18n::gi()->{'otto_config_matching_options'} = 'Matching Options';
 MLI18n::gi()->{'otto_config_matching_shop_values'} = 'Shop Values';
-MLI18n::gi()->{'otto_config_matching_otto_values'} = 'OTTO Values';
+MLI18n::gi()->{'otto_config_matching_otto_values'} = 'OTTO Market Values';
 
 /*----- Remove below -------*/
 
@@ -153,11 +148,6 @@ MLI18n::gi()->otto_config_general_nosync = 'keine Synchronisierung';
 MLI18n::gi()->otto_config_account_price = 'Preisberechnung';
 MLI18n::gi()->otto_config_account_emailtemplate = 'Promotion-E-Mail Template';
 MLI18n::gi()->otto_config_account_producttemplate = 'Produkt Template';
-
-MLI18n::gi()->{'formfields_otto_freightforwarding_values'} = array(
-    'true' => 'Ja',
-    'false' => 'Nein',
-);
 
 MLI18n::gi()->otto_configform_orderstatus_sync_values = array(
     'auto' => '{#i18n:otto_config_general_autosync#}',
@@ -259,4 +249,4 @@ table.ordersummary tbody td.qty {
 
 
 
-MLI18n::gi()->{'formfields__importactive__hint'} = 'Bitte beachten Sie: Bestellungen vom OTTO Marktplatz werden automatisch mit der Übergabe an den Webshop (Bestellimport) akzeptiert.';
+MLI18n::gi()->{'formfields__importactive__hint'} = '';

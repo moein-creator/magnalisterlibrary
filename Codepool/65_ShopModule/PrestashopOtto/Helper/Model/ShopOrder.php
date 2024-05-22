@@ -49,7 +49,7 @@ class ML_PrestashopOtto_Helper_Model_ShopOrder extends ML_Prestashop_Helper_Mode
                 $oProduct = MLProduct::factory();
                 foreach ($this->aNewData['Products'] as $product)
                     if ($oProduct->getByMarketplaceSKU($product['SKU'])->exists()
-                        && MLModul::gi()->getConfig('stocksync.frommarketplace') === 'rel') {
+                        && MLModule::gi()->getConfig('stocksync.frommarketplace') === 'rel') {
                         $oProduct->setStock($oProduct->getStock() + $product['Quantity']);
                     }
             }

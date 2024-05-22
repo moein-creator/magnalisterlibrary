@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -34,7 +34,7 @@ class ML_WooCommerce_Model_ProductListDependency_ManufacturerFilter extends ML_S
         global $wpdb;
 
 
-        $sType = MLModul::gi()->getConfig('manufacturer');
+        $sType = MLModule::gi()->getConfig('manufacturer');
         $sFilterValue = $this->getFilterValue();
         if (!empty($sFilterValue)) {
             if (strpos($sType, 'cf_') === 0) {
@@ -83,7 +83,7 @@ class ML_WooCommerce_Model_ProductListDependency_ManufacturerFilter extends ML_S
             )
         );
 
-        $sType = MLModul::gi()->getConfig('manufacturer');
+        $sType = MLModule::gi()->getConfig('manufacturer');
         if (strpos($sType, 'cf_') === 0) {
             $sType = ltrim($sType, 'cf_');
             $results = $wpdb->get_results(" 

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -49,7 +49,49 @@ class MLShopifyAlias {
     }
 
     /**
-     * @return ML_Shopify_Model_Table_ShopifyProduct|ML_Database_Model_Table_Abstract
+     * @return ML_Shopify_Model_Table_ShopifyCollection|ML_Database_Model_Table_Abstract
+     */
+    public static function getCollectionModel() {
+        return MLDatabase::factory('ShopifyCollection');
+    }
+
+    /**
+     * @return ML_Shopify_Model_Table_ShopifyProductCollectionRelation|ML_Database_Model_Table_Abstract
+     */
+    public static function getProductCollectionRelationModel() {
+        return MLDatabase::factory('ShopifyProductCollectionRelation');
+    }
+
+    /**
+     * @return ML_Shopify_Model_Table_ShopifyMetaField|ML_Database_Model_Table_Abstract
+     */
+    public static function getMetaFieldModel() {
+        return MLDatabase::factory('ShopifyMetaField');
+    }
+
+    /**
+     * @return ML_Shopify_Model_Table_ShopifyObjectMetaFieldRelation|ML_Database_Model_Table_Abstract
+     */
+    public static function getObjectMetaFieldRelationModel() {
+        return MLDatabase::factory('ShopifyObjectMetaFieldRelation');
+    }
+
+    /**
+     * @return ML_Shopify_Model_Table_ShopifyProductVendor|ML_Database_Model_Table_Abstract
+     */
+    public static function getProductVendorModel() {
+        return MLDatabase::factory('ShopifyProductVendor');
+    }
+
+    /**
+     * @return ML_Shopify_Model_Table_ShopifyProductData|ML_Database_Model_Table_Abstract
+     */
+    public static function getProductDataModel() {
+        return MLDatabase::factory('ShopifyProductData');
+    }
+
+    /**
+     * @return ML_Shopify_Model_Product|ML_Database_Model_Table_Abstract
      */
     public static function getShopifyProductTable() {
         return MLDatabase::factory('shopifyproduct');

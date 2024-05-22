@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -64,7 +64,13 @@ class ML_Sync_Controller_Frontend_Do_SyncOrderStatus extends ML_Core_Controller_
                             $sMessage .= $sMarketPlace.' ('.$iMarketPlace.'), ';
                             MLHelper::gi('stream')->higher($sMarketPlaceText.' -> end sync');
                         } catch (Exception $oEx) {//module doesn't exists
-                            MLHelper::gi('stream')->higher($sMarketPlaceText.' -> end sync, not implemented', false);
+                            if (MLSetting::gi()->blDebug) {
+                                MLHelper::gi('stream')->stream('Exception Message: "' . $oEx->getMessage() . '"');
+                                MLHelper::gi('stream')->stream('Exception File: "' . $oEx->getFile() . '"');
+                                MLHelper::gi('stream')->stream('Exception Line: "' . $oEx->getLine() . '"');
+                                MLHelper::gi('stream')->stream('Exception Backtrace: "' . $oEx->getTraceAsString() . '"');
+                            }
+                            MLHelper::gi('stream')->higher($sMarketPlaceText . ' -> end sync, not implemented', false);
                         }
                     }
                 }
@@ -75,7 +81,7 @@ class ML_Sync_Controller_Frontend_Do_SyncOrderStatus extends ML_Core_Controller_
 
         if (MLHttp::gi()->isAjax()) {
             $iStep = MLService::getSyncOrderStatusInstance()->getOrderPerRequest();
-            $iOffset = (int)MLModul::gi()->getConfig('orderstatussyncoffset');
+            $iOffset = (int)MLModule::gi()->getConfig('orderstatussyncoffset');
             $iTotal = MLOrder::factory()->getOutOfSyncOrdersArray(0, true);
             if ($iTotal <= $iOffset + $iStep) {
                 $blFinished = true;
@@ -84,7 +90,7 @@ class ML_Sync_Controller_Frontend_Do_SyncOrderStatus extends ML_Core_Controller_
                 $blFinished = false;
                 $iOffset = $iOffset + $iStep;
             }
-            MLModul::gi()->setConfig('orderstatussyncoffset', $iOffset);
+            MLModule::gi()->setConfig('orderstatussyncoffset', $iOffset);
             MLSetting::gi()->add(
                 'aAjax',
                 array(

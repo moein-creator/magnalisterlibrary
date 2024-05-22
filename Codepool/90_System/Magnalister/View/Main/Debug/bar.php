@@ -44,13 +44,32 @@ try {
                     'selected' => MLSetting::gi()->data('sShowToolsMenu') == 'shopify-api'
                 );
             }
+            if (class_exists('\ML_ShopwareCloud_Helper_ShopwareCloudInterfaceRequestHelper', false)) {
+                $aContents[] = array(
+                    'title' => 'Shopware-Cloud-API-Requests',
+                    'template' => 'shopwarecloud-api-requests',
+                    'content' => array(),
+                    'selected' => MLSetting::gi()->data('sShowToolsMenu') == 'shopwarecloud-api'
+                );
+            }
+        try {
+            MLImage::gi();
+            $aContents[] = array(
+                'title' => 'Image Processing Time',
+                'template' => 'image',
+                'content' => array(),
+                'selected' => MLSetting::gi()->data('sShowToolsMenu') == 'image'
+            );
+        } catch (Exception $ex) {
+
+        }
             if (!MLHttp::gi()->isAjax()) {
                 try {
                     $aContents[] = array(
-                        'title' => 'Modul-Config', 
+                        'title'    => 'Modul-Config',
                         'template' => 'print_m',
-                        'content' => MLModul::gi()->getConfig(),
-                    'selected' => MLSetting::gi()->data('sShowToolsMenu') == 'config'
+                        'content'  => MLModule::gi()->getConfigAndDefaultConfig(),
+                        'selected' => MLSetting::gi()->data('sShowToolsMenu') == 'config'
                     );
                 } catch (Exception $oEx) {
                 }
@@ -151,6 +170,6 @@ try {
     }
     if(!MLHttp::gi()->isAjax()){
         MLSettingRegistry::gi()->addJs('magnalister.debugbar.js');
-        MLSetting::gi()->add('aCss', 'magnalister.debugbar.css', true);
+        MLSetting::gi()->add('aCss', 'magnalister.debugbar.css?%s', true);
     }
 ?>

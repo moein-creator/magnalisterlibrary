@@ -120,9 +120,11 @@ abstract class ML_Shop_Model_Http_Abstract {
         } else {
             $iNumber = 1;
         }
-        MLMessage::gi()->addDebug('It is redirected from: '.MLHttp::gi()->getCurrentUrl(), $aReason);
-        header('Location: '.$sUrl.'&ml[nor]='.$iNumber, true, $iStatus);
-        MagnalisterFunctions::stop();
+        if ($sUrl !== MLHttp::gi()->getCurrentUrl()) {
+            MLMessage::gi()->addDebug('It is redirected from: ' . MLHttp::gi()->getCurrentUrl(), $aReason);
+            header('Location: ' . $sUrl . '&ml[nor]=' . $iNumber, true, $iStatus);
+            MagnalisterFunctions::stop();
+        }
     }
     
     /**
@@ -145,15 +147,15 @@ abstract class ML_Shop_Model_Http_Abstract {
      */
     public function getImagePath($sFile) {
         if(self::$sImagePath === null ){
-            $sShopwareImagePath = $this->getShopImagePath();
-            if(file_exists($sShopwareImagePath) && is_writable($sShopwareImagePath)){
-                if(!file_exists($sShopwareImagePath.'magnalister/')){
-                    mkdir($sShopwareImagePath.'magnalister/');
+            $sImagePath = $this->getShopImagePath();
+            if(file_exists($sImagePath) && is_writable($sImagePath)){
+                if(!file_exists($sImagePath.'magnalister/')){
+                    mkdir($sImagePath.'magnalister/');
                 }
-                self::$sImagePath = $sShopwareImagePath.'magnalister/';
+                self::$sImagePath = $sImagePath.'magnalister/';
             }else{
                 MLMessage::gi()->addError(MLI18n::gi()->get('sException_update_pathNotWriteable', array(
-                    'path' => $sShopwareImagePath
+                    'path' => $sImagePath
                   )));
                 throw new Exception('cannot create images');
             }
@@ -171,7 +173,7 @@ abstract class ML_Shop_Model_Http_Abstract {
         }else{
             $aImageEncoded = array();
             foreach (explode('/', $sFile) as $sFilePart) {
-                $aImageEncoded[] = rawurlencode($sFilePart);
+                $aImageEncoded[] = rawurlencode(rawurldecode($sFilePart));//decode and encode together to be sure that orginal url is not encoded
             }
             return $this->getShopImageUrl().'magnalister/'. implode('/', $aImageEncoded);
         }
@@ -255,13 +257,19 @@ abstract class ML_Shop_Model_Http_Abstract {
     /**
      * @return string
      */
-    public function getConfigFrontCornURL($aParams) {
+    public function getConfigFrontCronURL($aParams) {
         $sParent = self::getUrl($aParams);
         $aSubmittedValues = MLRequest::gi()->data();
         if (isset($aSubmittedValues['field']['general.cronfronturl'])) {
             $mConfig = $aSubmittedValues['field']['general.cronfronturl'] === '' ? null : $aSubmittedValues['field']['general.cronfronturl'];
         } else {
-            $mConfig = MLDatabase::factory('config')->set('mpid', '0')->set('mkey', 'general.cronfronturl')->get('value');
+            $cacheFile = strtoupper(__CLASS__).'__'.__FUNCTION__.'txt';
+            if (!MLCache::gi()->exists($cacheFile)) {
+                $mConfig = MLDatabase::factory('config')->set('mpid', '0')->set('mkey', 'general.cronfronturl')->get('value');
+                MLCache::gi()->set($cacheFile, $mConfig, 360);
+            } else {
+                $mConfig = MLCache::gi()->get($cacheFile);
+            }
         }
 
         if ($mConfig != null) {

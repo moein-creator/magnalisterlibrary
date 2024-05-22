@@ -1,7 +1,8 @@
 <?php
 /* @var $this  ML_Productlist_Controller_Widget_ProductList_Abstract */
 /* @var $aField array array('name'=>'', 'value'=>'', 'values'=>array('key'=> 'value'), 'shopMatchingValue'=>'') */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <?php if (isset($aField)) {
     $selectid = uniqid('autoprefix-option');
@@ -18,7 +19,7 @@ class_exists('ML', false) or die();
             <?php echo 'id="'.$selectid.'"'?>>
             <optgroup label="Possible Values">
                 <?php foreach ($aField['values'] as $aKey => $aValue) {?>
-                    <option style="padding: 5px 0;" <?php if($aKey == 'freetext') echo "disabled='disabled'"; ?> value="<?php echo $aKey ?>"<?php echo $aField['value'] == $aKey ? ' selected="selected"' : '' ?>> <?php echo $aValue ?></option>
+                    <option style="padding: 5px 0;" <?php if($aKey == 'freetext') echo "disabled='disabled'"; ?> value="<?php echo $aKey ?>" <?php echo $aField['value'] == $aKey ? ' selected="selected"' : '' ?> > <?php echo $aValue ?></option>
                 <?php }?>
             </optgroup>
         </select>

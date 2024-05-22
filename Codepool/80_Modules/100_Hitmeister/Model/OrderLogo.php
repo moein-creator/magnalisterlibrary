@@ -17,7 +17,20 @@
  */
 
 class ML_Hitmeister_Model_OrderLogo {
+    /**
+     * Return the logo depending on order data.
+     *
+     * @param ML_Shop_Model_Order_Abstract $oOrder
+     * @return string
+     */
     public function getLogo(ML_Shop_Model_Order_Abstract $oOrder) {
+        $data = $oOrder->get('data');
+        if (is_array($data) && array_key_exists('FulfillmentType', $data) &&
+            'fulfilled_by_kaufland' == $data['FulfillmentType']
+        ) {
+            return 'fulfilled_by_kaufland.png';
+        }
+
         return 'kaufland_orderview.png';
     }
 }

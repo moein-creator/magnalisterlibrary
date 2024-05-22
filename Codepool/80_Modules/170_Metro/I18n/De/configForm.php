@@ -38,7 +38,6 @@ MLI18n::gi()->{'formfields_metro__orderstatus.accepted'} = array(
 
 MLI18n::gi()->{'formgroups_legend_quantity'} = 'Lager';
 
-
 MLI18n::gi()->metro_configform_orderstatus_sync_values = array(
     'auto' => '{#i18n:metro_config_general_autosync#}',
     'no' => '{#i18n:metro_config_general_nosync#}',
@@ -77,71 +76,10 @@ MLI18n::gi()->metro_configform_orderimport_shipping_values = array(
     ),
 );
 
-MLI18n::gi()->metro_config_sync_inventory_import = array(
-    'true' => 'Ja',
-    'false' => 'Nein'
-);
-
-MLI18n::gi()->metro_config_account_emailtemplate_sender = 'Beispiel-Shop';
-MLI18n::gi()->metro_config_account_emailtemplate_sender_email = 'beispiel@onlineshop.de';
-MLI18n::gi()->metro_config_account_emailtemplate_subject = 'Ihre Bestellung bei #SHOPURL#';
-MLI18n::gi()->metro_config_producttemplate_content = '<p>#TITLE#</p>'.
-    '<p>#ARTNR#</p>'.
-    '<p>#SHORTDESCRIPTION#</p>'.
-    '<p>#PICTURE1#</p>'.
-    '<p>#PICTURE2#</p>'.
-    '<p>#PICTURE3#</p>'.
-    '<p>#DESCRIPTION#</p>';
-MLI18n::gi()->metro_config_emailtemplate_content = '
- <style><!--
-body {
-    font: 12px sans-serif;
-}
-table.ordersummary {
-	width: 100%;
-	border: 1px solid #e8e8e8;
-}
-table.ordersummary td {
-	padding: 3px 5px;
-}
-table.ordersummary thead td {
-	background: #cfcfcf;
-	color: #000;
-	font-weight: bold;
-	text-align: center;
-}
-table.ordersummary thead td.name {
-	text-align: left;
-}
-table.ordersummary tbody tr.even td {
-	background: #e8e8e8;
-	color: #000;
-}
-table.ordersummary tbody tr.odd td {
-	background: #f8f8f8;
-	color: #000;
-}
-table.ordersummary td.price,
-table.ordersummary td.fprice {
-	text-align: right;
-	white-space: nowrap;
-}
-table.ordersummary tbody td.qty {
-	text-align: center;
-}
---></style>
-<p>Hallo #FIRSTNAME# #LASTNAME#,</p>
-<p>vielen Dank f&uuml;r Ihre Bestellung! Sie haben &uuml;ber #MARKETPLACE# in unserem Shop folgendes bestellt:</p>
-#ORDERSUMMARY#
-<p>Zuz&uuml;glich etwaiger Versandkosten.</p>
-<p>&nbsp;</p>
-<p>Mit freundlichen Gr&uuml;&szlig;en,</p>
-<p>Ihr Online-Shop-Team</p>';
-
 MLI18n::gi()->add('metro_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
@@ -208,7 +146,18 @@ MLI18n::gi()->add('metro_config_prepare', array(
             'label' => 'Name des Versandkosten-Profils',
         ),
         'shippingprofile.cost' => array(
-            'label' => 'Versandkostenaufschlag (Betrag)',
+            'label' => 'Versandkostenaufschlag (Brutto)',
+        ),
+        'shipping.group' => array(
+            'label' => 'Verk&auml;uferversandgruppen',
+            'hint' => 'Eine bestimmte Gruppe von Versandeinstellungen, die verk&auml;uferspezifisch f&uuml;r ein Angebot festgelegt wird. Die Verk&auml;uferversandgruppe wird in der Benutzeroberfl&auml;che f&uuml;r Versandeinstellungen vom Verk&auml;ufer erstellt und verwaltet.',           
+            'help' => 'Verk&auml;ufer k&ouml;nnen eine Gruppe mit verschiedenen Versandeinstellungen erstellen, je nach gesch&auml;ftlichen Erfordernissen und Anwendungsf&auml;llen. F&uuml;r verschiedene Regionen k&ouml;nnen unterschiedliche Gruppen von Versandeinstellungen gew&auml;hlt werden, mit unterschiedlichen Versandbedingungen und &ndash;geb&uuml;hren f&uuml;r die jeweilige Region.<br /><br /> Wenn der Verk&auml;ufer ein Produkt als Angebot erstellt, kann er eine seiner angelegten Gruppen von Versandeinstellungen f&uuml;r das jeweilige Produkt festlegen. Die Versandeinstellungen dieser Gruppe werden dann genutzt, um die jeweils g&uuml;ltige Versandoption je Produkt auf der Website anzuzeigen.<br /><br /><strong>Wichtig:</strong> Kopieren Sie die Versandgruppen-Namen aus Ihrem METRO Account in die entsprechenden Felder hier. Nur diese werden verwendet. Die Bezeichnung dient hier nur dazu, sie in der Produktvorbereitung anzuzeigen.<br /><br />F&uuml;r Details zum Anlegen der Versandgruppen siehe <a href="https://developer.metro-selleroffice.com/docs/offer-data/shipping/" target="_blank">METRO Dokumentation</a>',
+        ),  
+        'shipping.group.name' => array(
+            'label' => 'Verk&auml;uferversandgruppen Bezeichnung',
+        ),
+        'shipping.group.id' => array(
+            'label' => 'Verk&auml;uferversandgruppen ID',
         ),
     )
 ), false);

@@ -76,7 +76,7 @@ body{
 
 #ml-loader-installation h1 {
 	color: #e31a1c;
-	font-family: "Source Sans Pro";
+	font-family: "Source Sans Pro", 'Open Sans', sans-serif;
 	font-weight: bolder;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -86,7 +86,7 @@ body{
 	margin: 0 0 0 5.7%;
 }
 #ml-loader-installation p{
-	font-family: "Source Sans Pro";
+	font-family: "Source Sans Pro", 'Open Sans', sans-serif;
 	font-size: 14px;
 	margin: 0 6.3%;
         line-height: initial;

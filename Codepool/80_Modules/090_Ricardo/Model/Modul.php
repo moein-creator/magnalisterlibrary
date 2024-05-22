@@ -78,7 +78,6 @@ class ML_Ricardo_Model_Modul extends ML_Modul_Model_Modul_Abstract {
     }
 
     public function isAuthed($blResetCache = false) {
-        return true;
         if (parent::isAuthed($blResetCache)) {
             if ($this->tokenAvailable($blResetCache)) {
                 $expires = $this->getConfig('token.expires');
@@ -141,7 +140,6 @@ class ML_Ricardo_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         $bReturn = parent::isConfigured();
 
         $sCurrency = $this->getConfig('currency');
-        $sCurrency = 'EUR';
         if (!empty($sCurrency) && !in_array($sCurrency, array_keys(MLCurrency::gi()->getList()))) {
             MLMessage::gi()->addError(sprintf(MLI18n::gi()->ML_GENERIC_ERROR_CURRENCY_NOT_IN_SHOP, $sCurrency));
             return false;

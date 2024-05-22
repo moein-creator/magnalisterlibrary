@@ -1,2 +1,3 @@
-<?php class_exists('ML',false) or die()?>
-<?php $this->render() ;?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
+<?php $this->render(); ?>

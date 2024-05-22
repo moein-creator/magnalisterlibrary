@@ -18,8 +18,9 @@
 
 MLSetting::gi()->hitmeister_prepareDefaultsFields = array(
     'itemcondition',
-    'shippingtime',
+    'handlingtime',
     'itemcountry',
+    'shippinggroup',
 );
 
 MLSetting::gi()->hitmeister_prepareDefaultsOptionalFields = array(

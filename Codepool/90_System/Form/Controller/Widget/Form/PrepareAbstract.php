@@ -18,7 +18,8 @@
 
 MLFilesystem::gi()->loadClass('Form_Controller_Widget_Form_Abstract');
 abstract class ML_Form_Controller_Widget_Form_PrepareAbstract extends ML_Form_Controller_Widget_Form_Abstract {
-    
+
+    protected static $valueIsSaved = null;
     /**
      * @var ML_Form_Helper_Model_Table_PrepareData_Abstract $oPrepareHelper
      */
@@ -52,14 +53,14 @@ abstract class ML_Form_Controller_Widget_Form_PrepareAbstract extends ML_Form_Co
     abstract protected function triggerBeforeFinalizePrepareAction();
     
     protected function construct() {
-        $this->oPrepareHelper = MLHelper::gi('Model_Table_'.MLModul::gi()->getMarketPlaceName().'_PrepareData');
+        $this->oPrepareHelper = MLHelper::gi('Model_Table_' . MLModule::gi()->getMarketPlaceName() . '_PrepareData');
         $oTable = MLDatabase::factory('selection')->set('selectionname', $this->getSelectionNameValue());
         $this->oSelectList = $oTable->getList();
         if ($this->oSelectList->getCountTotal() == 0) {
             MLMessage::gi()->addDebug('no product is selected');
             MLHttp::gi()->redirect($this->getParentUrl());
         }
-        $this->oPrepareList = MLDatabase::factory(MLModul::gi()->getMarketPlaceName().'_prepare')->getList();
+        $this->oPrepareList = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_prepare')->getList();
         $this->oPrepareList->getQueryObject()->where($this->oPrepareHelper->getPrepareTableProductsIdField()." in ('" . implode("', '", $this->oSelectList->get('pid')) . "')");
         if ($this->oSelectList->getCountTotal() == 1) {
             $aList = $this->oSelectList->getList();
@@ -246,4 +247,17 @@ abstract class ML_Form_Controller_Widget_Form_PrepareAbstract extends ML_Form_Co
         return $this;
     }
 
+    public function valueIsSaved() {
+        if (self::$valueIsSaved === null) {
+            self::$valueIsSaved = $this->oPrepareList->getCountTotal() > 0;
+        }
+        return self::$valueIsSaved;
+    }
+
+    public function getSavedValue($aField) {
+        $sField = $aField['realname'];
+        $aData = $this->oPrepareList->get(str_replace('.', '_', $sField), true);
+
+        return is_array($aData) ? current($aData) : $aData;
+    }
 }

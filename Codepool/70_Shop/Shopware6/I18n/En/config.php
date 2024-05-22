@@ -10,5 +10,7 @@ MLI18n::gi()->{'Weight'} = 'Weight';
 MLI18n::gi()->{'Width'} = 'Width';
 MLI18n::gi()->{'Height'} = 'Height';
 MLI18n::gi()->{'Length'} = 'Length';
+MLI18n::gi()->{'UnitId'} = 'Scale unit';
+MLI18n::gi()->{'PurchaseUnit'} = 'Selling unit';
 MLI18n::gi()->{'ManufacturerId'} = 'Manufacturer';
 MLI18n::gi()->{'ManufacturerNumber'} = 'Manufacturer product number ';

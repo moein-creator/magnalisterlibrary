@@ -17,12 +17,15 @@
  */
 
 MLI18n::gi()->add('formfields', array(
-    'config_shopware6_invoice_documenttype' => array(
+    'config_shopware6_invoice_documenttype'    => array(
         'label' => 'Rechnung<br>Shopware Dokument-Typ',
-        'help' => 'Wählen Sie hier den Dokument-Typen aus Ihrem Shopware Shop, welche Sie unter "Einstellungen > Dokumente" angelegt haben.',
+        'help'  => 'Wählen Sie hier den Dokument-Typen aus Ihrem Shopware Shop, welche Sie unter "Einstellungen > Dokumente" angelegt haben.',
     ),
     'config_shopware6_creditnote_documenttype' => array(
         'label' => 'Gutschrift<br>Shopware Dokument-Typ',
-        'help' => 'Wählen Sie hier den Dokument-Typen aus Ihrem Shopware Shop, welche Sie unter "Einstellungen > Dokumente" angelegt haben.',
+        'help'  => 'Wählen Sie hier den Dokument-Typen aus Ihrem Shopware Shop, welche Sie unter "Einstellungen > Dokumente" angelegt haben.',
     ),
 ));
+
+MLI18n::gi()->shop_order_attribute_name = 'Shopware Zusatzfelder';
+MLI18n::gi()->shop_order_attribute_creation_instruction = 'Zusatzfelder können Sie in Ihrem Shopware-Backend unter “Einstellungen” -> “System” -> “Zusatzfelder” anlegen (Verwenden für: Bestellungen) und unter “Bestellungen” befüllen. Öffnen Sie dazu die entsprechende Bestellung und scrollen Sie in der Bestellübersicht nach unten zu “Zusatzfelder”.';

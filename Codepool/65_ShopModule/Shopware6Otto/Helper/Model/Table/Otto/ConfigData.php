@@ -20,37 +20,35 @@ MLFilesystem::gi()->loadClass('Otto_Helper_Model_Table_Otto_ConfigData');
 
 class ML_Shopware6Otto_Helper_Model_Table_Otto_ConfigData extends ML_Otto_Helper_Model_Table_Otto_ConfigData {
     /**
-     * Custom fields(FreeTextField) has been removed from the attributes as a option to select because  Shopware 6 does not support "Orders Custom fields(Order FreeTextField)" specifically
+     * On Shopware we only offer select option
      *
      * @param $aField
-     * @param $carrierType
-     * @return mixed
      * @throws MLAbstract_Exception
      */
-    public function carrierSelect($matchingElementValue, $aField, $carrierType = 'standard') {
-        $optGroups = array();
-        $marketplaceCarriers = array();
-        $matchingElement = array();
-        // First element is pure text that explains that nothing is selected so it should not be added
-        $aFirstElement = array('' => MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT'));
-
-        // Marketplace carriers
-        $apiMarketplaceCarriers = MLModule::gi()->getOttoShippingSettings($carrierType);
-        foreach ($apiMarketplaceCarriers as $key => $marketplaceCarrier) {
-            $marketplaceCarriers[$key] = $marketplaceCarrier;
+    public function orderstatus_returncarrier_selectField(&$aField) {
+        if (isset($aField['matching'])) {
+            $aField = $this->carrierSelect($aField['matching'], $aField, 'return');
         }
-        if (!empty($apiMarketplaceCarriers)) {
-            $marketplaceCarriers['optGroupClass'] = 'marketplaceCarriers';
-            $optGroups += array(MLI18n::gi()->get('otto_config_carrier_option_group_marketplace_carrier') => $marketplaceCarriers);
+    }
+
+    /**
+     * On Shopware we offer Shop Order FreeText fields as option
+     *
+     * @param $aField
+     * @throws MLAbstract_Exception
+     */
+    public function orderstatus_returntrackingkeyField(&$aField) {
+        $aField['values'] = array(
+            ''                   => MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT'),
+            'orderFreeTextField' => MLI18n::gi()->get('otto_config_free_text_attributes_opt_group_value'),
+        );
+        // Free text fields - additional fields
+        if (method_exists(MLFormHelper::getShopInstance(), 'getOrderFreeTextFieldsAttributes')) {
+            $aShopFreeTextFieldsAttributes = MLFormHelper::getShopInstance()->getOrderFreeTextFieldsAttributes();
+            foreach ($aShopFreeTextFieldsAttributes as $value => $aShopFreeTextFieldsAttribute) {
+                $aField['values'][$value] = $aShopFreeTextFieldsAttribute;
+            }
         }
-
-        // matching option key value "returnCarrierMatching" must be the same as "matching" value on form fields
-        $matchingElement[$matchingElementValue] = MLI18n::gi()->get('otto_config_carrier_option_matching_option');
-        $matchingElement['optGroupClass'] = 'matching';
-        $optGroups += array(MLI18n::gi()->get('otto_config_carrier_option_group_additional_option') => $matchingElement);
-
-        $aField['values'] = $aFirstElement + $optGroups;
-        return $aField;
     }
 
 }

@@ -3,7 +3,7 @@
 
 MLI18n::gi()->{'Hitmeister_CheckinForm__Price'} = 'Price';
 MLI18n::gi()->{'Hitmeister_CheckinForm__Amount'} = 'Quantity';
-MLI18n::gi()->{'Hitmeister_CheckinForm__ShippingTime'} = 'Shipping time (in days)';
+MLI18n::gi()->{'Hitmeister_CheckinForm__HandlingTime'} = 'Handling time (in days)';
 MLI18n::gi()->{'Hitmeister_CheckinForm__ShopPrice'} = 'Shop';
 MLI18n::gi()->{'Hitmeister_CheckinForm__SuggestedPrice'} = 'Calculated (acc. to Configuration)';
 MLI18n::gi()->{'Hitmeister_CheckinForm__HitPrice'} = 'Preis-Hit';

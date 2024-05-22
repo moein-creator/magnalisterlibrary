@@ -173,7 +173,7 @@ table.ordersummary tbody td.qty {
 MLI18n::gi()->add('hood_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
@@ -241,9 +241,13 @@ MLI18n::gi()->add('hood_config_prepare', array(
             'label' => 'Land',
         ),
         'mwst' => array(
-            'label' => 'Mehrwertsteuer',
-            'help' => 'H&ouml;he der Mehrwertsteuer, die bei Hood.de ausgewiesen wird. Bitte nur ausf&uuml;llen wenn Sie ein gewerbliches H&auml;ndlerkonto bei Hood.de haben',
+            'label' => 'Mehrwertsteuer-Fallback',
+            'help' => 'H&ouml;he der Mehrwertsteuer, die bei Hood.de ausgewiesen wird, falls nicht am Artikel hinterlegt. Werte ungleich 0 nur erlaubt, wenn Sie ein gewerbliches Konto bei Hood.de haben.',
             'hint' => '&nbsp;Steuersatz f&uuml;r gewerbliche H&auml;ndler in %',
+        ),
+        'forcefallback' => array(
+            'label' => 'Immer Fallback verwenden',
+            'help' => 'Wenn aktiviert, wird immer der Fallback-Wert für die Mehrwertsteuer verwendet, unabhängig davon, was am Artikel hinterlegt ist.',
         ),
         'conditiontype' => array(
             'label' => 'Artikelzustand',
@@ -256,10 +260,12 @@ MLI18n::gi()->add('hood_config_prepare', array(
 					In derselben Sprache kommen auch etwaige Fehlermeldungen von Hood.de.',
         ),
          'shippingtime.min' => array(
-            'label' => 'Lieferzeit (min)',
+            'label' => 'Lieferzeit in Tagen (min)',
+            'help'  => 'Tragen Sie hier die k&uuml;rzeste Lieferzeit ein (als Zahl). Verwenden Sie 0, wenn Sie am gleichen Tag liefern. Wenn Sie hier keine Zahl eintragen, wird der in Ihrem Hood.de Konto hinterlegte Wert verwendet.'
         ),
          'shippingtime.max' => array(
-            'label' => 'Lieferzeit (max)',
+            'label' => 'Lieferzeit in Tagen (max)',
+            'help'  => 'Tragen Sie hier die l&auml;ngste Lieferzeit ein (als Zahl). Verwenden Sie 0, wenn Sie am gleichen Tag liefern. Wenn Sie hier keine Zahl eintragen, wird der in Ihrem Hood.de Konto hinterlegte Wert verwendet.'
         ),
         'dispatchtimemax' => array(
             'label' => 'Zeit bis Versand',
@@ -1002,6 +1008,7 @@ MLI18n::gi()->add('hood_config_producttemplate', array(
     'field' => array(
         'template.name' => array(
             'label' => 'Template Produktname',
+            // For shopify this help is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyHood/I18n/De/configForm.php
             'help' => '<dl>
 							<dt>Name des Produkts auf Hood.de</dt>
 							 <dd>Einstellung, wie das Produkt auf Hood.de hei&szlig;en soll.
@@ -1017,6 +1024,7 @@ MLI18n::gi()->add('hood_config_producttemplate', array(
 							 <dd>Beispiel: <br />&nbsp;Variantengruppe: F&uuml;llmenge<ul><li>Variante: 0,33 l (3 EUR / Liter)</li><li>Variante: 0,5 l (2,50 EUR / Liter)</li><li>usw.</li></ul></dd>
 							<dd>In diesem Fall schalten Sie bitte ebenfalls <b>die Preissynchronisation ab</b>,  da Varianten-Titel bei Hood.de nicht ge&auml;ndert werden k&ouml;nnen.</dd>
 							</dl>',
+            // For shopify this hint is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyHood/I18n/De/configForm.php
             'hint' => 'Platzhalter: #TITLE# - Produktname; #BASEPRICE# - Grundpreis',
         ),
         'template.content' => array(

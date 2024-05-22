@@ -28,7 +28,7 @@ if (!class_exists('ML', false))
     $this->includeType($aField);   
 }
 if (isset($aField['realname']) && in_array($aField['realname'], array('prepareaction', 'saveaction'))) {
-    $sCssClassAdd = ' action';
+    $sCssClassAdd = ' action text';
 } else {
     $sCssClassAdd = '';
 }

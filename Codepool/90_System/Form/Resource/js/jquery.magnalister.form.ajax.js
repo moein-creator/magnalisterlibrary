@@ -71,7 +71,7 @@
                     }
 
                     if (eElement.find(aAjaxController.selector).length === 0) {
-                        $(eElements).find(aAjaxController.selector).on(aAjaxController.trigger, function(event) {
+                        $(eElements).on(aAjaxController.trigger, aAjaxController.selector, function (event) {
                             fireAjaxRequest(eElement, event.ajaxAdditional);
                         });
                     } else {

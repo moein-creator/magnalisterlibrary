@@ -1,7 +1,8 @@
 <?php
 /* @var $this  ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Orderlist */
 /* @var $oList ML_Amazon_Model_List_Amazon_Order */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <tr class="main" data-actionTopForm="<?php echo $this->getRowAction($aOrder); ?>">
     <?php if ($this->isSelectable()) { ?>

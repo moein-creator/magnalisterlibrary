@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -39,5 +39,6 @@ MLSetting::gi()->add('formgroups__orderimport__fields__orderimport.paymentstatus
     'type' => 'select',
     'cssclasses' => array('mljs-directbuy',),
 ));
-//$Config = MLSetting::gi()->get('formgroups__orderimport');
-//Kint::dump($Config); // compare change in you see changes after that
+
+MLSetting::gi()->set('formgroups_metro__invoice__fields__invoiceDocumentType', '{#setting:formfields__config_shopware6_invoice_documenttype#}');
+MLSetting::gi()->set('formgroups_metro__invoice__fields__creditnoteDocumentType', '{#setting:formfields__config_shopware6_creditnote_documenttype#}');

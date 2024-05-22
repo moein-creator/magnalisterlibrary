@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -110,11 +110,11 @@ class ML_Prestashop_Model_Order extends ML_Shop_Model_Order_Abstract {
         $oQueryBuilder = MLDatabase::factorySelectClass()->select('id_order')
             ->from(_DB_PREFIX_.'orders', 'po')
             ->join(array('magnalister_orders', 'mo', 'po.id_order = mo.current_orders_id'), ML_Database_Model_Query_Select::JOIN_TYPE_LEFT)
-            ->where("po.current_state != mo.status AND mo.mpID = '".MLModul::gi()->getMarketPlaceId()."'");
+            ->where("po.current_state != mo.status AND mo.mpID = '" . MLModule::gi()->getMarketPlaceId() . "'");
         try {
             $aListOfStatus = array();
-            foreach (MLModul::gi()->getStatusConfigurationKeyToBeConfirmedOrCanceled() as $sKey) {
-                $sListOfStatus = MLModul::gi()->getConfig($sKey);
+            foreach (MLModule::gi()->getStatusConfigurationKeyToBeConfirmedOrCanceled() as $sKey) {
+                $sListOfStatus = MLModule::gi()->getConfig($sKey);
                 if (is_array($sListOfStatus)) {
                     $aListOfStatus = array_merge($aListOfStatus, $sListOfStatus);
                 } else
@@ -273,5 +273,9 @@ class ML_Prestashop_Model_Order extends ML_Shop_Model_Order_Abstract {
             }
         }
         return '';
+    }
+
+    public function getShopOrderProducts() {
+        return array();
     }
 }

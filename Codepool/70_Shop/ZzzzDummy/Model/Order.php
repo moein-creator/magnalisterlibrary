@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -77,5 +77,12 @@ class ML_ZzzzDummy_Model_Order extends ML_Shop_Model_Order_Abstract {
 
     public function getShopOrderTotalTax() {
         return '';
+    }
+
+    public function getShopOrderProducts() {
+        return array(
+            array('SKU' => 'xy1', 'VAT' => 19.00),
+            array('SKU' => 'xy2', 'VAT' => 7.00),
+        );
     }
 }

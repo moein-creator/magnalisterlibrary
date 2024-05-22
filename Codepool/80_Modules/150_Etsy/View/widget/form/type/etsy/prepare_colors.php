@@ -17,7 +17,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <table>
     <?php for ($i = 0; $i < 2; $i++) { ?>

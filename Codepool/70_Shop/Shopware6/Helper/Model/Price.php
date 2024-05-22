@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -29,8 +29,8 @@ use Shopware\Core\System\Currency\CurrencyFormatter;
 class ML_Shopware6_Helper_Model_Price {
 
     public function getPriceByCurrency($mValue, $sCurrency = null, $blFormatted = false) {
-        if (MLModul::gi()->getConfig('lang') !== null) {
-            $lang = MLModul::gi()->getConfig('lang');
+        if (MLModule::gi()->getConfig('lang') !== null) {
+            $lang = MLModule::gi()->getConfig('lang');
         } else {
             $lang = Defaults::LANGUAGE_SYSTEM;
         }

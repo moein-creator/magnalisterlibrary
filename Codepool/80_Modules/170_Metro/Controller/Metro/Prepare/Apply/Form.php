@@ -45,21 +45,25 @@ class ML_Metro_Controller_Metro_Prepare_Apply_Form extends ML_Form_Controller_Wi
         $aField['value'] = MLModul::gi()->getConfig('currency');
     }
 
-
     protected function shippingProfileField(&$aField) {
         $aDefaultTemplate = MLModul::gi()->getConfig('shippingprofile');
         $aTemplateName = MLModul::gi()->getConfig('shippingprofile.name');
         $aTemplateCost = MLModul::gi()->getConfig('shippingprofile.cost');
         $aField['type'] = 'select';
         $aField['autooptional'] = false;
-        $iDefault = 0;
         foreach ($aDefaultTemplate as $iKey => $sValue) {
             $aField['values'][] = $aTemplateName[$iKey].' ('.number_format((float)$aTemplateCost[$iKey], 2, '.', '').' Euro)';
-            if ($sValue['default']) {
-                $iDefault = $iKey;
-            }
         }
-        $aField['value'] = $iDefault;
+    }
+
+    protected function shippingGroupField(&$aField) {
+        $aDefaultGroup = MLModule::gi()->getConfig('shipping.group');
+        $aGroupName = MLModule::gi()->getConfig('shipping.group.name');
+        $aField['type']='select';
+        $aField['autooptional'] = false;
+        foreach ($aDefaultGroup as $iKey => $sValue) {
+             $aField['values'][]= $aGroupName[$iKey];
+        }       
     }
 
      protected function titleField(&$aField) {

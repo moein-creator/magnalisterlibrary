@@ -122,6 +122,10 @@ class ML_Core_Model_Cache {
      */
     public function flush($pattern = '*') {
         $this->oCacheClass->flush($pattern);
+
+        if (get_class(MLShop::gi()->getCacheObject()) !== get_class($this)) {
+            MLShop::gi()->getCacheObject()->flush();
+        }
         $this->aRequestCached = array();
     }
     

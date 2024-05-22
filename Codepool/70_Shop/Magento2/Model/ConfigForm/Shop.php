@@ -12,7 +12,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -286,6 +286,10 @@ class ML_Magento2_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
         return $this->getListOfArticleFields();
     }
 
+    public function getShopSystemAttributeList() {
+        return $this->getListOfArticleFields();
+    }
+
     public function getShippingTime() {
         return $this->getListOfArticleFields();
     }
@@ -312,7 +316,7 @@ class ML_Magento2_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
     }
 
     public function getAttributeOptions($sAttributeCode, $iLangId = null) {
-        $iLangId = $iLangId === null ? MLModul::gi()->getConfig()['lang'] : $iLangId;
+        $iLangId = $iLangId === null ? MLModule::gi()->getConfig()['lang'] : $iLangId;
         $aAttributeCode = explode('_', $sAttributeCode, 2);
         $attributes = array();
         $oAttribute = MLMagento2Alias::ObjectManagerProvider('Magento\Catalog\Model\ResourceModel\Eav\Attribute');
@@ -485,7 +489,7 @@ class ML_Magento2_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
     public function manipulateFormAfterNormalize(&$aForm) {
         try {
             parent::manipulateFormAfterNormalize($aForm);
-            MLModul::gi();
+            MLModule::gi();
 
             if (isset($aForm['importactive']['fields']['orderimport.paymentmethod'])) {
                 $aForm['importactive']['fields']['orderimport.paymentmethod']['type'] = 'select';
@@ -504,7 +508,7 @@ class ML_Magento2_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
                 unset($aForm['paymentandshipping']['fields']['orderimport.paymentmethod']['subfields']);
             }
 
-            if (in_array(MLModul::gi()->getMarketPlaceName(), ['ebay', 'hood'])) {
+            if (in_array(MLModule::gi()->getMarketPlaceName(), ['ebay', 'hood'])) {
                 $aMatching = MLI18n::gi()->get('magento2_configform_orderimport_shipping_values__matching__title');
                 $shippingValues =  array('matching' => $aMatching) + $this->getShippingMethodValues();
             } else {

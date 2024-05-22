@@ -27,12 +27,12 @@ class ML_ZzzzDummyDawanda_Model_ProductList_Dawanda_Checkin extends ML_ZzzzDummy
                 'preparedstatus' => MLProductList::dependencyInstance('preparestatusfilter')->setConfig(array('blPrepareMode' => false)),
             );
         } else {
-            $sPreparedStatusCheckModulSpecific = ucfirst(MLModul::gi()->getMarketPlaceName()).'_Productlist_Header_sPreparedType';
+            $sPreparedStatusCheckModulSpecific = ucfirst(MLModule::gi()->getMarketPlaceName()) . '_Productlist_Header_sPreparedType';
             $sPreparedStatusTitle = MLI18n::gi()->get($sPreparedStatusCheckModulSpecific);
             $sPreparedStatusTitle = $sPreparedStatusTitle == $sPreparedStatusCheckModulSpecific ? MLI18n::gi()->get('Productlist_Header_sPreparedType') : $sPreparedStatusTitle;
             $aMyConfig = array(
                 'priceMarketplace' => array(
-                    'title' =>  sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModul::gi()->getMarketPlaceName(false)),
+                    'title' => sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModule::gi()->getMarketPlaceName(false)),
                     'order' => false,
                     'type' => 'priceMarketplace'
                 ),

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -80,7 +80,7 @@ MLI18n::gi()->add('hood_config_orderimport', array(
             'help' => '<p>Hier setzen Sie den Zahl- und den Bestellstatus, den eine Bestellung im Shop bekommt, sobald sie bei Hood.de mit PayPal bezahlt wird.</p>
 <p>
 Wenn ein Kunde auf Hood.de kauft, wird die Bestellung sofort in Ihren Web-Shop &uuml;bertragen.
-Dabei wird zuerst die Zahlungsweise auf „Hood.de“, oder den Wert, den Sie unter „Zahlart der Bestellungen“ hinterlegt haben, gesetzt.</p>
+Dabei wird zuerst die Zahlungsweise auf „Hood.de“, oder den Wert, den Sie unter „Zahlart der Bestellungen“ hinterlegt haben, gesetzt.</p>
 
 <p>
 magnalister &uuml;berwacht weiterhin 16 Tage lang st&uuml;ndlich, ob ein Käufer auf Hood.de nach dem ersten Bestellimport seine Zahlung später getätigt, oder seine Versandadresse geändert hat.
@@ -95,7 +95,7 @@ Dabei rufen wir Änderungen in folgenden Intervallen ab:
 	<li>	bis 16 Tage nach der Bestellung alle 6 Std.</li>
         </ul>
 
-Dabei verwendet magnalister die Hood.de-Information, die Sie auch in Ihrem Hood.de-Account unter "Aktivität" > "Zusammenfassung" > "Verkaufsmanager Pro" > "Verkauft" in der 12ten Spalte (Euro-Symbol) sehen können: Ein fett gedrucktes Symbol ist der Hinweis auf "bezahlt". 
+Dabei verwendet magnalister die Hood.de-Information, die Sie auch in Ihrem Hood.de-Account unter "Aktivität" > "Zusammenfassung" > "Verkaufsmanager Pro" > "Verkauft" in der 12ten Spalte (Euro-Symbol) sehen können: Ein fett gedrucktes Symbol ist der Hinweis auf "bezahlt".
 </p><br /><br />
                 <b>Hinweis:</b> Der Status von zusammengefa&szlig;ten Bestellungen wird nur dann ge&auml;ndert, wenn alle Teile bezahlt sind.'
         ),
@@ -116,9 +116,9 @@ Dabei verwendet magnalister die Hood.de-Information, die Sie auch in Ihrem Hood.
         ),
         'orderimport.paymentmethod' => array(
             'label' => 'Zahlart der Bestellungen',
-            'help' => '<p>Zahlart, die allen Hood.de-Bestellungen beim Bestellimport zugeordnet wird. 
+            'help' => '<p>Zahlart, die allen Hood.de-Bestellungen beim Bestellimport zugeordnet wird.
 <p>
-Alle Zahlarten in der Liste k&ouml;nnen Sie ebenfalls unter Shopware > Einstellungen > Zahlungsarten definieren und hier&uuml;ber dann verwenden.
+Alle Zahlarten in der Liste k&ouml;nnen Sie ebenfalls unter Shopware > Einstellungen > Zahlungsarten definieren und hier&uuml;ber dann verwenden.
 </p>
 <p>
 Diese Einstellung ist wichtig f&uuml;r den Rechnungs- und Lieferscheindruck, und f&uuml;r die nachtr&auml;gliche Bearbeitung der Bestellung im Shop, sowie in Warenwirtschaften.
@@ -127,13 +127,13 @@ Diese Einstellung ist wichtig f&uuml;r den Rechnungs- und Lieferscheindruck, und
         ),
         'orderimport.shippingmethod' => array(
             'label' => 'Versandart der Bestellungen',
-            'help' => '<p>Versandart, die allen Hood.de-Bestellungen beim Bestellimport zugeordnet wird. 
-Standard: "Automatische Zuordnung"</p>
+            'help' => '<p>Versandart, die allen Hood.de-Bestellungen beim Bestellimport zugeordnet wird.
+Standard: "Vom Marktplatz übernehmen"</p>
 <p>
-Wenn Sie „Automatische Zuordnung" wählen, &uuml;bernimmt magnalister die Versandart, die der K&auml;ufer auf Hood.de gew&auml;hlt hat.
-Diese wird dann zus&auml;tzlich auch unter Shopware > Einstellungen > Versandkosten angelegt.</p>
+Wenn Sie "Vom Marktplatz übernehmen" wählen, &uuml;bernimmt magnalister die Versandart, die der K&auml;ufer auf Hood.de gew&auml;hlt hat.
+Diese wird dann zus&auml;tzlich auch unter Shopware > Einstellungen > Versandkosten angelegt.</p>
 <p>
-Alle weiteren verf&uuml;gbaren Versandart in der Liste k&ouml;nnen Sie ebenfalls unter Shopware > Einstellungen > Versandkosten definieren und hier&uuml;ber dann verwenden.</p>
+Alle weiteren verf&uuml;gbaren Versandart in der Liste k&ouml;nnen Sie ebenfalls unter Shopware > Einstellungen > Versandkosten definieren und hier&uuml;ber dann verwenden.</p>
 <p>
 Diese Einstellung ist wichtig f&uuml;r den Rechnungs- und Lieferscheindruck, und f&uuml;r die nachtr&auml;gliche Bearbeitung der Bestellung im Shop, sowie in Warenwirtschaften.</p>',
             'hint' => '',
@@ -185,3 +185,21 @@ Liste verf&uuml;gbarer Platzhalter f&uuml;r die Produktbeschreibung:
     ),
 ), false);
 MLI18n::gi()->{'hood_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+MLI18n::gi()->{'hood_config_price__field__fixed.priceoptions__help'} = '<p>Mit dieser Funktion k&ouml;nnen Sie abweichende Preise zu {#setting:currentMarketplaceName#} &uuml;bergeben und automatisch synchronisieren lassen.</p>
+<p>Wählen Sie dazu über das nebenstehende Dropdown eine Kundengruppe aus Ihrem Webshop. </p>
+<p>Wenn Sie keinen Preis in der neuen Kundengruppe eintragen, wird automatisch der Standard-Preis aus dem Webshop verwendet. Somit ist es sehr einfach, auch für nur wenige Artikel einen abweichenden Preis zu hinterlegen. Die übrigen Konfigurationen zum Preis finden ebenfalls Anwendung.</p>
+<p><b>Anwendungsbeispiel:</b></p>
+<ul>
+<li>Hinterlegen Sie in Ihrem Web-Shop eine Kundengruppe z.B. "{#setting:currentMarketplaceName#}-Kunden"</li>
+<li>F&uuml;gen Sie in Ihrem Web-Shop an den Artikeln in der neuen Kundengruppe die gew&uuml;nschten Preise ein.</li>
+</ul>
+<p>Auch der Rabatt-Modus der Kundengruppen kann genutzt werden. Sie können dort einen (prozentualen) Rabatt hinterlegen. Sofern der Rabatt-Modus im Shopware Artikel aktiviert ist, wird der rabattierte Preis per magnalister an den Marktplatz übermittelt. Wichtig dabei ist, dass der Marktplatz-Preis nicht als Streichpreis angezeigt wird.</p>';
+MLI18n::gi()->{'hood_config_price__field__chinese.priceoptions__help'} = '<p>Mit dieser Funktion k&ouml;nnen Sie abweichende Preise zu {#setting:currentMarketplaceName#} &uuml;bergeben und automatisch synchronisieren lassen.</p>
+<p>Wählen Sie dazu über das nebenstehende Dropdown eine Kundengruppe aus Ihrem Webshop. </p>
+<p>Wenn Sie keinen Preis in der neuen Kundengruppe eintragen, wird automatisch der Standard-Preis aus dem Webshop verwendet. Somit ist es sehr einfach, auch für nur wenige Artikel einen abweichenden Preis zu hinterlegen. Die übrigen Konfigurationen zum Preis finden ebenfalls Anwendung.</p>
+<p><b>Anwendungsbeispiel:</b></p>
+<ul>
+<li>Hinterlegen Sie in Ihrem Web-Shop eine Kundengruppe z.B. "{#setting:currentMarketplaceName#}-Kunden"</li>
+<li>F&uuml;gen Sie in Ihrem Web-Shop an den Artikeln in der neuen Kundengruppe die gew&uuml;nschten Preise ein.</li>
+</ul>
+<p>Auch der Rabatt-Modus der Kundengruppen kann genutzt werden. Sie können dort einen (prozentualen) Rabatt hinterlegen. Sofern der Rabatt-Modus im Shopware Artikel aktiviert ist, wird der rabattierte Preis per magnalister an den Marktplatz übermittelt. Wichtig dabei ist, dass der Marktplatz-Preis nicht als Streichpreis angezeigt wird.</p>';

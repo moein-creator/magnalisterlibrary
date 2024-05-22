@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -77,7 +77,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function payPalEmailAddressField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('paypal.address');
+        $aField['value'] = MLModule::gi()->getConfig('paypal.address');
     }
     
     protected function taxField(&$aField) {
@@ -86,7 +86,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
 
     protected function mwstField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
-        $sConfigValue = (int)MLModul::gi()->getConfig('mwst');
+        $sConfigValue = (int)MLModule::gi()->getConfig('mwst');
         if($aField['value'] === null && $aField['value'] !== $sConfigValue){
             $aField['value'] = $sConfigValue;
         }
@@ -96,15 +96,15 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function postalCodeField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('postalcode');
+        $aField['value'] = MLModule::gi()->getConfig('postalcode');
     }
     
     protected function locationField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('location');
+        $aField['value'] = MLModule::gi()->getConfig('location');
     }
     
     protected function countryField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('country');
+        $aField['value'] = MLModule::gi()->getConfig('country');
     }
     
     protected function skuField(&$aField) {
@@ -112,7 +112,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function quantityField(&$aField) {
-        $aConf = MLModul::gi()->getStockConfig($this->getField('ListingType', 'value'));
+        $aConf = MLModule::gi()->getStockConfig($this->getField('ListingType', 'value'));
         $aField['value'] = $this->oProduct->getSuggestedMarketplaceStock($aConf['type'], $aConf['value'],$aConf['max']);
     }
     
@@ -125,7 +125,23 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function titleField(&$aField) {
-        $sValue = $this->getFirstValue($aField,  MLModul::gi()->getConfig('template.name'));
+        $sValue = $this->getFirstValue($aField, MLModule::gi()->getConfig('template.name'));
+        $aMyField = $aField;
+        unset($aMyField['value']);
+        $oParentProduct = $this->oProduct;
+        if ($this->oProduct->get('ParentId') !== '0') {
+            $oParentProduct = $this->oProduct->getParent();
+        }
+        $sPreparedTitle = $this->getFirstValue($aMyField);
+        $sParentProductName = $oParentProduct->getName();
+        if (
+            $sPreparedTitle !== null && //if any title is prepared
+            strpos($sValue, $sPreparedTitle) === false &&//prepared title doesn't exist in current product title(it happens by single product)
+            $sPreparedTitle !== $sParentProductName && //if prepared title is different from product title
+            strpos($sValue, $sParentProductName) === 0//if current product title contain product title(e.g. The variation title contains product title)
+        ) {
+            $sValue = str_replace($sParentProductName, $sPreparedTitle, $sValue);
+        }
         $aField['value'] = $this->replaceTitle($sValue);
     }
     
@@ -139,10 +155,12 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
                 '#PID#'             => $this->oProduct->get('marketplaceidentid'),
     //            '#BASEPRICE#'       => $sBasePrice,
             );
-            $aReplace['#PRICE#'] = html_entity_decode(MLPrice::factory()->format($this->getField('StartPrice', 'value'),  MLModul::gi()->getConfig('currency')), null, 'UTF-8');
+            $aReplace['#PRICE#'] = html_entity_decode(MLPrice::factory()->format($this->getField('StartPrice', 'value'), MLModule::gi()->getConfig('currency')), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
             $sTitle =  str_replace(array_keys($aReplace), array_values($aReplace), $sTitle);
         }
-        return trim($sTitle) == '' ? $this->oProduct->getName() : $sTitle;
+        // Replace &nbsp; (if any) by single spaces
+        $sTitle = str_replace('&nbsp;', ' ', $sTitle);
+        return trim($sTitle) == '' ? str_replace('&nbsp;', ' ', $this->oProduct->getName()) : $sTitle;
     }
     
     protected function basePriceStringField(&$aField) {
@@ -156,11 +174,13 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function subtitleField(&$aField) {
-        $aField['value'] = strip_tags($this->getFirstValue($aField, $this->oProduct->getShortDescription()));
+        // Helper for php8 compatibility - can't pass null to strip_tags 
+        $sShortDescription = MLHelper::gi('php8compatibility')->checkNull($this->oProduct->getShortDescription());
+        $aField['value'] = strip_tags($this->getFirstValue($aField, $sShortDescription));
     }
     
     protected function getImageSize() {
-        $sSize = MLModul::gi()->getConfig('imagesize');
+        $sSize = MLModule::gi()->getConfig('imagesize');
         $iSize = $sSize == null ? 500 : (int)$sSize;
         return $iSize;
     }
@@ -180,8 +200,8 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
         if (($sHook = MLFilesystem::gi()->findhook('ebaydescription', 1)) !== false) {
             $iMagnalisterProductsId = $this->oProduct->get('id');
             $aProductData = $this->oProduct->data();
-            $iMarketplaceId = MLModul::gi()->getMarketPlaceId();
-            $sMarketplaceName = MLModul::gi()->getMarketPlaceName();
+            $iMarketplaceId = MLModule::gi()->getMarketPlaceId();
+            $sMarketplaceName = MLModule::gi()->getMarketPlaceName();
             require $sHook;
         }
     }
@@ -202,8 +222,8 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
             
             $iMagnalisterProductsId = $this->oProduct->get('id');
             $aProductData = $this->oProduct->data();
-            $iMarketplaceId = MLModul::gi()->getMarketPlaceId();
-            $sMarketplaceName = MLModul::gi()->getMarketPlaceName();
+            $iMarketplaceId = MLModule::gi()->getMarketPlaceId();
+            $sMarketplaceName = MLModule::gi()->getMarketPlaceName();
             require $sHook;
         }
     }
@@ -216,8 +236,8 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
         }
         $this->hookEbayDescription($sDescription);
         $oProduct = $this->oProduct;
-        $aReplace = $oProduct->getReplaceProperty();        
-        $aReplace['#PRICE#'] = MLPrice::factory()->format($this->getField('StartPrice', 'value'),  MLModul::gi()->getConfig('currency'));
+        $aReplace = $oProduct->getReplaceProperty();
+        $aReplace['#PRICE#'] = MLPrice::factory()->format($this->getField('StartPrice', 'value'), MLModule::gi()->getConfig('currency'));
         $sDescription = str_replace(array_keys($aReplace), array_values($aReplace), $sDescription);
         $iSize = $this->getImageSize();
         //images
@@ -251,7 +271,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     public function replaceDescriptionMain($sDescription) {
         $sMobileTemplateText = '';
         if (
-                strpos($sDescription, '#MOBILEDESCRIPTION#') !== false && MLModul::gi()->getConfig('template.mobile.active') == 'true'
+            strpos($sDescription, '#MOBILEDESCRIPTION#') !== false && MLModule::gi()->getConfig('template.mobile.active') == 'true'
         ) {
             $sDescriptionMobile = $this->getField('descriptionmobile', 'value');
             $sMobileTemplateText = empty($sDescriptionMobile) ? '' : 
@@ -259,7 +279,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
                     . '<span property="description">'.$sDescriptionMobile.'</span>'
                     . '</div>';
 
-            $sMobileDesc = MLModul::gi()->getConfig('template.mobile.content');
+            $sMobileDesc = MLModule::gi()->getConfig('template.mobile.content');
 
             $aPlaceholders = array(
                 '#TITLE#',
@@ -282,12 +302,12 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
 
     public function descriptionField(&$aField) {
-        $sDescription = $this->getFirstValue($aField,  MLModul::gi()->getConfig('template.content'));
+        $sDescription = $this->getFirstValue($aField, MLModule::gi()->getConfig('template.content'));
         $aField['value'] =$this->replaceDescriptionMain($sDescription);
     }
     
     public function descriptionMobileField(&$aField) {
-        $sValue = $this->getFirstValue($aField,  MLModul::gi()->getConfig('template.mobile.content'));
+        $sValue = $this->getFirstValue($aField, MLModule::gi()->getConfig('template.mobile.content'));
         $aField['value'] = $this->replaceDescriptionMobile($sValue);
     }
     
@@ -302,7 +322,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
         }
         foreach ($aImages as $sImage) {
             try {
-                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 60, 60);
+                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 80, 80);
             } catch(Exception $oEx) {
                 //no image in fs
             }
@@ -311,12 +331,14 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
             reset($aImages);
             $aField['value'] = $this->getFirstValue($aField, array_keys($aField['values']));
             //Remove the false value from pictureUrl and prevent to submite false value.
-            foreach ($aField['value'] as $key => $value) {
-                if ($value === 'false') {
-                    unset($aField['value'][$key]);
+            if (is_array($aField['value'])) {
+                foreach ($aField['value'] as $key => $value) {
+                    if ($value === 'false') {
+                        unset($aField['value'][$key]);
+                    }
                 }
+                $aField['value'] = empty($aField['value']) ? array_keys($aField['values']) : $aField['value'];
             }
-            $aField['value'] = empty($aField['value']) ? array_keys($aField['values']) : $aField['value'];
             $aField['value'] = (array) $aField['value'];
         }else{
             $aField['value'] = (array)$this->getFirstValue($aField, $aImages);
@@ -328,8 +350,8 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
      
     protected function picturePackField(&$aField) {
-        $aField['value'] = 
-            MLModul::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('EbayPicturePack')
+        $aField['value'] =
+            MLModule::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('EbayPicturePack')
             ? true
             : false
         ;
@@ -367,14 +389,14 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
                 }
             }
             reset ($aField['values']);
-            $aField['value'] = $this->getFirstValue($aField, MLModul::gi()->getConfig('variationdimensionforpictures'), key($aField['values']));
+            $aField['value'] = $this->getFirstValue($aField, MLModule::gi()->getConfig('variationdimensionforpictures'), key($aField['values']));
         }
     }
 
     protected static $aCachedVariationPictures = array();
     protected function variationPicturesField(&$aField) {
         if (
-            MLModul::gi()->getConfig('picturepack')
+            MLModule::gi()->getConfig('picturepack')
             && MLShop::gi()->addonBooked('EbayPicturePack')
             && $this->oProduct instanceof ML_Shop_Model_Product_Abstract
             && $this->oProduct->getVariantCount() > 1
@@ -405,7 +427,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
                             if ($aVariationData['code'] == $sControlValue) {
                                 foreach (array_unique($oVariant->getImages()) as $sImage) {
                                     try {
-                                        self::$aCachedVariationPictures[$iProductId]['variationpictures'][$aVariationData['code']][$aVariationData['value']]['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 60, 60);
+                                        self::$aCachedVariationPictures[$iProductId]['variationpictures'][$aVariationData['code']][$aVariationData['value']]['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 80, 80);
                                         self::$aCachedVariationPictures[$iProductId]['variationpictures'][$aVariationData['code']][$aVariationData['value']]['title'] = $aVariationData['value'];
                                         self::$aCachedVariationPictures[$iProductId]['default'][$aVariationData['code']][$aVariationData['value']][] = $sImage;
                                     } catch (Exception $oEx) {
@@ -431,33 +453,37 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
 
     protected function purgePicturesField(&$aField) {
-        $aField['value'] = 
-            MLModul::gi()->getConfig('picturepack') 
+        $aField['value'] =
+            MLModule::gi()->getConfig('picturepack')
             && MLShop::gi()->addonBooked('EbayPicturePack')
         ;
     }
 
     protected function conditionIdField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField, MLModul::gi()->getConfig('acondition'));
+        $aField['value'] = $this->getFirstValue($aField, MLModule::gi()->getConfig('acondition'));
     }
 
     protected function conditionDescriptionField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
     }
 
+    protected function conditionDescriptorsField(&$aField) {
+        $aField['value'] = $this->getFirstValue($aField);
+    }
+
     protected function startPriceField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField, $this->oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject($this->getField('ListingType', 'value')), true));
+        $aField['value'] = $this->getFirstValue($aField, $this->oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($this->getField('ListingType', 'value')), true));
     }
 
     protected function strikePriceField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField, MLModul::gi()->getConfig('strikeprice.active'));
+        $aField['value'] = $this->getFirstValue($aField, MLModule::gi()->getConfig('strikeprice.active'));
         if ($aField['value'] === '1') $aField['value'] = 'true';
     }
 
     protected function strikePriceForUploadField(&$aField) {
         if($this->getField('StrikePrice', 'value') == 'true') {
             //MLMessage::gi()->addDebug(__LINE__.':'.microtime(true), array());
-            $aField['value'] = $this->oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject('strikeprice'));
+            $aField['value'] = $this->oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject('strikeprice'));
         }else{
             $aField['value'] = null;
         }
@@ -465,7 +491,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
 
     protected function buyItNowPriceField(&$aField) {
         if($this->getField('ListingType', 'value') == 'Chinese'){
-            $sPrice = $this->oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject('buyitnow'));
+            $sPrice = $this->oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject('buyitnow'));
             $aField['value'] = $this->getFirstValue($aField, $sPrice);
         }else{
             $aField['value'] = null;
@@ -473,11 +499,11 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function currencyIdField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('currency');
+        $aField['value'] = MLModule::gi()->getConfig('currency');
     }
     
     protected function siteField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('site');
+        $aField['value'] = MLModule::gi()->getConfig('site');
     }
     
     protected function primaryCategoryField(&$aField) {
@@ -584,7 +610,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function listingTypeField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField, key(MLModul::gi()->getListingTypeValues()));
+        $aField['value'] = $this->getFirstValue($aField, key(MLModule::gi()->getListingTypeValues()));
     }
     
     protected function listingDurationField(&$aField) {
@@ -597,10 +623,6 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     
     protected function bestOfferEnabledField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField, false);
-    }
-    
-    protected function hitCounterField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField);
     }
     
     protected function paymentMethodsField(&$aField) {
@@ -637,11 +659,11 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function shippingLocalProfileField(&$aField) {
-        $this->_shippingProfileField($aField, MLModul::gi()->getConfig('default.shippingprofile.international'));
+        $this->_shippingProfileField($aField, MLModule::gi()->getConfig('default.shippingprofile.international'));
     }
     
     protected function shippingInternationalProfileField(&$aField) {
-        $this->_shippingProfileField($aField, MLModul::gi()->getConfig('default.shippingprofile.local'));
+        $this->_shippingProfileField($aField, MLModule::gi()->getConfig('default.shippingprofile.local'));
     }
     
     protected function _shippingProfileField(&$aField, $iDefault) {
@@ -713,28 +735,28 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
     
     protected function paymentInstructionsField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('paymentinstructions');
+        $aField['value'] = MLModule::gi()->getConfig('paymentinstructions');
     }
     
     protected function returnPolicyField(&$aField) {
         $aReturnPolicy = array();
-        $aReturnPolicy['ReturnsAcceptedOption'] = MLModul::gi()->getConfig('returnpolicy.returnsaccepted');
+        $aReturnPolicy['ReturnsAcceptedOption'] = MLModule::gi()->getConfig('returnpolicy.returnsaccepted');
         if (!isset($aReturnPolicy['ReturnsAcceptedOption']) || empty($aReturnPolicy['ReturnsAcceptedOption'])) {
             $aReturnPolicy['ReturnsAcceptedOption'] = 'ReturnsAccepted';
         }
-        $aReturnPolicy['ReturnsWithinOption'] =  MLModul::gi()->getConfig('returnpolicy.returnswithin');
+        $aReturnPolicy['ReturnsWithinOption'] = MLModule::gi()->getConfig('returnpolicy.returnswithin');
         if (empty($aReturnPolicy['ReturnsWithinOption'])) {
             unset($aReturnPolicy['ReturnsWithinOption']);
         }
-        $aReturnPolicy['ShippingCostPaidByOption'] =  MLModul::gi()->getConfig('returnpolicy.shippingcostpaidby');
+        $aReturnPolicy['ShippingCostPaidByOption'] = MLModule::gi()->getConfig('returnpolicy.shippingcostpaidby');
         if (empty($aReturnPolicy['ShippingCostPaidByOption'])){
             unset($aReturnPolicy['ShippingCostPaidByOption']);
         }
-        $aReturnPolicy['WarrantyDurationOption'] =  MLModul::gi()->getConfig('returnpolicy.warrantyduration');
+        $aReturnPolicy['WarrantyDurationOption'] = MLModule::gi()->getConfig('returnpolicy.warrantyduration');
         if (empty($aReturnPolicy['WarrantyDurationOption'])) {
             $aReturnPolicy['WarrantyDurationOption'] = 'none';
         }
-        $aReturnPolicy['Description'] =  MLModul::gi()->getConfig('returnpolicy.description');
+        $aReturnPolicy['Description'] = MLModule::gi()->getConfig('returnpolicy.description');
         if (empty($aReturnPolicy['Description'])) {
             unset($aReturnPolicy['Description']);
         }
@@ -761,12 +783,12 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
         }
         if (isset($aField['value']['ShippingDiscountProfileID']) && isset($aField['value']['ShippingServiceOptions'])) {
             foreach ($aField['value']['ShippingServiceOptions'] as &$aService) {
-                $aService['ShippingServiceAdditionalCost'] = MLModul::gi()->getShippingDiscountProfiles($aField['value']['ShippingDiscountProfileID']);
+                $aService['ShippingServiceAdditionalCost'] = MLModule::gi()->getShippingDiscountProfiles($aField['value']['ShippingDiscountProfileID']);
             }
         }
         if (isset($aField['value']['InternationalShippingDiscountProfileID'])) {
             foreach ($aField['value']['InternationalShippingServiceOption'] as &$aService) {
-                $aService['ShippingServiceAdditionalCost'] = MLModul::gi()->getShippingDiscountProfiles($aField['value']['InternationalShippingDiscountProfileID']);
+                $aService['ShippingServiceAdditionalCost'] = MLModule::gi()->getShippingDiscountProfiles($aField['value']['InternationalShippingDiscountProfileID']);
             }
         }
         // RateTableDetails: possibly switchable-off by config in the future
@@ -787,7 +809,9 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     public function brandField(&$aField) {
         $aField['value'] = $this->oProduct->getModulField('productfield.brand');
     }
-
+    public function tecDocKTypeField(&$aField) {
+        $aField['value'] = $this->oProduct->getModulField('productfield.tecdocktype', false, true);
+    }
     /**
      * in version 3 we always calculate baseprice in Plugin , because each shopsystem(e.g. Shopware and Prestashop) has different style to show baseprice
      * @param array $aField
@@ -799,7 +823,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     public function eBayPlusField(&$aField) {
         $mValue = $this->getFirstValue($aField, false);
         $blEbayPlusActive = true;
-        $aSetting = MLModul::gi()->getEBayAccountSettings();
+        $aSetting = MLModule::gi()->getEBayAccountSettings();
         if(!isset($aSetting['eBayPlus']) || $aSetting['eBayPlus'] != "true"){
             $blEbayPlusActive = false;
         }
@@ -816,7 +840,7 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
     }
 
     protected function restrictedToBusinessField(&$aField) {
-        if (MLModul::gi()->getConfig('restrictedtobusiness')) {
+        if (MLModule::gi()->getConfig('restrictedtobusiness')) {
             $aField['value'] = true;
         }
     }
@@ -872,6 +896,14 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
         }
         $iBasePriceLength = strlen($sBasePriceString);
         $iBasePricePos = strpos($mValue, '#BASEPRICE#');
+        // omit double strings (like '5 kg 5 kg (1 EUR / kg)' )
+        if (!empty($sBasePriceString)) {
+            $sBasePriceQuantity = trim(substr($sBasePriceString, 0, strpos($sBasePriceString, '(')));
+            if (    !empty($sBasePriceQuantity)
+                 && strpos($mValue, $sBasePriceQuantity) !== false) {
+                $sBasePriceString = trim(str_replace($sBasePriceQuantity, '', $sBasePriceString));
+            }
+        }
         if (
             $iBasePricePos !== false //have #BASEPRICE#
             && strlen($sBasePriceString) != 0 // Baseprice exists
@@ -926,12 +958,16 @@ class ML_Ebay_Helper_Model_Table_Ebay_PrepareData extends ML_Form_Helper_Model_T
 
     protected function _shippingDiscountField(&$aField) {
         if (!MLHelper::gi('model_form_type_sellerprofiles')->manipulateFieldForSellerProfile($aField, $this->getField('shippingSellerProfile'), 'Shipping')) {
-            $aField['value']=$this->getFirstValue($aField);
+            $aField['value'] = $this->getFirstValue($aField);
         }
         MLHelper::gi('model_form_type_sellerprofiles')->manipulateFieldForSellerProfile($aField, $this->getField('shippingSellerProfile'), 'Shipping');
     }
 
     protected function ePIDField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
+    }
+
+    protected function weightField(&$aField) {
+        $aField['value'] = $this->oProduct->getWeight();
     }
 }

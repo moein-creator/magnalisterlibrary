@@ -25,7 +25,7 @@ class ML_WooCommerceCrowdfox_Helper_Model_Table_Crowdfox_PrepareData extends ML_
         $sShopValue = '';
 
         if ($this->oProduct) {
-            $sCode = MLModul::gi()->getConfig('gtincolumn');
+            $sCode = MLModule::gi()->getConfig('gtincolumn');
             $sValue = $this->oProduct->getModulField($sCode);
         }
 

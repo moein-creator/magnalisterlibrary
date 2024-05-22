@@ -198,19 +198,15 @@ class ML_Magento2_Model_Product extends ML_Shop_Model_Product_Abstract {
              echo print_m($this->oProduct->getId());
              echo print_m($this->oProduct->getSKU());
              echo '<hr />';*/
-
-                $this
-                    ->set('marketplaceidentid', $this->oProduct->getId())
-                    ->set('marketplaceidentsku', $sSku)
-                    ->set('productsid', $this->oProduct->getId())
-                    ->set("productssku", $sSku)
-                    ->set('shopdata', array())
-                    ->set('data', array('messages' => $sMessage))
-                    ->save()
-                    ->aKeys = array('id');
-
-
-
+            $this
+                ->set('marketplaceidentid', $this->oProduct->getId())
+                ->set('marketplaceidentsku', $sSku)
+                ->set('productsid', $this->oProduct->getId())
+                ->set("productssku", $sSku)
+                ->set('shopdata', array())
+                ->set('data', array('messages' => $sMessage))
+                ->save()
+                ->aKeys = array('id');
             self::addStaticProduct($this, $this->oProduct);
         } else {
 
@@ -401,49 +397,51 @@ class ML_Magento2_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @todo : checked amazon image
      * @return array|null
      */
-    public function getImages()
-    {
-        $directory = MLMagento2Alias::ObjectManagerProvider('\Magento\Framework\Filesystem\DirectoryList');;
-        $mediaPath = $directory->getPath('media');
-        $helperImport = MLMagento2Alias::ObjectManagerProvider('\Magento\Catalog\Api\ProductRepositoryInterfaceFactory');
-        $product = $helperImport->create()
-            ->getById($this->getCorrespondingProductEntity()->getId());
-        $images = $this->getCorrespondingProductEntity()->getMediaGalleryImages();
+    public function getImages() {
+        $helperImport = MLMagento2Alias::ObjectManagerProvider('\Magento\Catalog\Api\ProductRepositoryInterface');
+        $storeManager = MLMagento2Alias::ObjectManagerProvider('\Magento\Store\Model\StoreManagerInterface');
+        $product = $helperImport->getById($this->getCorrespondingProductEntity()->getId());
+        $images = $this->getCorrespondingProductEntity()->getMediaGalleryEntries();
+
         if ($this->aImages === null) {
             $this->load();
-            $aImages = array();
             $aImgs = array();
-            $VariationaImgs = array();
+            $variationaImgs = array();
             if ($this->get('parentid') == 0) {
                 //Parent Product
                 $CoverImage = array();
-                $CoverImage[] = $mediaPath . "/catalog/product" . $product->getData('image');
+                $CoverImage[] = $storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA). 'catalog/product' . $product->getData('image');
                 foreach ($images as $image) {
+                    $baseUrl = $product->getMediaConfig()->getBaseMediaUrl();
+                    $imageUrl = $baseUrl . $image->getFile();
                     //Note: Images has been sorted by position
-                    $aImgs[] = $mediaPath . "/catalog/product" . $image->getFile();
+                    $aImgs[] = $imageUrl;
                 }
                 if ($this->getCorrespondingProductEntity()->getTypeId() == 'configurable') {
                     $variantsUsed = $this->getCorrespondingProductEntity()->getTypeInstance()->getUsedProducts($this->getCorrespondingProductEntity());
                     foreach ($variantsUsed as $aRow) {
                         $variationImages = $aRow->getMediaGalleryImages();
-                        $VariationProduct = $helperImport->create()
-                            ->getById($aRow->getId());
+                        $variationProduct = $helperImport->getById($aRow->getId());
 
-                        $VariationaImgs[] = $mediaPath . "/catalog/product" . $VariationProduct->getData('image');
+                        $variationaImgs[] = $storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA). 'catalog/product' . $variationProduct->getData('image');
                         foreach ($variationImages as $value) {
-                            //echo print_m($value->getFile());
-                            if ($VariationProduct->getData('image') != $value->getFile()) {
-                                $VariationaImgs[] = $mediaPath . "/catalog/product" . $value->getFile();
+                            if ($variationProduct->getData('image') != $value->getFile()) {
+                                $baseUrl = $variationProduct->getMediaConfig()->getBaseMediaUrl();
+                                $variationImageUrl = $baseUrl . $value->getFile();
+                                $variationaImgs[] = $variationImageUrl;
                             }
                         }
                     }
                 }
-                $aImgs = array_merge($CoverImage, $aImgs, $VariationaImgs);
+                $aImgs = array_merge($CoverImage, $aImgs, $variationaImgs);
             } else {
                 $CoverImage = array();
-                $CoverImage[] = $mediaPath . "/catalog/product" . $product->getData('image');
+                $CoverImage[] = $storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA). 'catalog/product' . $product->getData('image');
                 foreach ($images as $image) {
-                    $aImgs[] = $mediaPath . "/catalog/product" . $image->getFile();
+                    $baseUrl = $product->getMediaConfig()->getBaseMediaUrl();
+                    $imageUrl = $baseUrl . $image->getFile();
+                    //Note: Images has been sorted by position
+                    $aImgs[] = $imageUrl;
                 }
                 $aImgs = array_merge($CoverImage, $aImgs);
             }
@@ -473,12 +471,12 @@ class ML_Magento2_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @return \Doctrine\ORM\PersistentCollection|int|string|null
      * @throws Exception
      */
-    public function getModulField($sFieldName, $blGeneral = false) {
+    public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false) {
         $this->load();
         if ($blGeneral) {
             $sField = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', $sFieldName)->get('value');
         } else {
-            $sField = MLModul::gi()->getConfig($sFieldName);
+            $sField = MLModule::gi()->getConfig($sFieldName);
         }
         $sField = empty($sField) ? $sFieldName : $sField;
 
@@ -492,7 +490,7 @@ class ML_Magento2_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @throws Exception
      */
     public function getCorrespondingProductEntity() {
-        $aConf = MLModul::gi()->getConfig();
+        $aConf = MLModule::gi()->getConfig();
         if ($this->oProduct === null) {
             $this->load();
         }
@@ -560,8 +558,6 @@ class ML_Magento2_Model_Product extends ML_Shop_Model_Product_Abstract {
         $sPriceKind = $aConf['kind'];
         $fPriceFactor = (float)$aConf['factor'];
         $iPriceSignal = $aConf['signal'];
-        $this->blDiscountMode = $aConf['special'];
-
         if (!$aConf['special']) {
             $oProduct->setSpecialPrice(null);
         }
@@ -580,11 +576,17 @@ class ML_Magento2_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @throws Exception
      */
     protected function getPrice($blGros, $blFormated, $sPriceKind = '', $fPriceFactor = 0.0, $iPriceSignal = null, $fTax = null) {
-        $this->getCorrespondingProductEntity();
+        $oProduct = $this->getCorrespondingProductEntity();
         $oPrice = MLPrice::factory();
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         try {
-            $fPrice = $this->oRealProduct->getPriceInfo()->getPrice('final_price')->getValue();
+            $fPrice = 0;
+            if($sPriceKind !== '' && $oProduct->getCustomerGroupId()) {
+                $fPrice = $this->oRealProduct->getPriceInfo()->getPrice('tier_price')->getValue();
+            }
+            if($fPrice == 0) {
+                $fPrice = $this->oRealProduct->getPriceInfo()->getPrice('final_price')->getValue();
+            }
         } catch (\Exception $ex) {
             if (str_contains($ex->getMessage(), 'Undefined rate from')) {
                 MLMessage::gi()->addWarn(sprintf(MLI18n::gi()->ML_MAGENTO2_ERROR_CURRENCY_NO_RATE, MLModule::gi()->getConfig('currency')));
@@ -774,7 +776,7 @@ class ML_Magento2_Model_Product extends ML_Shop_Model_Product_Abstract {
     public function getSuggestedMarketplaceStock($sType, $fValue, $iMax = null) {
 
         if (
-            MLModul::gi()->getConfig('inventar.productstatus') == 'true' && !$this->isActive()
+            MLModule::gi()->getConfig('inventar.productstatus') == 'true' && !$this->isActive()
         ) {
             return 0;
         }
@@ -1013,7 +1015,7 @@ class ML_Magento2_Model_Product extends ML_Shop_Model_Product_Abstract {
         if ($oCurrent->getResource()->getAttribute($sName) === false) {
             return null;
         } else {
-            $aConf = MLModul::gi()->getConfig();
+            $aConf = MLModule::gi()->getConfig();
             //Displaying attributes value by different store
             //$mValue = $oCurrent->getResource()->getAttribute($sName)->setStoreId(0)->getFrontend()->getValue($oCurrent);
             $mValue = $oCurrent->getResource()->getAttribute($sName)->setStoreId($aConf['lang'])->getFrontend()->getValue($oCurrent);

@@ -44,7 +44,7 @@ MLI18n::gi()->add('hood_prepare_apply_form', array(
     'field' => array(
         'title' => array(
             'label' => 'Produktname',
-            'hint' => 'Titel max. 80 Zeichen<br />Erlaubte Platzhalter:<br />#BASEPRICE# - Grundpreis<br />Bitte dazu den <span style="color:red;">Info-Text in der Konfiguration</span> (bei Template Produktname) beachten.',
+            'hint' => 'Titel max. 85 Zeichen<br />Erlaubte Platzhalter:<br />#BASEPRICE# - Grundpreis<br />Bitte dazu den <span style="color:#e31a1c;">Info-Text in der Konfiguration</span> (bei Template Produktname) beachten.',
             'optional' => array(
                 'checkbox' => array(
                     'labelNegativ' => 'Artikelname immer aktuell aus Web-Shop &uuml;bernehmen',
@@ -54,7 +54,7 @@ MLI18n::gi()->add('hood_prepare_apply_form', array(
         
         'subtitle' => array(
             'label' => 'Untertitel',
-            'hint' => 'Untertitel max. 55 Zeichen <span style="color:red">kostenpflichtig</span>',
+            'hint' => 'Untertitel max. 55 Zeichen <span style="color:#e31a1c">kostenpflichtig</span>',
             'optional' => array(
                 'select' => array(
                     'false' => 'Nicht &Uuml;bertragen',
@@ -172,7 +172,7 @@ MLI18n::gi()->add('hood_prepare_apply_form', array(
         ),
         'privatelisting' => array(
             'label' => 'Privat-Listing',
-            'hint' => 'Wenn aktiv, kann die Käufer / Bieterliste nicht von Dritten eingesehen werden <span style="color:red">kostenpflichtig</span>',
+            'hint' => 'Wenn aktiv, kann die Käufer / Bieterliste nicht von Dritten eingesehen werden <span style="color:#e31a1c">kostenpflichtig</span>',
             'valuehint' => 'Käufer / Bieterliste nicht öffentlich',
         ),
         
@@ -182,11 +182,11 @@ MLI18n::gi()->add('hood_prepare_apply_form', array(
         ),
         'starttime' => array(
             'label' => 'Startzeit<br />(falls vorbelegt)',
-            'hint' => 'Im Normalfall ist ein Hood.de-Artikel sofort nach dem Hochladen aktiv. Aber wenn Sie dieses Feld füllen, erst ab Startzeit (<span style="color:red">kostenpflichtig</span>).',
+            'hint' => 'Im Normalfall ist ein Hood.de-Artikel sofort nach dem Hochladen aktiv. Aber wenn Sie dieses Feld füllen, erst ab Startzeit (<span style="color:#e31a1c">kostenpflichtig</span>).',
         ),
          'noidentifierflag' => array(
             'label' => 'Sonderanfertigung',
-            'hint' => 'Diese Einstellung erlaubt es, Artikel ohne EAN, ISBN, MPN oder Marke zu listen. <span style="color:red">Bitte nur in Ausnahmefällen verwenden. Ein generelles Setzen kann zur Sperrung des Hood.de Accounts führen.</span>.',
+            'hint' => 'Diese Einstellung erlaubt es, Artikel ohne EAN, ISBN, MPN oder Marke zu listen. <span style="color:#e31a1c">Bitte nur in Ausnahmefällen verwenden. Ein generelles Setzen kann zur Sperrung des Hood.de Accounts führen.</span>.',
         ),
         
          'age' => array(
@@ -206,7 +206,7 @@ MLI18n::gi()->add('hood_prepare_apply_form', array(
         ),
         'features' => array(
             'label' => 'Zusatzoptionen',
-            'hint' => '<span style="color:red">Kostenpflichtig auf Hood.de</span>',
+            'hint' => '<span style="color:#e31a1c">Kostenpflichtig auf Hood.de</span>',
         ),
        
         'categories' => array(

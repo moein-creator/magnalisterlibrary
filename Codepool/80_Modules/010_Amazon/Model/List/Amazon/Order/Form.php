@@ -62,9 +62,9 @@ class ML_Amazon_Model_List_Amazon_Order_Form {
                             if ($oProduct->exists()) {
                                 $oConvertor = MLHelper::gi('unitconvertor');
                                 $aWeight = $oProduct->getWeight();
-                                $fWeight = $oConvertor->convertWeight($aWeight['Value'], $aWeight['Unit'], MLModul::gi()->getConfig('shippinglabel.weight.unit'));
+                                $fWeight = $oConvertor->convertWeight($aWeight['Value'], $aWeight['Unit'], MLModule::gi()->getConfig('shippinglabel.weight.unit'));
                             }
-                            $fWeight = $fWeight === null ? MLModul::gi()->getConfig('shippinglabel.fallback.weight') : $fWeight;
+                            $fWeight = $fWeight === null ? MLModule::gi()->getConfig('shippinglabel.fallback.weight') : $fWeight;
                             $this->aList[$iOrderKey]['Products'][$iProductKey]['Weight'] = $fWeight;
                             $fTotalWeight += $fWeight * $this->aList[$iOrderKey]['Products'][$iProductKey]['Quantity'];
                         }
@@ -100,7 +100,7 @@ class ML_Amazon_Model_List_Amazon_Order_Form {
     public function getHead() {
         $aHead = array();
         $aHead['Name'] = array(
-            'title' => MLI18n::gi()->get('ML_Amazon_Shippinglabel_Form_PrductName'),
+            'title' => MLI18n::gi()->get('ML_Amazon_Shippinglabel_Form_ProductName'),
             'type' => 'product',
         );
         $aHead['SKU'] = array(

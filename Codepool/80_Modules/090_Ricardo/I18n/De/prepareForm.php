@@ -48,7 +48,7 @@ MLI18n::gi()->add('ricardo_prepare_form',array(
         ),
         'detitle' => array(
             'label' => 'Titel (Deutsch)',
-            'hint' => 'Titel max. 40 Zeichen <br> Erlaubte Platzhalter: <br> #BASEPRICE# - Grundpreis',
+            'hint' => 'Titel max. 60 Zeichen <br> Erlaubte Platzhalter: <br> #BASEPRICE# - Grundpreis',
             'optional' => array(
                 'checkbox' => array(
                     'labelNegativ' => 'Artikelname immer aktuell aus Web-Shop &uuml;bernehmen',
@@ -76,7 +76,7 @@ MLI18n::gi()->add('ricardo_prepare_form',array(
         ),
         'frtitle' => array(
             'label' => 'Titel (Franz&ouml;sisch)',
-            'hint' => 'Titel max. 40 Zeichen <br> Erlaubte Platzhalter: <br> #BASEPRICE# - Grundpreis',
+            'hint' => 'Titel max. 60 Zeichen <br> Erlaubte Platzhalter: <br> #BASEPRICE# - Grundpreis',
             'optional' => array(
                 'checkbox' => array(
                     'labelNegativ' => 'Artikelname immer aktuell aus Web-Shop &uuml;bernehmen',
@@ -222,11 +222,11 @@ MLI18n::gi()->add('ricardo_prepare_form',array(
         ),
         'firstpromotion' => array(
             'label' => 'Promotion-Paket',
-            'hint' => '<span style="color:red;">Promotions sind nicht kostenlos. Bitte &uuml;berpr&uuml;fen Sie die Preise auf Ricardo.</span>',
+            'hint' => '<span style="color:#e31a1c;">Promotions sind nicht kostenlos. Bitte &uuml;berpr&uuml;fen Sie die Preise auf Ricardo.</span>',
         ),
         'secondpromotion' => array(
             'label' => 'Startseite',
-            'hint' => '<span style="color:red;">Promotions sind nicht kostenlos. Bitte &uuml;berpr&uuml;fen Sie die Preise auf Ricardo.</span>',
+            'hint' => '<span style="color:#e31a1c;">Promotions sind nicht kostenlos. Bitte &uuml;berpr&uuml;fen Sie die Preise auf Ricardo.</span>',
         ),
     ),
 ),false);

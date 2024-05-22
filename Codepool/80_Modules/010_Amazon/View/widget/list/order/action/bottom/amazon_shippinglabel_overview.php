@@ -16,44 +16,49 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <?php
 /* @var $this  ML_Amazon_Controller_Amazon_ShippingLabel_Orderlist */
 /* @var $oList ML_Amazon_Model_List_Amazon_Order */
 /* @var $aStatistic array */
 
-$sMpId = MLModul::gi()->getMarketPlaceId();
-$sMpName = MLModul::gi()->getMarketPlaceName();
+$sMpId = MLModule::gi()->getMarketPlaceId();
+$sMpName = MLModule::gi()->getMarketPlaceName();
 
 $sUrlPrefix = "{$sMpName}:{$sMpId}_";
 $sI18nPrefix = 'ML_' . ucfirst($sMpName) . '_';
 ?>
-<table class="actions">
-    <tbody class="firstChild">
-        <tr>
-            <td>
-                <div class="actionBottom">
-                    <form action="<?php echo $this->getUrl(array('controller' => "{$sUrlPrefix}shippinglabel_overview")); ?>" method="POST">
-                        <?php foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) { ?>
-                            <input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue ?>"/>
-                        <?php } ?>
-                        <button type="submit" name="<?php echo MLHttp::gi()->parseFormFieldName('method')?>" value="delete" class="mlbtn ml-js-config-reset left" >
-                            <?php echo $this->__('ML_Amazon_Shippinglabel_Delete') ?>
-                        </button>
-                        <button type="submit" name="<?php echo MLHttp::gi()->parseFormFieldName('method')?>" value="cancel" class="mlbtn action right">
-                            <?php echo $this->__('ML_Amazon_Shippinglabel_Cancel') ?>
-                        </button>
-                        <button type="submit" name="<?php echo MLHttp::gi()->parseFormFieldName('method')?>" value="download" class="mlbtn ml-js-config-reset right" style="margin-right: 1em;">
-                            <?php echo $this->__('ML_Amazon_Shippinglabel_Download') ?>
-                        </button>
-                    </form>
-                    <div class="clear"></div>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
+
+
+<form action="<?php echo $this->getUrl(array('controller' => "{$sUrlPrefix}shippinglabel_overview")); ?>" method="POST">
+    <div class="ml-container-action-head">
+        <h4>
+            <?php echo $this->__('ML_LABEL_ACTIONS') ?>
+        </h4>
+    </div>
+    <div class="ml-container-action">
+        <div class="ml-container-inner ml-container-sm">
+            <?php foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) { ?>
+                <input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue ?>"/>
+            <?php } ?>
+            <button type="submit" name="<?php echo MLHttp::gi()->parseFormFieldName('method')?>" value="delete" class="mlbtn-gray ml-js-config-reset left" >
+                <?php echo $this->__('ML_Amazon_Shippinglabel_Delete') ?>
+            </button>
+        </div>
+        <div class="ml-container-inner ml-container-md">
+            <button type="submit" name="<?php echo MLHttp::gi()->parseFormFieldName('method')?>" value="download" class="mlbtn-gray ml-js-config-reset">
+                <?php echo $this->__('ML_Amazon_Shippinglabel_Download') ?>
+            </button>
+            <button type="submit" name="<?php echo MLHttp::gi()->parseFormFieldName('method')?>" value="cancel" class="mlbtn-red">
+                <?php echo $this->__('ML_Amazon_Shippinglabel_Cancel') ?>
+            </button>
+
+        </div>
+    </div>
+    <div class="spacer"></div>
+</form>
 <?php if($this->getDownloadLink() !== null){ ?>
 <script type="text/javascript">//<![CDATA[
     (function ($) {

@@ -16,32 +16,38 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
-	MLSettingRegistry::gi()->addJs(array('jquery-ui-timepicker-addon.js'));
+if (!class_exists('ML', false))
+    throw new Exception();
+MLSettingRegistry::gi()->addJs(array('jquery-ui-timepicker-addon.js'));
 
+    // Helper for php8 compatibility - can't pass null to explode 
+    $aField['value'] = MLHelper::gi('php8compatibility')->checkNull($aField['value']);
+    if (empty($aField['value'])) {
+        $aField['value'] = '00:00:00';
+    }
 	$timeParts = explode(':', $aField['value']);
-	if (isset($timeParts[1]) === false) {
-		$timeParts[1] = '00';
-	}
-	
-	if (isset($timeParts[2]) === false) {
-		$timeParts[2] = '00';
-	}
+    if (is_array($timeParts)){
+        for ($i = 0; $i <= 2; $i++) {
+            if (empty($timeParts[$i])){
+                $timeParts[$i] = '00';
+            }
+        }
+    }
 ?>
 <div class="datetimepicker">
-	<input type="text" id="<?php echo $aField['id']; ?>"
-	   <?php echo (isset($aField['value']) ? 'value="'. htmlspecialchars($aField['value'], ENT_COMPAT) . '"' : '') ?>
-	   name="<?php echo MLHttp::gi()->parseFormFieldName($aField['name']) ?>" readonly="readonly" class="autoWidth rightSpacer"/>
+    <input type="text" id="<?php echo $aField['id']; ?>"
+        <?php echo(isset($aField['value']) ? 'value="'.htmlspecialchars($aField['value'], ENT_COMPAT).'"' : '') ?>
+           name="<?php echo MLHttp::gi()->parseFormFieldName($aField['name']) ?>" readonly="readonly" class="autoWidth rightSpacer"/>
 </div>
 <script type="text/javascript">
-	(function($) {
-		jqml(document).ready(function() {
-			jqml.timepicker.setDefaults(jqml.timepicker.regional['']);
-			jqml("#<?= $aField['id'] ?>").timepicker(
-				jqml.timepicker.regional['de']
-			).datetimepicker("option", {
-				onClose:  function(dateText, inst) {
-					var t = jqml("#<?= $aField['id'] ?>").val();
+    (function ($) {
+        jqml(document).ready(function () {
+            jqml.timepicker.setDefaults(jqml.timepicker.regional['']);
+            jqml("#<?= $aField['id'] ?>").timepicker(
+                jqml.timepicker.regional['de']
+            ).datetimepicker("option", {
+                onClose: function (dateText, inst) {
+                    var t = jqml("#<?= $aField['id'] ?>").val();
 					var tArray = t.split(':');
 					if ((t !== null) && (tArray.length === 2)) {
 						jqml("#<?= $aField['id'] ?>").val(t + ':00');

@@ -26,22 +26,3 @@ MLSetting::gi()->add('formgroups_otto_paymentandshipping__fields__orderimport.sh
         'cssclasses' => array('mljs-directbuy',),
     )
 );
-
-MLSetting::gi()->add('formgroups_otto__orderstatus__fields__orderstatus.trackingkey.select', array(
-        'i18n' => '{#i18n:formfields_otto__trackingkey#}',
-        'name' => 'orderstatus.trackingkey.select',
-        'cssclasses' => array('ml-translate-toolbar-wrapper', 'mljs-directbuy'),
-        'fieldposition' => array('after'=> 'orderstatus.standardshipping'),
-        'type' => 'selectwithtmatchingoption',
-        'subfields' => array(
-            'select' => array(
-                'i18n' => array('label' => '',),
-                'name' => 'orderstatus.trackingkey',
-                'tdclass' => 'borderNone',
-                'matching' => 'noMatching',
-                'type' => 'select'
-            ),
-            'matching' => ''
-        ),
-    )
-);

@@ -66,7 +66,7 @@ class ML_Prestashop_Helper_Model_ProductList_Filter {
 
      public function setOrder($sOrder) {
          $aOrder = explode('_' , $sOrder) ;
-         if ( count($aOrder) == 2 && $aOrder[0] != '' && $aOrder[1] != '' ) {
+         if (is_array($aOrder) && count($aOrder) == 2 && $aOrder[0] != '' && $aOrder[1] != '') {
              if ($aOrder[0] == 'price') {
                  $aOrder[0] = "p.price";
              } elseif ($aOrder[0] == 'manufacturer') {
@@ -153,7 +153,7 @@ class ML_Prestashop_Helper_Model_ProductList_Filter {
             $sPrefix = ($sProductKeyGeneralConfiguration === 'pID' ? '' : 'N');
             $sField = ($sProductKeyGeneralConfiguration === 'pID' ? ML_Prestashop_Model_Product::ID_FIELD_NAME : ML_Prestashop_Model_Product::SKU_FIELD_NAME);
             $sMLField = $sProductKeyGeneralConfiguration === 'pID' ? 'productsid' : 'productssku';
-            if (isset($aIdentFilter['inQuery'])) {
+            if (isset($aIdentFilter['inQuery']) && MLDatabase::factory('config')->set('mpid', '0')->set('mkey', 'blUseSubQueryToImprovePerformance')->get('value') === '1') {//Some databases work faster with sub queries, blUseSubQueryForPerformance could be set for customer as individual programming
                 foreach ($aIdentFilter['inQuery'] as $sFieldName => $sQuery) {
                     $this->oSelect->join("(".$sQuery.") mlprepare ON {$sField} = mlprepare.{$sMLField}", ML_Database_Model_Query_Select::JOIN_TYPE_INNER);
                 }

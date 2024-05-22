@@ -4,8 +4,13 @@
 /* @var $aStatistic array */
 /* @var iLinkedPage int */
 /* @var sLabel string */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
+
+$activeButton = ($aStatistic['iCurrentPage'] == $iLinkedPage) | ($sLabel == '...');
+
 ?>
+
 <form action="<?php echo $this->getCurrentUrl() ?>" method="post">
     <?php foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) { ?>
         <input type="hidden" name="<?php echo $sName ?>" value="<?php echo $sValue ?>" />
@@ -16,5 +21,5 @@ class_exists('ML', false) or die();
     foreach ($oList->getFilters() as $sFilterName => $mFilter) { /** @deprecated array | productlist-depenendcies */ ?>
         <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName('filter[' . $sFilterName . ']') ?>" value="<?php echo is_object($mFilter) ? $mFilter->getFilterValue() : $mFilter['value'] ?>" />
     <?php } ?>
-    <input class="noButton" type="submit" value="<?php echo $sLabel ?>"<?php echo $aStatistic['iCurrentPage'] == $iLinkedPage ? ' disabled="disabled"' : '' ?> />
+    <input class="ml-pagButton<?php echo $activeButton ? ' ml-active' : ''; ?>" style="" type="submit" value="<?php echo $sLabel ?>"<?php echo $activeButton ? ' disabled="disabled"' : '' ?> />
 </form>

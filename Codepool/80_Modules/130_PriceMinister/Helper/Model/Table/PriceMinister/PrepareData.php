@@ -59,7 +59,7 @@ class ML_PriceMinister_Helper_Model_Table_PriceMinister_PrepareData extends ML_F
             }
 
             if (!isset($sValue) || $sValue === ''){
-                $sValue = MLModul::gi()->getConfig('template.name');
+                $sValue = MLModule::gi()->getConfig('template.name');
             }
 
             if (!isset($sValue) || $sValue === ''){
@@ -101,7 +101,7 @@ class ML_PriceMinister_Helper_Model_Table_PriceMinister_PrepareData extends ML_F
     {
         $aField['issingleview'] = isset($this->oProduct);
         if ($aField['issingleview']){
-            $price = $aField['value'] = $this->oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
+            $price = $aField['value'] = $this->oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
             $aField['value'] = round($price, 2);
         }
     }
@@ -121,10 +121,10 @@ class ML_PriceMinister_Helper_Model_Table_PriceMinister_PrepareData extends ML_F
                 }
 
                 try{
-                    $aUrl = MLImage::gi()->resizeImage($sImagePath, 'products', 60, 60);
+                    $aUrl = MLImage::gi()->resizeImage($sImagePath, 'products', 80, 80);
                     $aField['values'][$sId] = array(
-                        'height' => '60',
-                        'width' => '60',
+                        'height' => '80',
+                        'width' => '80',
                         'alt' => $sId,
                         'url' => $aUrl['url'],
                     );
@@ -149,7 +149,7 @@ class ML_PriceMinister_Helper_Model_Table_PriceMinister_PrepareData extends ML_F
         $sValue = $this->getFirstValue($aField);
         if ($this->oProduct){
             if (!isset($sValue) || $sValue === ''){
-                $sValue = MLModul::gi()->getConfig('template.content');
+                $sValue = MLModule::gi()->getConfig('template.content');
             }
 
             if (!isset($sValue) || $sValue === ''){
@@ -304,7 +304,7 @@ class ML_PriceMinister_Helper_Model_Table_PriceMinister_PrepareData extends ML_F
 
     protected function getImageSize()
     {
-        $sSize = MLModul::gi()->getConfig('imagesize');
+        $sSize = MLModule::gi()->getConfig('imagesize');
         $iSize = $sSize == null ? 500 : (int)$sSize;
         return $iSize;
     }
@@ -348,7 +348,7 @@ class ML_PriceMinister_Helper_Model_Table_PriceMinister_PrepareData extends ML_F
             $aField['products'][] = $this->getProductInfoById($product->pID);
         }
 
-        $this->itemsPerPage = MLModul::gi()->getConfig('itemsperpage');
+        $this->itemsPerPage = MLModule::gi()->getConfig('itemsperpage');
         $this->productChunks = array_chunk($aField['products'], $this->itemsPerPage);
         $this->totalPages = count($this->productChunks);
         $this->currentChunk = ($this->currentPage - 1) >= 0 ? $this->productChunks[$this->currentPage - 1] : $this->productChunks[0];
@@ -365,7 +365,7 @@ class ML_PriceMinister_Helper_Model_Table_PriceMinister_PrepareData extends ML_F
             'Title' => $oP->getName(),
             'Description' => $oP->getDescription(),
             'Images' => $oP->getImages(),
-            'Price' => $oP->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject(), true, true),
+            'Price' => $oP->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject(), true, true),
             'Manufacturer' => $oP->getManufacturer(),
             'EAN' => $oP->getModulField('general.ean', true)
         );

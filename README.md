@@ -1,2 +1,0 @@
-# magnalisterlibrary
-magnalisterlibrary

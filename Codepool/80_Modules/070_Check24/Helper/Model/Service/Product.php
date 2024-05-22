@@ -120,14 +120,14 @@ class ML_Check24_Helper_Model_Service_Product {
     }
 
     protected function getTitle() {
-        $iLangId = MLModul::gi()->getConfig('lang');
+        $iLangId = MLModule::gi()->getConfig('lang');
         $this->oVariant->setLang($iLangId);
 
         return $this->oVariant->getName();
     }
 
     protected function getDescription() {
-        $iLangId = MLModul::gi()->getConfig('lang');
+        $iLangId = MLModule::gi()->getConfig('lang');
         $this->oVariant->setLang($iLangId);
 
         return $this->getSanitizedProductDescription($this->oVariant->getDescription());
@@ -146,10 +146,13 @@ class ML_Check24_Helper_Model_Service_Product {
     }
 
     protected function getImages() {
+        $sSize = MLModule::gi()->getConfig('imagesize');
+        $iSize = $sSize === null ? 500 : (int)$sSize;
+
         $aOut = array();
         foreach ($this->oVariant->getImages() as $sImage) {
             try {
-                $aImage = MLImage::gi()->resizeImage($sImage, 'products', 500, 500);
+                $aImage = MLImage::gi()->resizeImage($sImage, 'products', $iSize, $iSize);
                 $aOut[]['URL'] = $aImage['url'];
             } catch (Exception $ex) {
                 // Happens if image doesn't exist.
@@ -164,7 +167,7 @@ class ML_Check24_Helper_Model_Service_Product {
 
     protected function getQuantity() {
         $iQty = $this->oVariant->getSuggestedMarketplaceStock(
-                MLModul::gi()->getConfig('quantity.type'), MLModul::gi()->getConfig('quantity.value')
+            MLModule::gi()->getConfig('quantity.type'), MLModule::gi()->getConfig('quantity.value')
         );
         return $iQty < 0 ? 0 : $iQty;
     }
@@ -173,7 +176,7 @@ class ML_Check24_Helper_Model_Service_Product {
         if (isset($this->aSelectionData['price'])) {
             return $this->aSelectionData['price'];
         } else {
-            return $this->oVariant->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
+            return $this->oVariant->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
         }
     }
 

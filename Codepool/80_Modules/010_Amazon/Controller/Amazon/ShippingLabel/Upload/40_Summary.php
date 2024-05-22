@@ -34,7 +34,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Summary extends ML_Core_C
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public static function getTabDefault() {
@@ -67,7 +67,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Summary extends ML_Core_C
                     $oOrder->delete();
                 }
                 
-                $sMessage = '<a  href="'.$sMessage.'" target="_blank" class="ml-downloadshippinglabel mlbtn action right"> </a>';
+                $sMessage = '<a href="'.$sMessage.'" target="_blank" class="ml-downloadshippinglabel mlbtn action right" style="display: none;"> </a>';
             }
             MLSetting::gi()->add(
                     'aAjax', array(

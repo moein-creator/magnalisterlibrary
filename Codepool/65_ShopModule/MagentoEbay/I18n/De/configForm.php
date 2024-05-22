@@ -106,3 +106,4 @@ MLI18n::gi()->add('ebay_config_producttemplate', array(
 		)
 	)
 ), true);
+MLI18n::gi()->{'orderstatus_carrier_default_send_order_carrier'} = 'Spediteur der Bestellung übergeben';

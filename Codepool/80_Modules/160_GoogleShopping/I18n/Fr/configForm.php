@@ -146,7 +146,7 @@ MLI18n::gi()->{'googleshopping_config_sync__field__stocksync.frommarketplace__hi
 MLI18n::gi()->{'googleshopping_config_sync__field__stocksync.frommarketplace__help'} = 'Si par exemple un article a été acheté 3 fois chez DaWanda, le stock en boutique va se réduire de 3 unités.<br /><br />
                 <strong>Important:</strong> Cette fonction s\'exécute uniquement si vous avez activé l\'importation de commande!
 ';
-MLI18n::gi()->{'googleshopping_config_sync__field__inventorysync.price__label'} = 'Prix de l\'article';
+MLI18n::gi()->{'googleshopping_config_sync__field__inventorysync.price__label'} = 'Prix de l&apos;article';
 MLI18n::gi()->{'googleshopping_config_sync__field__inventorysync.price__hint'} = '';
 MLI18n::gi()->{'googleshopping_config_sync__field__inventorysync.price__help'} = '       <p>
                     la fonction "synchronisation automatique" compare toutes les 4 heures (à partir de 0:00 dans la nuit) l\'état actuel des prix sur DaWanda et les prix de votre boutique.<br>

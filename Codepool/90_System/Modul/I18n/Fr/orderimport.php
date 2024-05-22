@@ -3,3 +3,5 @@
 
 MLI18n::gi()->{'Orderimport_CurrencyCodeDontExistsError'} = 'La commande {#mpOrderId#} ne pourra pas être importée, si vous n\'avez pas configuré, dans votre boutique, la devise {#ISO#} standart pour la place de marché, dont elle émane.';
 MLI18n::gi()->{'orderstatus_carrier_defaultField_value_shippingname'} = 'Transmetre le nom du livreur en tant que mode de livraison';
+MLI18n::gi()->{'Orderimport_CurrencyCodeDontExistsError'} = 'La commande {#mpOrderId#} ne pourra pas être importée, si vous n&apos;avez pas configuré, dans votre boutique, la devise {#ISO#} standart pour la place de marché, dont elle émane.';
+MLI18n::gi()->{'orderstatus_carrier_defaultField_value_shippingname'} = 'Transmetre le nom du livreur en tant que mode de livraison';

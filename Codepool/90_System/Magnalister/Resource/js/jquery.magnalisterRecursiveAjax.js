@@ -77,6 +77,11 @@
                     window.location.href=eElement.attr('href');
                 }
         },
+        buttonExists: function (button, buttonArray) {
+            return buttonArray.some(function (item) {
+                return item.class === button.class && item.text === button.text; // Check for similarity based on the 'class' field
+            });
+        },
         error:function(bl){
             if(typeof bl !=='undefined'){
                 blError=bl;
@@ -171,12 +176,12 @@
                 eDialog.find(".errorBox").css("display", "block");
             }
             if(blJSError){
-                eDialog.find(".infoBox").css("display", "none");                
+                eDialog.find(".infoBox").css("display", "none");
             }else{
-                eDialog.find(".infoBox").css("display", "block");                
+                eDialog.find(".infoBox").css("display", "block");
             }
                 
-            eDialog.parent().find('.ui-dialog-buttonpane').css('display','block'); 
+            eDialog.parent().find('.ui-dialog-buttonpane').css('display','block');
             if(eDialog.parent().find('.ui-dialog-buttonpane button:visible').length===0){
                 eDialog.parent().find('.ui-dialog-buttonpane').css('display','none'); 
             }
@@ -204,9 +209,7 @@
                 while(eMainElement.prop('tagName')!=='FORM'&& eMainElement.prop('tagName')!=='A'){
                     eMainElement=eMainElement.parent();
                 }
-                if(oOptions.oI18n.sTitle===null){
-                    oOptions.oI18n.sTitle=eMainElement.attr('title');
-                }
+                oOptions.oI18n.sTitle = eMainElement.attr('title');
                 eDialog=(function(){
                     $('#recursiveAjaxDialog').remove();
                     var sHtml = "<div id=\"recursiveAjaxDialog\" class=\"dialog2\" title=\""+oOptions.oI18n.sTitle+"\">"+ 
@@ -214,11 +217,10 @@
                                 "   <p class=\"successBox\" style=\"display:none\">"+oOptions.oI18n.sSuccessLabel+"</p>"+
                                 "   <p class=\"errorBox\" style=\"display:none\"></p>"+
                                 "   <p class=\"requestErrorBox\" style=\"display:none\"></p>";
-                    
                     if (typeof oOptions.oI18n.sInfo !== '' ){
                         sHtml += "  <p class=\"infoBox\" style=\"display:none\">" + oOptions.oI18n.sInfo + "</p>";
                     }
-            
+
                     var fProgressBarTemplate=function(sClassName){
                         var sI18n='';
                         if(sClassName!=='main'){
@@ -243,18 +245,20 @@
                     if(oOptions.blDebug){
                         sHtml +="<div class=\"debug-ajax\">" ;
                         if (oOptions.sDebugLoopParam!=='') {
-                            sHtml += "   <button class=\"button loop\" title=\"loop\">&#x21BA;</button>";
+                            sHtml += "   <button class=\"button loop\" title=\"loop\"></button>";
                         }
                         sHtml +=
-                                "   <button class=\"button next\" title=\"next\">&#x25B6;&#x25AE;</button>"+
-                                "   <button class=\"button play\" title=\"play\">&#x25B6;</button>"+
-                                "   <button class=\"button pause\" title=\"pause\" disabled=\"disabled\">&#x25AE;&#x25AE;</button>"+
+                                "   <button class=\"button next\" title=\"next\"></button>"+
+                                "   <button class=\"button play\" title=\"play\"></button>"+
+                                "   <button class=\"button pause\" title=\"pause\" disabled=\"disabled\"></button>"+
+                                "   <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n" +
                                 "</div>"
                         ;
                     }
                     sHtml+= "   <div class=\"ui-helper-clearfix content\"></div>"+
                             "</div>"
                     ;
+
                     $('html').append(sHtml);
                     var eDialog=$('#recursiveAjaxDialog');
                     eDialog.find(".successBoxBlue").css("display", "block");
@@ -291,7 +295,9 @@
                             for(var i=0;i<oOptions.oFinalButtons[sButtonSet].length;i++){
                                 oOptions.oFinalButtons[sButtonSet][i].class="button-"+(sButtonSet==='oError'?'error':'success');
                                 oOptions.oFinalButtons[sButtonSet][i].style="display:none";
-                                oOptions.oDialog.buttons.push(oOptions.oFinalButtons[sButtonSet][i]);
+                                if (oMethods.buttonExists(oOptions.oFinalButtons[sButtonSet][i], oOptions.oDialog.buttons) === false) {
+                                    oOptions.oDialog.buttons.push(oOptions.oFinalButtons[sButtonSet][i]);
+                                }
                             }
                         }
                         if(oOptions.blDebug) {// let user do interactions with debug-bar
@@ -481,6 +487,7 @@
                         oOptions.sAddParam = sOrg;
                     });
                     eDialog.find('.debug-ajax>.play').click(function() {
+                        eDialog.find('.debug-ajax>.next').attr('disabled',true);
                         if(eDialog.find(".successBoxBlue").is(':hidden')){
                             oOptions.onFinalize(blError);
                         } else {

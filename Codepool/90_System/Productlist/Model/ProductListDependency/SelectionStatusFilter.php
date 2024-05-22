@@ -47,7 +47,7 @@ class ML_ProductList_Model_ProductListDependency_SelectionStatusFilter extends M
     public function getMasterIdents () {
         $sValue = $this->getFilterValue();
         if ( in_array($sValue, array( 'selected','notselected'))) {
-            $sProductTable = MLDatabase::getTableInstance('product')->getTableName();
+            $sProductTable = MLProduct::factory()->getTableName();
             $selectionname = $this->getConfig('selectionname');
             $sSql = MLDatabase::getTableInstance('selection')->set('selectionname', $selectionname)->getList()->getQueryObject()->select(
                     "master.".(

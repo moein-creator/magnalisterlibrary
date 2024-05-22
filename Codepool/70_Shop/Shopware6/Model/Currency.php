@@ -17,10 +17,11 @@
  * -----------------------------------------------------------------------------
  */
 
+use Redgecko\Magnalister\Controller\MagnalisterController;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Redgecko\Magnalister\Controller\MagnalisterController;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\System\Currency\CurrencyEntity;
 
 class ML_Shopware6_Model_Currency extends ML_Shop_Model_Currency_Abstract {
 
@@ -46,26 +47,44 @@ class ML_Shopware6_Model_Currency extends ML_Shop_Model_Currency_Abstract {
     }
 
     public function getDefaultIso() {
-        $oSearchCriteria = new Criteria();
-        $oSearchCriteria->addFilter(new EqualsFilter('factor', '1'));
-        $oCurrency = MagnalisterController::getShopwareMyContainer()->get('currency.repository')->search($oSearchCriteria, Context::createDefaultContext())->getEntities()->last();
-         if($oCurrency == null){
-             return 'EUR';
-         }   else{
-              return $oCurrency->getIsoCode();
-         }   
-         
+        $oCurrency = $this->getDefaultCurrency();
+        if ($oCurrency == null) {
+            return 'EUR';
+        } else {
+            return $oCurrency->getIsoCode();
+        }
+
     }
 
-    public function updateCurrencyRate($sCurrency) {      
-        $sDefaultCurrency = $this->getDefaultIso();        
+    /**
+     * @return CurrencyEntity|null
+     */
+    public function getDefaultCurrency() {
+        $oSearchCriteria = new Criteria();
+        $oSearchCriteria->addFilter(new EqualsFilter('factor', '1'));
+        return MagnalisterController::getShopwareMyContainer()->get('currency.repository')->search($oSearchCriteria, Context::createDefaultContext())->getEntities()->last();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDefaultCurrency($sCurrencyId) {
+        $oSearchCriteria = new Criteria([$sCurrencyId]);
+        /** @var CurrencyEntity $oCurrency */
+        $oCurrency = MagnalisterController::getShopwareMyContainer()->get('currency.repository')->search($oSearchCriteria, Context::createDefaultContext())->getEntities()->first();
+
+        return $oCurrency !== null && $oCurrency->getFactor() === 1.00;
+    }
+
+    public function updateCurrencyRate($sCurrency) {
+        $sDefaultCurrency = $this->getDefaultIso();
         if ($sDefaultCurrency != $sCurrency) {
             try {
                 $result = MagnaConnector::gi()->submitRequest(array(
-                    'ACTION' => 'GetExchangeRate',
+                    'ACTION'    => 'GetExchangeRate',
                     'SUBSYSTEM' => 'Core',
-                    'FROM' => strtoupper($sDefaultCurrency),
-                    'TO' => strtoupper($sCurrency),
+                    'FROM'      => strtoupper($sDefaultCurrency),
+                    'TO'        => strtoupper($sCurrency),
                 ));
                 if ($result['EXCHANGERATE'] > 0) {
                     MLDatabase::getDbInstance()->query('UPDATE `' . MagnalisterController::getShopwareMyContainer()->get('currency.repository')->getDefinition()->getEntityName() . "` SET `factor` = '" . $result['EXCHANGERATE'] . "' WHERE `iso_code` = '" . $sCurrency . "'");

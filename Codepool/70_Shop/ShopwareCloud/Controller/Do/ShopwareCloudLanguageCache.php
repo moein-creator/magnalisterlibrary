@@ -1,0 +1,4 @@
+<?php
+MLFilesystem::gi()->loadClass('ShopwareCloud_Controller_Frontend_Do_ShopwareCloudLanguageCache');
+class ML_ShopwareCloud_Controller_Do_ShopwareCloudLanguageCache extends ML_ShopwareCloud_Controller_Frontend_Do_ShopwareCloudLanguageCache {
+}

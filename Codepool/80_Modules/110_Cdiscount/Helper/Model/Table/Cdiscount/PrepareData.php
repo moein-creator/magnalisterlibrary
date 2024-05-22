@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -59,7 +59,7 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_PrepareData extends ML_Form_Help
         $aField['value'] = $this->getFirstValue($aField);
         $aField['issingleview'] = isset($this->oProduct);
         if ($this->bIsSinglePrepare === true && isset($aField['value']) === false) {
-            $aField['value'] = $this->oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
+            $aField['value'] = $this->oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
         } elseif ($this->bIsSinglePrepare === false) {
             $aField['value'] = 0;
         }
@@ -75,7 +75,7 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_PrepareData extends ML_Form_Help
             'Title'			=> $oP->getName(),
             'Description'	=> $oP->getDescription(),
             'Images'		=> $oP->getImages(),
-            'Price'			=> $oP->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject(), true, true),
+            'Price' => $oP->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject(), true, true),
             'Manufacturer'	=> $oP->getManufacturer(),
             'EAN'			=> $oP->getModulField('general.ean', true),
             //				'ShippingTime'	=> $p['ShippingTime'],
@@ -127,7 +127,7 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_PrepareData extends ML_Form_Help
     protected function titleField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
         if (isset($this->oProduct) && empty($aField['value'])) {
-            $parent = $this->oProduct->getParent();
+            $parent = $this->oProduct->get('ParentID') === '0' ? $this->oProduct : $this->oProduct->getParent();
             try {
                 $aField['value'] = $parent->getName();
                 if (empty($aField['value'])) {
@@ -236,10 +236,10 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_PrepareData extends ML_Form_Help
                 }
 
                 try {
-                    $aUrl = MLImage::gi()->resizeImage($sImagePath, 'products', 60, 60);
+                    $aUrl = MLImage::gi()->resizeImage($sImagePath, 'products', 80, 80);
                     $aField['values'][$sId] = array(
-                        'height' => '60',
-                        'width' => '60',
+                        'height' => '80',
+                        'width' => '80',
                         'alt' => $sId,
                         'url' => $aUrl['url'],
                     );
@@ -275,7 +275,11 @@ class ML_Cdiscount_Helper_Model_Table_Cdiscount_PrepareData extends ML_Form_Help
 
     // Shipping
     protected function shippingprofilenameField(&$aField) {
-        $aField['values'] = MagnaConnector::gi()->submitRequestCached(array('ACTION' => 'GetDeliveryModes'), 60)['DATA'];
+        try {
+            $aField['values'] = MagnaConnector::gi()->submitRequestCached(array('ACTION' => 'GetDeliveryModes'), 60)['DATA'];
+        } catch (\Exception $ex) {
+            MLMessage::gi()->addDebug($ex);
+        }
         $aField['value'] = $this->getFirstValue($aField);
     }
 

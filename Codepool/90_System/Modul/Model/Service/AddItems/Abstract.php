@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -139,8 +139,8 @@ abstract class ML_Modul_Model_Service_AddItems_Abstract extends ML_Modul_Model_S
         */
         if (($sHook = MLFilesystem::gi()->findhook('additem', 1)) !== false) {
             $aProductData = MLProduct::factory()->set('id', $iMagnalisterProductsId)->data();
-            $iMarketplaceId = MLModul::gi()->getMarketPlaceId();
-            $sMarketplaceName = MLModul::gi()->getMarketPlaceName();
+            $iMarketplaceId = MLModule::gi()->getMarketPlaceId();
+            $sMarketplaceName = MLModule::gi()->getMarketPlaceName();
             require $sHook;
         }
     }

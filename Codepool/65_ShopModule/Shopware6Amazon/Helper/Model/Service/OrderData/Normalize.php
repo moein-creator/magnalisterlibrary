@@ -29,13 +29,13 @@ class ML_Shopware6Amazon_Helper_Model_Service_OrderData_Normalize extends ML_Ama
         }else{
             $sStatusKey = 'orderimport.shippingmethod';
         }
-        $sShippingMethod = MLModul::gi()->getConfig($sStatusKey);
+        $sShippingMethod = MLModule::gi()->getConfig($sStatusKey);
         if ('textfield' == $sShippingMethod) {
-            $sPayment = MLModul::gi()->getConfig('orderimport.shippingmethod.name');
+            $sPayment = MLModule::gi()->getConfig('orderimport.shippingmethod.name');
             return $sPayment == '' ? $aTotal['Code'] : $sPayment;
         } else if ('matching' == $sShippingMethod) {
             if (in_array($aTotal['Code'], array('', 'none', 'None'))) {
-                return MLModul::gi()->getMarketPlaceName();
+                return MLModule::gi()->getMarketPlaceName();
             } else {
                 return $aTotal['Code'];
             }

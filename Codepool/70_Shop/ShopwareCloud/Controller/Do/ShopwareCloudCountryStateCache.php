@@ -1,0 +1,5 @@
+<?php
+MLFilesystem::gi()->loadClass('ShopwareCloud_Controller_Frontend_Do_ShopwareCloudCountryStateCache');
+
+class ML_ShopwareCloud_Controller_Do_ShopwareCloudCountryStateCache extends ML_ShopwareCloud_Controller_Frontend_Do_ShopwareCloudCountryStateCache {
+}

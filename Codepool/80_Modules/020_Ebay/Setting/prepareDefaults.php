@@ -19,7 +19,7 @@
 MLSetting::gi()->ebay_prepareDefaultsFields = array(
     'conditionid', 'conditiondescription', 'paymentmethods', 'shippinglocal', 'shippinginternational',
     'shippinglocalprofile', 'shippinginternationalprofile', 'shippinglocaldiscount',
-    'shippinginternationaldiscount', 'privatelisting', 'hitcounter',
+    'shippinginternationaldiscount', 'privatelisting',
     'bestofferenabled', 'listingtype', //listingtype needed for buyitnowprice - if listing type allow it
     'dispatchtimemax','ebayplus', 'gallerytype', 'paymentsellerprofile', 'shippingsellerprofile', 'returnsellerprofile',
     'mwst'

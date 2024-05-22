@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -59,6 +59,8 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
      */
     protected $oCurrentVariant = null;
 
+    protected static $aCachedVariationDimensionForPictures = array();
+
     public function setValidationMode($blValidation) {
         $this->sAction = $blValidation ? 'VerifyAddItems' : 'AddItems';
         return $this;
@@ -68,7 +70,7 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
         $this->aOut = array();
         try {
             $blMasterVariant = $this->getCategoryVariationStatus();
-            $blConfigUseVariation = MLModul::gi()->getConfig('usevariations') == '1';
+            $blConfigUseVariation = MLModule::gi()->getConfig('usevariations') == '1';
             if (!$blConfigUseVariation) {
                 //if variation is disable in configuration
                 $this->setOnlyMaster();
@@ -101,6 +103,7 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                     ->getPrepareData($this->getFieldDefineComplete(), 'value')
             );
             $this->aOut[$oMaster->get('id')]['rawDescription'] = stringToUTF8(html_entity_decode(fixHTMLUTF8Entities(MLProduct::factory()->set('id', $oMaster->get('id'))->getDescription())));
+            $this->setTaxToZero($this->aOut[$oMaster->get('id')]);
         }
     }
     
@@ -124,12 +127,13 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                             ->setProduct($oVariant)
                             ->setMasterProduct($oMaster);
                     if ($iVariantCount > 1) {
-                        $aDefineComplete['Title']['value'] = $oPrepareHelper->replaceTitle(MLModul::gi()->getConfig('template.name'));
+                        $aDefineComplete['Title']['value'] = $oPrepareHelper->replaceTitle(MLModule::gi()->getConfig('template.name'));
                     }
 
                     $aPrepareData = $oPrepareHelper->getPrepareData($aDefineComplete, 'value');
                     $aPrepareData['PictureURL'] = $this->variationImageAsSingleProductImage($aPrepareData['PictureURL'], $oVariant);
 
+                    $this->setTaxToZero($aPrepareData);
                     $this->aOut[$oVariant->get('id')] = $this->replacePrepareData(
                             $aPrepareData
                     );
@@ -204,7 +208,7 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                 $this->aOut[$oMaster->get('id')]['rawDescription'] = stringToUTF8(html_entity_decode(fixHTMLUTF8Entities(MLProduct::factory()->set('id', $oMaster->get('id'))->getDescription())));
             } else {
                 $oFirstVariant = current($aVariants);
-                $oPrepareList = MLDatabase::factory(MLModul::gi()->getMarketPlaceName() . '_prepare')->getList();
+                $oPrepareList = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_prepare')->getList();
                 $oPrepareList->getQueryObject()->where($oPrepareHelper->getPrepareTableProductsIdField() . " = '" . $oFirstVariant->get('id') . "'");
                 foreach (array('Title', 'Description', 'PictureURL', 'GalleryType', 'Subtitle', 'StartPrice', 'StartTime', 'BuyItNowPrice') as $sField) {
                     $aPrepared = $oPrepareList->get($sField, true);
@@ -300,7 +304,23 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                 unset($aMasterData['BasePriceString']);
                 $this->aOut[$oMaster->get('id')] = $aMasterData;
             }
+            $this->setTaxToZero($this->aOut[$oMaster->get('id')]);
             $this->aOut[$oMaster->get('id')]['rawDescription'] = stringToUTF8(html_entity_decode(fixHTMLUTF8Entities(MLProduct::factory()->set('id', $oMaster->get('id'))->getDescription())));
+        }
+    }
+
+    /**
+     * Set tax to string 'zero' in case the tax is set to 0
+     * and customer wants to include the tax in the price
+     *
+     * @param $aMasterData
+     * @return void
+     */
+    private function setTaxToZero(&$aMasterData){
+        if (isset($aMasterData['Tax']) && $aMasterData['Tax'] == 0) {
+            if (MLModule::gi()->getConfig('mwst.always')) {
+                $aMasterData['Tax'] = 'zero';
+            }
         }
     }
     
@@ -441,7 +461,7 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                     $aData[$sKey] = $this->{'replace'.$sKey}($mValue, $aData);
                     if ($sKey == 'StrikePrice') {
                         // replace by sth like $aData['ManufacturersPrice'] = 100.00
-                        if (!empty($aData['StrikePrice'])) {
+                        if (!empty($aData['StrikePrice']) && MLModule::gi()->getConfig('strikeprice.kind') !== null) {
                             $aData[MLModule::gi()->getConfig('strikeprice.kind')] = $aData['StrikePrice'];
                         }
                         unset($aData['StrikePrice']);
@@ -454,13 +474,13 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
     }
 
     protected function _getImageUrl($mValue) {
-        $sSize = MLModul::gi()->getConfig('imagesize');
+        $sSize = MLModule::gi()->getConfig('imagesize');
         $iSize = $sSize == null ? 500 : (int)$sSize;
         $aOut = array();
         foreach (is_array($mValue) ? $mValue : array($mValue) as $sImage) {
             try {
                 $aImage = MLImage::gi()->resizeImage($sImage, 'products', $iSize, $iSize);
-//                if (MLModul::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('EbayPicturePack')) {
+//                if (MLModule::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('EbayPicturePack')) {
                     $aOut[] = $aImage['url'];
 //                } else {
 //                    $aOut[] = str_replace('https:', 'http:', $aImage['url']);
@@ -473,7 +493,12 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
 
     protected function replaceVariationDimensionForPictures($mValue, $aData) {
         $this->sVariationDimensionForPictures = $mValue;
-        $aSearch = MLFormHelper::getShopInstance()->getPossibleVariationGroupNames();
+        $aSearch = array();
+        foreach ($this->oCurrentProduct->getVariants() as $oVariant) {
+            foreach ($oVariant->getVariatonDataOptinalField(array('name', 'code')) as $aVariationData) {
+                 $aSearch[$aVariationData['code']] = $aVariationData['name'];
+            }
+        }
         if (array_key_exists($mValue, $aSearch)) {
             $sValue = $aSearch[$mValue];
             $aVariant = current($aData['Variations']);
@@ -537,14 +562,14 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                         empty($mValue[$sSpecificsKey][$sKey])
                         && in_array($sKey, $aConfig['search'])
                         && (
-                            (MLShop::gi()->addonBooked('EbayProductIdentifierSync') && MLModul::gi()->getConfig('syncproperties'))
+                            (MLShop::gi()->addonBooked('EbayProductIdentifierSync') && MLModule::gi()->getConfig('syncproperties'))
                             || (
                                 $sMyValue == '(matching)'
                                 && ! $aConfig['onlySyncModul']
                             )
                         )
                     ) {
-                        $sConfigKey = MLModul::gi()->getConfig($aConfig['fieldKey']);
+                        $sConfigKey = MLModule::gi()->getConfig($aConfig['fieldKey']);
                         if (!empty($sConfigKey)) {
                             $sMyValue = empty($sConfigKey) ? $sMyValue : $this->oCurrentProduct->getModulField(($aConfig['globalField'] ? 'general.' : '').$aConfig['fieldKey'], $aConfig['globalField']);
                             if (is_array($sValue)) {
@@ -673,6 +698,8 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
      * @return string
      */
     protected function replaceTitle($mValue, $aData, $iMaxChars = 80) {
+        // Replace &nbsp; (if any) by single spaces
+        $mValue = str_replace('&nbsp;', ' ', $mValue);
         /* @var $oPrepareHelper ML_Ebay_Helper_Model_Table_Ebay_PrepareData */
         $oPrepareHelper = MLHelper::gi('Model_Table_Ebay_PrepareData');
         return $oPrepareHelper->basePriceReplace($mValue, $aData, $iMaxChars);
@@ -718,10 +745,13 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
             'EAN' => array('optional' => array('active' => true)),
             'ePID' => array('optional' => array('active' => true)),
             'ConditionID' => array('optional' => array('active' => true)),
+            'ConditionDescriptors' => array('optional' => array('active' => true)),
             'ConditionDescription' => array('optional' => array('active' => true)),
+            'tecDocKType' => array('optional' => array('active' => true)),
+            //add Tecdoc
         );
-        
-        if (MLShop::gi()->addonBooked('EbayProductIdentifierSync') && MLModul::gi()->getConfig('syncproperties')) {
+
+        if (MLShop::gi()->addonBooked('EbayProductIdentifierSync') && MLModule::gi()->getConfig('syncproperties')) {
             $aReturn += array(
                 'Brand' => array('optional' => array('active' => true)),
             );
@@ -743,39 +773,40 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
     protected function getFieldDefineMasterVariant() {
         $aReturn = array(
             'BestOfferEnabled' => array('optional' => array('active' => true)),
-            'HitCounter' => array('optional' => array('active' => true)),
             'PrimaryCategory' => array('optional' => array('active' => true)),
             'SecondaryCategory' => array(),
             'StoreCategory' => array(),
             'StoreCategory2' => array(),
             'ItemSpecifics' => array('optional' => array('active' => true)),
             'Attributes' => array('optional' => array('active' => true)),
-            'ListingType' => array('optional' => array('active' => true)),
-            'ListingDuration' => array('optional' => array('active' => true)),
-            'Country' => array('optional' => array('active' => true)),
-            'Site' => array('optional' => array('active' => true)),
-            'currencyID' => array('optional' => array('active' => true)),
-            'Location' => array('optional' => array('active' => true)),
-            'PostalCode' => array('optional' => array('active' => true)),
-            'Tax' => array('optional' => array('active' => true)),
-            'ReturnPolicy' => array('optional' => array('active' => true)),
+            'ListingType'                     => array('optional' => array('active' => true)),
+            'ListingDuration'                 => array('optional' => array('active' => true)),
+            'Country'                         => array('optional' => array('active' => true)),
+            'Site'                            => array('optional' => array('active' => true)),
+            'currencyID'                      => array('optional' => array('active' => true)),
+            'Location'                        => array('optional' => array('active' => true)),
+            'PostalCode'                      => array('optional' => array('active' => true)),
+            'Tax'                             => array('optional' => array('active' => true)),
+            'ReturnPolicy'                    => array('optional' => array('active' => true)),
             'doCalculateBasePriceForVariants' => array('optional' => array('active' => true)),
-            'eBayPlus' => array('optional' => array('active' => true)),
-            'PurgePictures' => array(),
-            'VariationDimensionForPictures' => array('optional' => array('active' => true)),
-            'VariationPictures' => array('optional' => array('active' => true)),
-            'Asynchronous' => array('optional' => array('active' => true)),
-            'PicturePack' => array('optional' => array('active' => true)),
-            'RestrictedToBusiness' => array('optional' => array('active' => true)),
-            'RawAttributesMatching' => array('optional' => array('active' => true)),
-            'RawVariationThemeBlacklist' => array('optional' => array('active' => true)),
-            'StrikePriceForUpload' => array('optional' => array('active' => true)),
+            'eBayPlus'                        => array('optional' => array('active' => true)),
+            'PurgePictures'                   => array(),
+            'VariationDimensionForPictures'   => array('optional' => array('active' => true)),
+            'VariationPictures'               => array('optional' => array('active' => true)),
+            'Asynchronous'                    => array('optional' => array('active' => true)),
+            'PicturePack'                     => array('optional' => array('active' => true)),
+            'RestrictedToBusiness'            => array('optional' => array('active' => true)),
+            'RawAttributesMatching'           => array('optional' => array('active' => true)),
+            'RawVariationThemeBlacklist'      => array('optional' => array('active' => true)),
+            'StrikePriceForUpload'            => array('optional' => array('active' => true)),
+            'Weight'                          => array('optional' => array('active' => true)),
         );
         
         if (empty($this->aCatCondition)) {
             $aReturn['ConditionID'] = array('optional' => array('active' => true));
         }
         $aReturn['ConditionDescription'] = array('optional' => array('active' => true));
+        $aReturn['ConditionDescriptors'] = array('optional' => array('active' => true));
         if (MLHelper::gi('model_form_type_sellerprofiles')->hasSellerProfiles()) {
             $aReturn['SellerProfiles'] = array('optional' => array('active' => true));
         } else {
@@ -817,9 +848,10 @@ class ML_Ebay_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
             'ePID' => array('optional' => array('active' => true)),
             'ConditionID' => array('optional' => array('active' => true)),
             'ConditionDescription' => array('optional' => array('active' => true)),
+            'ConditionDescriptors' => array('optional' => array('active' => true)),
         );
 
-//        if (MLShop::gi()->addonBooked('EbayProductIdentifierSync') && MLModul::gi()->getConfig('syncproperties')) {
+//        if (MLShop::gi()->addonBooked('EbayProductIdentifierSync') && MLModule::gi()->getConfig('syncproperties')) {
 //            $aRetrun += array(
 //            );
 //        }

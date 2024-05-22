@@ -19,20 +19,21 @@
  * -----------------------------------------------------------------------------
  */
 /** @var ML_MercadoLivre_Controller_MercadoLivre_Prepare_Form $this */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 
 $i18n = $this->getFormArray('aI18n');
 $i18nConfigPrepare = MLI18n::gi()->get('mercadolivre_config_prepare');
 $aFieldset = array(
-	'type' => 'fieldset',
-	'id' => $this->getIdent() . '_fieldset_config',
-	'legend' => array(
-		'i18n' => $i18n['legend']['configmatching'],
-		'template' => 'h4'
-	),
-	'row' => array(
-		'template' => 'default',
-	),
+    'type'   => 'fieldset',
+    'id'     => $this->getIdent().'_fieldset_config',
+    'legend' => array(
+        'i18n'     => $i18n['legend']['configmatching'],
+        'template' => 'h4'
+    ),
+    'row'    => array(
+        'template' => 'default',
+    ),
 );
 
 // Currency
@@ -48,7 +49,7 @@ foreach ($aCategoryInfo['Settings']['Currencies'] as $curr) {
 if (count($aCategoryInfo['Settings']['Currencies']) === 1) {
 	$aCurrencyField['value'] = reset($aCategoryInfo['Settings']['Currencies']);
 } else if (in_array($aCurrencyField['value'], $aCategoryInfo['Settings']['Currencies']) === false) {
-	$sDefaultCurrency = MLModul::gi()->getConfig('currency');
+    $sDefaultCurrency = MLModule::gi()->getConfig('currency');
 	if (in_array($sDefaultCurrency, $aCategoryInfo['Settings']['Currencies']) === false) {
 		$aCurrencyField['value'] = null;
 	} else {
@@ -71,7 +72,7 @@ foreach ($aCategoryInfo['Settings']['ItemConditions'] as $cond) {
 if (count($aCategoryInfo['Settings']['ItemConditions']) === 1) {
 	$aItemConditionField['value'] = reset($aCategoryInfo['Settings']['ItemConditions']);
 } else if (in_array($aItemConditionField['value'], $aCategoryInfo['Settings']['ItemConditions']) === false) {
-	$sDefaultItemCondition = MLModul::gi()->getConfig('itemcondition');
+    $sDefaultItemCondition = MLModule::gi()->getConfig('itemcondition');
 	if (in_array($sDefaultItemCondition, $aCategoryInfo['Settings']['ItemConditions']) === false) {
 		$aItemConditionField['value'] = null;
 	} else {
@@ -87,7 +88,7 @@ $aListingTypeField['type'] = 'select';
 $aListingTypeField['name'] = 'field[listingtype]';
 $aListingTypeField['values']['none'] = MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT');
 
-$aListingTypesConfig = MLModul::gi()->getConfig('site.listing_types');
+$aListingTypesConfig = MLModule::gi()->getConfig('site.listing_types');
 
 foreach ($aListingTypesConfig as $listingTypeCode => $listingTypeName) {
 	$aListingTypeField['values'][$listingTypeCode] = $listingTypeName;
@@ -95,7 +96,7 @@ foreach ($aListingTypesConfig as $listingTypeCode => $listingTypeName) {
 if (count($aListingTypesConfig) === 1) {
 	$aListingTypeField['value'] = reset($aListingTypesConfig);
 } else if (array_key_exists($aListingTypeField['value'], $aListingTypesConfig) === false) {
-	$sDefaultListingType = MLModul::gi()->getConfig('listingtype');
+    $sDefaultListingType = MLModule::gi()->getConfig('listingtype');
 	if (array_key_exists($sDefaultListingType, $aListingTypesConfig) === false) {
 		$aListingTypeField['value'] = null;
 	} else {
@@ -118,7 +119,7 @@ foreach ($aCategoryInfo['Settings']['BuyingModes'] as $mode) {
 if (count($aCategoryInfo['Settings']['BuyingModes']) === 1) {
 	$aBuyingModeField['value'] = reset($aCategoryInfo['Settings']['BuyingModes']);
 } else if (in_array($aBuyingModeField['value'], $aCategoryInfo['Settings']['BuyingModes']) === false) {
-	$sDefaultBuyingMode = MLModul::gi()->getConfig('buyingmode');
+    $sDefaultBuyingMode = MLModule::gi()->getConfig('buyingmode');
 	if (in_array($sDefaultBuyingMode, $aCategoryInfo['Settings']['BuyingModes']) === false) {
 		$aBuyingModeField['value'] = null;
 	} else {
@@ -138,12 +139,12 @@ foreach ($aCategoryInfo['Settings']['ShippingModes'] as $mode) {
 	$aShippingModeField['values'][$mode] = $i18nConfigPrepare['field']['shippingmode']['values'][$mode];
 }
 
-$sDefaultShippingMode = MLModul::gi()->getConfig('shippingmode');
+$sDefaultShippingMode = MLModule::gi()->getConfig('shippingmode');
 
 if (count($aCategoryInfo['Settings']['ShippingModes']) === 1) {
 	$aShippingModeField['value'] = reset($aCategoryInfo['Settings']['ShippingModes']);
-} else if (in_array($aShippingModeField['value'], $aCategoryInfo['Settings']['ShippingModes']) === false) {	
-	$sDefaultShippingMode = MLModul::gi()->getConfig('shippingmode');
+} else if (in_array($aShippingModeField['value'], $aCategoryInfo['Settings']['ShippingModes']) === false) {
+    $sDefaultShippingMode = MLModule::gi()->getConfig('shippingmode');
 	if (in_array($sDefaultShippingMode, $aCategoryInfo['Settings']['ShippingModes']) === false) {	
 		$aShippingModeField['value'] = null;
 	} else {

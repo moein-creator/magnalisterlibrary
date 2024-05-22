@@ -1,6 +1,7 @@
 <?php 
-class_exists('ML', false) or die();
-$latestReport = MLModul::gi()->getConfig('inventory.import');
+ if (!class_exists('ML', false))
+     throw new Exception();
+$latestReport = MLModule::gi()->getConfig('inventory.import');
 ?>
 
 <table class="magnaframe">

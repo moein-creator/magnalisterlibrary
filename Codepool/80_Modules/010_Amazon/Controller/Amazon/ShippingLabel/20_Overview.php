@@ -41,7 +41,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Overview extends ML_Core_Control
      */
     protected function setFilter() {
         $aRequestFilter = MLRequest::gi()->data('filter');
-        $sIdent = MLModul::gi()->getMarketPlaceId() . '_' . $this->getIdent();
+        $sIdent = MLModule::gi()->getMarketPlaceId() . '_' . $this->getIdent();
         $aFilters = array();
         if ($aRequestFilter !== null) {
             $aFilters[$sIdent] = $aRequestFilter;
@@ -97,7 +97,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Overview extends ML_Core_Control
                     if (MLHttp::gi()->isAjax()) {
                         $aStatistic = $this->getOrderlist()->getStatistic();
                         $iFrom = 0;
-                        $iCount = 100; // if its to high, we have fast-cgi problems, perhaps make some output (spaces) after while and flush() them directly
+                        $iCount = 5;
                         if (MLRequest::gi()->data('selectionlimit') !== null) {
                             list($iFrom, $iCount) = explode('_', MLRequest::gi()->data('selectionlimit'));
                         }
@@ -180,7 +180,7 @@ class ML_Amazon_Controller_Amazon_ShippingLabel_Overview extends ML_Core_Control
 
         $this->includeView('widget_list_order_action_selection_selectionoption', array(
             'sName' => MLI18n::gi()->get(
-                    'Productlist_Cell_aToMagnalisterSelection_selectedArticlesCountInfo', array('count' => $this->getSelectedCount())
+                'Productlist_Cell_aToMagnalisterSelection_selectedArticlesCountInfo', array('count' => $this->getSelectedCount())
             )
         ));
         return $this;

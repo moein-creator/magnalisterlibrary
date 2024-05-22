@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -21,7 +21,7 @@
 MLI18n::gi()->{'Hitmeister_Productlist_Cell_aPreparedStatus__OK__title'} = 'Préparé avec succès';
 MLI18n::gi()->{'Hitmeister_Productlist_Cell_aPreparedStatus__ERROR__title'} = 'Mal préparé';
 MLI18n::gi()->{'Hitmeister_Productlist_Cell_aPreparedStatus__OPEN__title'} = 'Préparation non vérifiée';
-MLI18n::gi()->{'Hitmeister_Productlist_Label_Price'} = 'Prix Kaufland.de';
+MLI18n::gi()->{'Hitmeister_Productlist_Label_Price'} = 'Prix Kaufland';
 MLI18n::gi()->{'Hitmeister_Productlist_Filter_aPreparedStatus__OK'} = 'Préparé avec succès';
 MLI18n::gi()->{'Hitmeister_Productlist_Filter_aPreparedStatus__ERROR'} = 'Mal préparé';
 MLI18n::gi()->{'Hitmeister_Productlist_Filter_aPreparedStatus__OPEN'} = 'Préparation non vérifiée\'';
@@ -31,9 +31,9 @@ MLI18n::gi()->{'Hitmeister_Productlist_Match_Auto_Title'} = 'Classement automati
 MLI18n::gi()->{'Hitmeister_Productlist_Match_Auto_Summary'} = '%d des articles ont été classés (matching) avec succès. <br/ ><br/ >
 	%d des articles n\'ont pas été classés (matching) avec succès.<br />
 	Entre eux %d ont générés plusieurs résultats.';
-MLI18n::gi()->{'Hitmeister_Productlist_Match_Manual_Desc'} = 'Les articles de la boutique sélectionnée par Checkbox vont être préparés en arrière plan: L\'article va être classé (matching) automatiquement avec les numéros EAN des articles correspondants sur Kaufland.de grâce aux numéros EAN pré-enregistrés de cet article.<br/ ><br/ > Il est donc primordial de mettre à jour régulièrement les numéros EAN de chaque produit.';
+MLI18n::gi()->{'Hitmeister_Productlist_Match_Manual_Desc'} = 'Les articles de la boutique sélectionnée par Checkbox vont être préparés en arrière plan: L\'article va être classé (matching) automatiquement avec les numéros EAN des articles correspondants sur Kaufland grâce aux numéros EAN pré-enregistrés de cet article.<br/ ><br/ > Il est donc primordial de mettre à jour régulièrement les numéros EAN de chaque produit.';
 MLI18n::gi()->{'Hitmeister_Productlist_Match_Auto_Desc'} = 'Les articles de la boutique sélectionnée par Checkbox vont être préparés en arrière plan: L\'article va être classé (matching) automatiquement avec les numéros EAN des articles correspondants sur Cdisount grâce aux numéros EAN pré-enregistrés de cet article.<br/ ><br/ > Il est donc primordial de mettre à jour régulièrement les numéros EAN de chaque produit.';
-MLI18n::gi()->{'Hitmeister_Productlist_Match_Auto_Confirm'} = 'Attention, le classement (matching) se fait automatiquement et exclusivement à partir de l\'ajustement des numéros EAN. Certains articles de Kaufland.de vont être classés (matching) en présentant une qualité inférieure au niveau de la description et des photos. Ce qui va provoquer alors de mauvais résultats, plus mauvais qu\'avec un classement (matching) manuel.<br/ ><br/ > RedGecko décline alors toutes responsabilités en cas d\'inexactitude de l\'article proposé.';
+MLI18n::gi()->{'Hitmeister_Productlist_Match_Auto_Confirm'} = 'Attention, le classement (matching) se fait automatiquement et exclusivement à partir de l\'ajustement des numéros EAN. Certains articles de Kaufland vont être classés (matching) en présentant une qualité inférieure au niveau de la description et des photos. Ce qui va provoquer alors de mauvais résultats, plus mauvais qu\'avec un classement (matching) manuel.<br/ ><br/ > RedGecko décline alors toutes responsabilités en cas d\'inexactitude de l\'article proposé.';
 MLI18n::gi()->{'Hitmeister_Productlist_Cell_aPreparedType__manual'} = 'Classement manuel (matching)';
 MLI18n::gi()->{'Hitmeister_Productlist_Cell_aPreparedType__auto'} = 'Classement automatique (matching)';
 MLI18n::gi()->{'Hitmeister_Productlist_Cell_aPreparedType__apply'} = 'Créer un nouveau produit';

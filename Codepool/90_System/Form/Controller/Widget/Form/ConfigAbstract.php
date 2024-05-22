@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -32,7 +32,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
          * sSyncOrderStatusUrl, sSyncInventoryUrl, sImportOrdersUrl
          */
         foreach (array('SyncOrderStatus', 'SyncInventory', 'ImportOrders') as $sSync) {
-            // Helper for php8 compatibility - can't pass null to trim
+            // Helper for php8 compatibility - can't pass null to trim 
             $sPassphrase = MLHelper::gi('php8compatibility')->checkNull(MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.passphrase')->get('value'));
             MLSetting::gi()->set('s'.$sSync.'Url', MLHttp::gi()->getFrontendDoUrl(array('do' => $sSync, 'auth' => md5(MLShop::gi()->getShopId().trim($sPassphrase)))), true);
         }
@@ -97,18 +97,20 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
             }
         }
         if (!MLRequest::gi()->data('wizard')) {
-            if (!MLModule::gi()->isConfigured()) {
-                $aSettings = MLSetting::gi()->get('aModules');
-                $aRequiredConfigKey = (MLModule::gi()->isAuthed() ? $aSettings[MLModul::gi()->getMarketPlaceName()]['requiredConfigKeys'] : array());
-                $aRequiredConfigKey = array_merge(
-                    array_keys(self::getAuthKeys($aSettings)),
-                    $aRequiredConfigKey
-                );
-                $aRequiredConfigKey = MLModule::gi()->addRequiredConfigurationKeys($aRequiredConfigKey);
-                $aFoundMissingField = null;
+                if (!MLModule::gi()->isConfigured()) {
+                    $aSettings = MLSetting::gi()->get('aModules');
+                    $isAuthenticated = MLModule::gi()->isAuthed();
+                    $aRequiredConfigKey = ($isAuthenticated ? $aSettings[MLModule::gi()->getMarketPlaceName()]['requiredConfigKeys'] : array());
+                    $aRequiredConfigKey = array_merge(
+                        array_keys(self::getAuthKeys($aSettings)),
+                        $aRequiredConfigKey,
+                        MLModule::gi()->getListOfConfigurationKeysNeedShopValidation()
+                    );
+                    $aRequiredConfigKey = MLModule::gi()->addRequiredConfigurationKeys($aRequiredConfigKey);
+                    $aFoundMissingField = null;
                 foreach (array_unique($aRequiredConfigKey) as $sMissingConfKey) {
-                    $mConfigValue = MLModule::gi()->getConfig($sMissingConfKey);
-                    if ($mConfigValue !== null && $mConfigValue !== '') {
+                    $mConfigValue = MLModule::gi()->getConfigAndDefaultConfig($sMissingConfKey);
+                    if (self::isValidated($mConfigValue, $sMissingConfKey)) {
                         continue;
                     }
                     $aFoundMissingField = null;
@@ -200,9 +202,17 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
                 is_array($aFieldSet['legend']['i18n'])
                     ? $aFieldSet['legend']['i18n']['title']
                     : $aFieldSet['legend']['i18n']
-                ).' > ';
+                ) . ' > ';
         }
         return $sLegend;
+    }
+
+    protected static function isValidated($mConfigValue, $sMissingConfKey) {
+        $isValidated = MLShop::gi()->isConfiguredKeyValid($sMissingConfKey);
+        if ($isValidated === null) {
+            return $mConfigValue !== null && $mConfigValue !== '';
+        }
+        return $isValidated;
     }
 
     /**
@@ -243,11 +253,11 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
         try {
             $sName = array_key_exists('realname', $aField) ? $aField['realname'] : $aField['name'];
             $aModules = MLSetting::gi()->get('aModules');
-            $aRequiredKeys = isset($aModules[MLModul::gi()->getMarketPlaceName()]) ? $aModules[MLModul::gi()->getMarketPlaceName()]['requiredConfigKeys'] : array();
-            $aRequiredKeys = MLModul::gi()->addRequiredConfigurationKeys($aRequiredKeys);
+            $aRequiredKeys = isset($aModules[MLModule::gi()->getMarketPlaceName()]) ? $aModules[MLModule::gi()->getMarketPlaceName()]['requiredConfigKeys'] : array();
+            $aRequiredKeys = MLModule::gi()->addRequiredConfigurationKeys($aRequiredKeys);
             if (
                 in_array($sName, $aRequiredKeys)
-                && !MLModul::gi()->isConfigured()
+                && !MLModule::gi()->isConfigured()
                 && !MLRequest::gi()->data('wizard')
             ) {
                 $aField['required'] = 'true';
@@ -270,23 +280,23 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
 
     protected function construct() {
         $this->isAuthed();
-        $oPrepareDefaults = MLDatabase::factory('preparedefaults')->set('mpId', MLModul::gi()->getMarketPlaceId())->set('name', 'defaultconfig');
+        $oPrepareDefaults = MLDatabase::factory('preparedefaults')->set('mpId', MLModule::gi()->getMarketPlaceId())->set('name', 'defaultconfig');
         $aPrepareDefaults = $oPrepareDefaults->get('values');
         $aPrepareDefaults = is_array($aPrepareDefaults) ? $aPrepareDefaults : array();
-        $aPrepareDefaultsConfig = MLSetting::gi()->get(strtolower(MLModul::gi()->getMarketPlaceName()).'_prepareDefaultsFields');
+        $aPrepareDefaultsConfig = MLSetting::gi()->get(strtolower(MLModule::gi()->getMarketPlaceName()) . '_prepareDefaultsFields');
         $aPrepareDefaultsConfig = isset($aPrepareDefaultsConfig) ? $aPrepareDefaultsConfig : array();
         foreach ($aPrepareDefaultsConfig as $sDefaultKey) {
             $this->aPrepareDefaults[$sDefaultKey] = isset($aPrepareDefaults[$sDefaultKey]) ? $aPrepareDefaults[$sDefaultKey] : null;
         }
 
         $aPrepareDefaultsActive = $oPrepareDefaults->get('active');
-        $aPrepareDefaultsActiveConfig = MLSetting::gi()->get(strtolower(MLModul::gi()->getMarketPlaceName()).'_prepareDefaultsOptionalFields');
+        $aPrepareDefaultsActiveConfig = MLSetting::gi()->get(strtolower(MLModule::gi()->getMarketPlaceName()) . '_prepareDefaultsOptionalFields');
         $aPrepareDefaultsActiveConfig= isset($aPrepareDefaultsActiveConfig) ? $aPrepareDefaultsActiveConfig : array();
         foreach ($aPrepareDefaultsActiveConfig as $sDefaultKey) {
             $this->aPrepareDefaultsActive[$sDefaultKey] = isset($aPrepareDefaultsActive[$sDefaultKey]) ? $aPrepareDefaultsActive[$sDefaultKey] : null;
             $this->aRequestOptional[$sDefaultKey] = array_key_exists($sDefaultKey, $this->aRequestOptional) ? $this->aRequestOptional[$sDefaultKey] : $this->aPrepareDefaultsActive[$sDefaultKey];
         }
-        $this->oConfigHelper = MLHelper::gi('model_table_'.MLModul::gi()->getMarketPlaceName().'_configdata');
+        $this->oConfigHelper = MLHelper::gi('model_table_' . MLModule::gi()->getMarketPlaceName() . '_configdata');
         $this->oConfigHelper
             ->setIdent($this->getIdent())
             ->setRequestFields($this->aRequestFields)
@@ -314,7 +324,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
         $aMethods[] = 'getRequestValue'; //request
         $aMethods[] = 'getValue'; //  database
         $aMethods[] = 'getDefaultValue'; //  config
-        $aMethods[] = 'prepareAddonField'; // addon field
+        $aMethods[] = 'prepareAddonField'; // addon field 
         foreach (parent::getFieldMethods($aField) as $sMethod) {
             $aMethods[] = $sMethod;
         }
@@ -345,12 +355,12 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
             if ($aField['realname'] == 'tabident') {
                 $aIdents = MLDatabase::factory('config')->set('mpId', 0)->set('mkey', 'general.tabident')->get('value');
                 $aIdents = is_array($aIdents) ? $aIdents : array();
-                $aField['value'] = isset($aIdents[MLModul::gi()->getMarketPlaceId()]) ? $aIdents[MLModul::gi()->getMarketPlaceId()] : '';
+                $aField['value'] = isset($aIdents[MLModule::gi()->getMarketPlaceId()]) ? $aIdents[MLModule::gi()->getMarketPlaceId()] : '';
             } else {
                 if (array_key_exists($aField['realname'], $this->aPrepareDefaults)) {
                     $aField['value'] = $this->aPrepareDefaults[$aField['realname']];
                 } else {
-                    $aField['value'] = MLModul::gi()->getConfig($aField['realname']);//MLDatabase::factory('config')->set('mpId', MLModul::gi()->getMarketPlaceId())->set('mkey', $aField['realname'])->get('value');
+                    $aField['value'] = MLModule::gi()->getConfig($aField['realname']);//MLDatabase::factory('config')->set('mpId', MLModule::gi()->getMarketPlaceId())->set('mkey', $aField['realname'])->get('value');
                 }
             }
         }
@@ -420,7 +430,6 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
     }
 
     protected function isAuthed($aAuthKeys = array()) {
-        return true;
         $aModules = MLSetting::gi()->get('aModules');
         $blForce = false;
         if (count($aAuthKeys)) {
@@ -428,7 +437,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
             $blForce = true;
             try {
                 MagnaConnector::gi()->submitRequest(array('ACTION' => 'SetCredentials') + $aAuthKeys);
-                if (MLModul::gi()->isAuthed($blForce)) {
+                if (MLModule::gi()->isAuthed($blForce)) {
                     $blForce = false;
                     MLMessage::gi()->addSuccess(MLI18n::gi()->get('ML_GENERIC_STATUS_LOGIN_SAVED'));
                 }
@@ -437,7 +446,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
                 MLMessage::gi()->addError(MLI18n::gi()->get('ML_GENERIC_STATUS_LOGIN_SAVEERROR'), array('md5' => get_class($this).'__auth'));
             }
         }
-        return MLModul::gi()->isAuthed($blForce);
+        return MLModule::gi()->isAuthed($blForce);
     }
 
     public function expertAction($blExecute = true) {
@@ -491,7 +500,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
      * @param array $aParams
      */
     protected function isWizard() {
-        return ($this->getRequest('wizard') || !MLModul::gi()->isConfigured());
+        return ($this->getRequest('wizard') || !MLModule::gi()->isConfigured());
     }
 
     /**
@@ -568,7 +577,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
                     if (array_key_exists($sName, $aAuthKeyDefinition)) {
                         MLModule::gi()->resetIsAuthedErrorCaches();
                         $mValue = trim($mValue);
-                        $sSavedAuthValue = MLModule::gi()->getConfig($sName); //MLDatabase::factory('config')->set('mpId', MLModul::gi()->getMarketPlaceId())->set('mkey', $sName)->get('value');
+                        $sSavedAuthValue = MLModule::gi()->getConfig($sName); //MLDatabase::factory('config')->set('mpId', MLModule::gi()->getMarketPlaceId())->set('mkey', $sName)->get('value');
                         if (
                             !empty($mValue)
                             && ($sSavedAuthValue != $mValue || !$blAuthed)
@@ -591,7 +600,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
                         $this->aPrepareDefaults[$sName] = $this->getField($sName, 'value');
                     } else {
                         MLModule::gi()->setConfig($sName, $this->getField($sName, 'value'));
-                        //MLDatabase::factory('config')->set('mpId', MLModul::gi()->getMarketPlaceId())->set('mkey', $sName)->set('value', $this->getField($sName, 'value'))->save();
+                        //MLDatabase::factory('config')->set('mpId', MLModule::gi()->getMarketPlaceId())->set('mkey', $sName)->set('value', $this->getField($sName, 'value'))->save();
                     }
                 }
             }
@@ -624,7 +633,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
             }
             $this->aFields = array();
             if (MLShop::gi()->isCurrencyMatchingNeeded() && isset($this->aRequestFields['currency'])) {
-                MLModul::gi()->setConfig('exchangerate_update', '0');
+                MLModule::gi()->setConfig('exchangerate_update', '0');
             }
             return $this;
         } else {
@@ -660,10 +669,10 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
      * @throws ML_Filesystem_Exception
      */
     private function renderCurrencyPopup() {
-        $mpDBCurrency = MLModul::gi()->getConfig('currency');
+        $mpDBCurrency = MLModule::gi()->getConfig('currency');
         $shopCurrency = strtoupper(MLHelper::gi('model_price')->getShopCurrency());
-        $mpCurrency = strtoupper((empty($mpDBCurrency)) ? getCurrencyFromMarketplace(MLModul::gi()->getMarketPlaceId()) : $mpDBCurrency);
-        if (!empty($mpCurrency) && $shopCurrency !== $mpCurrency && !MLModul::gi()->getConfig('exchangerate_update')) {
+        $mpCurrency = strtoupper((empty($mpDBCurrency)) ? getCurrencyFromMarketplace(MLModule::gi()->getMarketPlaceId()) : $mpDBCurrency);
+        if (!empty($mpCurrency) && $shopCurrency !== $mpCurrency && !MLModule::gi()->getConfig('exchangerate_update')) {
             MLSettingRegistry::gi()->addJs('magnalister.woocommerce.currencypopup.js');
             ?>
             <div class="cml-modal"
@@ -681,7 +690,7 @@ abstract class ML_Form_Controller_Widget_Form_ConfigAbstract extends ML_Form_Con
     }
 
     protected function callAjaxAcceptCurrencyExchange() {
-        MLModul::gi()->setConfig('exchangerate_update', '1');
+        MLModule::gi()->setConfig('exchangerate_update', '1');
     }
 
     /**

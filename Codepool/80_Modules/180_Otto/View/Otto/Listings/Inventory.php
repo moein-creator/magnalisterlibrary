@@ -16,7 +16,8 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 
 MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true);
 /* @var $this   ML_Listings_Controller_Widget_Listings_InventoryAbstract */

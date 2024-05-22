@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -61,7 +61,6 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
         );
     }
 
-
     public function productPriceField(&$aField) {
         $aField['value'] = $this->oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
     }
@@ -69,11 +68,16 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
     public function gtinField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField, $this->oProduct->getEAN());
 
-        if (!isset($aField['value']) || $aField['value'] === '') {
-            $this->aErrors[] = 'ML_METRO_ERROR_MISSING_GTIN';
+        $manufacturerField = $this->getField('Manufacturer');
+        $sManufacturer = $this->getFirstValue($manufacturerField, $this->oProduct->getManufacturer());
+
+        $manufacturerPartNumberField = $this->getField('ManufacturerPartNumber');
+        $sMPN = $this->getFirstValue($manufacturerPartNumberField, $this->oProduct->getManufacturerPartNumber());
+
+        if ((!isset($aField['value']) || $aField['value'] === '') && (empty($sManufacturer) || empty($sMPN))) {
+            $this->aErrors[] = 'ML_METRO_ERROR_MISSING_GTIN_MPN_MANUFACTURER';
         }
     }
-
 
     /**
      * This function is needed only for additem, and it has no meaning in preparation
@@ -82,7 +86,6 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
     public function categoryIDField(&$aField) {
         $aField['value'] = $this->getField('primarycategory', 'value');
     }
-
 
     /**
      * This function is needed only for additem, and it has no meaning in preparation
@@ -123,7 +126,7 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
         }
         foreach ($aImages as $sImage) {
             try {
-                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 60, 60);
+                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 80, 80);
             } catch (Exception $oEx) {
                 $this->aErrors[] = 'metro_prepare_images_not_exist';
             }
@@ -166,7 +169,6 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
         }
     }
 
-
     public function processingTimeField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
     }
@@ -180,7 +182,6 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
     public function maxProcessingTimeField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
     }
-
 
     public function businessModelField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
@@ -207,6 +208,25 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
 
     public function freightForwardingField(&$aField) {
         $aField['value'] = $this->getFirstValue($aField);
+    }
+
+    public function shippingGroupField(&$aField) {
+        $aDefaultGroup = MLModul::gi()->getConfig('shipping.group');
+        $iDefault = 0;
+        foreach ($aDefaultGroup as $iKey => $sValue) {
+            if ($sValue['default']) {
+                $iDefault = $iKey;
+            }
+        }
+        $aField['value'] = $this->getFirstValue($aField, $iDefault);
+    }
+
+    public function shippingGroupIdField(&$aField) {
+        $aDefaultGroup = MLModul::gi()->getConfig('shipping.group');
+        $aGroupId = MLModul::gi()->getConfig('shippingprofile.group.id');
+        $iDefault = 0;
+        $iKey = $this->getField('shippingGroup', 'value');
+        $aField['value'] = $aGroupId[$iKey];
     }
 
     public function featureField(&$aField) {
@@ -264,7 +284,6 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
         }
     }
 
-
     protected function primaryCategoryNameField(&$aField) {
         $sCategoryID = $this->getField('variationgroups.value', 'value');
         $oCat = MLDatabase::factory('Metro_CategoriesMarketplace');
@@ -297,6 +316,8 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
     }
 
     protected function stringToArray($sString, $iCount, $iMaxChars) {
+        // Helper for php8 compatibility - can't pass null to explode 
+        $sString = MLHelper::gi('php8compatibility')->checkNull($sString);
         $aArray = explode(',', $sString);
         array_walk($aArray, array($this, 'trim'));
         $aOut = array_slice($aArray, 0, $iCount);
@@ -309,7 +330,7 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
         }
         return $aOut;
     }
-    
+
     protected function trim(&$v, $k) {
         $v = trim($v);
     }
@@ -320,5 +341,57 @@ class ML_Metro_Helper_Model_Table_Metro_PrepareData extends ML_Form_Helper_Model
         return $iSize;
     }
 
+    /**
+     * used in add-item or update items to send net volume prices to API
+     * @param $aField
+     * @return void
+     */
+    protected function volumePricesField(&$aField) {
+        $mConfig = MLModule::gi()->getConfig('volumepricesenable');
+        if ($mConfig === 'webshop') {
+            $aField['value'] = array();
+            $sType = strtolower('WebshopPriceOptions'); // naming of field like "VolumepricePriceWebshopOptions" priceObject need "volumepriceprice#placeholder#addkind"
+            $priceConfig = MLModule::gi()->getPriceObject($sType)->getPriceConfig();
+            $aPrices = $this->oProduct->getVolumePrices(
+                MLModule::gi()->getConfig('volumepriceswebshopcustomergroup'),
+                false,
+                $priceConfig['kind'],
+                $priceConfig['factor'],
+                $priceConfig['signal']
+            );
+
+            $iNumberOfGreaterThan5 = 0;
+            foreach ($aPrices as $iStartQuantity => $fPrice) {
+                $aField['value'][$iStartQuantity] = round($fPrice, 2);
+                if ((int)$iStartQuantity > 5) {
+                    $iNumberOfGreaterThan5++;
+                }
+                if ($iNumberOfGreaterThan5 === 2) {
+                    break;
+                }
+            }
+        } elseif ($mConfig === 'useconfig') {
+            $aField['value'] = array();
+            foreach (array('2', '3', '4', '5') as $sType) {
+                $mTypeConfig = MLModule::gi()->getConfig('volumepriceprice'.$sType.'addkind');
+                if ($mTypeConfig !== 'dontuse') {
+                    $aField['value'][$sType] = round($this->oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($sType), false), 2);
+                }
+            }
+            foreach (array('a', 'b') as $sType) {
+                try {
+                    $mTypeConfig = MLModule::gi()->getConfig('volumepriceprice'.$sType.'addkind');
+                    if ($mTypeConfig !== 'dontuse') {
+                        $aField['value'][MLModule::gi()->getConfig('volumepriceprice'.$sType.'start')] = round($this->oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject($sType), false), 2);
+                    }
+                } catch (\Exception $ex) {
+                    MLMessage::gi()->addDebug($ex);
+                }
+            }
+        } elseif ($mConfig === 'dontuse') {
+            // need to set it empty array - so it will be removed from metro
+            $aField['value'] = array(); // if you don't set it to an empty array it will use data from magnalister database
+        }
+    }
 
 }

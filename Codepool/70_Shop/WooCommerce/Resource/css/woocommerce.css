@@ -37,7 +37,7 @@ input, select {
 
 input, select, textarea {
     font-size: 12px;
-    padding: 0;
+    padding: 1px 4px;
 }
 
 body.wp-admin.magna select {
@@ -50,19 +50,21 @@ body.wp-admin.magna select[multiple="multiple"] {
 
 body.wp-admin.magna input[type="checkbox"],
 body.wp-admin.magna input[type="radio"] {
-    margin: 1px;
+    margin: -2px 4px 0px 7px;
     min-width: 14px;
     width: 14px;
     height: 14px;
-    border: 1px solid #818181;
+    cursor: unset;
+}
+body.wp-admin.magna input[type="checkbox"] {
+    margin: -2px 4px 0px 0px;
+}
+body.wp-admin.magna th input[type="checkbox"] {
+    margin-top: 12px;
 }
 
 body.wp-admin.magna input[type="checkbox"]:checked::before {
-    margin: -4px 0 0 -5px;
-}
-
-body.wp-admin.magna input[type="radio"]:checked::before {
-    margin: 2px;
+    content: unset;
 }
 
 body.wp-admin.magna div.magnaTabs2 ul li {
@@ -86,6 +88,14 @@ body.wp-admin.magna textarea {
     border-radius: 0;
     min-height: 0;
     line-height: 17px;
+    height: 42px;
+    box-shadow: unset;
+}
+/*body.wp-admin.magna .topControls select {
+    height: 36px;
+}*/
+body.wp-admin.magna td.options select {
+    width: 100%;
 }
 
 body.wp-admin.magna div.newSearch input[type="text"] {
@@ -93,9 +103,9 @@ body.wp-admin.magna div.newSearch input[type="text"] {
     margin: 0;
 }
 
-body.wp-admin.magna table.attributesTable td input[type="text"],
+/*body.wp-admin.magna table.attributesTable td input[type="text"],*/
 body.wp-admin.magna table.attributesTable td input[type="password"],
-body.wp-admin.magna table.attributesTable td select,
+/*body.wp-admin.magna table.attributesTable td select,*/
 body.wp-admin.magna table.attributesTable td textarea {
     padding: 2px 4px;
 }
@@ -103,3 +113,782 @@ body.wp-admin.magna table.attributesTable td textarea {
 .magna ul {
     list-style: inherit;
 }
+input[type=radio]:checked::before {
+    background-color: unset;
+}
+input[type="radio"]:focus {
+    box-shadow: unset;
+}
+#ebay_config_prepare_fieldset_prepare input[type="checkbox"] {
+    margin: 6px 3px 3px 0px;
+}
+#ebay_config_prepare_fieldset_fixedprice input[type="checkbox"],
+#ebay_config_prepare_fieldset_pictures input[type="checkbox"] {
+    margin: 3px 3px 3px 0px;
+}
+#idealo_config_prepare_fieldset_prepare input[type="checkbox"],
+#idealo_config_prepare_fieldset_upload input[type="checkbox"],
+#hood_config_orderimport_fieldset_importactive input[type="radio"] {
+    margin: -1px 4px 0px 0px;
+}
+#idealo_config_price_fieldset_price input[type="checkbox"],
+#hood_prepare_apply_form_fieldset_auction input[type="checkbox"],
+#cdiscount_config_prepare_fieldset_upload input[type="checkbox"],
+#cdiscount_config_price_fieldset_price input[type="checkbox"],
+#cdiscount_config_orderimport_fieldset_importactive input[type="checkbox"],
+#hood_config_emailtemplate_fieldset_mail input[type="radio"],
+#check24_config_orderimport_fieldset_importactive input[type="radio"],
+#check24_config_emailtemplate_fieldset_mail input[type="radio"],
+#ricardo_config_orderimport_fieldset_importactive input[type="radio"],
+#ricardo_config_emailtemplate_fieldset_mail input[type="radio"],
+#cdiscount_config_orderimport_fieldset_importactive input[type="radio"],
+#cdiscount_config_emailtemplate_fieldset_mail input[type="radio"] {
+    margin: 0px 4px 0px 0px;
+}
+#ricardo_config_prepare_fieldset_prepare input[type="checkbox"],
+#cdiscount_config_prepare_fieldset_prepare input[type="checkbox"],
+#priceminister_config_prepare_fieldset_prepare input[type="checkbox"],
+#metro_config_prepare_fieldset_prepare input[type="checkbox"],
+#otto_config_prepare_fieldset_prepare input[type="checkbox"],
+#otto_config_prepare_fieldset_upload input[type="checkbox"] {
+    margin: 1px 4px 0px 0px;
+}
+
+.wp-core-ui .attributesTable select {
+    height: 46px;
+    max-width: unset;
+    -webkit-appearance: button;
+    cursor: unset;
+}
+.wp-core-ui select:hover {
+    color: rgba(0, 0, 0, 0.847);
+}
+.wp-core-ui select:disabled:hover {
+    color: #a7aaad;
+}
+.wp-core-ui select:focus  {
+    border-color: #dadada;
+    box-shadow: unset;
+}
+body.wp-admin.magna .attributesTable select {
+    height: 43px;
+}
+body.wp-admin.magna .attributesTable select[multiple] {
+    height: auto;
+}
+input[type="checkbox"]:focus {
+    box-shadow: unset;
+}
+body.wp-admin.magna tbody tr td div.optional-field input {
+    height: 44px;
+}
+body.wp-admin.magna tbody tr td div.optional-field .ml-image-cb input {
+    height: 20px;
+}
+.wp-core-ui select:disabled {
+    background-image: unset;
+}
+.wp-core-ui table.attributesTable td input.fullwidth[type="text"]{
+    height: 43px;
+}
+.wp-core-ui table.attributesTable td input.fullwidth[type="text"]:focus {
+    box-shadow: unset;
+}
+input[type="checkbox"],
+input[type="radio"]{
+    -webkit-appearance: checkbox;
+}
+#wpcontent .pagination_bar form input.noButton {
+    padding-right: 4px !important;
+    padding-left: 4px !important;
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif;
+}
+#wpcontent .magnamain input.mlbtn.mlbtn-md {
+    height: 42px;
+}
+#wpcontent .magnamain div.search input.ml-searchbox-size {
+    box-sizing: content-box;
+}
+#wpcontent .magna table thead tr th.nowrap label {
+    padding-bottom: 3px;
+}
+#wpcontent .magna tbody tr td div > span label {
+    padding-bottom: 5px;
+}
+#wpcontent .magna tbody tr td div > span.nowrap label {
+    padding-bottom: 0px;
+}
+#wpcontent .magna tbody > tr > td > span > a {
+    margin-top: 3px;
+}
+.wp-core-ui .magna select:focus {
+    color: unset;
+}
+.wp-core-ui .magna select:active {
+    border-color: #dadada;
+}
+#wpcontent .magna table.attributesTable tr.headline > * h4 {
+    line-height: 1em;
+}
+#wpcontent .magna label {
+    margin-right: 20px;
+}
+.ml-js-catMatch-nameContainer ul {
+    padding-left: 40px;
+}
+.wp-core-ui div.magnamain form.ml-plist.ml-js-plist table.datagrid.ml-plist-old-fix tbody tr td input {
+    margin-top: -5px;
+}
+.wp-core-ui table.datagrid thead tr td input[type="checkbox"]#selectAll {
+    margin: 0px 4px 0px 0px;
+}
+
+.wp-core-ui .magna select {
+    vertical-align: inherit;
+}
+.wp-core-ui .magna input,
+.wp-core-ui .magna select {
+    font-weight: initial;
+/*    -webkit-appearance: button;*/
+}
+/*.wp-core-ui .magna select{
+    background: unset;
+}*/
+
+.wp-core-ui .magna a:focus {
+    box-shadow: unset;
+}
+
+.wp-core-ui .ml-mlMessages {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.wp-core-ui #amazon_config_prepare_fieldset_upload input[type="checkbox"]{
+    margin-top: 1px;
+}
+
+.wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td:last-child {
+    text-align: center;
+}
+
+.wp-core-ui .ml-plist table > tbody > tr > th.switch a {
+    vertical-align: sub;
+}
+
+.wp-core-ui .ml-catMatch-treeContainer a:focus {
+    box-shadow: unset;
+}
+[id$="_config_price_fieldset_fixedprice"] tr:nth-child(2).js-field,
+[id$="_config_price_fieldset_chineseprice"] tr:nth-child(3).js-field,
+[id$="_config_price_fieldset_price"] tr:nth-child(3).js-field,
+[id$="_config_price_fieldset_chineseprice"] tr:nth-child(2).js-field {
+    border-bottom: 1px solid #dadada !important;
+}
+#cdiscount_prepare_apply_form_fieldset_unit textarea {
+    height: 200px;
+}
+@media screen and (max-width: 1904px) {
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(6) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(6) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(6) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1892px) {
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div,
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(8) div.duplicate div {
+        justify-content: end;
+
+    }
+
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div > div,
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(8) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div > span,
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(8) div.duplicate div > span {
+        position: inherit;
+    }
+
+}
+
+.wp-core-ui .ml-mlMessages {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.wp-core-ui #amazon_config_prepare_fieldset_upload input[type="checkbox"]{
+    margin-top: 1px;
+}
+
+.wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td:last-child {
+    text-align: center;
+}
+
+.wp-core-ui .ml-plist table > tbody > tr > th.switch a {
+    vertical-align: sub;
+}
+
+.wp-core-ui .ml-catMatch-treeContainer a:focus {
+    box-shadow: unset;
+}
+
+
+@media screen and (max-width: 1919px) {
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(6) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(6) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(6) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1889px) {
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(8) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(8) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(8) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1879px) {
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1699px) {
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1584px) {
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+
+@media screen and (max-width: 1579px) {
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div,
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div > div,
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div > span,
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1450px){
+    .wp-core-ui .ml-plist table > * > tr > * {
+        font-size: 12px;
+    }
+
+    .wp-core-ui .ml-plist table.ml-plist-table > thead > tr > th {
+        padding-left: 8px;
+    }
+
+    table.ml-plist-table > tbody > tr > * {
+        padding-left: 8px;
+    }
+
+    .wp-core-ui .ml-container-md {
+        width: 203px;
+    }
+
+    .wp-core-ui tbody#ricardo_prepare_form_fieldset_shipping tr.js-field td.input {
+          display: flex;
+          flex-direction: column;
+          row-gap: 4px;
+          border-top: 0px solid #dadada;
+      }
+    .wp-core-ui tbody#ricardo_config_prepare_fieldset_prepare tr:nth-child(14).js-field td.input {
+        display: flex;
+        flex-direction: column;
+        row-gap: 5px;
+        border-bottom: unset;
+    }
+}
+@media screen and (max-width: 1290px){
+    .wp-core-ui .plist-th {
+        flex-wrap: wrap;
+    }
+
+    .wp-core-ui .ml-plist table > * > tr > * {
+        font-size: 11px;
+    }
+
+    .wp-core-ui .ml-plist table.ml-plist-table > thead > tr > th {
+        padding-right: 4px;
+        padding-left: 4px;
+    }
+
+    .wp-core-ui table.ml-plist-table > tbody > tr > * {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 11px;
+    }
+
+    .wp-core-ui table.datagrid thead tr td,
+    .wp-core-ui table.datagrid thead tr th,
+    .wp-core-ui table.datagrid tbody tr td,
+    .wp-core-ui table.datagrid tbody tr th,
+    .wp-core-ui form.categoryView table.list thead tr td,
+    .wp-core-ui form.categoryView table.list tbody tr td,
+    .wp-core-ui table.actions tr th,
+    .wp-core-ui table.actions tr td {
+        padding: 8px 12px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix thead tr th,
+    .wp-core-ui table.datagrid.ml-plist-old-fix tbody tr td {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .wp-core-ui .ml-container-inner div.newSearch input[type="text"] {
+        width: 138px;
+    }
+
+}
+
+@media screen and (max-width: 1150px) {
+    .wp-core-ui .ml-plist table > * > tr > * {
+        font-size: 10px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 9px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix tbody tr td:nth-child(3) table > tbody > tr > td {
+        display: table-row;
+    }
+}
+@media screen and (max-width: 1150px) {
+    /*Prestashop Kopie*/
+    .wp-core-ui table.datagrid thead tr td, table.datagrid thead tr th, table.datagrid tbody tr td, table.datagrid tbody tr th, form.categoryView table.list thead tr td, form.categoryView table.list tbody tr td, table.actions tr th, table.actions tr td {
+        padding: 8px 2px !important;
+    }
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 2px !important;
+    }
+
+    .wp-core-ui div.magnamain table .js-field th,
+    .wp-core-ui div.magnamain table .js-field td.input {
+        padding: 14px 8px 14px 8px !important;
+    }
+
+    .wp-core-ui table.attributesTable td.info {
+        padding-right: 8px !important;
+        padding-left: 8px !important;
+    }
+
+    .wp-core-ui table.attributesTable tr.headline > * {
+        padding: 14px 8px !important;
+    }
+
+    .wp-core-ui tbody#ricardo_prepare_form_fieldset_shipping tr.js-field td.input {
+        display: flex;
+        flex-direction: column;
+        row-gap: 4px;
+        border-top: 0px solid #dadada;
+    }
+
+    .wp-core-ui .otto_config_order_field_orderstatus_shippedaddress table.attributesTable td,
+    .wp-core-ui .otto_config_order_field_orderstatus_shippedaddress table.attributesTable th {
+        padding: 12px 4px 10px 4px !important;
+    }
+
+    .wp-core-ui div.magnamain table {
+        font-size: 11px !important;
+    }
+    .wp-core-ui table.attributesTable td select {
+        font-size: 11px;
+    }
+    .wp-core-ui .ml-container-wd {
+        width: 220px;
+    }
+
+}
+
+@media screen and (max-width: 1000px){
+    .wp-core-ui .ml-plist table > * > tr > * {
+        font-size: 10px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 9px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix thead tr th,
+    .wp-core-ui table.datagrid.ml-plist-old-fix tbody tr td {
+        padding-left: 5px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 6px;
+    }
+}
+@media screen and (max-width: 960px) {
+    .wp-core-ui div.magnamain table {
+        font-size: 10px !important;
+    }
+
+    .wp-core-ui .page-sidebar:not(.page-sidebar-closed) .magna {
+        margin-left: -225px;
+    }
+    .wp-core-ui div.magnamain table .js-field th, div.magnamain table .js-field td.input {
+        padding: 10px 6px !important;
+    }
+
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div > div,
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(8) div.duplicate div > div {
+        width: 100%;
+    }
+}
+
+
+@media screen and (max-width: 1860px) {
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1860px) {
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1817px) {
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > div,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > span,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1559px) {
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+
+    .hood_config_prepare_field_shippinginternational > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) {
+        width: unset !important;
+    }
+
+}
+@media screen and (max-width: 1497px) {
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+
+    .hood_config_prepare_field_shippinglocal > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) {
+        width: unset !important;
+    }
+
+}
+@media screen and (max-width: 1450px){
+    .wp-core-ui .ml-plist table > * > tr > * {
+        font-size: 12px;
+    }
+
+    .wp-core-ui .ml-plist table.ml-plist-table > thead > tr > th {
+        padding-left: 8px;
+    }
+
+    table.ml-plist-table > tbody > tr > * {
+        padding-left: 8px;
+    }
+
+    .wp-core-ui .ml-container-md {
+        width: 203px;
+    }
+
+    .wp-core-ui tbody#ricardo_prepare_form_fieldset_shipping tr.js-field td.input {
+          display: flex;
+          flex-direction: column;
+          row-gap: 4px;
+          border-top: 0px solid #dadada;
+      }
+    .wp-core-ui tbody#ricardo_config_prepare_fieldset_prepare tr:nth-child(14).js-field td.input {
+        display: flex;
+        flex-direction: column;
+        row-gap: 5px;
+        border-bottom: unset;
+    }
+}
+@media screen and (max-width: 1290px){
+    .wp-core-ui .plist-th {
+        flex-wrap: wrap;
+    }
+
+    .wp-core-ui .ml-plist table > * > tr > * {
+        font-size: 11px;
+    }
+
+    .wp-core-ui .ml-plist table.ml-plist-table > thead > tr > th {
+        padding-right: 4px;
+        padding-left: 4px;
+    }
+
+    .wp-core-ui table.ml-plist-table > tbody > tr > * {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 11px;
+    }
+
+    .wp-core-ui table.datagrid thead tr td,
+    .wp-core-ui table.datagrid thead tr th,
+    .wp-core-ui table.datagrid tbody tr td,
+    .wp-core-ui table.datagrid tbody tr th,
+    .wp-core-ui form.categoryView table.list thead tr td,
+    .wp-core-ui form.categoryView table.list tbody tr td,
+    .wp-core-ui table.actions tr th,
+    .wp-core-ui table.actions tr td {
+        padding: 8px 12px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix thead tr th,
+    .wp-core-ui table.datagrid.ml-plist-old-fix tbody tr td {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .wp-core-ui .ml-container-inner div.newSearch input[type="text"] {
+        width: 138px;
+    }
+
+}
+@media screen and (max-width: 1268px) {
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1206px) {
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+
+@media screen and (max-width: 1150px) {
+    .wp-core-ui .ml-plist table > * > tr > * {
+        font-size: 10px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 9px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix tbody tr td:nth-child(3) table > tbody > tr > td {
+        display: table-row;
+    }
+}
+@media screen and (max-width: 1150px) {
+    /*Prestashop Kopie*/
+    .wp-core-ui table.datagrid thead tr td, table.datagrid thead tr th, table.datagrid tbody tr td, table.datagrid tbody tr th, form.categoryView table.list thead tr td, form.categoryView table.list tbody tr td, table.actions tr th, table.actions tr td {
+        padding: 8px 2px !important;
+    }
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 2px !important;
+    }
+
+    .wp-core-ui div.magnamain table .js-field th,
+    .wp-core-ui div.magnamain table .js-field td.input {
+        padding: 14px 8px 14px 8px !important;
+    }
+
+    .wp-core-ui table.attributesTable td.info {
+        padding-right: 8px !important;
+        padding-left: 8px !important;
+    }
+
+    .wp-core-ui table.attributesTable tr.headline > * {
+        padding: 14px 8px !important;
+    }
+
+    .wp-core-ui tbody#ricardo_prepare_form_fieldset_shipping tr.js-field td.input {
+        display: flex;
+        flex-direction: column;
+        row-gap: 4px;
+        border-top: 0px solid #dadada;
+    }
+
+    .wp-core-ui .otto_config_order_field_orderstatus_shippedaddress table.attributesTable td,
+    .wp-core-ui .otto_config_order_field_orderstatus_shippedaddress table.attributesTable th {
+        padding: 12px 4px 10px 4px !important;
+    }
+
+    .wp-core-ui div.magnamain table {
+        font-size: 11px !important;
+    }
+    .wp-core-ui table.attributesTable td select {
+        font-size: 11px;
+    }
+    .wp-core-ui .ml-container-wd {
+        width: 220px;
+    }
+
+}
+
+@media screen and (max-width: 1000px){
+    .wp-core-ui .ml-plist table > * > tr > * {
+        font-size: 10px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 9px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix thead tr th,
+    .wp-core-ui table.datagrid.ml-plist-old-fix tbody tr td {
+        padding-left: 5px;
+    }
+
+    .wp-core-ui table.datagrid.ml-plist-old-fix > tbody > tr > td {
+        padding-left: 6px;
+    }
+}
+@media screen and (max-width: 960px) {
+    .wp-core-ui div.magnamain table {
+        font-size: 10px !important;
+    }
+   /* .wp-core-ui table.attributesTable td,
+    .wp-core-ui table.attributesTable th {
+        padding: 10px 4px !important;
+    }*/
+    .wp-core-ui .page-sidebar:not(.page-sidebar-closed) .magna {
+        margin-left: -225px;
+    }
+    .wp-core-ui div.magnamain table .js-field th, div.magnamain table .js-field td.input {
+        padding: 10px 6px !important;
+    }
+}
+
+
+
+
+
+
+
+
+
+

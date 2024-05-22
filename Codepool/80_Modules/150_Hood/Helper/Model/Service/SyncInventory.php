@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -306,6 +306,7 @@ class ML_Hood_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
     protected function getMasterData() {
         /* @var $oPrepareHelper ML_Hood_Helper_Model_Table_Hood_PrepareData */
         $oPrepareHelper = MLHelper::gi('Model_Table_Hood_PrepareData');
+        $sKeyType = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.keytype')->get('value');
         if (!array_key_exists($this->cItem['AuctionId'], $this->aMasterData)) {
             /* getProduct, get master and walk childs which are prepared
              * @see additems
@@ -328,11 +329,14 @@ class ML_Hood_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
                 'ListingType' => array('optional' => array('active' => true)),
             );
             $aMasterData = array(
-                'SKU' => $oMaster->get('MarketplaceIdentSku'),
+                'SKU' => ('artNr' == $sKeyType 
+                     ? $oMaster->get('MarketplaceIdentSku')
+                     : $oMaster->get('MarketplaceIdentId')),
                 'Price' => 0,
                 'Quantity' => 0,
                 'Variations' => array(),
             );
+
             foreach ($aVariants as $oVariant) {
                 $aVariation = $oPrepareHelper
                     ->setPrepareList(null)->setProduct($oVariant)
@@ -343,13 +347,12 @@ class ML_Hood_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
                 }
 
                 foreach ($aVariation['Variation'] as $sKey => $value) {
-
                     $aVariation['Variation'][$sKey]['Name'] = $aVariation['Variation'][$sKey]['name'];
                     $aVariation['Variation'][$sKey]['Value'] = $aVariation['Variation'][$sKey]['value'];
                     unset($aVariation['Variation'][$sKey]['name']);
                     unset($aVariation['Variation'][$sKey]['value']);
-
                 }
+
                 $aVariation['Price'] = (float)$aVariation['Price'];
 
                 if ($aVariation['ListingType'] == 'StoresFixedPrice') {
@@ -360,7 +363,17 @@ class ML_Hood_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
                     $aVariation['ListingType'] = 'classic';
                     $aVariation['StartPrice'] = (float)$aVariation['Price'];
                 }
-                $aMasterData['Variations'][] = $aVariation;
+
+                // only handle product as variation when "usevariations" is enabled
+                if (MLModule::gi()->getConfig('usevariations') == '1') {
+                    $aMasterData['Variations'][] = $aVariation;
+                } elseif ($this->cItem['SKU'] == $aVariation['SKU']) { // only if current sku equals variation sku
+                    // Change the product data - so that they are threaded as a single product
+                    unset($aVariation['Variation']);
+                    $aMasterData['Variations'][] = $aVariation;
+                    break;
+                }
+
             }
             $this->aMasterData[$this->cItem['AuctionId']] = $aMasterData;
 
@@ -368,22 +381,15 @@ class ML_Hood_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
 
         $aReturn = $this->aMasterData[$this->cItem['AuctionId']];
 
-        $iVariantIndex = 0;//@todo: Variante in index => nicht mehr vorhandenimmmer abgleich
-        foreach (array_keys($aReturn['Variations']) as $i) {
-            if ($aReturn['Variations'][$i]['SKU'] == $this->cItem['SKU']) {
-                $iVariantIndex = $i;
-                break;
-            }
-        }
-        # ist es eine Variante?
+        # Is it a variation?
         if (count($aReturn['Variations']) == 1 && $aReturn['Variations'][0]['Variation'] == array()) {//is master
             $aReturn = array_merge($aReturn, $aReturn['Variations'][0]);
             $aReturn['Price'] = (float)$aReturn['Variations'][0]['Price'];
             $aReturn['Tax'] = (float)$aReturn['Variations'][0]['Tax'];
             unset($aReturn['Variation'], $aReturn['Variations']);
         } else {
-
-            $aReturn['SKU'] = ($this->blVariantAsMaster ? $this->cItem['SKU']: $aReturn['SKU']) ;
+            // has variations
+            $aReturn['SKU'] = ($this->blVariantAsMaster ? $this->cItem['SKU'] : $aReturn['SKU']) ;
             $aReturn['Tax'] = (float)$aReturn['Variations'][0]['Tax'];
             $aReturn['ListingType'] = $aReturn['Variations'][0]['ListingType'];
             foreach ($aReturn['Variations'] as &$aVariant) {
@@ -399,7 +405,7 @@ class ML_Hood_Helper_Model_Service_SyncInventory extends MagnaCompatibleSyncInve
         $this->identifySKU();
         $articleIdent = 'SKU: '.$this->cItem['SKU'].' ('.$this->cItem['Title'].'); '.
             'Hood-AuctionID: '.$this->cItem['AuctionId'].'; '.
-            'ListingType: '.$this->cItem['ListingType'].' ';
+            'ListingType: '.$this->cItem['ListingType'];
 
         if ((int)$this->cItem['pID'] <= 0) {
             $this->log("\n".$articleIdent.' not found');

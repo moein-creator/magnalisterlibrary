@@ -162,7 +162,8 @@ class ML_Ricardo_Helper_Model_Service_Product {
                 }
 
                 try {
-                    $aImage = MLImage::gi()->resizeImage($sImage, 'products', 500, 500);
+                    $size = $this->getImageSize();
+                    $aImage = MLImage::gi()->resizeImage($sImage, 'products', $size, $size);
                     $aOut[] = array('URL' => urldecode($aImage['url']));
                 } catch (Exception $ex) {
                     // Happens if image doesn't exist.
@@ -171,6 +172,12 @@ class ML_Ricardo_Helper_Model_Service_Product {
         }
 
         return $aOut;
+    }
+
+    protected function getImageSize() {
+        $sSize = MLModule::gi()->getConfig('imagesize');
+        $iSize = $sSize == null ? 500 : (int)$sSize;
+        return $iSize;
     }
 
     protected function getQuantity() {

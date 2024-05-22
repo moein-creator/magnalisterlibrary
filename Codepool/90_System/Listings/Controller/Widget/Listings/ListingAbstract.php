@@ -22,7 +22,7 @@ MLFilesystem::gi()->loadClass('Core_Controller_Abstract');
 /**
  * @todo all classes like errorlogview and deletedview should use this abstract , and this class should have more function and be more abtracted then we can remove amazon and ebay inventoryview 
  */
-class ML_Listings_Controller_Widget_Listings_ListingAbstract extends ML_Core_Controller_Abstract {
+abstract class ML_Listings_Controller_Widget_Listings_ListingAbstract extends ML_Core_Controller_Abstract {
 
 
     protected function setCurrentState(){

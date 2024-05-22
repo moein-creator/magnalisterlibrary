@@ -126,4 +126,8 @@ class ML_WooCommerce_Model_Shop extends ML_Shop_Model_Shop_Abstract {
     public function getTimeZone() {
         return wp_timezone_string();
     }
+
+    public function getShopVersion() {
+        return WC()->version;
+    }
 }

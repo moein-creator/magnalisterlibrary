@@ -16,34 +16,35 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
-	MLSettingRegistry::gi()->addJs(array('jquery-ui-timepicker-addon.js'));
+if (!class_exists('ML', false))
+    throw new Exception();
+MLSettingRegistry::gi()->addJs(array('jquery-ui-timepicker-addon.js'));
 ?>
 <div class="datetimepicker">
-	<input type="text" id="<?php echo $aField['id']; ?>"
-		<?php echo (isset($aField['value']) ? 'value="'. htmlspecialchars($aField['value'], ENT_COMPAT) . '"' : '') ?>
-		readonly="readonly" class="autoWidth rightSpacer"/>
-	<input type="hidden" id="<?php echo $aField['id'] . '_hidden'; ?>" name="<?php echo MLHttp::gi()->parseFormFieldName($aField['name']) ?>" value="<?php echo $aField['value'] ?>"/>
+    <input type="text" id="<?php echo $aField['id']; ?>"
+        <?php echo(isset($aField['value']) ? 'value="'.htmlspecialchars($aField['value'], ENT_COMPAT).'"' : '') ?>
+           readonly="readonly" class="autoWidth rightSpacer"/>
+    <input type="hidden" id="<?php echo $aField['id'].'_hidden'; ?>" name="<?php echo MLHttp::gi()->parseFormFieldName($aField['name']) ?>" value="<?php echo $aField['value'] ?>"/>
 </div>
 <script type="text/javascript">
-	(function($) {
-		jqml(document).ready(function() {
-			jqml.datepicker.setDefaults(jqml.datepicker.regional['']);
-			jqml.timepicker.setDefaults(jqml.timepicker.regional['']);
-			jqml("#<?php echo $aField['id']; ?>").datetimepicker(
-				jqml.extend(
-					jqml.datepicker.regional['de'],
-					jqml.timepicker.regional['de']
-				)
-			).datetimepicker("option", {
-				onClose:  function(dateText, inst) {
-					var d = jqml("#<?php echo $aField['id']; ?>").datetimepicker("getDate");
-					if (d !== null) {
-						var s = jqml.datepicker.formatDate("yy-mm-dd", d) + ' ' +
-						jqml.datepicker.formatTime("HH:mm:ss", {
-							hour: d.getHours(),
-							minute: d.getMinutes(),
-							second: d.getSeconds()
+    (function ($) {
+        jqml(document).ready(function () {
+            jqml.datepicker.setDefaults(jqml.datepicker.regional['']);
+            jqml.timepicker.setDefaults(jqml.timepicker.regional['']);
+            jqml("#<?php echo $aField['id']; ?>").datetimepicker(
+                jqml.extend(
+                    jqml.datepicker.regional['de'],
+                    jqml.timepicker.regional['de']
+                )
+            ).datetimepicker("option", {
+                onClose: function (dateText, inst) {
+                    var d = jqml("#<?php echo $aField['id']; ?>").datetimepicker("getDate");
+                    if (d !== null) {
+                        var s = jqml.datepicker.formatDate("yy-mm-dd", d) + ' ' +
+                            jqml.datepicker.formatTime("HH:mm:ss", {
+                                hour: d.getHours(),
+                                minute: d.getMinutes(),
+                                second: d.getSeconds()
 						}, { ampm: false });
 						jqml("#<?php echo $aField['id']; ?>_hidden").val(s);
 					}

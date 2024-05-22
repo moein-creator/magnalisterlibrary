@@ -29,10 +29,10 @@ class ML_ShopifyEbay_Model_Service_UpdateOrders extends ML_Ebay_Model_Service_Up
     public function canDoOrder(ML_Shop_Model_Order_Abstract $oOrder, &$aOrder) {
         if ($oOrder->get('orders_id') !== null) { // only existing orders
             $aMessage = array();
-            $aIsActive = MLModul::gi()->getConfig('update.paymentstatus');
+            $aIsActive = MLModule::gi()->getConfig('update.paymentstatus');
             if (
                 !isset($aIsActive) //if someone didn't set this configuration , it doesn't update payment status
-                || ((bool)$aIsActive && in_array($oOrder->getShopPaymentStatus(), MLModul::gi()->getConfig('updateable.paymentstatus'), true))
+                || ((bool)$aIsActive && in_array($oOrder->getShopPaymentStatus(), MLModule::gi()->getConfig('updateable.paymentstatus'), true))
             ) {
                 $oOrder->setUpdatablePaymentStatus(true);
                 $aMessage[] = 'Update payment status';
@@ -40,8 +40,8 @@ class ML_ShopifyEbay_Model_Service_UpdateOrders extends ML_Ebay_Model_Service_Up
                 $oOrder->setUpdatablePaymentStatus(false);
             }
 
-            $aIsActive = MLModul::gi()->getConfig('update.orderstatus');
-            $aUpdateableStatusses = MLModul::gi()->getConfig('updateable.orderstatus');
+            $aIsActive = MLModule::gi()->getConfig('update.orderstatus');
+            $aUpdateableStatusses = MLModule::gi()->getConfig('updateable.orderstatus');
             if ((bool)$aIsActive && is_array($aUpdateableStatusses) && in_array($oOrder->getShopOrderStatus(), $aUpdateableStatusses, true)) {
                 $oOrder->setUpdatableOrderStatus(true);
                 $aMessage[] = 'Update order status';
@@ -49,7 +49,7 @@ class ML_ShopifyEbay_Model_Service_UpdateOrders extends ML_Ebay_Model_Service_Up
                 $oOrder->setUpdatableOrderStatus(false);
             }
 
-            return empty($aMessage) ? 'cannot update order and payment status' : implode($aMessage, ', ');
+            return empty($aMessage) ? 'cannot update order and payment status' : implode(', ', $aMessage);
         } else {
             throw new Exception("Order doesn't exist");
         }

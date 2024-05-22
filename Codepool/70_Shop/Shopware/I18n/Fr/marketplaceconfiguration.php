@@ -34,27 +34,9 @@ Le mode de livraison sera alors ajouté à votre boutique dans "Shopware" > "Par
 <p>Vous pouvez définir d\'autres modes de livraison qui s\'afficheront dans le menu déroulant en vous rendant sur "Shopware" > "frais de port".</p>
 <p>Ce réglage est important pour l\'impression des bons de livraison et des factures, mais aussi pour le traitement ultérieur des commandes dans votre boutique ainsi que dans votre gestion des marchandises.</p>
 ';
-MLI18n::gi()->{'Shopware_Amazon_Configuration_ShippingMethod_Info'} = '<b>Mode d’envoi des commandes</b><br />
-<br />
-Choisissez ici le mode d’envoi qui sera associé uniformément à toutes les commandes.<br />
-<br />
-Voici les différentes options qui s’offrent à vous :<br />
-<ol>
-<li><b>Modes d’envoi pris en charge par la place de marché</b><br />
-<br />
-Choisissez un mode d’envoi dans la liste du menu déroulant. Seules les options prises en charge par la place de marché s’affichent.<br />
-<br />
-</li>
-<li><b>Modes d’envoi sur le gestionnaire des champs libres de la boutique en ligne</b><br />
-<br />
-Choisissez un mode d’envoi à partir d’un champ libre de la boutique en ligne. <br />
-<br />
-</li>
-<li><b>Sélection automatique</b><br />
-<br />
-Pour chaque pays de destination, magnalister sélectionne automatiquement le mode d’envoi placé en tête de liste dans le module de calcul des frais de port pour la boutique en ligne concernée. 
-</li>
-</ol>';
+MLI18n::gi()->{'Shopware_Amazon_Configuration_ShippingMethod_Info'} = '<p>Lors des importations des commandes, Amazon ne transmet pas d\'information sur le mode d\'expédition. </p>
+<p>Veuillez sélectionner dans le menu déroulant, les modes de livraison de votre boutique. Vous pouvez définir les modes de livraison de votre boutique en vous rendant sur "Shopware" > "paramètres" > "Frais de port". </p>
+<p>Ce réglage est important pour l\'impression des bons de livraison et des factures, mais aussi pour le traitement ultérieur des commandes dans votre boutique ainsi que dans votre gestion des marchandises.</p>';
 MLI18n::gi()->{'Shopware_Ebay_Configuration_Updateable_OrderStatus_Label'} = 'Permettre le changement de statut de commande si';
 MLI18n::gi()->{'Shopware_Ebay_Configuration_Updateable_PaymentStatus_Label'} = 'Permettre le changement de statut de commande si';
 MLI18n::gi()->{'Shopware_Ebay_Configuration_Updateable_PaymentStatus_Info'} = 'Vous pouvez avec cette fonction synchroniser le changement de statut des commandes après paiements sur eBay. <br>

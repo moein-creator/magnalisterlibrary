@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -23,6 +23,7 @@ MLI18n::gi()->Description = 'Product-Description';
 MLI18n::gi()->ItemName = 'Product-Title';
 MLI18n::gi()->Weight = 'Weight';
 MLI18n::gi()->ProductType = 'Product type';
+MLI18n::gi()->Shopify_Carrier_Other = 'Other';
 MLI18n::gi()->{'form_config_orderimport_exchangerate_update_help'} = '
 <strong>General:</strong>
 <p>
@@ -66,6 +67,26 @@ MLI18n::gi()->FinancialStatus_Paid = 'Paid';
 MLI18n::gi()->FinancialStatus_PartiallyRefunded = 'Partially refunded';
 MLI18n::gi()->FinancialStatus_Refunded = 'Refunded';
 MLI18n::gi()->FinancialStatus_Voided = 'Voided';
+MLI18n::gi()->CustomerGroupSettingNotSupported = 'This option is not supported by Shopify.';
 
 MLI18n::gi()->set('formfields_config_uploadInvoiceOption_help_erp', '', true);
 MLI18n::gi()->set('formfields_config_uploadInvoiceOption_help_webshop', '', true);
+
+//shopify collection vat matching
+MLI18n::gi()->set('orderimport_shopify_vatmatching_label', 'VAT Matching');
+MLI18n::gi()->set('orderimport_shopifyvatmatching_help', '<p>Shopify does not allow third-party apps to access tax settings. You can therefore make these settings directly in magnalister to import orders with the appropriate VAT rate.</p>
+<p>To do this, match a Shopify Collection with the desired order shipping country and VAT rate. The VAT rates will be stored in the order details during the magnalister order import of Shopify products.</p>
+<b>Notes:</b>
+<ul>
+<li>If products are assigned to multiple Shopify Collections that contain different VAT rates, only the tax rate that was matched first will be applied during the order import.</li>
+<li>If the imported order cannot be matched with a magnalister tax configuration, the default VAT rate provided by the Shopify API will be applied (Example: For orders with order shipping country Germany: 19%).</li>
+<li>If you select the "{#i18n:shopify_global_configuration_vat_matching_option_all#}" option in the "Shopify Collection" dropdown, you can assign a single VAT rate to all products, regardless of the collection applied by Shopify.</li>
+</ul>
+');
+
+MLI18n::gi()->{'orderimport_shopify_vatmatching_collection_label'} = 'Shopify Collection';
+
+MLI18n::gi()->{'orderimport_shopify_vatmatching_shipping_country_label'} = 'Order Shipping Country';
+MLI18n::gi()->{'orderimport_shopifyvatmatching_vatrate_label'} = 'VAT in %';
+MLI18n::gi()->{'shopify_global_configuration_vat_matching_option_all'} = 'All Collections';
+MLI18n::gi()->{'shopify_global_configuration_vat_matching_option_all_countries'} = 'All Countries';

@@ -34,10 +34,10 @@ MLI18n::gi()->{'ebay_prepare_apply_form__legend__variationmatchingcustom__1'} = 
 MLI18n::gi()->{'ebay_prepare_apply_form__legend__shipping'} = 'Shipping';
 MLI18n::gi()->{'ebay_prepare_apply_form__legend__mwst'} = 'VAT';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__title__label'} = 'Product Name';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__title__hint'} = 'Title, max. 80 characters.<br />Placeholders allowed:<br />#BASEPRICE#<br />Please note the <span style="color:red;">Info Text in the Configuration</span> (on Template Product name).';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__title__hint'} = 'Title, max. 80 characters.<br />Placeholders allowed:<br />#BASEPRICE#<br />Please note the <span style="color:#e31a1c;">Info Text in the Configuration</span> (on Template Product name).';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__title__optional__checkbox__labelNegativ'} = 'Use always product title from web-shop';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__label'} = 'Subtitle';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__hint'} = 'Subtitle, max. 55 characters <span style="color:red">requires payment</span> ';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__hint'} = 'Subtitle, max. 55 characters <span style="color:#e31a1c">requires payment</span> ';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__optional__select__false'} = 'Don\'t transfer to eBay';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__subtitle__optional__select__true'} = 'Transfer to eBay';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__pictureurl__label'} = 'eBay-Picture';
@@ -54,13 +54,13 @@ MLI18n::gi()->{'ebay_prepare_apply_form__field__gallerytype__help'} = '<b>Galler
                 <b>Gallery Plus</b><br /><br />
                 Gallery Plus means a  pop-up window with a bigger view of the item, when the customer points with the mouse on the item within the search result list. Please note that the image size must be <b>at least 800x800 px</b>.<br /><br />
                 <b>eBay Fees</b><br /><br />
-                &quot;Gallery Plus&quot; is <span style="color:red">subject to fee on eBay</span> in some categories! RedGecko GmbH does not care responsibility for any eBay fees caused.<br /><br />
+                &quot;Gallery Plus&quot; is <span style="color:#e31a1c;">subject to fee on eBay</span> in some categories! RedGecko GmbH does not care responsibility for any eBay fees caused.<br /><br />
                 <b>Further information</b><br /><br />
                 Please refer to the <a href="http://pages.ebay.com/help/sell/gallery-upgrade.html" target="_blank">eBay help pages</a> for further information.';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__gallerytype__hint'} = 'Gallery setting (&quot;Plus&quot; can <span style="color:red">cause fees on eBay</span> in some categories)';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__gallerytype__hint'} = 'Gallery setting (&quot;Plus&quot; can <span style="color:#e31a1c">cause fees on eBay</span> in some categories)';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__gallerytype__alert__Plus__title'} = 'Gallery Plus';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__gallerytype__alert__Plus__content'} = 'Gallery Plus means a pop-up window with a bigger view of the item, when the customer points with the mouse on the item within the search result list. Please note that the image size must be <b>at least 800x800 px</b>.<br /><br />
-The usage of Gallery Plus can <span style="color:red">cause extra fees</span> in some eBay categories. See  <a href="http://pages.ebay.com/help/sell/gallery-upgrade.html" target="_blank">eBay help page</a> for details.<br /><br />RedGecko GmbH is not responsible for any costs caused.';
+The usage of Gallery Plus can <span style="color:#e31a1c">cause extra fees</span> in some eBay categories. See  <a href="http://pages.ebay.com/help/sell/gallery-upgrade.html" target="_blank">eBay help page</a> for details.<br /><br />RedGecko GmbH is not responsible for any costs caused.';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__description__label'} = 'Description';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__description__hint'} = 'List of available place holders for product description:<dl><dt>#TITLE#</dt><dd>Product name (Titel)</dd><dt>#ARTNR#</dt><dd>Article number from the shop</dd><dt>#PID#</dt><dd>Products ID</dd><!--<dt>#PRICE#</dt><dd>Price</dd><dt>#VPE#</dt><dd>Price per packaging unit</dd>--><dt>#SHORTDESCRIPTION#</dt><dd>Short Description from Shop</dd><dt>#DESCRIPTION#</dt><dd>Description from Shop</dd><dt>#WEIGHT#</dt><dd>Products weight</dd><dt>#PICTURE1#</dt><dd>First Product-Image</dd><dt>#PICTURE2# etc.</dt><dd>Second Product-Image; with #PICTURE3#, #PICTURE4# etc. More Images can be sent, as many as available in the shop.</dd></dl>';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__description__optional__checkbox__labelNegativ'} = 'Use always product description from web-shop';
@@ -101,10 +101,12 @@ MLI18n::gi()->{'ebay_prepare_apply_form__field__paymentmethods__hint'} = 'Accept
 MLI18n::gi()->{'ebay_prepare_apply_form__field__paymentmethods__help'} = 'Preferences for payment methods ( multi-select with Ctrl+click).<br /><br /> Here you can select the payment methods provided by eBay.<br /><br /> If you use „eBay Managed Payments", eBay will not provide any further information about the payment method used by the buyer. ';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__conditionid__label'} = 'Item Condition';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__conditionid__hint'} = 'Condition of item (will be displayed in most eBay categories)';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__conditiondescriptors__label'} = 'Item condition details';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__conditiondescriptors__hint'} = 'Additional information about the item condition (for some categories)';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__conditiondescription__label'} = 'Description of the Condition';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__conditiondescription__hint'} = 'Additional information about the item condition. Not displayed for states like "New" or "New with ...".';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__privatelisting__label'} = 'Private Listing';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__privatelisting__hint'} = 'When activated, the buyer/bidder list cannot be seen by third parties <span style="color:red">requires payment</span> ';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__privatelisting__hint'} = 'When activated, the buyer/bidder list cannot be seen by third parties <span style="color:#e31a1c">requires payment</span> ';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__privatelisting__valuehint'} = 'Activate Private Listing';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__bestofferenabled__label'} = 'Enable Best Offer';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__bestofferenabled__hint'} = 'When active, buyers can offer their best price.';
@@ -112,10 +114,8 @@ MLI18n::gi()->{'ebay_prepare_apply_form__field__bestofferenabled__valuehint'} = 
 MLI18n::gi()->{'ebay_prepare_apply_form__field__ebayplus__label'} = 'eBay Plus';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__ebayplus__hint'} = 'only available if this feature is activated on eBay';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__ebayplus__valuehint'} = 'activate \'eBay Plus\'';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__hitcounter__label'} = 'Enable Hit Counter';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__hitcounter__hint'} = '';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__starttime__label'} = 'Start Time<br />(If allocated)';
-MLI18n::gi()->{'ebay_prepare_apply_form__field__starttime__hint'} = 'An item on eBay is normally active immediately after uploading. Fill out this field to only make it available after the set start time (<span style="color:red">requires payment</span>).';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__starttime__hint'} = 'An item on eBay is normally active immediately after uploading. Fill out this field to only make it available after the set start time (<span style="color:#e31a1c">requires payment</span>).';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__primarycategory__label'} = 'Primary Category';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__primarycategory__hint'} = 'Select';
 MLI18n::gi()->{'ebay_prepare_apply_form__field__secondarycategory__label'} = 'Secondary Category';

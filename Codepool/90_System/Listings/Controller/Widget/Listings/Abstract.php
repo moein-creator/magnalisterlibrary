@@ -25,7 +25,7 @@
 
 MLFilesystem::gi()->loadClass('Tabs_Controller_Widget_Tabs_Abstract');
 
-class ML_Listings_Controller_Widget_Listings_Abstract extends ML_Tabs_Controller_Widget_Tabs_Abstract {
+abstract class ML_Listings_Controller_Widget_Listings_Abstract extends ML_Tabs_Controller_Widget_Tabs_Abstract {
 
     protected $aParameters = array('mp', 'mode', 'view');
     

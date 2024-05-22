@@ -1,6 +1,5 @@
 <?php
-
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,60 +11,67 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2017 RedGecko GmbH -- http://www.redgecko.de/
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
- *
- * Class ML_Shopify_Helper_Model_Price
  */
-class ML_Shopify_Helper_Model_Price 
-{
 
-    public function getPriceByCurrency($mValue, $sCurrency = null, $blFormated = false)
-    {
+class ML_Shopify_Helper_Model_Price {
+
+    public function getPriceByCurrency($mValue, $sCurrency = null, $blFormatted = false, $applyExchangeRate = true) {
         $exchangeRate = 1;
-        $format = array();
 
-        $oShopConfuguration = MLCurrency::gi()->getShopConfigurationAsArray();
+        // cache the ShopConfiguration (to prevent errors from Shipify)
+        $sShopConfigurationCacheKey = 'shopConfigurationAsArray';
+        if (!MLCache::gi()->exists($sShopConfigurationCacheKey)) {
+            $oShopConfiguration = MLCurrency::gi()->getShopConfigurationAsArray();
+            MLCache::gi()->set($sShopConfigurationCacheKey, $oShopConfiguration, 30 * 60);
+        } else {
+            $oShopConfiguration = MLCache::gi()->get($sShopConfigurationCacheKey);
+        }
 
         // reads the currency marketplace
-        $currencyMarketplace = mlmodul::gi()->getConfig('currency');
+        $currencyMarketplace = MLModule::gi()->getConfig('currency');
 
         // Compare the currency of the webshop and marketplace
-        if ($currencyMarketplace!=null && $oShopConfuguration['currency'] != $currencyMarketplace) {
+        if ($currencyMarketplace != null && $oShopConfiguration['currency'] != $currencyMarketplace) {
 
-            // checks if cash does not exist
-            if ( ! MLCache::gi()->exists( 'currencyExchangeRate' ) ) {
-                $currencyExchangeRate = MagnaConnector::gi()->submitRequest( array(
-                    'ACTION'    => 'GetExchangeRate',
-                    'SUBSYSTEM' => 'Core',
-                    'FROM'      => $oShopConfuguration['currency'],
-                    'TO'        => $currencyMarketplace,
-                ) );
-                // Creates cash
-                MLCache::gi()->set( 'currencyExchangeRate', $currencyExchangeRate, 24 * 60 * 60 );
+            // only apply when exchange rate needs to be applied
+            if ($applyExchangeRate) {
+                $cacheKey = 'currencyExchangeRate'.$oShopConfiguration['currency'].$currencyMarketplace;
 
-                // exchange rate difference between webchop and marketplace
-                $exchangeRate = $currencyExchangeRate['EXCHANGERATE'];
-            } else {
-                $exchangeRate = MLCache::gi()->get( 'currencyExchangeRate' )['EXCHANGERATE'];
+                // checks if cache does not exist
+                if (!MLCache::gi()->exists($cacheKey)) {
+                    $currencyExchangeRate = MagnaConnector::gi()->submitRequest(array(
+                        'ACTION'    => 'GetExchangeRate',
+                        'SUBSYSTEM' => 'Core',
+                        'FROM'      => $oShopConfiguration['currency'],
+                        'TO'        => $currencyMarketplace,
+                    ));
+                    // Creates cache
+                    MLCache::gi()->set($cacheKey, $currencyExchangeRate, 4 * 60 * 60);
+
+                    // exchange rate difference between webshop and marketplace
+                    $exchangeRate = $currencyExchangeRate['EXCHANGERATE'];
+                } else {
+                    $exchangeRate = MLCache::gi()->get($cacheKey)['EXCHANGERATE'];
+                }
             }
-              // sets currency for marketplace in default (listCurrencies) currency setting
-              //$format = MLCurrency::gi()->getList()[ $currencyMarketplace ];
 
-              //sets currency for marketplace, setting for shop only currency sign change
-              $format = MLCurrency::gi()->getList()[  $oShopConfuguration['currency'] ];
+            // sets currency for marketplace in default (listCurrencies) currency setting
+            //$format = MLCurrency::gi()->getList()[ $currencyMarketplace ];
 
-              $symboCurrencyMarketplacel= MLCurrency::gi()->getCurrencySymbol($currencyMarketplace);
-              $symboShopConfuguration= MLCurrency::gi()->getCurrencySymbol($oShopConfuguration['currency']);
+            //sets currency for marketplace, setting for shop only currency sign change
+            $format = MLCurrency::gi()->getList()[$oShopConfiguration['currency']];
 
-              $format['symbol_left'] = str_replace($symboShopConfuguration, $symboCurrencyMarketplacel, $format['symbol_left'] );
-              $format['symbol_right'] = str_replace($symboShopConfuguration, $symboCurrencyMarketplacel, $format['symbol_right'] );
+            $symbolCurrencyMarketplace = MLCurrency::gi()->getCurrencySymbol($currencyMarketplace);
+            $symbolShopConfiguration = MLCurrency::gi()->getCurrencySymbol($oShopConfiguration['currency']);
 
-        }else{
-            $format = MLCurrency::gi()->getList()[ $oShopConfuguration['currency' ]];
+            $format['symbol_left'] = str_replace($symbolShopConfiguration, $symbolCurrencyMarketplace, $format['symbol_left']);
+            $format['symbol_right'] = str_replace($symbolShopConfiguration, $symbolCurrencyMarketplace, $format['symbol_right']);
+
+        } else {
+            $format = MLCurrency::gi()->getList()[$oShopConfiguration['currency']];
         }
 
         // account for the exchange rate
@@ -78,16 +84,25 @@ class ML_Shopify_Helper_Model_Price
         $thousandsPoint = $format['thousands_point'] != "" ? $format['thousands_point'] : ',';
         $mValue = number_format($mValue, $decimalPlaces, $decimalPoint, $thousandsPoint);
 
-        if ($sCurrency != null || $blFormated == true) {
-            $mValue =  $format['symbol_left'] . $mValue . $format['symbol_right'];
-
-            return $mValue;
+        if ($sCurrency != null || $blFormatted == true) {
+            $mValue = $format['symbol_left'].$mValue.$format['symbol_right'];
         } else if ($sCurrency === null) {
             $oMLPrice = MLPrice::factory();
             $mValue = $oMLPrice->unformat($mValue);
-
-            return $mValue;
         }
+
+        return $mValue;
+    }
+
+    public function convertPriceFromToCurrency($mValue, $sFromCurrency, $sToCurrency) {
+        $exchangeRate = 1;
+
+        if ($sFromCurrency !== $sToCurrency) {
+            $exchangeRate = $this->getExchangeRate($sFromCurrency, $sToCurrency);
+        }
+        // account for the exchange rate
+        $mValue = (float)($mValue * $exchangeRate);
+        return $mValue;
     }
 
     protected static $aShopConfiguration = null;
@@ -97,9 +112,8 @@ class ML_Shopify_Helper_Model_Price
      *
      * @return array
      */
-    public function getCurrencyAndCurrencyPosition()
-    {
-        if(self::$aShopConfiguration === null) {
+    public function getCurrencyAndCurrencyPosition() {
+        if (self::$aShopConfiguration === null) {
             $aShop = MLCurrency::gi()->getShopConfigurationAsArray();
 
             $priceWithCurrencyFormat = $aShop['money_format'];
@@ -136,6 +150,19 @@ class ML_Shopify_Helper_Model_Price
         }
         return self::$aShopConfiguration;
 
+    }
+
+    protected function getExchangeRate($sShopifyCurrency, $sCurrency) {
+        $currencyExchangeRate = MagnaConnector::gi()->submitRequestCached(array(
+            'ACTION'    => 'GetExchangeRate',
+            'SUBSYSTEM' => 'Core',
+            'FROM'      => $sShopifyCurrency,
+            'TO'        => $sCurrency,
+        ), 4 * 60 * 60);
+        Kint::dump($currencyExchangeRate);
+        // exchange rate difference between webshop and marketplace
+        $exchangeRate = $currencyExchangeRate['EXCHANGERATE'];
+        return $exchangeRate;
     }
 
 }

@@ -1,19 +1,17 @@
 <?php
-/**
- * 888888ba                 dP  .88888.                    dP                
- * 88    `8b                88 d8'   `88                   88                
- * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b. 
- * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88 
- * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88 
- * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P' 
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
  *                          m a g n a l i s t e r
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -27,7 +25,7 @@ class ML_DummyModule_Helper_Model_Table_DummyModule_ConfigData extends ML_Form_H
      * @param array $aField
      */
     public function siteField(&$aField) {
-        foreach (MLModul::gi()->getMarketPlaces() as $aMarketplace) {
+        foreach (MLModule::gi()->getMarketPlaces() as $aMarketplace) {
             $aField['values'][$aMarketplace['Key']] = fixHTMLUTF8Entities($aMarketplace['Label']);
         }
     }   
@@ -36,7 +34,7 @@ class ML_DummyModule_Helper_Model_Table_DummyModule_ConfigData extends ML_Form_H
      * Gets Currency list of DummyModule for config form.
      */
     public function currencyField(&$aField) {
-        foreach (MLModul::gi()->getMarketPlaces() as $aMarketplace) {
+        foreach (MLModule::gi()->getMarketPlaces() as $aMarketplace) {
             $aField['values'][$aMarketplace['Key']] = fixHTMLUTF8Entities($aMarketplace['Currency']);
         }
     }
@@ -130,25 +128,25 @@ class ML_DummyModule_Helper_Model_Table_DummyModule_ConfigData extends ML_Form_H
     }
     
     public function shippingservice_carrierwillpickupField(&$aField) {
-        $aService = MLModul::gi()->MfsGetConfigurationValues('ServiceOptions');
+        $aService = MLModule::gi()->MfsGetConfigurationValues('ServiceOptions');
         $aField['values'] = array_key_exists('CarrierWillPickUp', $aService) ? $aService['CarrierWillPickUp'] : array();
     }
     
     public function shippingservice_deliveryexperienceField(&$aField) {
-        $aService = MLModul::gi()->MfsGetConfigurationValues('ServiceOptions');
+        $aService = MLModule::gi()->MfsGetConfigurationValues('ServiceOptions');
         $aField['values'] = array_key_exists('DeliveryExperience', $aService) ? $aService['DeliveryExperience'] : array();
     }
      
     public function shippinglabel_size_unitField(&$aField) {
-        $aField['values'] = MLModul::gi()->MfsGetConfigurationValues('SizeUnits');
+        $aField['values'] = MLModule::gi()->MfsGetConfigurationValues('SizeUnits');
     }
      
     public function shippinglabel_weight_unitField(&$aField) {
-        $aField['values'] = MLModul::gi()->MfsGetConfigurationValues('WeightUnits');
+        $aField['values'] = MLModule::gi()->MfsGetConfigurationValues('WeightUnits');
     }
     
     public function shippinglabel_address_countryField(&$aField) {
-        $aField['values'] = MLModul::gi()->MfsGetConfigurationValues('Countries');
+        $aField['values'] = MLModule::gi()->MfsGetConfigurationValues('Countries');
     }
 
     public function b2b_price_addKindField (&$aField) {
@@ -178,7 +176,7 @@ class ML_DummyModule_Helper_Model_Table_DummyModule_ConfigData extends ML_Form_H
     public function b2b_tax_code_categoryField(&$aField)
     {
         $aField['values'] = array('' => MLI18n::gi()->get('form_type_matching_select_optional'))
-            + MLModul::gi()->getMainCategories();
+            + MLModule::gi()->getMainCategories();
     }
 
     public function b2bselltoField(&$aField) {
@@ -221,7 +219,7 @@ class ML_DummyModule_Helper_Model_Table_DummyModule_ConfigData extends ML_Form_H
                 }
             }
         } else {
-            $category = MLModul::gi()->getConfig($catSelector);
+            $category = MLModule::gi()->getConfig($catSelector);
             $category = $category ? reset($category) : '';
         }
 

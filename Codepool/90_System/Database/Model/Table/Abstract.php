@@ -86,7 +86,7 @@ abstract class ML_Database_Model_Table_Abstract {
      */
     protected static $aExpiredDeleted = array();
 
-    protected $sInsertCurrentTimeFieldName = '';
+    protected $sInsertCurrentTimeFieldNames = array();
 
     public function __construct() {
         $this->init(true);
@@ -94,7 +94,13 @@ abstract class ML_Database_Model_Table_Abstract {
             MLSession::gi()->set('runOncePerSession', array());
         }
         $aSession = MLSession::gi()->get('runOncePerSession');
-        if (!(isset($aSession['schema']) && in_array($this->sTableName, $aSession['schema']))) {
+        if (
+            (!(isset($aSession['schema']) && in_array($this->sTableName, $aSession['schema']))) ||
+            (
+                MLRequest::gi()->data('updateTables') !== null &&
+                ML::gi()->isAdmin()
+            )
+        ) {
             $aSession['schema'][] = $this->sTableName;
             $this->runOnceSession();
             MLSession::gi()->set('runOncePerSession', $aSession);
@@ -135,6 +141,7 @@ abstract class ML_Database_Model_Table_Abstract {
             $this->aKeys = array();
             foreach ($oRef->getDefaultProperties() as $sKey => $mValue) {
                 $oRefProp = new ReflectionProperty($this, $sKey);
+
                 if(!$oRefProp->isStatic()){
                     $this->$sKey = $mValue;
                 }
@@ -148,7 +155,7 @@ abstract class ML_Database_Model_Table_Abstract {
                     $this->sExpirableFieldName = strtolower($sName);
                 }
                 if (isset($aData['isInsertCurrentTime']) && $aData['isInsertCurrentTime']) {
-                    $this->sInsertCurrentTimeFieldName = strtolower($sName);
+                    $this->sInsertCurrentTimeFieldNames[] = strtolower($sName);
                 }
             }
             $this->setDefaultValues();
@@ -231,7 +238,7 @@ abstract class ML_Database_Model_Table_Abstract {
         } elseif ($this->blLoaded === null) {
             $this->blLoaded = false;
             $oSelect = MLDatabase::factorySelectClass();
-            $aData = $oSelect->select("*")->from($this->sTableName)->where($this->buildWhere())->getResult() ;
+            $aData = $oSelect->select("*")->from($this->sTableName)->where($this->buildWhere())->getResult();
             //echo "<br>".MLDatabase::getDbInstance()->getLastQuery();
             if (!empty($aData)) {
                 $aData = array_shift($aData);
@@ -309,9 +316,13 @@ abstract class ML_Database_Model_Table_Abstract {
         if (!$this->allKeysExists()) {
             throw new Exception('not all keys are set'.$this->getMissingKeysInfo());
         } else {
-            if ($this->sInsertCurrentTimeFieldName != '' && empty($this->aData[$this->sInsertCurrentTimeFieldName])) {
-                // MLMessage::gi()->addDebug($this->sInsertCurrentTimeFieldName);
-                $this->set($this->sInsertCurrentTimeFieldName, date('Y-m-d H:i:s'));
+            if (!empty($this->sInsertCurrentTimeFieldNames)) {
+                foreach ($this->sInsertCurrentTimeFieldNames as $fieldName) {
+                    if (empty($this->aData[$fieldName])) {
+                        //MLMessage::gi()->addDebug($fieldName);
+                        $this->set($fieldName, date('Y-m-d H:i:s'));
+                    }
+                }
             }
             $aData = array();
             $aKeys = array_keys(array_change_key_case($this->aFields, CASE_LOWER));
@@ -371,7 +382,7 @@ abstract class ML_Database_Model_Table_Abstract {
     /**
      * returns value of this->aData
      * @param string $sName
-     * @return mixed
+     * @return mixed|null
      */
     public function get($sName) {
         $sName = strtolower($sName);
@@ -449,7 +460,7 @@ abstract class ML_Database_Model_Table_Abstract {
 
     /**
      *
-     * @return ML_Database_Model_List
+     * @return ML_Database_Model_List|object
      */
     public function getList() {
         $sIdent = MLFilesystem::getIdent($this);

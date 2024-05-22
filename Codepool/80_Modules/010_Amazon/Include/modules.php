@@ -11,17 +11,18 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 MLSetting::gi()->add('aModules', array(
     'amazon' => array(
-        'title' => '{#i18n:sModuleNameAmazon#}',
-        'logo' => 'amazon',
-        'displayAlways' => true,
-        'requiredConfigKeys' => array(
+        'title'                         => '{#i18n:sModuleNameAmazon#}',
+        'logo'                          => 'amazon',
+        'displayAlways'                 => true,
+        'requiredConfigKeys'            => array(
+            'site',
             'lang',
             'mwstfallback',
             'quantity.type',
@@ -37,20 +38,19 @@ MLSetting::gi()->add('aModules', array(
             'mail.send',
             'orderimport.shop',
         ),
-        'authKeys' => array(
-            /*'username' => 'USERNAME', 
-            'password' => 'PASSWORD',*/
-            'mwstoken' => 'MWSToken',
-            'merchantid' => 'MERCHANTID',
-            'marketplaceid' => 'MARKETPLACE', 
-            'site' => 'SITE', 
+        'configKeysNeedsShopValidation' => array(
+            'price.group',
+            'b2b.price.group',
         ),
-        'settings' => array(
-            'defaultpage' => 'prepare',
-            'subsystem' => 'Amazon',
-            'currency' => '__depends__',
+        'authKeys'                      => array(
+            'site' => 'SITE',
+        ),
+        'settings'                      => array(
+            'defaultpage'    => 'prepare',
+            'subsystem'      => 'Amazon',
+            'currency'       => '__depends__',
             'hasOrderImport' => true,
         ),
-        'type' => 'marketplace',
+        'type'                          => 'marketplace',
     ),
 ));

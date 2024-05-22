@@ -15,7 +15,7 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-MLI18n::gi()->{'UploadInvoice_Error_PathNotExists'} = 'Achtung der Server-Pfad "{#ConfigPath#}" existiert nicht. Bitte überprüfen Sie den in der {#setting:currentMarketplaceName#} Marktplatz Konfiguration unter "{#ConfigFieldLabel#} ausgewählten Server-Pfad für die Rechnungen bzw. Gutschriften.';
+MLI18n::gi()->{'UploadInvoice_Error_PathNotExists'} = 'Achtung der Server-Pfad "{#ConfigPath#}" existiert nicht. Bitte überprüfen Sie den in der {#setting:currentMarketplaceName#} Marktplatz Konfiguration unter "{#ConfigFieldLabel#}" ausgewählten Server-Pfad für die Rechnungen bzw. Gutschriften.';
 MLI18n::gi()->{'UploadInvoice_Error_MultipleReceiptsForOneOrder'} = 'Achtung für den/die "{#ConfigFieldLabel#}" besteht eine Rechnungs- bzw. Gutschrift-Dublette (Shop-Bestell-Id: {#ShopOrderId#}). Bitte löschen Sie die Dublette entsprechend.';
 MLI18n::gi()->{'UploadInvoice_Error_NoReceiptsForOneOrder'} = 'Achtung in dem/den "{#ConfigFieldLabel#}" existiert keine Rechnung bzw. Gutschrift zu Shop-Bestell-Id: {#ShopOrderId#}. magnalister kann der Shop-Bestellung daher keine Rechnung / Gutschrift zuordnen und an {#setting:currentMarketplaceName#} übermitteln.';
 MLI18n::gi()->{'UploadInvoice_Error_MoveToDestinationDirectory_Failed'} = 'Die Rechnung / Gutschrift "{#ReceiptFileName#}" konnte nicht in den Ziel-Ordner auf dem Server ({#ConfigDestinationPath#}) verschoben werden. Bitte prüfen Sie die Schreib- und Leserechte für entsprechende Ordner und Dateien auf Ihrem Server!';

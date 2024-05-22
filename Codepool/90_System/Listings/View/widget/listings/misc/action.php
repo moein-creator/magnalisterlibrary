@@ -2,51 +2,28 @@
     throw new Exception(); ?>
 <input type="hidden" id="action" name="<?php echo MLHttp::gi()->parseFormFieldName('action') ?>" value="">
 <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName('timestamp') ?>" value="<?php echo time() ?>">
-<table class="actions">
-    <thead>
-    <tr>
-        <th><?php echo $this->__('ML_LABEL_ACTIONS') ?></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>
-            <div class="actionBottom">
-                <table>
-                    <tbody>
-                    <tr>
-                        <td class="firstChild">
-                            <input type="button" class="mlbtn" value="<?php echo $this->__('ML_BUTTON_LABEL_DELETE') ?>" id="listingDelete" name="<?php echo MLHttp::gi()->parseFormFieldName('listing[delete]'); ?>"/>
-                        </td>
-                        <td>
-                            <?php if ($this->isSearchable()) { ?>
-                                <div class="newSearch">
-                                    <input id="tfSearch" placeholder="<?php $this->__('Productlist_Filter_sSearch') ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('tfSearch') ?>" type="text" value="<?php echo fixHTMLUTF8Entities($this->search, ENT_COMPAT) ?>"/>
-                                    <button type="submit" class="mlbtn action">
-                                        <span></span>
-                                    </button>
-                                </div>
-                            <?php } ?>
-                        </td>
-                        <td class="lastChild">
-                            <table class="right">
-                                <tbody>
-                                <tr>
-                                    <td class="firstChild">
-                                        <!--   @todo hook rightaction -->
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div class="ml-container-action-head">
+    <h4>
+        <?php echo $this->__('ML_LABEL_ACTIONS') ?>
+    </h4>
+</div>
+<div class="ml-container-action">
+    <div class="ml-container-inner ml-container-sm">
+        <input type="button" class="mlbtn" value="<?php echo $this->__('ML_BUTTON_LABEL_DELETE') ?>" id="listingDelete" name="<?php echo MLHttp::gi()->parseFormFieldName('listing[delete]'); ?>"/>
+    </div>
+    <div class="ml-container-inner ml-container-md">
+        <?php if ($this->isSearchable()) { ?>
+            <div class="newSearch">
+                <input id="tfSearch" placeholder="<?php $this->__('Productlist_Filter_sSearch') ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('tfSearch') ?>" type="text" value="<?php echo fixHTMLUTF8Entities($this->search, ENT_COMPAT) ?>"/>
+                <button type="submit" class="mlbtn action">
+                    <span></span>
+                </button>
+            </div>
+        <?php } ?>
+    </div>
+     <div class="ml-container-inner ml-container-sm"></div>
+</div>
+<div class="spacer"></div>
 <script type="text/javascript">/*<![CDATA[*/
     jqml(document).ready(function() {
         jqml('#listingDelete').click(function() {

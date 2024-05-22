@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -158,20 +158,30 @@ class ML_Shopify_Helper_Model_ShopOrder {
             sleep(90);
             self::$numberOfImportedOrder = 0;
         }
+        $this->normalizeOrder();
         if (!is_array($this->aExistingOrderData)
             || count($this->aExistingOrderData) === 0) {
-            return $this->createOrder();
+            $aReturnData = $this->createOrder();
         } else {
             $this->iCustomerId = $this->oExistingOrder->customer->id;
             if ($this->checkForUpdate()) {
                 $this->aNewData = MLHelper::gi('model_service_orderdata_merge')->mergeServiceOrderData($this->aNewData, $this->aExistingOrderData, $this->oOrder);
 
-                return $this->updateStatus();
+                $aReturnData = $this->updateStatus();
             } else {
                 $idOldOrder = $this->oExistingOrder->id;
                 $this->aNewData = MLHelper::gi('model_service_orderdata_merge')->mergeServiceOrderData($this->aNewData, $this->aExistingOrderData, $this->oOrder);
 
-                return $this->createOrder($idOldOrder);
+                $aReturnData = $this->createOrder($idOldOrder);
+            }
+        }
+        return $aReturnData;
+    }
+
+    protected function normalizeOrder() {
+        foreach ($this->aNewData['Totals'] as &$aTotal) {
+            if ($aTotal['Type'] === 'Shipping' && $aTotal['Code'] === 'textfield') {
+                $aTotal['Code'] = MLModule::gi()->getConfig('orderimport.shippingmethod.name');
             }
         }
     }
@@ -240,9 +250,12 @@ class ML_Shopify_Helper_Model_ShopOrder {
                 return '';
             }
 
+            $aData = $this->aNewData;
+            $aAddresses = $aData['AddressSets'];
             $orderBody = [
                 'id'             => $this->oExistingOrder->id,
-                'shipping_lines' => $this->getShippingLine()
+                'shipping_lines' => $this->getShippingLine(),
+                'shipping_address' => $this->formAddress($aAddresses, 'Shipping')
             ];
 
             $modifyOrderParams = new ModifyOrderParams();
@@ -410,7 +423,7 @@ class ML_Shopify_Helper_Model_ShopOrder {
         }
 
         // Load Config Payment Status
-        $sConfigPaymentStatus = MLModul::gi()->getConfig('orderimport.paymentstatus');
+        $sConfigPaymentStatus = MLModule::gi()->getConfig('orderimport.paymentstatus');
 
         // Add transaction to order
         $this->addTransactionToOrderBody($orderBody, $aData, $sConfigPaymentStatus);
@@ -420,7 +433,6 @@ class ML_Shopify_Helper_Model_ShopOrder {
         $orderBody->currency = $sOrderCurrency;
         $orderBody->billing_address = $this->formAddress($aAddresses, 'Billing');
         $orderBody->shipping_address = $this->formAddress($aAddresses, 'Shipping');
-        $orderBody->note_attributes = $this->getAdditionalDetails();
         $orderBody = $this->addProductsAndTotals($aData, $orderBody);
         $orderBody = $this->setOrderStatus($aData, $orderBody);
         $aPayment = $this->getTotal('Payment');
@@ -436,7 +448,8 @@ class ML_Shopify_Helper_Model_ShopOrder {
         }
 
         $this->addTotalTax($orderBody);
-
+        $orderBody->note_attributes = $this->getAdditionalDetails();
+        $this->addOrderName($orderBody);
         $newOrderParams->setOrderBody($orderBody);
         $response = $this->application->getOrderRequest($this->token)->createOrder($newOrderParams);
         if ($response->getCode() == 201) {// order is created successfully
@@ -461,6 +474,8 @@ class ML_Shopify_Helper_Model_ShopOrder {
             }
 
         } else {
+            $aRequest = ML_Shopify_Helper_ShopifyInterfaceRequestHelper::gi()->getLogPerRequest();
+            $this->logShopifyRequest(end($aRequest));
             $this->logShopifyError($response);
             throw new Exception('There is a problem to insert order data: '.$response->getBody());
         }
@@ -765,14 +780,14 @@ class ML_Shopify_Helper_Model_ShopOrder {
      */
     protected function addProductToOrder($aProduct, $iCurrentQty, $orderBody) { //@ToDo: $orderBody is never used
         /** @var ML_Shopify_Model_Product $oProduct */
-        $oProduct = MLProduct::factory();
+        $oProduct = MLShopifyAlias::getProductModel();
         $iVariantId = 0;
         if (MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.keytype')->get('value') === 'pID' && strpos($aProduct['SKU'], '_') === false) {
             $oProduct->getByMarketplaceSKU($aProduct['SKU'], true);
         } else {
             $oProduct->getByMarketplaceSKU($aProduct['SKU']);
         }
-        if (isset($aProduct['SKU']) && $oProduct->exists()) {
+        if (isset($aProduct['SKU']) && $oProduct->exists() && !$oProduct->productContainsComponent()) {
             $aRealProduct = $oProduct->getRealProduct();
             if (!empty($aRealProduct)) {
                 $iVariantId = $aRealProduct['id'];
@@ -785,13 +800,17 @@ class ML_Shopify_Helper_Model_ShopOrder {
         $this->getTaxDecimal = $fTaxPercent / 100;
         $fGross = (float)$aProduct['Price'];
         $fNet = $fGross == 0 ? $fGross : MLPrice::factory()->calcPercentages($fGross, null, $fTaxPercent);
-
+        $sProductTitle = $aProduct['ItemTitle'];
+        if (mb_strlen($sProductTitle) > 255) {
+            $sProductTitle = $this->cutText($aProduct['ItemTitle'], 255);
+            $this->aWarning[] = "Original Item-Title:".$aProduct['ItemTitle'];
+        }
         $aProductArray = array(
             'variant_id' => $iVariantId,
-            'price'      => (string)$fGross.'',
+            'price'      => (string)$fGross,
             'quantity'   => (int)$aProduct['Quantity'],
-            'name'       => $aProduct['ItemTitle'],
-            'title'      => $aProduct['ItemTitle'],
+            'name'       => $sProductTitle,
+            'title'      => $sProductTitle,
             'tax_lines'  => [
                 [
                     'title' => 'VAT',
@@ -823,10 +842,10 @@ class ML_Shopify_Helper_Model_ShopOrder {
     }
 
     protected function getFallbackTax() {
-        $fDefaultProductTax = MLModul::gi()->getConfig('mwst.fallback');
+        $fDefaultProductTax = MLModule::gi()->getConfig('mwst.fallback');
         // fallback
         if ($fDefaultProductTax === null) {
-            $fDefaultProductTax = MLModul::gi()->getConfig('mwstfallback'); // some modules have this, other that
+            $fDefaultProductTax = MLModule::gi()->getConfig('mwstfallback'); // some modules have this, other that
         }
         return $fDefaultProductTax;
     }
@@ -990,43 +1009,57 @@ class ML_Shopify_Helper_Model_ShopOrder {
      * @return boolean
      */
     protected function checkForUpdate() {
+        $blReturn = true;
+        $aReturnLine = [];
         if (count($this->aNewData['Products']) > 0) {
             $this->blNewProduct = true;
+            $aReturnLine[] = __LINE__;
+            $blReturn = false;
+        } else {
 
-            return false;
-        }
+//            if (!$this->checkForShippingAddress()) {
+//                $aReturnLine[] = __LINE__;
+//                $blReturn = false;
+//            } else {
+                $this->blNewAddress = false;
 
-        if (!$this->checkForShippingAddress()) {
-            return false;
-        }
-        $this->blNewAddress = false;
+                $sNewOrderMarketplaceID = $this->aNewData['MPSpecific']['MOrderID'];
+                foreach ($this->aNewData['Totals'] as $aNewTotal) {
+                    $blFound = false;
+                    foreach ($this->aExistingOrderData['Totals'] as $aExistingOrderTotal) {
+                        // we need to check if shipping is may the same as before - because value from api is different to calculated value in shop
+                        if ($aNewTotal['Type'] == $aExistingOrderTotal['Type']) {
+                            $blFound = true;
+                            // specific when ebay recalculates the shipping costs
+                            // Fallback for orgValue changes
+                            if ($aNewTotal['Type'] == 'Shipping' && isset($aExistingOrderTotal['orgValue'][$sNewOrderMarketplaceID])) {
+                                $fExistingOrderTotalValue = (float)$aExistingOrderTotal['orgValue'][$sNewOrderMarketplaceID];
+                            } else {
+                                $fExistingOrderTotalValue = (float)$aExistingOrderTotal['Value'];
+                            }
 
-        $sNewOrderMarketplaceID = $this->aNewData['MPSpecific']['MOrderID'];
-        foreach ($this->aNewData['Totals'] as $aNewTotal) {
-            $blFound = false;
-            foreach ($this->aExistingOrderData['Totals'] as $aExistingOrderTotal) {
-                // we need to check if shipping is may the same as before - because value from api is different to calculated value in shop
-                if ($aNewTotal['Type'] == $aExistingOrderTotal['Type']) {
-                    $blFound = true;
-                    // specific when ebay recalculates the shipping costs
-                    // Fallback for orgValue changes
-                    if ($aNewTotal['Type'] == 'Shipping' && isset($aExistingOrderTotal['orgValue'][$sNewOrderMarketplaceID])) {
-                        $fExistingOrderTotalValue = (float)$aExistingOrderTotal['orgValue'][$sNewOrderMarketplaceID];
-                    } else {
-                        $fExistingOrderTotalValue = (float)$aExistingOrderTotal['Value'];
+                            if ((float)$aNewTotal['Value'] != $fExistingOrderTotalValue) {
+                                $aReturnLine[] = __LINE__;
+                                $blReturn = false;
+                            }
+                        }
                     }
 
-                    if ((float)$aNewTotal['Value'] != $fExistingOrderTotalValue) {
-                        return false;
+                    if (!$blFound) {
+                        $aReturnLine[] = __LINE__;
+                        $blReturn = false;
                     }
-                }
-            }
-
-            if (!$blFound) {
-                return false;
+//                }
             }
         }
-        return true;
+        MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'),
+            array(
+                'MOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
+                'PHP' => get_class($this) . '::' . __METHOD__ . '(' . json_encode($aReturnLine) . ')',
+                'Check For Update Return' => var_export($blReturn, true)
+            )
+        );
+        return $blReturn;
     }
 
     /**
@@ -1040,6 +1073,20 @@ class ML_Shopify_Helper_Model_ShopOrder {
                 if ((isset($this->aNewData['AddressSets'][$sAddressType][$sField]) && !isset($this->aExistingOrderData['AddressSets'][$sAddressType][$sField]))
                     || (isset($this->aNewData['AddressSets'][$sAddressType][$sField]) && $this->aNewData['AddressSets'][$sAddressType][$sField] != $this->aExistingOrderData['AddressSets'][$sAddressType][$sField])
                 ) {
+
+                    MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'),
+                        array(
+                            'MOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
+                            'PHP' => get_class($this) . '::' . __METHOD__ . '(' . __LINE__ . ')',
+                            'Different Address Type' => $sAddressType,
+                            'Different Field' => $sField,
+                            'Different Field Values' => [
+                                $this->aExistingOrderData['AddressSets'][$sAddressType][$sField] ?? '',
+                                $this->aNewData['AddressSets'][$sAddressType][$sField] ?? '',
+
+                            ]
+                        )
+                    );
                     return false;
                 }
             }
@@ -1072,9 +1119,9 @@ class ML_Shopify_Helper_Model_ShopOrder {
         $oI18n = MLI18n::gi();
 
         $aAdditionalDetails = array();
-        //        foreach ($this->aWarning as $sKey => $sWarning){
-        //            $aAdditionalDetails['Warning'][] = $sWarning;
-        //        }
+        foreach ($this->aWarning as $sKey => $sWarning) {
+            $aAdditionalDetails['Warning'][] = $sWarning;
+        }
         $oOrder = $this->oOrder;
         foreach ($this->aNewData['MPSpecific'] as $sKey => $mValue) {
             $aPrefixes = array("_platformName_" => MLI18n::gi()->get('sModuleName'.ucfirst($oOrder->get('platform'))));
@@ -1119,6 +1166,18 @@ class ML_Shopify_Helper_Model_ShopOrder {
         ));
     }
 
+    protected function logShopifyRequest($request, $aExtraData = null) {
+        if (!is_string($request)) {
+            $request = json_encode($request);
+        }
+        MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
+            'MOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
+            'PHP' => get_class($this) . '::' . __METHOD__ . '(' . __LINE__ . ')',
+            'ShopifyResponse' => $request,
+            'Extra' => $aExtraData
+        ));
+    }
+
     protected function normalizePriceForShopify() {
         $fTotalBeforeNormalize = $this->getTotalOrder($this->aNewData);
         foreach ($this->aNewData['Products'] as &$aProduct) {
@@ -1131,14 +1190,18 @@ class ML_Shopify_Helper_Model_ShopOrder {
         unset($aTotal);
         $fTotalAfterNormalize = $this->getTotalOrder($this->aNewData);
         if ($fTotalAfterNormalize !== $fTotalBeforeNormalize) {
+            $sMarketplaceName = MLModule::gi()->getMarketPlaceName(false);
             //content should be discussed
-            $sMessage = 'For this order '.MLModul::gi()->getMarketPlaceName(false).' transfers magnalister price with more than 2 decimal places. But in price fields of the Shopify order you can only enter the price with 2 decimal places.Therefore the amount of the order in Shopify and Amazon are different in second decimal place. This is a limitation in Shopify, so we can\'t show correct price in order details. '.MLModul::gi()->getMarketPlaceName(false).'-Total: '.$fTotalBeforeNormalize.', Shopify-Total: '.$fTotalAfterNormalize;
+            $sMessage = 'For this order, '.$sMarketplaceName.' transfers magnalister a price with more than 2 decimal places. 
+            But in price fields of the Shopify order you can have only 2 decimal places.
+            mgnalister can\'t show correct price in order details because of this limitation in Shopify. 
+            '.$sMarketplaceName.'-Total: '.$fTotalBeforeNormalize.', Shopify-Total: '.$fTotalAfterNormalize;
             MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
                 'MOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
                 'PHP'      => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
                 'Warning'  => $sMessage
             ));
-            $this->aWarning[] = $sMessage;
+            //            $this->aWarning[] = $sMessage;
         }
     }
 
@@ -1181,7 +1244,7 @@ class ML_Shopify_Helper_Model_ShopOrder {
                 ),
             );
             return;
-        } elseif($sConfigPaymentStatus == 'refunded') {
+        } elseif ($sConfigPaymentStatus == 'refunded') {
             $orderBody->transactions = array(
                 array(
                     'amount' => (string)$this->getTotalOrder($aData),
@@ -1189,7 +1252,7 @@ class ML_Shopify_Helper_Model_ShopOrder {
                 ),
             );
             return;
-        } elseif($sConfigPaymentStatus == 'voided') {
+        } elseif ($sConfigPaymentStatus == 'voided') {
             $orderBody->transactions = array(
                 array(
                     'amount' => (string)$this->getTotalOrder($aData),
@@ -1221,7 +1284,13 @@ class ML_Shopify_Helper_Model_ShopOrder {
      */
     protected function getTaxPercentForProducts($aProduct, ML_Shopify_Model_Product $oProduct): float {
         if (isset($aProduct['SKU']) && $oProduct->exists()) {
-            $fTaxPercent = $oProduct->getTax($this->aNewData['AddressSets']);
+            $fTaxPercent = $this->getMatchedTaxForShippingCountry($oProduct, $this->aNewData['AddressSets']['Shipping']['CountryCode']);
+            if ($fTaxPercent === null) {
+                $fTaxPercent = $this->getMatchedTaxForShippingCountry($oProduct, 'all');
+            }
+            if ($fTaxPercent === null) {
+                $fTaxPercent = $oProduct->getTax($this->aNewData['AddressSets']);
+            }
         } else {
             $fTaxPercent = (($aProduct['Tax'] === false) ? $this->getFallbackTax() : $aProduct['Tax']);
         }
@@ -1270,5 +1339,52 @@ class ML_Shopify_Helper_Model_ShopOrder {
                 )
             ));
         }
+    }
+
+    protected function cutText($sText, $iLength, $blDottedEnd = true) {
+        if ($blDottedEnd) {
+            $sText = mb_substr($sText, 0, $iLength - 4, 'UTF8') . "...";
+        } else {
+            $sText = mb_substr($sText, 0, $iLength, 'UTF8');
+        }
+        return $sText;
+    }
+
+    protected function getVATConfig() {
+        $aVatMatchingRates = MLModule::gi()->getConfig('global.vat.matching.rate');
+        $aShopifyCollection = MLModule::gi()->getConfig('global.vat.matching.collection');
+        $aShippingCountry = MLModule::gi()->getConfig('global.vat.matching.shipping.country');
+        if ($aVatMatchingRates === null) {
+            $aVatMatchingRates = MLModule::gi()->getConfig('vat.matching.rate');//to support one old implementation
+            $aShopifyCollection = MLModule::gi()->getConfig('vat.matching.collection');
+            $aShippingCountry = MLModule::gi()->getConfig('vat.matching.shipping.country');
+        }
+        return [$aVatMatchingRates, $aShopifyCollection, $aShippingCountry];
+    }
+
+    protected function getMatchedTaxForShippingCountry(ML_Shopify_Model_Product $oProduct, $countryISO) {
+        [$aVatMatchingRates, $aShopifyCollection, $aShippingCountry] = $this->getVATConfig();
+        //MLMessage::gi()->addDebug(__LINE__.':'.microtime(true), array($aVatMatchingRates));
+        $fTaxPercent = null;
+        if (is_array($aVatMatchingRates) && is_numeric($aVatMatchingRates[0])) {
+            foreach ($aVatMatchingRates as $sKey => $sRate) {
+                if ($countryISO === $aShippingCountry[$sKey]) {
+                    if (in_array($aShopifyCollection[$sKey], $oProduct->getCategoryIds())) {
+                        //MLMessage::gi()->addDebug(__LINE__.':'.microtime(true), array($aShopifyCollection[$sKey], $oProduct->getCategoryIds(),$aVatMatchingRates, $aShopifyCollection));
+                        $fTaxPercent = $sRate;
+                        break;
+                    } else if ($aShopifyCollection[$sKey] === 'all') {
+                        //MLMessage::gi()->addDebug(__LINE__ . ':' . microtime(true), array($sRate));
+                        $fTaxPercent = $sRate;
+                    }
+                }
+            }
+
+        }
+        return $fTaxPercent;
+    }
+
+    protected function addOrderName(stdClass $orderBody) {
+
     }
 }

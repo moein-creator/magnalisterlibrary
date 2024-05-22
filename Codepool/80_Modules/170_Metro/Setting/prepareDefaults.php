@@ -11,14 +11,17 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 //prepare field in this array get their value from config automatically with getFirstValue
 MLSetting::gi()->metro_prepareDefaultsFields = array(
-    'processingtime', 'maxprocessingtime', 'freightforwarding', 'businessmodel',
+    'processingtime',
+    'maxprocessingtime',
+    'freightforwarding',
+    'businessmodel',
 );
 
 MLSetting::gi()->metro_prepareDefaultsOptionalFields = array(

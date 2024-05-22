@@ -17,10 +17,15 @@
  */
 
 MLI18n::gi()->add('formfields', array(
-    'config_shopware6_invoice_documenttype' => array(
+    'config_shopware6_invoice_documenttype'    => array(
         'label' => 'Shopware PDF Document Creation Invoice "Technical Name"',
     ),
     'config_shopware6_creditnote_documenttype' => array(
         'label' => 'Shopware PDF Document Creation Credit Note "Technical Name"',
     ),
 ));
+
+
+MLI18n::gi()->shop_order_attribute_name = 'Shopware free text';
+MLI18n::gi()->shop_order_attribute_creation_instruction = 'You can create free text fields in your Shopware backend under "Settings" -> " Custom fields" (Assign to: Orders) and fill them under "Orders". To do so, open the corresponding order and scroll down to "Custom fields".';
+

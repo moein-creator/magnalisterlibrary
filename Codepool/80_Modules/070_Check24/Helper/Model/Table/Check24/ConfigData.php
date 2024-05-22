@@ -87,4 +87,15 @@ class ML_Check24_Helper_Model_Table_Check24_ConfigData extends ML_Form_Helper_Mo
     public function primaryCategoryField(&$aField) {
 
     }
+
+    public function imagesizeField(&$aField) {
+        $startSize = 500;
+        $maxSize = 2500;
+
+        $aField['values'] = array();
+
+        for ($i = $startSize; $i <= $maxSize; $i += 100) {
+            $aField['values'][(string)$i] = $i."px";
+        }
+    }
 }

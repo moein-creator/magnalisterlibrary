@@ -51,7 +51,7 @@ class ML_Amazon_Model_Service_UploadInvoices extends ML_Modul_Model_Service_Uplo
      * @param mixed $sVCSInvoiceConfig
      * @return string|null
      */
-    protected function getInvoiceOptionConfig() {
+    public function getInvoiceOptionConfig() {
         $sVCSConfig = MLModule::gi()->getConfig('amazonvcs.option');
         if (!in_array($sVCSConfig, array('vcs-lite', 'off'), true)) {
             $this->sInvoiceOptionConfig = null;

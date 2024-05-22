@@ -19,22 +19,23 @@
  * -----------------------------------------------------------------------------
  */
 /** @var ML_MercadoLivre_Controller_MercadoLivre_Prepare_Form $this */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 $sCategoryId = $this->getField('primarycategory', 'value');
 $aRequestFields = $this->getRequestField();
 
 if ($sCategoryId != null) {
-	$bReqiredFields = false;
+    $bReqiredFields = false;
     $i18n = $this->getFormArray('aI18n');
-	$aCategoryInfo = $this->getCategoryInfo($sCategoryId);
+    $aCategoryInfo = $this->getCategoryInfo($sCategoryId);
     $aFieldset = array(
-        'type' => 'fieldset',
-        'id' => $this->getIdent() . '_fieldset_' . $sCategoryId,
+        'type'   => 'fieldset',
+        'id'     => $this->getIdent().'_fieldset_'.$sCategoryId,
         'legend' => array(
-            'i18n' => $i18n['legend']['variationmatching'],
+            'i18n'     => $i18n['legend']['variationmatching'],
             'template' => 'two-columns',
         ),
-        'row' => array(
+        'row'    => array(
             'template' => 'default',
         ),
     );

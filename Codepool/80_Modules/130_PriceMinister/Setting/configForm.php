@@ -19,7 +19,7 @@
 MLSetting::gi()->add('priceminister_config_account', array(
     'tabident' => array(
         'legend' => array(
-            'classes' => array('mlhidden'),
+            'classes' => array(''),
         ),
         'fields' => array(
             array(

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -20,7 +20,6 @@ MLSetting::gi()->add('metro_config_account', array(
     'tabident' => '{#setting:formgroups__tabident#}',
     'account' => '{#setting:formgroups_metro__account#}',
 ), false);
-
 
 MLSetting::gi()->add('metro_config_prepare', array(
     'prepare' => '{#setting:formgroups_metro__prepare#}',
@@ -32,6 +31,7 @@ MLSetting::gi()->add('metro_config_priceandstock', array(
     'quantity' => '{#setting:formgroups_metro__quantity#}',
     'price' => '{#setting:formgroups__genericprice#}',
     'sync' => '{#setting:formgroups__sync#}',
+    'volumeprices' => '{#setting:formgroups_metro__volumeprices#}',
 ), false);
 
 MLSetting::gi()->add('metro_config_order', array(
@@ -49,11 +49,9 @@ MLSetting::gi()->add('metro_config_emailtemplate', array(
 ), false);
 
 MLSetting::gi()->add('metro_config_invoice', array(
-    'metroInvoice' => '{#setting:formgroups_metro__invoice#}',
+    'invoice' => '{#setting:formgroups_metro__invoice#}',
     'erpInvoice'   => '{#setting:formgroups_metro__erpInvoice#}',
     'magnaInvoice' => '{#setting:formgroups_metro__magnaInvoice#}',
 ), false);
 
-//echo print_m(MLSetting::gi()->get('metro_config_invoice'));
-//$line = __FILE__.__LINE__;die($line);
 

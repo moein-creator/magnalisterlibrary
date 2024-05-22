@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,13 +12,10 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-
-use Shopify\API\Application\Request\Products\CountProducts\CountProductsParams;
-use Shopify\API\Application\Request\Products\ListOfProducts\ListOfProductsParams;
 
 //if ML::isInstalled() === false then it won't load init folder, we should include these classes like this
 include_once __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Helper'.DIRECTORY_SEPARATOR.'MLShopifyAlias.php';
@@ -44,6 +41,8 @@ class ML_Shopify_Update_ProductCache extends ML_Core_Update_Abstract {
     protected $iLimitationOfIteration = 40;
 
     public function needExecution() {
+        //skip that for update process, it can make update process very long
+        return false;
         //Lock prevent to run updating same product in same time from two different call
         //here we don't use MLCache, instead we use database cache
         //because this will be executed also during update process of plugin, and all cache files will be deleted automatically by updating
@@ -55,111 +54,111 @@ class ML_Shopify_Update_ProductCache extends ML_Core_Update_Abstract {
         return $this->getTotalCountOfProduct() > 0;
     }
 
-    public function execute() {
-        $this->oCacheDB->set('value', time())->save();
-        $iCurrentPage = $this->getPage();
-        while ($this->iNumberOfRepeat < $this->iLimitationOfIteration) {
-            $aListOfProductsParams = new ListOfProductsParams();
-            $aListOfProductsParams->setLimit(MLSetting::gi()->ShopifyProductRequestLimit);
-            $aListOfProductsParams->setPage($iCurrentPage);
-            $sUpdatedAtMin = $this->getUpdatedAtMin();
-            if ($sUpdatedAtMin !== null) {
-                $aListOfProductsParams->setUpdatedAtMin($sUpdatedAtMin);
-            }
-            $aProducts = MLShopifyAlias::getProductHelper()->getProductListFromShopify($aListOfProductsParams);
-
-            foreach ($aProducts as $aProduct) {
-                $aProduct['MethodOfUpdate'] = 'update';
-                try {
-                    MLShopifyAlias::getProductModel()
-                        ->loadByShopProduct($aProduct) //insert master product
-                        ->getVariants() // insert variants
-                    ;
-                } catch (\Exception $oEx) {
-                    MLMessage::gi()->addDebug($oEx, array());
-                }
-            }
-
-            if ((int)$this->getProgress() >= 100) {
-                $oTimeZone = $this->getTimeZone();
-                if ($oTimeZone === null) {
-                    $oUpdateTime = new DateTime('now');
-                } else {
-                    $oUpdateTime = new DateTime('now', $oTimeZone);
-                }
-                MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyUpdatedAtMin')->set('value', $oUpdateTime->format('c'))->save();
-            }
-            $this->iNumberOfRepeat++;
-        }
-        $this->oCacheDB->delete();
-        return $this;
-    }
-
-    /**
-     * return a number between 0 and 100 to present the percent of progress
-     * @return float|int
-     */
-    public function getProgress() {
-        $totalCount = $this->getTotalCountOfProduct();
-        if($totalCount === 0 || $this->getPage() > $totalCount ) {
-            return 100;
-        } else {
-            return $this->getPage() * MLSetting::gi()->ShopifyProductRequestLimit / $totalCount * 100;
-        }
-    }
-
-    protected function getTotalCountOfProduct(){
-        $countProductsParams = new CountProductsParams();
-        $sUpdatedAtMin = $this->getUpdatedAtMin();
-        if($sUpdatedAtMin !== null) {
-            $countProductsParams->setUpdatedAtMin($sUpdatedAtMin);
-        }
-        return (int)MLShopifyAlias::getProductHelper()->getProductListCount($countProductsParams);
-    }
-
-    /**
-     * If it is needed to send extra parameter to manage steps of process in
-     * @return array
-     */
-    public function getUrlExtraParameters() {
-        return array(
-            'shopifyProductPage' => $this->getPage(),
-            'shopifyUpdatedAtMin' => $this->getUpdatedAtMin(),
-        );
-    }
-
-    public function getInfo() {
-        return MLI18n::gi()->get('installation_message_importing_shopify_product_into_magnalister');
-    }
-
-    /**
-     * @return int
-     */
-    protected function getPage() {
-        return (int)MLRequest::gi()->data('shopifyProductPage') + $this->iNumberOfRepeat;
-    }
-
-
-    /**
-     * get date to limit products and get only updated product
-     * @return string
-     */
-    protected function getUpdatedAtMin() {
-        $sRequestTime = MLRequest::gi()->data('shopifyUpdatedAtMin');
-        if($sRequestTime === null) {
-            $sRequestTime = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyUpdatedAtMin')->get('value');
-        }
-        return $sRequestTime;
-    }
-
-    protected function getTimeZone() {
-        if ($this->oTimeZone === null) {
-            $aShop = MLShopifyAlias::getShopHelper()->getShopConfigurationAsArray();
-            if (!empty($aShop['timezone'])) {
-                $this->oTimeZone = new DateTimeZone($aShop['timezone']);
-            }
-        }
-        return $this->oTimeZone;
-    }
+    //    public function execute() {
+    //        $this->oCacheDB->set('value', time())->save();
+    //        $iCurrentPage = $this->getPage();
+    //        while ($this->iNumberOfRepeat < $this->iLimitationOfIteration) {
+    //            $aListOfProductsParams = new ListOfProductsParams();
+    //            $aListOfProductsParams->setLimit(MLSetting::gi()->ShopifyProductRequestLimit);
+    //            $aListOfProductsParams->setPage($iCurrentPage);
+    //            $sUpdatedAtMin = $this->getUpdatedAtMin();
+    //            if ($sUpdatedAtMin !== null) {
+    //                $aListOfProductsParams->setUpdatedAtMin($sUpdatedAtMin);
+    //            }
+    //            $aProducts = MLShopifyAlias::getProductHelper()->getProductListFromShopify($aListOfProductsParams);
+    //
+    //            foreach ($aProducts as $aProduct) {
+    //                $aProduct['MethodOfUpdate'] = 'update';
+    //                try {
+    //                    MLShopifyAlias::getProductModel()
+    //                        ->loadByShopProduct($aProduct) //insert master product
+    //                        ->getVariants() // insert variants
+    //                    ;
+    //                } catch (\Exception $oEx) {
+    //                    MLMessage::gi()->addDebug($oEx, array());
+    //                }
+    //            }
+    //
+    //            if ((int)$this->getProgress() >= 100) {
+    //                $oTimeZone = $this->getTimeZone();
+    //                if ($oTimeZone === null) {
+    //                    $oUpdateTime = new DateTime('now');
+    //                } else {
+    //                    $oUpdateTime = new DateTime('now', $oTimeZone);
+    //                }
+    //                MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyUpdatedAtMin')->set('value', $oUpdateTime->format('c'))->save();
+    //            }
+    //            $this->iNumberOfRepeat++;
+    //        }
+    //        $this->oCacheDB->delete();
+    //        return $this;
+    //    }
+    //
+    //    /**
+    //     * return a number between 0 and 100 to present the percent of progress
+    //     * @return float|int
+    //     */
+    //    public function getProgress() {
+    //        $totalCount = $this->getTotalCountOfProduct();
+    //        if($totalCount === 0 || $this->getPage() > $totalCount ) {
+    //            return 100;
+    //        } else {
+    //            return $this->getPage() * MLSetting::gi()->ShopifyProductRequestLimit / $totalCount * 100;
+    //        }
+    //    }
+    //
+    //    protected function getTotalCountOfProduct(){
+    //        $countProductsParams = new CountProductsParams();
+    //        $sUpdatedAtMin = $this->getUpdatedAtMin();
+    //        if($sUpdatedAtMin !== null) {
+    //            $countProductsParams->setUpdatedAtMin($sUpdatedAtMin);
+    //        }
+    //        return (int)MLShopifyAlias::getProductHelper()->getProductListCount($countProductsParams);
+    //    }
+    //
+    //    /**
+    //     * If it is needed to send extra parameter to manage steps of process in
+    //     * @return array
+    //     */
+    //    public function getUrlExtraParameters() {
+    //        return array(
+    //            'shopifyProductPage' => $this->getPage(),
+    //            'shopifyUpdatedAtMin' => $this->getUpdatedAtMin(),
+    //        );
+    //    }
+    //
+    //    public function getInfo() {
+    //        return MLI18n::gi()->get('installation_message_importing_shopify_product_into_magnalister');
+    //    }
+    //
+    //    /**
+    //     * @return int
+    //     */
+    //    protected function getPage() {
+    //        return (int)MLRequest::gi()->data('shopifyProductPage') + $this->iNumberOfRepeat;
+    //    }
+    //
+    //
+    //    /**
+    //     * get date to limit products and get only updated product
+    //     * @return string
+    //     */
+    //    protected function getUpdatedAtMin() {
+    //        $sRequestTime = MLRequest::gi()->data('shopifyUpdatedAtMin');
+    //        if($sRequestTime === null) {
+    //            $sRequestTime = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyUpdatedAtMin')->get('value');
+    //        }
+    //        return $sRequestTime;
+    //    }
+    //
+    //    protected function getTimeZone() {
+    //        if ($this->oTimeZone === null) {
+    //            $aShop = MLShopifyAlias::getShopHelper()->getShopConfigurationAsArray();
+    //            if (!empty($aShop['timezone'])) {
+    //                $this->oTimeZone = new DateTimeZone($aShop['timezone']);
+    //            }
+    //        }
+    //        return $this->oTimeZone;
+    //    }
 
 }

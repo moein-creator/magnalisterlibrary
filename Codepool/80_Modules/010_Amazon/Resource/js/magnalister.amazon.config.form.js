@@ -10,10 +10,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 (function($) {
     function checkVCSOption(optionCase) {
         var select = jqml('.magnalisterForm #amazon_config_vcs_field_amazonvcs_invoice');
@@ -83,7 +84,26 @@
         $("#amazon_config_orderimport_field_orderimport_fbapaymentmethod").prop("disabled", status);
     }
 
+    function disableGetTokenButton (status) {
+        $("#requestToken").prop("disabled", status);
+    }
+
     jqml(document).ready(function() {
+
+        var siteField = $("#amazon_config_account_field_site");
+
+        if (siteField.val() === "0"){
+            disableGetTokenButton(true)
+        }
+
+        siteField.change(function() {
+            if ($("#amazon_config_account_field_site").val() === "0"){
+                disableGetTokenButton(true)
+            } else {
+                disableGetTokenButton(false)
+            }
+        });
+
         var invoiceDiv = jqml(".magnalisterForm #amazon_config_vcs_fieldset_amazonvcsinvoice");
         var invoiceOption = jqml('.magnalisterForm #amazon_config_vcs_field_amazonvcs_invoice');
 

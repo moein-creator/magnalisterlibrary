@@ -11,10 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 $sMarketplaceOrderId = 'TestOrder-'.uniqid();
 $sMarketplaceOrderNumber = 'TestOrder-'.uniqid();
 MLSetting::gi()->main_tools_testorders = array(
@@ -29,6 +30,7 @@ MLSetting::gi()->main_tools_testorders = array(
             array(
                 'name'   => 'MPSpecific',
                 'i18n'   => array('label' => 'MPSpecific', 'hint' => ''),
+                'cssclass' => ['ml-tools-testorder-mpspecificbox'],
                 'values' => array(
                     'amazon'  => array(
                         'FulfillmentChannel'  => 'AFN',
@@ -46,6 +48,10 @@ MLSetting::gi()->main_tools_testorders = array(
                     ),
                     'dawanda' => array(
                         'BuyerUsername' => 'BuyerUsername-'.uniqid()
+                    ),
+                    'hitmeister' => array(
+                        'MOrderID' => $sMarketplaceOrderId,
+                        'FulfillmentType' => 'fulfilled_by_merchant',
                     ),
                     'default' => array(
                         'MOrderID' => $sMarketplaceOrderId
@@ -68,7 +74,7 @@ MLSetting::gi()->main_tools_testorders = array(
                     'amazon'  => '
                         <table class="datagrid">
                             <thead>
-                                <tr><th colspan="2">FulfillmentChannel</th></tr>
+                                <tr><th colspan="2">FulfillmentType</th></tr>
                             </thead>
                             <tbody>
                                 <tr><td>MFN</td><td>order is payed</td></tr>
@@ -98,6 +104,17 @@ MLSetting::gi()->main_tools_testorders = array(
                      "ML_TEXT_WARNING":"ML_EBAY_PLUS_ORDER_WRONG_SHIPPING"</p>'
                     ,
                     'dawanda' => 'Depend on dawanda-setting, "BuyerUsername" will identify customer.',
+                    'hitmeister' => '
+                        <table class="datagrid">
+                            <thead>
+                                <tr><th colspan="2">FulfillmentChannel</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>fulfilled_by_merchant</td><td>order is payed</td></tr>
+                                <tr><td>fulfilled_by_kaufland</td><td>order is payed and shipped</td></tr>
+                            </tbody>
+                        </table>
+                    ',
                     'default' => 'No specific info',
                 ),
             ),
@@ -117,6 +134,8 @@ MLSetting::gi()->main_tools_testorders = array(
                     'Company'       => false,
                     'StreetAddress' => 'Teststrasse 43',
                     'Street'        => 'Teststrasse',
+                    'AddressAddition' => '123456',
+                    'UstId'=> '123456789',
                     'Housenumber'   => '43',
                     'Postcode'      => '1234',
                     'City'          => 'Teststadt',
@@ -138,6 +157,7 @@ MLSetting::gi()->main_tools_testorders = array(
                 'name'  => 'Order',
                 'type'  => 'text',
                 'i18n'  => array('label' => 'Order', 'hint' => ''),
+                'cssclass' => ['ml-tools-testorder-orderbox'],
                 'value' => array(
                     'Currency'      => 'EUR',
                     'DatePurchased' => date('Y-m-d H:i:s'),
@@ -164,6 +184,7 @@ MLSetting::gi()->main_tools_testorders = array(
             ),
             array(
                 'name'  => 'Products',
+                'cssclass' => ['ml-tools-testorder-productbox'],
                 'i18n'  => array('label' => 'Products', 'hint' => ''),
                 'value' => array(
                     array(
@@ -183,6 +204,7 @@ MLSetting::gi()->main_tools_testorders = array(
         'fields' => array(
             array(
                 'optional' => array(),
+                'cssclass' => ['ml-tools-testorder-jsondatabox'],
                 'name'     => 'CompleteJsonData',
                 'i18n'     => array('label' => 'Complete Json Data', 'hint' => 'You can put complete json data here and import'),
                 'value'    => array(

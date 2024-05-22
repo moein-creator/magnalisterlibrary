@@ -2,6 +2,7 @@
                         $aSelect = array(
                             'name' => $aField['name'] . '[0][Shop][Key]',
                             'type' => 'otto_select2',
+                            'isbrand' => $aField['isbrand'],
                             'i18n' => array(),
                             'values' => $aField['valuessrc'],
                             'value' => 'noselection',

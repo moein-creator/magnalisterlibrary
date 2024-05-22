@@ -18,7 +18,7 @@
 
 MLFilesystem::gi()->loadClass('Core_Controller_Abstract');
 
-class ML_Listings_Controller_Widget_Listings_DeletedAbstract extends ML_Core_Controller_Abstract {
+abstract class ML_Listings_Controller_Widget_Listings_DeletedAbstract extends ML_Core_Controller_Abstract {
 
     protected $marketplace = '';
     protected $aSetting = array();
@@ -32,8 +32,8 @@ class ML_Listings_Controller_Widget_Listings_DeletedAbstract extends ML_Core_Con
     public function __construct() {
         parent::__construct();
         $this->aPostGet = MLRequest::gi()->data();
-        $this->marketplace = MLModul::gi()->getMarketPlaceName();
-        $aConfig = MLModul::gi()->getConfig();
+        $this->marketplace = MLModule::gi()->getMarketPlaceName();
+        $aConfig = MLModule::gi()->getConfig();
         $this->aSetting['maxTitleChars'] = 40;
         $this->aSetting['itemLimit'] = 50;
         $this->aSetting['language'] = $aConfig['lang'];
@@ -60,7 +60,7 @@ class ML_Listings_Controller_Widget_Listings_DeletedAbstract extends ML_Core_Con
     public function prepareData() {
         $oSelect = MLDatabase::factorySelectClass();
 		$oSelect->from('magnalister_listings_deleted');
-		$oSelect->where('mpID = '.MLModul::gi()->getMarketPlaceId());
+        $oSelect->where('mpID = ' . MLModule::gi()->getMarketPlaceId());
 		
         $this->numberofitems = (int) $oSelect->getCount();
         $this->pages = ceil($this->numberofitems / $this->aSetting['itemLimit']);
@@ -108,6 +108,8 @@ class ML_Listings_Controller_Widget_Listings_DeletedAbstract extends ML_Core_Con
                 break;
         }
     }
+
+    abstract public static function getTabTitle();
 
     public function getFields() {
         return array(

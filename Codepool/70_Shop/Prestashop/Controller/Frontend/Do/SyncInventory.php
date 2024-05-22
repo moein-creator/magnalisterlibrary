@@ -2,6 +2,14 @@
 
 MLFilesystem::gi()->loadClass('Sync_Controller_Frontend_Do_SyncInventory');
 
+/**
+ * If a magnalister user has managed different marketplaces onther magnalister plugin,
+ * and if different currency are related to configured mandant-shop for marketplaces, they couldn't be synchronized in same load of PHP
+ * we prevent to sync, because it is problematic in prestashop
+ *
+ * @ToDo The procedure of preventing is wrong, we should try to synchronize one of marketplace in each synchronization CRON
+ * Information: Till now I didn't see any client with the same case, so it is not needed to do this task very soon
+ */
 class ML_Prestashop_Controller_Frontend_Do_SyncInventory extends ML_Sync_Controller_Frontend_Do_SyncInventory {
     
     public function execute(){
@@ -36,18 +44,20 @@ class ML_Prestashop_Controller_Frontend_Do_SyncInventory extends ML_Sync_Control
     
     public function syncMultiMPAllowed($aMpIds) {
         $blReturn = true;
-        if(!empty($aMpIds)){
+        if(!empty($aMpIds)) {
             $aShopIds = MLDatabase::factorySelectClass()->select('Distinct(value)')->from(MLDatabase::factory('config')->getTableName())
-                    ->where("mkey = 'orderimport.shop' AND mpid in (".implode(',', $aMpIds).")")->getResult();
+                ->where("mkey = 'orderimport.shop' AND mpid in (".implode(',', $aMpIds).")")->getResult();
             $aFirstShop = array_shift($aShopIds);
             $oCurrency = MLCurrency::gi();
-            $iCurrency = $oCurrency->getShopCurrency($aFirstShop['value']);
-            foreach ($aShopIds as $iId){
-                if($iCurrency != $oCurrency->getShopCurrency($iId['value'])){
-                    $blReturn = false;
-                    break;
+            if (isset($aFirstShop['value'])) {
+                $iCurrency = $oCurrency->getShopCurrency($aFirstShop['value']);
+                foreach ($aShopIds as $iId) {
+                    if ($iCurrency != $oCurrency->getShopCurrency($iId['value'])) {
+                        $blReturn = false;
+                        break;
+                    }
+
                 }
-            
             }
         }
         return $blReturn;

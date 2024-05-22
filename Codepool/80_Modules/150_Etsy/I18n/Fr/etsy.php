@@ -10,9 +10,11 @@ MLI18n::gi()->{'etsy_prepare_price_not_valid'} = 'Minimum item price on Etsy is 
 MLI18n::gi()->{'etsy_prepare_quantity_not_valid'} = 'The stock for a product must not be larger than 999.';
 
 MLI18n::gi()->{'etsy_inventory_listing_status_new'} = 'Product will be created';
-MLI18n::gi()->{'etsy_inventory_listing_status_update'} = 'Product will be updated';
 MLI18n::gi()->{'etsy_inventory_listing_status_active'} = 'Actif';
 MLI18n::gi()->{'etsy_inventory_listing_status_inactive'} = 'Inactif';
+MLI18n::gi()->{'etsy_inventory_listing_status_expired'} = 'Expired';
+MLI18n::gi()->{'etsy_inventory_listing_status_draft'} = 'Draft';
+MLI18n::gi()->{'etsy_inventory_listing_status_sold_out'} = 'Sold Out';
 
 MLI18n::gi()->{'etsy_checkin_purge_popup_text'} = '
 <p><strong>Veuillez noter que :</strong> Vous &ecirc;tes sur le point de remplacer compl&egrave;tement votre inventaire sur Etsy. Ce processus supprime d\'abord compl&egrave;tement votre inventaire du march&eacute; et le remplace ensuite par les &eacute;l&eacute;ments s&eacute;lectionn&eacute;s ici.</p>

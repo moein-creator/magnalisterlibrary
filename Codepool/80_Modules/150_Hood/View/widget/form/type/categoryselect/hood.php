@@ -15,7 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
     <table class="attributesTable">
         <?php foreach ($aField['subfields'] as $aSubField) { ?>

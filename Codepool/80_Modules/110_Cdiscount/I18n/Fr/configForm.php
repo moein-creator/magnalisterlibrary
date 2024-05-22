@@ -16,7 +16,7 @@
  * -----------------------------------------------------------------------------
  */
 
-MLI18n::gi()->cdiscount_config_carrier_other = 'Autre';
+MLI18n::gi()->{'cdiscount_config_use_shop_value'} = 'Reprendre de la boutique';
 MLI18n::gi()->{'cdiscount_config_account_title'} = 'Mes coordonnées';
 MLI18n::gi()->{'cdiscount_config_account_prepare'} = 'Préparation d\'article';
 MLI18n::gi()->{'cdiscount_config_account_price'} = 'Calcul du prix';
@@ -84,7 +84,7 @@ MLI18n::gi()->{'cdiscount_configform_orderimport_shipping_values__textfield__tit
 MLI18n::gi()->{'cdiscount_configform_orderimport_shipping_values__textfield__textoption'} = '1';
 MLI18n::gi()->{'cdiscount_configform_orderimport_shipping_values__matching__title'} = 'Prendre le relais du marché';
 MLI18n::gi()->{'cdiscount_config_account__legend__account'} = 'Mes coordonnées';
-MLI18n::gi()->{'cdiscount_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'cdiscount_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'cdiscount_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'cdiscount_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'cdiscount_config_account__field__mpusername__label'} = 'Votre identifiant (API)';
@@ -244,7 +244,7 @@ MLI18n::gi()->{'cdiscount_config_sync__field__stocksync.frommarketplace__label'}
 MLI18n::gi()->{'cdiscount_config_sync__field__stocksync.frommarketplace__help'} = 'Si cette fonction est activée le nombre de commandes effectués et payés sur Cdiscount sera soustrait de votre stock boutique.<br>
 <br>
 <b>Attention :</b> cette fonction ne s’exécute que si  l’importation des commandes est activée!';
-MLI18n::gi()->{'cdiscount_config_sync__field__inventorysync.price__label'} = 'Prix de l\'article';
+MLI18n::gi()->{'cdiscount_config_sync__field__inventorysync.price__label'} = 'Prix de l&apos;article';
 MLI18n::gi()->{'cdiscount_config_sync__field__inventorysync.price__help'} = '                <p>
                     La fonction "synchronisation automatique" compare toutes les 4 heures (à partir de 0:00 dans la nuit) l\'état actuel des prix sur Cdiscount et les prix de votre boutique.<br>
                     Ainsi les valeurs venant de la base de données sont vérifiées et appliquées même si des changements, par exemple, dans la gestion des marchandises, sont seulement réalisés dans la base de données.<br><br> 
@@ -292,9 +292,6 @@ MLI18n::gi()->{'cdiscount_config_orderimport__field__preimport.start__hint'} = '
 MLI18n::gi()->{'cdiscount_config_orderimport__field__preimport.start__help'} = 'Les commandes seront importées à partir de la date que vous saisissez dans ce champ. Veillez cependant à ne pas donner une date trop éloignée dans le temps pour le début de l’importation, car les données sur les serveurs de Cdiscount ne peuvent être conservées, que quelques semaines au maximum. <br>
 <br>
 <b>Attention</b> : les commandes non importées ne seront après quelques semaines plus importables!';
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.shipmethod__label'} = 'Méthode d\'expédition';
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.shipmethod__hint'} = 'Sélectionnez la méthode d\'expédition qui est attribuée par défaut à toutes les commandes Cdiscount.';
-
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.open__label'} = 'Statut de la commande dans votre boutique';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.open__hint'} = '';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.open__help'} = 'Le statut des commandes dans votre boutique qui sera attribué automatiquement aux commandes provenant de la place de marché.';
@@ -306,9 +303,6 @@ MLI18n::gi()->{'cdiscount_config_orderimport__field__orderimport.shippingmethod_
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderimport.shippingmethod__help'} = 'Mode d\'envoi assigné à toutes les commandes Cdiscount. Standard : « Cdiscount ».<br><br>
 Ce réglage est important pour l\'impression des bons de livraison, des factures et pour le
 traitement de la commande en boutique et en stock.';
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.shipmethod.freetext__label'} = 'Méthode d\'expédition:';
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.shipmethod.freetext__placeholder'} = 'Entrez votre méthode d\'expédition ici';
-
 MLI18n::gi()->{'cdiscount_config_orderimport__field__customergroup__label'} = 'Groupe de client';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__customergroup__help'} = 'Vous pouvez choisir ici un groupe dans lesquel vos clients seront classés. Pour créer des groupes, rendez-vous dans le menu de l\'administration de votre boutique PrestaShop ->Clients ->Groupes. Lorsqu\'ils sont créés, ils apparaissent dans la liste de choix proposée. ';
 MLI18n::gi()->{'cdiscount_config_emailtemplate__legend__mail'} = '{#i18n:configform_emailtemplate_legend#}';
@@ -337,3 +331,5 @@ MLI18n::gi()->{'cdiscount_config_emailtemplate__field__mail.content__hint'} = 'L
         </dl>';
 MLI18n::gi()->{'cdiscount_config_emailtemplate__field__mail.copy__label'} = 'Copie à l\'expéditeur';
 MLI18n::gi()->{'cdiscount_config_emailtemplate__field__mail.copy__help'} = 'Activez cette fonction si vous souhaitez recevoir une copie du courriel.';
+MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.carrier__label'} = 'Shipping Carrier';
+MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.carrier__help'} = '';

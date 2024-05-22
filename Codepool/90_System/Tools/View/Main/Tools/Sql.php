@@ -2,7 +2,7 @@
 if (!class_exists('ML', false))
     throw new Exception();
 MLSettingRegistry::gi()->addJs('magnalister.tools.sql.js');
-MLSetting::gi()->add('aCss', array('magnalister.tools.sql.css'), true);
+MLSettingRegistry::gi()->addCss('magnalister.tools.sql.css');
 ?>
 <div id="magnaToolsSql">
     <h2>SQL</h2>
@@ -39,7 +39,7 @@ MLSetting::gi()->add('aCss', array('magnalister.tools.sql.css'), true);
                             <?php foreach ($aData as $aRow) {?>
                                 <tr>
                                     <?php foreach ($aRow as $sKey => $sItem) {?>
-                                    <td class="<?php echo strtolower($sKey)?>"><?php echo htmlspecialchars($sItem,null,'UTF-8') ?></td>
+                                    <td class="<?php echo strtolower($sKey)?>"><?php echo htmlspecialchars(var_export($sItem, true),ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8') ?></td>
                                     <?php } ?>
                                 </tr>
                             <?php }?>

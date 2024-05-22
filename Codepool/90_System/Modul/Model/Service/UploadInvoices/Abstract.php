@@ -78,7 +78,13 @@ class ML_Modul_Model_Service_UploadInvoices_Abstract extends ML_Modul_Model_Serv
     }
 
     public function execute() {
-        if (in_array($this->getInvoiceOptionConfig(), array('erp', 'webshop', 'magna'), true)) {
+        $invoiceOptions = array(
+            'erp',
+            'webshop',
+            'magna',
+            'germanmarket' // WooCommerce - German Market Modul
+        );
+        if (in_array($this->getInvoiceOptionConfig(), $invoiceOptions, true)) {
             $offset = 0;
 
             $runOnce = false;
@@ -101,8 +107,20 @@ class ML_Modul_Model_Service_UploadInvoices_Abstract extends ML_Modul_Model_Serv
                     MLHelper::gi('stream')->higher('');
                     return;
                 }
-
                 $aOrders = $aResults['DATA'];
+                if (MLRequest::gi()->data('TestOrderId') !== null) {
+                    $sType = MLRequest::gi()->data('TestOrderType');
+                    if ($sType === null) {
+                        $sType = 'Invoice';//SHIPMENT, RETURN, REFUND, Reversal
+                    }
+                    $aOrders = [
+                        [
+                            $this->sOrderIdIndexName => MLRequest::gi()->data('TestOrderId'), //marketplace order id
+                            $this->sDocumentTypeIndexName => $sType
+                        ]
+                    ];
+                }
+//                $line = __FILE__.__LINE__;die($line);
                 $this->displayListOfProcessingOrder($aOrders);
 
                 MLHelper::gi('stream')->deeper('Confirmation result');
@@ -145,7 +163,7 @@ class ML_Modul_Model_Service_UploadInvoices_Abstract extends ML_Modul_Model_Serv
                                 $this->sOrderIdIndexName => $aOrder[$this->sOrderIdIndexName],
                             ), $aOrder);
                         } else if (empty($sOrderInvoiceFile) && in_array($this->getInvoiceOptionConfig(), array('webshop', 'erp'), true)) {
-                            MLHelper::gi('stream')->stream('No pdf is available for order number: '.$oOrder->get('special').', Shop order id:'.$oOrder->getShopOrderId());
+                            MLHelper::gi('stream')->stream('No (valid) pdf is available for order number: '.$oOrder->get('special').', Shop order id:'.$oOrder->getShopOrderId());
                         }
                     }
                 }
@@ -184,7 +202,7 @@ class ML_Modul_Model_Service_UploadInvoices_Abstract extends ML_Modul_Model_Serv
         }
     }
 
-    protected function getInvoiceOptionConfig() {
+    public function getInvoiceOptionConfig() {
         if ($this->sInvoiceOptionConfig === null) {
             $this->sInvoiceOptionConfig = MLModule::gi()->getConfig('invoice.option');
         }
@@ -206,7 +224,7 @@ class ML_Modul_Model_Service_UploadInvoices_Abstract extends ML_Modul_Model_Serv
      */
     protected function getInvoiceFile($oOrder, $invoiceType) {
         if ($this->getInvoiceOptionConfig() === 'erp') {
-            $aData = $this->getERPInvoiceData($oOrder->getShopOrderId(), $invoiceType, $oOrder->get('special'));
+            $aData = $this->getERPInvoiceData($oOrder, $invoiceType, $oOrder->get('special'));
             $sOrderInvoiceFile = $aData['OrderInvoiceFile'];
         } else {
             $sOrderInvoiceFile = $oOrder->getShopOrderInvoice($invoiceType);
@@ -221,7 +239,7 @@ class ML_Modul_Model_Service_UploadInvoices_Abstract extends ML_Modul_Model_Serv
      */
     public function getInvoiceNumber($oOrder, $invoiceType) {
         if ($this->getInvoiceOptionConfig() === 'erp') {
-            $aData = $this->getERPInvoiceData($oOrder->getShopOrderId(), $invoiceType, $oOrder->get('special'));
+            $aData = $this->getERPInvoiceData($oOrder, $invoiceType, $oOrder->get('special'));
             $sOrderInvoiceNumber = $aData['OrderInvoiceNumber'];
         } else {
             $sOrderInvoiceNumber = $oOrder->getInvoiceNumber($invoiceType);
@@ -229,15 +247,39 @@ class ML_Modul_Model_Service_UploadInvoices_Abstract extends ML_Modul_Model_Serv
         return $sOrderInvoiceNumber;
     }
 
-    protected function getERPInvoiceData($sShopOrderID, $sInvoiceType, $sMarketplaceOrderId) {
+    /**
+     * @param $oOrder ML_Shop_Model_Order_Abstract
+     * @param $sInvoiceType
+     * @param $sMarketplaceOrderId
+     * @return mixed
+     * @throws Exception
+     */
+    protected function getERPInvoiceData($oOrder, $sInvoiceType, $sMarketplaceOrderId) {
+        $sShopOrderID = $oOrder->getShopOrderId();
         if (!isset($this->aERPInvoiceDataCache[$sShopOrderID][$sInvoiceType])) {
+            $errorMessages = array();
             try {
                 $receipt = MLHelper::getReceiptUpload()->processReceipt($sShopOrderID, $sInvoiceType);
                 $sOrderInvoiceNumber = $receipt['receiptNr'];
                 $sOrderInvoiceFile = $receipt['file'];
             } catch (MagnaException $e) {
-                MLHelper::gi('stream')->stream($e->getMessage());
-                MLErrorLog::gi()->addError(0, ' ', $e->getMessage(), array('MOrderID' => $sMarketplaceOrderId));
+                $errorMessages[] = $e->getMessage();
+                if($oOrder->getShopAlternativeOrderId() !== $sShopOrderID) {
+                    try {
+                        $receipt = MLHelper::getReceiptUpload()->processReceipt($oOrder->getShopAlternativeOrderId(), $sInvoiceType);
+                        $sOrderInvoiceNumber = $receipt['receiptNr'];
+                        $sOrderInvoiceFile = $receipt['file'];
+                        $errorMessages = array();
+                    } catch (MagnaException $e) {
+                        $errorMessages[] = $e->getMessage();
+                    }
+                }
+            }
+            if(count($errorMessages) > 0){
+                foreach ($errorMessages as $errorMessage) {
+                    MLHelper::gi('stream')->stream($errorMessage);
+                    MLErrorLog::gi()->addError(0, ' ', $errorMessage, array('MOrderID' => $sMarketplaceOrderId));
+                }
                 $sOrderInvoiceNumber = null;
                 $sOrderInvoiceFile = null;
             }

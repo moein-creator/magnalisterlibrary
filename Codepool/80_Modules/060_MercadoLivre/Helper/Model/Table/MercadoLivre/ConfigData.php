@@ -41,7 +41,7 @@ class ML_MercadoLivre_Helper_Model_Table_MercadoLivre_ConfigData extends ML_Form
     }
     
 	public function currencyField(&$aField) {
-		$currencies = MLModul::gi()->getConfig('site.currencies');
+        $currencies = MLModule::gi()->getConfig('site.currencies');
 		$aField['values'][''] = ML_AMAZON_LABEL_APPLY_PLEASE_SELECT;
 		foreach ($currencies as $code => $symbol) {
 			$aField['values'][$code] = $code;
@@ -49,7 +49,7 @@ class ML_MercadoLivre_Helper_Model_Table_MercadoLivre_ConfigData extends ML_Form
 	}
 	
 	public function listingTypeField(&$aField) {
-		$listingTypes = MLModul::gi()->getConfig('site.listing_types');
+        $listingTypes = MLModule::gi()->getConfig('site.listing_types');
 		$aField['values'][''] = ML_AMAZON_LABEL_APPLY_PLEASE_SELECT;
 		foreach ($listingTypes as $code => $name) {
 			$aField['values'][$code] = $name;

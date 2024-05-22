@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -80,7 +80,7 @@ class ML_Shopware6_Helper_Model_ProductList_List extends ML_Productlist_Helper_M
     }
 
     public function getList() {
-        $aConfig = MLModul::gi()->getConfig();
+        $aConfig = MLModule::gi()->getConfig();
         $iLangId = $aConfig['lang'];
         $oContext = null;
         try {
@@ -154,18 +154,22 @@ class ML_Shopware6_Helper_Model_ProductList_List extends ML_Productlist_Helper_M
     public function shopSystemAttribute($sCode, $blUse = true, $sTitle = null, $sTypeVariant = null) {
         if ($this->oLoadedProduct === null) {
             if (!in_array($sCode, $this->aFields)) {
-                MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getFields()->getMappedByStorageName();
-                $aFieldList = MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getFields()->getMappedByStorageName();
-                $sFieldOrder = isset($aFieldList[$sCode]) ? $aFieldList[$sCode] : $sCode;
-                if ($blUse) {
-                    $this->aFields[] = '_'.$sCode;
-                    $this->aHeader['_'.$sCode] = array(
-                        'title'        => $sTitle === null ? (isset($this->aAttributes[$sCode]) ? $this->aAttributes[$sCode] : ucfirst($sCode)) : $sTitle,
-                        'order'        => $sFieldOrder,
-                        'type'         => 'simpleText',
-                        'type_variant' => $sTypeVariant === null ? 'simpleText' : $sTypeVariant
-                    );
-                }
+                     /**
+                     * \Shopware\Core\Framework\DataAbstractionLayer\CompiledFieldCollection::getMappedByStorageName
+                     * @deprecated tag:v6.6.0 - Will be removed without replacement as it is unused
+                     */
+                    MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getFields()->getMappedByStorageName();
+                    $aFieldList = MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getFields()->getMappedByStorageName();
+                    $sFieldOrder = isset($aFieldList[$sCode]) ? $aFieldList[$sCode] : $sCode;
+                    if ($blUse) {
+                        $this->aFields[] = '_'.$sCode;
+                        $this->aHeader['_'.$sCode] = array(
+                            'title'        => $sTitle === null ? (isset($this->aAttributes[$sCode]) ? $this->aAttributes[$sCode] : ucfirst($sCode)) : $sTitle,
+                            'order'        => $sFieldOrder,
+                            'type'         => 'simpleText',
+                            'type_variant' => $sTypeVariant === null ? 'simpleText' : $sTypeVariant
+                        );
+                    }
             }
             return $this;
         } else {

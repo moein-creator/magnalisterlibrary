@@ -11,7 +11,7 @@ abstract class ML_Productlist_Model_ProductList_ShopAbstract extends ML_Productl
         if ($this->sColumnListName !== null) {
             $aColumnNames = MLSetting::gi()->{$this->aColumnListName};
         } else if ($this->getSelectionName() === 'checkin') {
-            if (MLModul::gi()->isMultiPrepareType()) {
+            if (MLModule::gi()->isMultiPrepareType()) {
                 $aColumnNames = MLSetting::gi()->{self::PRODUCTLIST_UPLOAD_COLUMNS};
             } else {
                 $aColumnNames = MLSetting::gi()->{self::PRODUCTLIST_UPLOAD_NOPREPARETYPE_COLUMNS};

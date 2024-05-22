@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -45,7 +45,7 @@ MLI18n::gi()->{'cdiscount_prepare_apply_form__field__marketingdescription__help'
 MLI18n::gi()->{'cdiscount_prepare_apply_form__field__marketingdescription__optional__checkbox__labelNegativ'} = 'Utiliser la description marketing de la boutique';
 MLI18n::gi()->{'cdiscount_prepare_apply_form__field__images__label'} = 'Images de l\'article';
 MLI18n::gi()->{'cdiscount_prepare_apply_form__field__images__hint'} = 'Cdiscount autorise un maximum de quatre images par fiche produit.<br /><br />De plus pour chaque déclinaison de produit vous pouvez télécharger 4 images supplémentaires.';
-MLI18n::gi()->{'cdiscount_prepare_apply_form__field__images__help'} = 'Cdiscount autorise un maximum de quatre images par fiche produit.<br /><br />De plus pour chaque déclinaison de produit vous pouvez télécharger 4 images supplémentaires.';
+MLI18n::gi()->{'cdiscount_prepare_apply_form__field__images__optional__checkbox__labelNegativ'} = 'Toujours utiliser les images des produits de la boutique en ligne';
 MLI18n::gi()->{'cdiscount_prepare_apply_form__field__price__label'} = 'Prix';
 MLI18n::gi()->{'cdiscount_prepare_apply_form__field__itemcondition__label'} = 'État de l\'article';
 MLI18n::gi()->{'cdiscount_prepare_apply_form__field__preparationtime__label'} = 'Délai de préparation à l\'expédition';

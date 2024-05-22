@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -73,7 +73,7 @@ class ML_Etsy_Helper_Model_Service_Product {
                     'IsSupply',
                     'Language',
                     'Currency',
-                    'ShippingTemplate',
+                    'ShippingProfile',
                     'Primarycategory',
                     'Description',
                     'Title',
@@ -120,7 +120,7 @@ class ML_Etsy_Helper_Model_Service_Product {
     }
 
     protected function getImageSize() {
-        $sSize = MLModul::gi()->getConfig('imagesize');
+        $sSize = MLModule::gi()->getConfig('imagesize');
         $iSize = $sSize == null ? 500 : (int)$sSize;
         return $iSize;
     }
@@ -129,16 +129,26 @@ class ML_Etsy_Helper_Model_Service_Product {
         $aImagesPrepare = $this->oPrepare->get('Image');
         $iSize = $this->getImageSize();
         $aOut = array();
-        if (empty($aImagesPrepare) === false) {
-            $aImages = $this->oVariant->getImages();
-            $aImages = empty($aImages) ? $this->oProduct->getImages() : $aImages;
-
+        $aImages = $this->oVariant->getImages();
+        $aImages = empty($aImages) ? $this->oProduct->getImages() : $aImages;
+        if (!empty($aImagesPrepare)) {
+            foreach ($aImages as $sImage) {
+                if (in_array($sImage, $aImagesPrepare)) {
+                    try {
+                        $aImage = MLImage::gi()->resizeImage($sImage, 'products', $iSize, $iSize);
+                        $aOut[]['URL'] = $aImage['url'];
+                    } catch (Exception $ex) {
+                        MLMessage::gi()->addDebug($ex);
+                    }
+                }
+            }
+        } else {
             foreach ($aImages as $sImage) {
                 try {
                     $aImage = MLImage::gi()->resizeImage($sImage, 'products', $iSize, $iSize);
                     $aOut[]['URL'] = $aImage['url'];
                 } catch (Exception $ex) {
-                    // Happens if image doesn't exist.
+                    MLMessage::gi()->addDebug($ex);
                 }
             }
         }
@@ -147,7 +157,7 @@ class ML_Etsy_Helper_Model_Service_Product {
     }
 
     protected function getQuantity() {
-        $aStockConf = MLModul::gi()->getStockConfig();
+        $aStockConf = MLModule::gi()->getStockConfig();
         $iQty = $this->oVariant->getSuggestedMarketplaceStock(
             $aStockConf['type'], $aStockConf['value'],(int)$aStockConf['max'] > 0 ?$aStockConf['max']:null
         );
@@ -158,7 +168,7 @@ class ML_Etsy_Helper_Model_Service_Product {
         if (isset($this->aSelectionData['price'])) {
             return $this->aSelectionData['price'];
         } else {
-            return $this->oVariant->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
+            return $this->oVariant->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
         }
     }
 
@@ -200,15 +210,15 @@ class ML_Etsy_Helper_Model_Service_Product {
     }
 
     protected function getLanguage() {
-        return MLModul::gi()->getConfig('shop.language');
+        return MLModule::gi()->getConfig('shop.language');
     }
 
     protected function getCurrency() {
-        return MLModul::gi()->getConfig('currency');
+        return MLModule::gi()->getConfig('currency');
     }
 
-    protected function getShippingTemplate() {
-        return $this->oPrepare->get('ShippingTemplate');
+    protected function getShippingProfile() {
+        return $this->oPrepare->get('ShippingProfile');
     }
 
     protected function getVerified() {
@@ -239,7 +249,12 @@ class ML_Etsy_Helper_Model_Service_Product {
     }
 
     protected function getMasterTitle() {
-        return $this->getTitle();
+        $sTitle = $this->oPrepare->get('Title');
+        $oProduct = $this->oVariant;
+        if ((int)($oProduct->get('parentid')) > 0) {
+            $oProduct = $oProduct->getParent();
+        }
+        return (!empty($sTitle) ? $sTitle : $oProduct->getName());
     }
 
     protected function getMasterDescription() {
@@ -255,97 +270,22 @@ class ML_Etsy_Helper_Model_Service_Product {
     }
 
     protected function getCategoryAttributes() {
-        $aVariants = $this->oVariant->getVariatonDataOptinalField(array('name', 'value', 'valueid', 'code'));
-        $shopVariants = $this->oPrepare->get('shopVariation');
-        if (!is_array($shopVariants)) {
-            return json_encode(array());
-        }
-        // Attributes for simple Items
-        if (empty($aVariants)) {
-            foreach ($shopVariants as $key => $shopVariations) {
-                if (strpos($shopVariations['Code'], 'pp_') === 0) {
-                    $fAttVal = $this->oProduct->getAttributeValue($shopVariations['Code']);
-                    $aVariants[] = array(
-                        'code'    => $shopVariations['Code'],
-                        'valueid' => current(array_keys($fAttVal)),
-                        'name'    => $shopVariations['AttributeName'],
-                        'value'   => current($fAttVal)
-                    );
-                }
-            }
-        }
-        $shopVariants = $this->manipulateShopVariationData($shopVariants);
-#MLMessage::gi()->addDebug(__FUNCTION__.' '.__LINE__.' $shopVariants', $shopVariants);
-        $propertyValue = '';
-        $propertyName = '';
-        $propertyId = '';
-        $results = array();
-        $valueIds = array();
 
-        foreach ($shopVariants as $key => $shopVariations) {
-            if (is_array($shopVariations['Values'])) {
-                foreach ($shopVariations['Values'] as $shopVariationKey => $shopVariationValue) {
-                    foreach ($aVariants as $aVariant) {
+        /* @var $attributesMatchingService ML_Modul_Helper_Model_Service_AttributesMatching */
+        $attributesMatchingService = MLHelper::gi('Model_Service_AttributesMatching');
 
-                        if (
-                            $shopVariationValue['Shop']['Key'] == $aVariant['valueid']
-                            && strtolower($shopVariationValue['Shop']['Value']) == strtolower($aVariant['value'])
-                        ) {
-                            $propertyId = explode('-', $shopVariationValue['Marketplace']['Key'])[0];
-                            if (strpos($shopVariationValue['Marketplace']['Key'], '-') !== false) {
-                                $valueIds = array(explode('-', $shopVariationValue['Marketplace']['Key'])[1]);
-                            } else {
-                                $valueIds = array(explode('-', $shopVariationValue['Marketplace']['Key']));
-                            }
-                        }
-                        if ($aVariant['code'] === $shopVariations['Code']) {
-                            if ($key === 'Custom1') {
-                                $propertyValue = $aVariant['value'];
-                                $propertyName = $aVariant['name'];
-                                $propertyId = 513;
-                                $valueIds = array();
-                            } elseif ($key === 'Custom2') {
-                                $propertyValue = $aVariant['value'];
-                                $propertyName = $aVariant['name'];
-                                $propertyId = 514;
-                                $valueIds = array();
-                            }
-                        }
-                        // these should not be empty
-                        if (empty($propertyName) && !empty($aVariant['name'])) {
-                                $propertyName = $aVariant['name'];
-                        }
-                        if (empty($propertyValue) && !empty($aVariant['value'])) {
-                                $propertyValue = $aVariant['value'];
-                        }
-                    }
-                }
-            } else {
-                // Attributes stored directly in the Preparation
-                if (strpos($shopVariations['Values'], '-')) {
-                    list($propertyId, $valueIds) = explode('-', $shopVariations['Values']);
-                    $valueIds = array($valueIds);
-                    $propertyName = $shopVariations['AttributeName'];
-                    $propertyValue = '';
-                }
-            }
-
-            // if not matched value is found don't add it to the request
-            if (empty($propertyId)) {
-                continue;
-            }
-
-            $results["property_values"][] =
-                array(
-                    "property_id"   => $propertyId,
-                    "value_ids"     => $valueIds,
-                    "property_name" => ucfirst($propertyName),
-                    "values"        => array($propertyValue),
-                );
-            $propertyName = '';
+        $aCatAttributes = $attributesMatchingService->mergeConvertedMatchingToNameValue(
+            $this->oPrepare->get('ShopVariation'),
+            $this->oVariant,
+            $this->oProduct//If a value is matched only for main variant, this matching will be used for not matched variant in the product as default
+        );
+        if (empty($aCatAttributes)) {
+            return array();
+        } else {
+            //        MLMessage::gi()->addDebug(__LINE__.':'.microtime(true), array($aCatAttributes));
+            return array("property_values" => $aCatAttributes);
         }
 
-        return json_encode($results);
     }
 
     /**

@@ -64,7 +64,7 @@ class ML_GoogleShopping_Model_ProductList_GoogleShopping_Prepare_Match_Manual ex
             'type'=>'priceshop'
         );
         $aHead['pricemarketplace']=array(
-            'title'=> sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModul::gi()->getMarketPlaceName(false)),
+            'title' => sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModule::gi()->getMarketPlaceName(false)),
             'type'=>'pricemarketplace'
         );
         return $aHead;
@@ -87,7 +87,7 @@ class ML_GoogleShopping_Model_ProductList_GoogleShopping_Prepare_Match_Manual ex
                     and
                     s.selectionname='match'
                     and
-                    mpid='".MLModul::gi()->getMarketPlaceId()."'
+                    mpid='" . MLModule::gi()->getMarketPlaceId() . "'
             ";
             $this->iCountTotal= MLDatabase::getDbInstance()->fetchOne(sprintf($sSql, ' distinct count(p.ParentId) '));
             foreach (MLDatabase::getDbInstance()->fetchArray(sprintf($sSql, ' distinct p.ParentId ')." limit ".$iFrom.", ".$iCount) as $aRow) {

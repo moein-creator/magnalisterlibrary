@@ -80,3 +80,4 @@ MLI18n::gi()->{'etsy_varmatch_attribute_deleted_from_shop'} = '{#i18n:attributes
 MLI18n::gi()->{'etsy_prepare_variations_saved'} = '{#i18n:attributes_matching_prepare_variations_saved#}';
 MLI18n::gi()->{'etsy_prepare_match_variations_saved'} = '{#i18n:attributes_matching_prepare_match_variations_saved#}';
 MLI18n::gi()->{'etsy_prepare_match_variations_no_selection'} = '{#i18n:attributes_matching_matching_variations_no_category_selection#}';
+MLI18n::gi()->{'etsy_prepare_match_variations_not_all_matched'} = 'Please allocate a shop attribute to all Amazon attributes';

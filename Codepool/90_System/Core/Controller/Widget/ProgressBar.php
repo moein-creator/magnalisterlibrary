@@ -54,7 +54,7 @@ class ML_Core_Controller_Widget_ProgressBar extends ML_Core_Controller_Abstract 
      */
     public function __construct() {
         $blInstalled = ML::isInstalled();
-        MLSetting::gi()->add($blInstalled ? 'aCss' : 'aInstallCss', $blInstalled ? 'progressbar.css':'install.progressbar.css');
+        MLSetting::gi()->add($blInstalled ? 'aCss' : 'aInstallCss', $blInstalled ? 'progressbar.css?%s' : 'install.progressbar.css');
         return parent::__construct();
     }
     

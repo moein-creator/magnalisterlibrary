@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -41,6 +41,10 @@ MLSetting::gi()->add('formgroups_metro__account', array(
             'values' => array(
                 'DE_MAIN' => 'METRO MARKETS {#i18n:ML_COUNTRY_GERMANY#}',
                 'ES_MAIN' => 'METRO MARKETS {#i18n:ML_COUNTRY_SPAIN#}',
+                'IT_MAIN' => 'METRO MARKETS {#i18n:ML_COUNTRY_ITALY#}',
+                'PT_MAIN' => 'METRO MARKETS {#i18n:ML_COUNTRY_PORTUGAL#}',
+                'NL_MAIN' => 'METRO MARKETS {#i18n:ML_COUNTRY_NETHERLANDS#}',
+                'FR_MAIN' => 'METRO MARKETS {#i18n:ML_COUNTRY_FRANCE#}',
             ),
             'default' => 'DE_MAIN',
         ),
@@ -51,12 +55,15 @@ MLSetting::gi()->add('formgroups_metro__account', array(
             'values' => array(
                 'DE_MAIN' => '{#i18n:ML_COUNTRY_GERMANY#}',
                 'ES_MAIN' => '{#i18n:ML_COUNTRY_SPAIN#}',
+                'IT_MAIN' => '{#i18n:ML_COUNTRY_ITALY#}',
+                'PT_MAIN' => '{#i18n:ML_COUNTRY_PORTUGAL#}',
+                'NL_MAIN' => '{#i18n:ML_COUNTRY_NETHERLANDS#}',
+                'FR_MAIN' => '{#i18n:ML_COUNTRY_FRANCE#}',
             ),
             'default' => 'DE_MAIN',
         ),
     ),
 ));
-
 
 MLSetting::gi()->add('formgroups_metro__prepare', array(
     'legend' => array('i18n' => '{#i18n:formgroups_metro__prepare#}'),
@@ -67,7 +74,6 @@ MLSetting::gi()->add('formgroups_metro__prepare', array(
         'businessmodel' => '{#setting:formfields_metro__businessmodel#}',
         'freightforwarding' => '{#setting:formfields_metro__freightforwarding#}',
     ),
-
 ));
 
 MLSetting::gi()->add('formgroups_metro__shipping', array(
@@ -84,6 +90,17 @@ MLSetting::gi()->add('formgroups_metro__shipping', array(
             'subfields' => array(
                 array('name' => 'shippingprofile.name', 'type' => 'string'),
                 array('name' => 'shippingprofile.cost', 'type' => 'string'),
+            )
+        ),
+        'shippinggroup' => array(
+            'name' => 'shipping.group',
+            'type' => 'duplicate',
+            'duplicate' => array(
+                'radiogroup' => 'default',
+                'field' => array('type' => 'subFieldsContainer')
+            ),
+            'subfields' => array(
+                array('name' => 'shipping.group.name', 'type' => 'string'),
             )
         ),
     ),
@@ -130,7 +147,6 @@ MLSetting::gi()->add('formgroups_metro__orderstatus', array(
     ),
 ));
 
-
 // prepare
 MLSetting::gi()->add('formgroups_metro__prepare_details', array(
         'legend' => array('i18n' => '{#i18n:formgroups_metro__prepare_details#}'),
@@ -148,6 +164,7 @@ MLSetting::gi()->add('formgroups_metro__prepare_details', array(
         ),
     )
 );
+
 MLSetting::gi()->add('formgroups_metro__prepare_general', array(
         'legend' => array('i18n' => '{#i18n:formgroups_metro__prepare_general#}'),
         'fields' => array(
@@ -156,10 +173,10 @@ MLSetting::gi()->add('formgroups_metro__prepare_general', array(
             'businessmodel' => '{#setting:formfields_metro__businessmodel#}',
             'freightforwarding' => '{#setting:formfields_metro__freightforwarding#}',
             'ShippingProfile' => '{#setting:formfields_metro__shippingprofile#}',
+            'ShippingGroup' => '{#setting:formfields_metro__shippinggroup#}',
         ),
     )
 );
-
 
 MLSetting::gi()->add('formgroups_metro__prepare_category', array(
         'legend' => array('i18n' => '{#i18n:formgroups_metro__prepare_category#}'),
@@ -172,7 +189,7 @@ MLSetting::gi()->add('formgroups_metro__prepare_category', array(
 MLSetting::gi()->add('formgroups_metro__prepare_action', array(
     'legend' => array(
         'classes' => array(
-            'mlhidden',
+            /*'mlhidden',*/
         ),
     ),
     'row' => array(
@@ -183,6 +200,7 @@ MLSetting::gi()->add('formgroups_metro__prepare_action', array(
         'resetaction' => '{#setting:formfields_metro__prepare_resetaction#}',
     ),
 ));
+
 MLSetting::gi()->add('formgroups_metro__prepare_variationmatching', array(
     'legend' => array('template' => 'two-columns'),
     'type' => 'ajaxfieldset',
@@ -191,6 +209,7 @@ MLSetting::gi()->add('formgroups_metro__prepare_variationmatching', array(
         'type' => 'ajax',
     ),
 ));
+
 MLSetting::gi()->add('formgroups_metro__prepare_variations', array(
     'legend' => array('i18n' => '{#i18n:formgroups_metro__prepare_variations#}'),
     'fields' => array(
@@ -211,3 +230,17 @@ MLSetting::gi()->add('formgroups_metro__invoice',
 MLSetting::gi()->set('formgroups_metro__erpInvoice', '{#setting:formgroups__config_erpInvoice#}');
 MLSetting::gi()->set('formgroups_metro__magnaInvoice', '{#setting:formgroups__config_magnaInvoice#}');
 
+MLSetting::gi()->add('formgroups_metro__volumeprices', array(
+    'legend' => array('i18n' => '{#i18n:formgroups_metro__volumeprices#}'),
+    'fields' => array(
+        'enable' => '{#setting:formfields_metro__VolumepricesEnable#}',
+        'webshopcustomergroup' => '{#setting:formfields_metro__VolumepricesWebshopCustomerGroup#}',
+        'webshoppriceoptions' => '{#setting:formfields_metro__VolumepricesWebshopPriceOptions#}',
+        'price2' => '{#setting:formfields_metro__VolumepricePrice2#}',
+        'price3' => '{#setting:formfields_metro__VolumepricePrice3#}',
+        'price4' => '{#setting:formfields_metro__VolumepricePrice4#}',
+        'price5' => '{#setting:formfields_metro__VolumepricePrice5#}',
+        'priceA' => '{#setting:formfields_metro__VolumepricePriceA#}',
+        'priceB' => '{#setting:formfields_metro__VolumepricePriceB#}',
+    )
+));

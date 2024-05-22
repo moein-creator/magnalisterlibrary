@@ -203,7 +203,7 @@ abstract class ML_Form_Controller_Widget_Form_Abstract extends ML_Core_Controlle
     }
 
     /**
-     * change position of some field when there filedposition data for one of field
+     * change position of some field when there fieldposition data for one of field
      * @param array $aForm
      * @throws Exception
      */
@@ -438,4 +438,9 @@ abstract class ML_Form_Controller_Widget_Form_Abstract extends ML_Core_Controlle
             //            throw new Exception('no subfield `'.$sSubType.'`');
         }
     }
+
+    public function valueIsSaved() {
+        return null;
+    }
+
 }

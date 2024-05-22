@@ -11,12 +11,12 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
-MLI18n::gi()->cdiscount_config_carrier_other = 'Other';
+MLI18n::gi()->{'cdiscount_config_use_shop_value'} = 'Take over from Shop';
 MLI18n::gi()->{'cdiscount_config_account_title'} = 'Login Details';
 MLI18n::gi()->{'cdiscount_config_account_prepare'} = 'Item Preparation';
 MLI18n::gi()->{'cdiscount_config_account_price'} = 'Price Calculation';
@@ -57,7 +57,7 @@ MLI18n::gi()->{'cdiscount_configform_orderimport_shipping_values__textfield__tit
 MLI18n::gi()->{'cdiscount_configform_orderimport_shipping_values__textfield__textoption'} = '1';
 MLI18n::gi()->{'cdiscount_configform_orderimport_shipping_values__matching__title'} = 'Take over from Marketplace';
 MLI18n::gi()->{'cdiscount_config_account__legend__account'} = 'Login Details';
-MLI18n::gi()->{'cdiscount_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'cdiscount_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'cdiscount_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'cdiscount_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'cdiscount_config_account__field__mpusername__label'} = 'API-Username';
@@ -73,9 +73,9 @@ MLI18n::gi()->{'cdiscount_config_prepare__field__checkin.status__valuehint'} = '
 MLI18n::gi()->{'cdiscount_config_prepare__field__lang__label'} = 'Article description';
 MLI18n::gi()->{'cdiscount_config_prepare__field__imagepath__label'} = 'Picture path';
 MLI18n::gi()->{'cdiscount_config_prepare__field__marketingdescription__label'} = 'Marketing description';
-MLI18n::gi()->{'cdiscount_config_prepare__field__marketingdescription__help'} = 'The marketing description must describe the product. It appears in the tab "Présentation produit". It must not content offers data (guarantee, price, shipping, packaging ...). HTML code is allowed. Description cannot exceed 5000 characters.';
+MLI18n::gi()->{'cdiscount_config_prepare__field__marketingdescription__help'} = 'The marketing description must describe the product. It appears in the tab "Présentation produit". It must not contain offers data (Guarantee, price, shipping, packaging ...). HTML code is allowed. Description cannot exceed 5000 characters.';
 MLI18n::gi()->{'cdiscount_config_prepare__field__standarddescription__label'} = 'Description';
-MLI18n::gi()->{'cdiscount_config_prepare__field__standarddescription__help'} = 'The product description must describe the product. It appears at the top of the product sheet under the wording. It must not content offers data. (Guarantuee, price, shipping, packaging...), html code or others codes. Description cannot exceed 420 characters.';
+MLI18n::gi()->{'cdiscount_config_prepare__field__standarddescription__help'} = 'The product description must describe the product. It appears at the top of the product sheet under the wording. It must not contain offers data. (Guarantee, price, shipping, packaging...), html code or others codes. Description cannot exceed 420 characters.';
 MLI18n::gi()->{'cdiscount_config_prepare__field__itemcondition__label'} = 'Condition';
 MLI18n::gi()->{'cdiscount_config_prepare__field__preparationtime__label'} = 'Preparation Time (in days 1-10)';
 MLI18n::gi()->{'cdiscount_config_prepare__field__preparationtime__help'} = 'Preparation time for deliver product. it must be in days between 1 and 10.';
@@ -212,11 +212,7 @@ MLI18n::gi()->{'cdiscount_config_orderimport__field__import__label'} = '';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__preimport.start__label'} = 'first from date';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__preimport.start__hint'} = 'Start time';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__preimport.start__help'} = 'Start time for first import of orders. Please note that this is not possible for a random time in the past. Data are utmost available for one week on Cdiscount.';
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.shipmethod__label'} = 'Shipping Method';
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.shipmethod__hint'} = 'Select the shipping method that is assigned to all Cdiscount orders by default.';
-
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.open__label'} = 'Order status in the shop
-';
+MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.open__label'} = 'Order status in the shop';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.open__hint'} = '';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.open__help'} = 'The status that should be transferred automatically to the Shop after a new order on DaWanda. <br />
 If you are using a connected dunning process***, it is recommended to set the Order Status to ‘Paid’ (‘Configuration’ > ‘Order Status’).
@@ -228,8 +224,6 @@ This setting is necessary for the invoice and shipping notice, and for editing o
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderimport.shippingmethod__label'} = 'Shipping Service of the Orders';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__orderimport.shippingmethod__help'} = 'Shipping methods that will be assigned to all Cdiscount orders. Standard: "Cdiscount"<br><br>
 This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.';
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.shipmethod.freetext__label'} = 'Shipping Method:';
-MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.shipmethod.freetext__placeholder'} = 'Enter your shipping method here';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__customergroup__label'} = 'Customer Group';
 MLI18n::gi()->{'cdiscount_config_orderimport__field__customergroup__help'} = 'The customer group that customers from new orders should be sorted into.';
 MLI18n::gi()->{'cdiscount_config_emailtemplate__legend__mail'} = '{#i18n:configform_emailtemplate_legend#}';
@@ -263,3 +257,5 @@ MLI18n::gi()->{'cdiscount_config_emailtemplate__field__mail.content__hint'} = 'A
                 </dl>';
 MLI18n::gi()->{'cdiscount_config_emailtemplate__field__mail.copy__label'} = 'Copy to Sender';
 MLI18n::gi()->{'cdiscount_config_emailtemplate__field__mail.copy__help'} = 'Copy will be sent to sender\'s E-Mail-address';
+MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.carrier__label'} = 'Shipping Carrier';
+MLI18n::gi()->{'cdiscount_config_orderimport__field__orderstatus.carrier__help'} = '';

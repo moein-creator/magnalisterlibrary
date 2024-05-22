@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -265,7 +265,7 @@ class ML_TestOrders_Controller_Main_Tools_TestOrders extends ML_Form_Controller_
             foreach (MLShop::gi()->getMarketplaces() as $iMarketPlace => $sMarketplace) {
                 try {
 //                    ML::gi()->init(array('mp' => $iMarketPlace));
-//                    if (!MLModul::gi()->isConfigured()) {
+//                    if (!MLModule::gi()->isConfigured()) {
 //                        throw new Exception('not configured');
 //                    }
                     $aMarketplaces[$iMarketPlace] = $sMarketplace . ' ' . (isset($aTabIdents[$iMarketPlace]) && $aTabIdents[$iMarketPlace] != '' ? ': ' . $aTabIdents[$iMarketPlace] . ' ' : '') . '(' . $iMarketPlace . ')';
@@ -349,6 +349,8 @@ class ML_TestOrders_Controller_Main_Tools_TestOrders extends ML_Form_Controller_
         $aField['value'] = $this->getFirstValue(
             $aField, $aDefault
         );
+
+        $aField['cssclass'] = ['ml-tools-testorder-addressbox'];
         $aField['type'] = 'text';
     }
 
@@ -370,6 +372,7 @@ class ML_TestOrders_Controller_Main_Tools_TestOrders extends ML_Form_Controller_
         }
         $aField['value'] = $this->getFirstValue($aField);
         $aField['type'] = 'duplicate';
+        $aField['cssclass'] = ['ml-tools-testorder-totalbox'];
         $aField['duplicate']['field'] = array(
             'type' => 'text',
         );

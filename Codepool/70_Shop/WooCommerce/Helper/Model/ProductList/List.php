@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -149,10 +149,10 @@ class ML_WooCommerce_Helper_Model_ProductList_List extends ML_Productlist_Helper
             'sku' => 'sku',
         );
 
-        $wpFields['manufacturer'] = MLModul::gi()->getConfig('manufacturer');
-        $wpFields['mpn'] = MLModul::gi()->getConfig('manufacturerpartnumber');
-        $wpFields['ean'] = MLModul::gi()->getConfig('ean');
-        $wpFields['upc'] = MLModul::gi()->getConfig('upc');
+        $wpFields['manufacturer'] = MLModule::gi()->getConfig('manufacturer');
+        $wpFields['mpn'] = MLModule::gi()->getConfig('manufacturerpartnumber');
+        $wpFields['ean'] = MLModule::gi()->getConfig('ean');
+        $wpFields['upc'] = MLModule::gi()->getConfig('upc');
 
         if ($this->oLoadedProduct === null) {
             if (!in_array($sCode, $this->aFields)) {

@@ -28,6 +28,6 @@ class ML_Amazon_Controller_Amazon_Listings extends ML_Tabs_Controller_Widget_Tab
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

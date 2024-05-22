@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,8 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- *
- * (c) 2010 - 2017 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -27,7 +26,7 @@ class ML_Ebay_Model_Table_Ebay_VariantMatching extends ML_Database_Model_Table_V
     );
 
     public function getTopPrimaryCategories() {
-        return $this->getLastModifiedCategories(MLModul::gi()->getMarketPlaceName().'_categories', 'Identifier', 'ModificationDate');
+        return $this->getLastModifiedCategories(MLModule::gi()->getMarketPlaceName() . '_categories', 'Identifier', 'ModificationDate');
     }
 
     protected function getLastModifiedCategories($sClass, $sField, $orderBy) {
@@ -37,7 +36,7 @@ class ML_Ebay_Model_Table_Ebay_VariantMatching extends ML_Database_Model_Table_V
             SELECT ".$sField."
             FROM ".$this->sTableName." prepare
             INNER JOIN ".$oCat->getTableName()." cat on cat.categoryid = ".$sField."
-            WHERE prepare.mpid = ".MLModul::gi()->getMarketPlaceId()."
+            WHERE prepare.mpid = " . MLModule::gi()->getMarketPlaceId() . "
             GROUP BY ".$sField."
             ORDER BY ".$orderBy." desc
             LIMIT 10

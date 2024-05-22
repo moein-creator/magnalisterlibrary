@@ -16,59 +16,25 @@
  * -----------------------------------------------------------------------------
  */
 
+MLI18n::gi()->{'amazon_config_carrier_option_group_shopfreetextfield_option_carrier'} = 'Charger la société de livraison  depuis un champ libre dans la commande de votre boutique';
+MLI18n::gi()->{'amazon_config_carrier_option_group_shopfreetextfield_option_shipmethod'} = 'Charger le service d\'expédition depuis un champ de texte libre de votre boutique';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.paymentmethod__label'} = 'Mode de paiement de la commande';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.paymentmethod__help'} = 'Mode de paiement qui sera attribué à toutes les commandes Amazon lors de l\'importation des commandes. <br><br>
 Vous pouvez définir d\'autres modes de paiements, qui s\'afficheront dans le menu déroulant en vous rendant sur "Shopware" > "moyens de paiement".<br><br>
 Ce réglage est important pour l\'impression des bons de livraison et des factures, mais aussi pour le traitement ultérieur des commandes dans votre boutique ainsi que dans votre gestion des marchandises.';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.paymentmethod__hint'} = '';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.shippingmethod__label'} = 'Mode de livraison de la commande';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.shippingmethod__help'} = '<b>Mode d’envoi des commandes</b><br />
-<br />
-Choisissez ici le mode d’envoi qui sera associé uniformément à toutes les commandes.<br />
-<br />
-Voici les différentes options qui s’offrent à vous :<br />
-<ol>
-<li><b>Modes d’envoi pris en charge par la place de marché</b><br />
-<br />
-Choisissez un mode d’envoi dans la liste du menu déroulant. Seules les options prises en charge par la place de marché s’affichent.<br />
-<br />
-</li>
-<li><b>Modes d’envoi sur le gestionnaire des champs libres de la boutique en ligne</b><br />
-<br />
-Choisissez un mode d’envoi à partir d’un champ libre de la boutique en ligne. <br />
-<br />
-</li>
-<li><b>Sélection automatique</b><br />
-<br />
-Pour chaque pays de destination, magnalister sélectionne automatiquement le mode d’envoi placé en tête de liste dans le module de calcul des frais de port pour la boutique en ligne concernée. 
-</li>
-</ol>';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.shippingmethod__help'} = '<p>Lors des importations des commandes, Amazon ne transmet pas d\'information sur le mode d\'expédition. </p>
+<p>Veuillez sélectionner dans le menu déroulant, les modes de livraison de votre boutique. Vous pouvez définir les modes de livraison de votre boutique en vous rendant sur "Shopware" > "paramètres" > "Frais de port". </p>
+<p>Ce réglage est important pour l\'impression des bons de livraison et des factures, mais aussi pour le traitement ultérieur des commandes dans votre boutique ainsi que dans votre gestion des marchandises.</p>';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.shippingmethod__hint'} = '';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.paymentstatus__label'} = 'Statut du paiement dans votre boutique';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.paymentstatus__help'} = 'Sélectionnez ici le statut de paiement qui sera automatiquement attribué aux commandes lors de l’importation des commandes depuis la place de marché.';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.paymentstatus__hint'} = '';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__label'} = 'Mode de livraison des commandes FBA';
-MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__help'} = '<b>Mode d’envoi des commandes</b><br />
-<br />
-Choisissez ici le mode d’envoi qui sera associé uniformément à toutes les commandes.<br />
-<br />
-Voici les différentes options qui s’offrent à vous :<br />
-<ol>
-<li><b>Modes d’envoi pris en charge par la place de marché</b><br />
-<br />
-Choisissez un mode d’envoi dans la liste du menu déroulant. Seules les options prises en charge par la place de marché s’affichent.<br />
-<br />
-</li>
-<li><b>Modes d’envoi sur le gestionnaire des champs libres de la boutique en ligne</b><br />
-<br />
-Choisissez un mode d’envoi à partir d’un champ libre de la boutique en ligne. <br />
-<br />
-</li>
-<li><b>Sélection automatique</b><br />
-<br />
-Pour chaque pays de destination, magnalister sélectionne automatiquement le mode d’envoi placé en tête de liste dans le module de calcul des frais de port pour la boutique en ligne concernée. 
-</li>
-</ol>';
+MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__help'} = '<p>Lors des importations des commandes, Amazon ne transmet pas d\'information sur le mode d\'expédition. </p>
+<p>Veuillez sélectionner dans le menu déroulant, les modes de livraison de votre boutique. Vous pouvez définir les modes de livraison de votre boutique en vous rendant sur "Shopware" > "paramètres" > "Frais de port". </p>
+<p>Ce réglage est important pour l\'impression des bons de livraison et des factures, mais aussi pour le traitement ultérieur des commandes dans votre boutique ainsi que dans votre gestion des marchandises.</p>';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbashippingmethod__hint'} = '';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbapaymentstatus__label'} = 'Statut du paiement FBA dans votre boutique';
 MLI18n::gi()->{'amazon_config_orderimport__field__orderimport.fbapaymentstatus__help'} = 'Sélectionnez ici le statut de paiement qui sera automatiquement attribué aux commandes lors de l’importation des commandes depuis la place de marché.';
@@ -142,3 +108,64 @@ Sélectionnez cette option, si vous souhaitez <strong>définir un service d’ex
 	<li>Le non-renseignement du service d’expédition lors de la confirmation de l’expédition sur amazon peut entrainer la suspension de votre compte vendeur.</li>
 </ul>
 ';
+
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumber__label'} = 'Numéro de facture';
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumber__help'} = '<p>
+Choisissez ici si les numéros de facture doivent être générés par magnalister ou si vous voulez qu’ils soient extraits d’un champ de texte libre de Shopware.
+</p><p>
+<b>Charger magnalister de la création des numéros de commande</b>
+</p><p>
+Lors de la création des factures par magnalister, des numéros de factures consécutifs sont automatiquement générés. Saisissez ici un préfixe qui sera automatiquement placé devant le numéro de facture.
+Exemple : F10000
+</p><p>
+Note : Les commandes créées par magnalister commencent par le numéro 10000.
+</p><p>
+<b>Tirer le numéro de commande d’un {#i18n:shop_order_attribute_name#}</b>
+</p><p>
+Lors de la création de la facture, le numéro de commande est tirée du {#i18n:shop_order_attribute_name#} que vous avez sélectionné.
+</p><p>
+{#i18n:shop_order_attribute_creation_instruction#}
+</p><p>
+<b>Important :</b> <br/>l’agrandisseur génère et transmet la facture dès que la commande est marquée comme expédiée. Veuillez vous assurer que le champ de texte libre est bien rempli, sinon une erreur sera causée (voir l’onglet "Journal des erreurs").
+<br/><br/>
+Si vous utilisez la correspondance des champs de texte libre, la société Magnalister n’est pas responsable de la création correcte et consécutive des numéros de facture.
+</p>';
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumberoption__label'} = '';
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumber.matching__label'} = 'Shopware order free text field';
+
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoicenumber__label'} = 'Reversal invoice number';
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoicenumber__help'} = '<p>
+Choose here if you want to have your reversal invoice numbers generated by magnalister or if you want them to be taken from a Shopware free text field.
+</p><p>
+<b>Create reversal invoice numbers via magnalister</b>
+</p><p>
+magnalister generates consecutive reversal invoice numbers during the invoice creation. You can define a prefix that is set in front of the reversal invoice number. Example: R10000.
+</p><p>
+Note: Invoices created by magnalister start with the number 10000.
+</p><p>
+<b>Match reversal invoice numbers with Shopware free text field</b>
+</p><p>
+When creating the invoice, the value is taken from the Shopware free text field you selected.
+</p><p>
+{#i18n:shop_order_attribute_creation_instruction#}
+</p><p>
+<b>Important:</b><br/> magnalister generates and transmits the invoice as soon as the order is marked as shipped. Please make sure that the free text field is filled, otherwise an error will be caused (see tab "Error Log").
+<br/><br/>
+If you use free text field matching, magnalister is not responsible for the correct, consecutive creation of reversal invoice numbers.
+</p>';
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoicenumberoption__label'} = MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumberoption__label'};
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.reversalinvoicenumber.matching__label'} = MLI18n::gi()->{'amazon_config_vcs__field__amazonvcsinvoice.invoicenumber.matching__label'};
+MLI18n::gi()->{'amazon_config_amazonvcsinvoice_invoicenumberoption_values_matching'} = 'Tirer le numéro de commande d’un {#i18n:shop_order_attribute_name#}';
+MLI18n::gi()->{'amazon_config_amazonvcsinvoice_reversalinvoicenumberoption_values_matching'} = 'Tirer le numéro de commande d’un {#i18n:shop_order_attribute_name#}';
+MLI18n::gi()->{'amazon_config_price__field__priceoptions__help'} = '<p>Avec cette fonction, vous pouvez transférer des prix divergents sur le marché et les faire synchroniser automatiquement.<br />
+<br />
+Pour ce faire, sélectionnez un groupe clients de votre boutique dans le menu déroulant de droite.<br />
+<br />
+Si vous ne saisissez pas de prix divergent dans le nouveau groupe de clients, le prix par défaut de votre boutique sera automatiquement transmis à eBay. Ainsi vous pouvez facilement appliquer un prix adapté pour un nombre limité d’articles Les autres paramètres relatifs au prix seront également appliqués au prix de vente.<br />
+<br />
+<b>Exemple :</b></p>
+<ul>
+<li>Ajoutez un groupe client dans votre boutique, par exemple "Clients eBay"</li>
+<li>Sur les fiches produits dans votre boutique, saisissez le prix souhaité</li>
+</ul>
+<p>Le mode de rabais des groupes de clients peut également être utilisé. Vous pouvez y enregistrer une remise (en pourcentage). À condition que le mode de remise soit activé dans l\'article Shopware, le prix soldé est transmis via magnalister à la place de marché. Il est important que le prix du marché ne soit pas affiché comme prix d\'exercice.</p>';

@@ -27,6 +27,9 @@ class ML_Etsy_Model_Table_Etsy_CategoriesMarketplace extends ML_Modul_Model_Tabl
                 'isKey' => true,
                 'Type' => 'varchar(2)', 'Null' => 'NO', 'Default' => '', 'Extra' => '', 'Comment' => ''
             );
+            $this->aFields['Selectable'] = array(
+                'Type' => 'tinyint(4)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 1, 'Extra' => '', 'Comment' => ''
+            );
         }
         return $this;
     }

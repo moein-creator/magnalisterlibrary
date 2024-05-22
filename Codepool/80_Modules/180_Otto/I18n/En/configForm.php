@@ -20,30 +20,15 @@ MLI18n::gi()->otto_config_account_title = 'Access Data';
 MLI18n::gi()->add('otto_config_account', array(
     'legend' => array(
         'account' => 'Access Data',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
             'label' => '{#i18n:ML_LABEL_TAB_IDENT#}',
             'help' => '{#i18n:ML_TEXT_TAB_IDENT#}'
         ),
-        'clientkey' => array(
-            'label' => 'OTTO API-User',
-            'help' => '
-                <p>You will automatically receive your "OTTO API-User" by e-mail after you have registered a merchant account with OTTO and completed the legitimation check.</p>
-                <strong>Further information:</strong>
-                <ul>
-                    <li>You can register as a merchant at <a href="https://www.otto.market/" target=_"blank">https://www.otto.market/</a></li>
-                    <li>In order for your products uploaded via magnalister to be displayed on OTTO, as a new merchant you need to remove the visibility restriction in the OTTO merchant backend and send a "confirmation of understanding of the order process" to OTTO. You can find more info here: <a href="https://account.otto.market/s/article/Vorbereitungen-Livegang/" target=_"blank">https://account.otto.market/s/article/Vorbereitungen-Livegang/</a></li>
-                </ul>
-            ',
-        ),
-        'secretkey' => array(
-            'label' => 'OTTO API-Password',
-            'help' => '
-                <p>After the registration of your OTTO merchant account and the legitimation check by OTTO, you will receive an e-mail with your OTTO „API-User" and a link to the password assignment. Enter the generated „API-Password" here.</p>
-                <p>For further information, please see the info icon under "OTTO Market API-Username".</p>
-            ',
+        'token' => array(
+            'label' => 'OTTO API-Token'
         ),
     ),
 ), false);
@@ -53,7 +38,7 @@ MLI18n::gi()->add('otto_config_prepare__field__vat', array(
     'hint' => '',
     'matching' => array(
         'titlesrc' => 'Shop Tax Classes',
-        'titledst' => 'OTTO Tax Codes',
+        'titledst' => 'OTTO Market Tax Codes',
     )
 ));
 MLI18n::gi()->otto_config_account_prepare = 'Product Preparation';
@@ -83,9 +68,9 @@ MLI18n::gi()->add('otto_config_prepare', array(
 MLI18n::gi()->otto_config_account_sync = 'Price and Stock';
 MLI18n::gi()->otto_config_account_orderimport = 'Orders';
 MLI18n::gi()->otto_config_account_orderimport_returntrackingkey_title = 'Return Tracking Key';
-MLI18n::gi()->{'otto_config_free_text_attributes_opt_group'} = 'Additional fields';
-MLI18n::gi()->{'otto_config_free_text_attributes_opt_group_value'} = 'Match it to free text field on specific order';
-MLI18n::gi()->otto_config_account_orderimport_returntrackingkey_info = 'For Standard Shipping Service "Return Tracking Key" is required filed on OTTO marketplace. Since shop system does not provide such fields as standard option we need to match it to custom filed.';
+MLI18n::gi()->{'otto_config_free_text_attributes_opt_group'} = 'Free text fields';
+MLI18n::gi()->{'otto_config_free_text_attributes_opt_group_value'} = 'Match it to magnalister free text field on specific order';
+MLI18n::gi()->otto_config_account_orderimport_returntrackingkey_info = 'For Standard Shipping Service "Return Tracking Key" is required filed on OTTO Market marketplace. Since shop system does not provide such fields as standard option we need to match it to custom filed.';
 
 MLI18n::gi()->{'otto_config_carrier_option_group_marketplace_carrier'} = 'Select Marketplace Supported Carrier:';
 MLI18n::gi()->{'otto_config_carrier_option_group_additional_option'} = 'Additional option:';
@@ -161,11 +146,6 @@ MLI18n::gi()->otto_config_general_nosync = 'keine Synchronisierung';
 MLI18n::gi()->otto_config_account_price = 'Preisberechnung';
 MLI18n::gi()->otto_config_account_emailtemplate = 'Promotion-E-Mail Template';
 MLI18n::gi()->otto_config_account_producttemplate = 'Produkt Template';
-
-MLI18n::gi()->{'formfields_otto_freightforwarding_values'} = array(
-    'true' => 'Ja',
-    'false' => 'Nein',
-);
 
 MLI18n::gi()->otto_configform_orderstatus_sync_values = array(
     'auto' => '{#i18n:otto_config_general_autosync#}',
@@ -265,4 +245,4 @@ table.ordersummary tbody td.qty {
 <p>Mit freundlichen Gr&uuml;&szlig;en,</p>
 <p>Ihr Online-Shop-Team</p>';
 
-MLI18n::gi()->{'formfields__importactive__hint'} = 'Bitte beachten Sie: Bestellungen vom OTTO Marktplatz werden automatisch mit der Übergabe an den Webshop (Bestellimport) akzeptiert.';
+MLI18n::gi()->{'formfields__importactive__hint'} = '';

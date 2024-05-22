@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -44,7 +44,7 @@ class MLDatabase {
      * @return ML_Database_Model_Table_Prepare_Abstract|object
      */
     public static function getPrepareTableInstance () {
-        return MLDatabase::getTableInstance(MLModul::gi()->getMarketPlaceName().'_prepare');
+        return MLDatabase::getTableInstance(MLModule::gi()->getMarketPlaceName() . '_prepare');
     }
 
     /**

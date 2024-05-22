@@ -28,6 +28,7 @@ class ML_WooCommerce_Helper_Model_ProductList_Filter {
     protected $oI18n = null;
     protected $aFilterInput = array();
     protected $aFilterOutput = array();
+    protected $aLimit;
 
     public function __construct() {
         $this->oI18n = MLI18n::gi();
@@ -70,18 +71,20 @@ class ML_WooCommerce_Helper_Model_ProductList_Filter {
     public function setOrder($sOrder) {
         global $wpdb;
         $aOrder = explode('_', $sOrder);
-        $sDirection = end($aOrder);
-        $sColumn = str_replace('_'.$sDirection, '', $sOrder);
-        if (in_array(strtolower($sDirection), array('asc','desc', ))) {
-            $this->aOrder = array('name' => $sColumn, 'direction' => $sDirection);
-            $this->oSelect->orderBy("{$sColumn} {$sDirection}");
-            if(strpos($sColumn, 'productPrice')!== false){
-                $this->oSelect->join("`{$wpdb->postmeta}`  productPrice ON productPrice.`meta_key` = '_price' AND productPrice.post_id = p.ID",
-                    ML_Database_Model_Query_Select::JOIN_TYPE_LEFT);
-            }
-            if(strpos($sColumn, 'productQuantity') !== false){
-                $this->oSelect->join("`{$wpdb->postmeta}`  productQuantity ON productQuantity.`meta_key` = '_stock' AND productQuantity.post_id = p.ID",
-                    ML_Database_Model_Query_Select::JOIN_TYPE_LEFT);
+        if (is_array($aOrder) && count($aOrder) == 2 && $aOrder[0] != '' && $aOrder[1] != '') {
+            $sDirection = end($aOrder);
+            $sColumn = str_replace('_' . $sDirection, '', $sOrder);
+            if (in_array(strtolower($sDirection), array('asc', 'desc',))) {
+                $this->aOrder = array('name' => $sColumn, 'direction' => $sDirection);
+                $this->oSelect->orderBy("{$sColumn} {$sDirection}");
+                if (strpos($sColumn, 'productPrice') !== false) {
+                    $this->oSelect->join("`{$wpdb->postmeta}`  productPrice ON productPrice.`meta_key` = '_price' AND productPrice.post_id = p.ID",
+                        ML_Database_Model_Query_Select::JOIN_TYPE_LEFT);
+                }
+                if (strpos($sColumn, 'productQuantity') !== false) {
+                    $this->oSelect->join("`{$wpdb->postmeta}`  productQuantity ON productQuantity.`meta_key` = '_stock' AND productQuantity.post_id = p.ID",
+                        ML_Database_Model_Query_Select::JOIN_TYPE_LEFT);
+                }
             }
         }
     }

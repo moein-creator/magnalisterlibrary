@@ -16,8 +16,8 @@
  * -----------------------------------------------------------------------------
  */
 global $magnaConfig;
-return 
-    class_exists('Shopware\Storefront\Framework\Routing\StorefrontResponse')//showpare 6 shop activation
+return
+    class_exists('Shopware\Storefront\Framework\Routing\StorefrontRouteScope')//showpare 6 shop activation
     && isset($magnaConfig['maranon']['Marketplaces'][MLRequest::gi()->data('mp')])
     && $magnaConfig['maranon']['Marketplaces'][MLRequest::gi()->data('mp')]=='hitmeister'
 ;

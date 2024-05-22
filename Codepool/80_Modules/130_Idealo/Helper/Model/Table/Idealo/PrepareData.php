@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -38,6 +38,8 @@ class ML_Idealo_Helper_Model_Table_Idealo_PrepareData extends ML_Form_Helper_Mod
             $aField['name'] = $aField['realname'] = 'ItemTitle';
         }
 
+        // Helper for php8 compatibility - can't pass null to trim 
+        $sTitle = MLHelper::gi('php8compatibility')->checkNull($sTitle);
         $aField['value'] = trim($sTitle) == '' ? $this->oProduct->getName() : $sTitle;
     }
 
@@ -47,6 +49,9 @@ class ML_Idealo_Helper_Model_Table_Idealo_PrepareData extends ML_Form_Helper_Mod
 
     protected function descriptionField(&$aField) {
         $sDescription = $this->getFirstValue($aField);
+
+        // Helper for php8 compatibility - can't pass null to trim 
+        $sDescription = MLHelper::gi('php8compatibility')->checkNull($sDescription);
         $aField['value'] = trim($sDescription) == '' ? $this->oProduct->getDescription() : $sDescription;
     }
 
@@ -57,7 +62,7 @@ class ML_Idealo_Helper_Model_Table_Idealo_PrepareData extends ML_Form_Helper_Mod
         }
         foreach ($aImages as $sImage) {
             try {
-                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 60, 60);
+                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 80, 80);
             } catch (Exception $oEx) {
                 //no image in fs
             }
@@ -112,9 +117,8 @@ class ML_Idealo_Helper_Model_Table_Idealo_PrepareData extends ML_Form_Helper_Mod
 
     public function quantityField(&$aField) {
         $aField['value'] = $this->oProduct->getSuggestedMarketplaceStock(
-            MLModul::gi()->getConfig('quantity.type'),
-            MLModul::gi()->getConfig('quantity.value'),
-            $this->getField('checkout', 'value') ? MLModul::gi()->getConfig('maxquantity') : null
+            MLModule::gi()->getConfig('quantity.type'),
+            MLModule::gi()->getConfig('quantity.value')
         );
     }
 
@@ -128,14 +132,6 @@ class ML_Idealo_Helper_Model_Table_Idealo_PrepareData extends ML_Form_Helper_Mod
 
     public function itemUrlField(&$aField) {
         $aField['value'] = $this->oProduct->getFrontendLink();
-    }
-
-    public function checkoutField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField);
-    }
-
-    public function checkoutenabledField(&$aField) {
-        $aField['value'] = MLModul::gi()->idealoHaveDirectBuy();
     }
 
     public function manufacturerField(&$aField) {
@@ -166,24 +162,6 @@ class ML_Idealo_Helper_Model_Table_Idealo_PrepareData extends ML_Form_Helper_Mod
 
     public function merchantCategoryField(&$aField) {
         $aField['value'] = $this->oProduct->getCategoryPath();
-    }
-
-    public function fulFillmentTypeField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField);
-    }
-
-    public function twoManHandlingFeeField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField);
-        if ($aField['value'] == '') {
-            $aField['value'] = '0.00';
-        }
-    }
-
-    public function disposalFeeField(&$aField) {
-        $aField['value'] = $this->getFirstValue($aField);
-        if ($aField['value'] == '') {
-            $aField['value'] = '0.00';
-        }
     }
 
     public function paymentMethodField(&$aField) {

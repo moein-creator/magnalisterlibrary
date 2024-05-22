@@ -95,7 +95,7 @@ class ML_Ebay_Model_Service_ImportOrders extends ML_Modul_Model_Service_ImportOr
     protected function getNumberOfImportedPosition($aOrder){
         $aOrderItemLine = array();
         foreach ($aOrder['Products'] as $aProduct){
-            if($aProduct['eBayOrderLineItemID']) {
+            if (!empty($aProduct['eBayOrderLineItemID'])) {
                 $aOrderItemLine[$aProduct['eBayOrderLineItemID']] = $aProduct['eBayOrderLineItemID'];
             }
         }

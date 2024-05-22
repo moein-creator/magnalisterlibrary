@@ -60,7 +60,7 @@ class ML_MercadoLivre_Model_Table_MercadoLivre_Prepare extends ML_Database_Model
         ),
 		'PreparedTS'   => array (
             'isInsertCurrentTime' => true,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => '0000-00-00 00:00:00', 'Extra' => '', 'Comment'=>''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
         ), 
     );
     protected $aTableKeys = array(
@@ -85,7 +85,7 @@ class ML_MercadoLivre_Model_Table_MercadoLivre_Prepare extends ML_Database_Model
             FROM " . $this->sTableName . " prepare
             INNER JOIN " . MLDatabase::factory('product')->getTableName() . " product on product.id = prepare.products_id
             INNER JOIN " . $oCat->getTableName() . " cat on cat.categoryid = " . $sField . "
-            WHERE prepare.mpid = " . MLModul::gi()->getMarketPlaceId() . "
+            WHERE prepare.mpid = " . MLModule::gi()->getMarketPlaceId() . "
             GROUP BY $sField
             ORDER BY count($sField)/count(product.parentid)+count(distinct product.parentid)-1 desc
             LIMIT 10

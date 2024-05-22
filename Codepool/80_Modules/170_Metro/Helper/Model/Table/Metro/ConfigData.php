@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -57,14 +57,91 @@ class ML_Metro_Helper_Model_Table_Metro_ConfigData extends ML_Form_Helper_Model_
 
     public function primaryCategoryField(&$aField) {
         $aRequest = MLRequest::gi()->data();
-        if (MLModul::gi()->getMarketPlaceName().':'.MLModul::gi()->getMarketPlaceId().'_prepare_variations' === $aRequest['controller']) {
-            $aField['values'] = MLDatabase::factory(MLModul::gi()->getMarketPlaceName() . '_variantmatching')->getTopPrimaryCategories();
+        if (MLModule::gi()->getMarketPlaceName().':'.MLModul::gi()->getMarketPlaceId().'_prepare_variations' === $aRequest['controller']) {
+            $aField['values'] = MLDatabase::factory(MLModul::gi()->getMarketPlaceName().'_variantmatching')->getTopPrimaryCategories();
         } else {
-            $aField['values'] = MLDatabase::factory( MLModul::gi()->getMarketPlaceName() . '_prepare')->getTopPrimaryCategories();
+            $aField['values'] = MLDatabase::factory(MLModul::gi()->getMarketPlaceName().'_prepare')->getTopPrimaryCategories();
         }
     }
 
     public function orderstatus_carrierField(&$aField) {
+    }
+
+    /**
+     * For all shopsystem's without volume prices remove webshop functionality
+     *
+     * @param $field
+     * @return void
+     */
+    public function volumepricesEnableField(&$field) {
+        MLMessage::gi()->addDebug('xy', MLShop::gi()->getShopSystemName());
+        if (!in_array(MLShop::gi()->getShopSystemName(), array('shopware', 'shopware6', 'magento', 'magento2', 'prestashop'))) {
+            unset($field['values']['webshop']);
+        }
+    }
+
+    public function volumepricePrice2AddKindField(&$field) {
+        if (in_array(MLShop::gi()->getShopSystemName(), array('shopify', 'woocommerce'))) {
+            unset($field['values']['customergroup']);
+        }
+    }
+
+    public function volumepricePrice3AddKindField(&$field) {
+        if (in_array(MLShop::gi()->getShopSystemName(), array('shopify', 'woocommerce'))) {
+            unset($field['values']['customergroup']);
+        }
+    }
+
+    public function volumepricePrice4AddKindField(&$field) {
+        if (in_array(MLShop::gi()->getShopSystemName(), array('shopify', 'woocommerce'))) {
+            unset($field['values']['customergroup']);
+        }
+    }
+
+    public function volumepricePrice5AddKindField(&$field) {
+        if (in_array(MLShop::gi()->getShopSystemName(), array('shopify', 'woocommerce'))) {
+            unset($field['values']['customergroup']);
+        }
+    }
+
+    public function volumepricePriceAAddKindField(&$field) {
+        if (in_array(MLShop::gi()->getShopSystemName(), array('shopify', 'woocommerce'))) {
+            unset($field['values']['customergroup']);
+        }
+    }
+
+    public function volumepricePriceBAddKindField(&$field) {
+        if (in_array(MLShop::gi()->getShopSystemName(), array('shopify', 'woocommerce'))) {
+            unset($field['values']['customergroup']);
+        }
+    }
+
+    public function volumepricesWebshopCustomerGroupField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getCustomerGroupValues();
+    }
+
+    public function volumepricePrice2CustomerGroupField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getCustomerGroupValues();
+    }
+
+    public function VolumepricePrice3CustomerGroupField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getCustomerGroupValues();
+    }
+
+    public function VolumepricePrice4CustomerGroupField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getCustomerGroupValues();
+    }
+
+    public function VolumepricePrice5CustomerGroupField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getCustomerGroupValues();
+    }
+
+    public function VolumepricePriceACustomerGroupField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getCustomerGroupValues();
+    }
+
+    public function VolumepricePriceBCustomerGroupField(&$aField) {
+        $aField['values'] = MLFormHelper::getShopInstance()->getCustomerGroupValues();
     }
 
 }

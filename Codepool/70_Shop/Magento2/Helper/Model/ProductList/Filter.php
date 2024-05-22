@@ -5,11 +5,11 @@ class ML_Magento2_Helper_Model_ProductList_Filter{
     protected $iPage=0;
     protected $iOffset=0;
     protected $aOrder=array ('name' => '' , 'direction' => '') ;
-
-    /**
-     *
-     * @var ML_Database_Model_Query_Select $oSelect
-     */
+    protected $aLimit;
+     /**
+      *
+      * @var Magento\Catalog\Model\ResourceModel\Product\Collection $oSelect
+      */
     protected $oSelect = null ;
     protected $oI18n=null;
     protected $aFilterInput=array();
@@ -42,14 +42,18 @@ class ML_Magento2_Helper_Model_ProductList_Filter{
         return $this;
     }
     public function setOrder($sOrder){
-        $aOrder = explode('_' , $sOrder) ;
-        if ( count($aOrder) == 2 && $aOrder[0] != '' && $aOrder[1] != '' ) {
+         $aOrder = explode('_' , $sOrder) ;
+        if (is_array($aOrder) && count($aOrder) == 2 && $aOrder[0] != '' && $aOrder[1] != '') {
+            $this->aOrder = [
+                'name' => $aOrder[0],
+                'direction' => $aOrder[1]
+            ];
             if ($aOrder[0] == 'qty') {
                 $aOrder[0] = 'quantity_and_stock_status';
             }
             $this->oSelect->addAttributeToSort($aOrder[0], strtoupper($aOrder[1]));
-        }
-    }
+         }
+     }
     public function setPrefix($sPrefix){
         $this->sPrefix=$sPrefix;
         return $this;

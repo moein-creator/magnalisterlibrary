@@ -5,7 +5,7 @@ MLSetting::gi()->add('etsy_prepare_apply_form', array(
     'category' => '{#setting:formgroups_etsy__prepare_variations#}',
     'variationmatching' => '{#setting:formgroups_etsy__prepare_variationmatching#}',
     'general' => '{#setting:formgroups_etsy__prepare_general#}',
-    'shippingtemplate' => '{#setting:formgroups_etsy__prepare_shippingtemplate#}',
+    'shippingprofile' => '{#setting:formgroups_etsy__prepare_shippingprofile#}',
 ), false);
 
 MLSetting::gi()->add('etsy_prepare_variations', array(

@@ -22,9 +22,9 @@ class ML_Metro_Controller_Metro_Config_Invoice extends ML_Form_Controller_Widget
     public function __construct() {
         parent::__construct();
         if (MLSetting::gi()->data('invoiceConfig') === true) {
-            MLSetting::gi()->add('aJs', 'magnalister.shopware.config.form.invoice.js');
+            MLSetting::gi()->add('aJs', 'magnalister.shopware.config.form.invoice.js?%s');
         }
-        MLSetting::gi()->add('aJs', 'magnalister.config.form.invoice.js');
+        MLSetting::gi()->add('aJs', 'magnalister.config.form.invoice.js?%s');
     }
 
     public static function getTabTitle() {

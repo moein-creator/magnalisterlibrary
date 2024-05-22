@@ -228,12 +228,14 @@ class ML_Ebay_Helper_Model_Form_Type_SellerProfiles {
         try {
             $aProfile = MLHelper::gi('model_form_type_sellerprofiles')->getSellerProfiles('shipping', $blForceRefresh);
             if (array_key_exists('optional', $aField)) {
-                $aField['type'] = isset($aField['optional']['field']) ? $aField['optional']['field']['type']:null;
+                $aField['type'] = isset($aField['optional']['field']) ? $aField['optional']['field']['type'] : null;
                 unset($aField['optional']);
                 $aField['autooptional'] = false;
             }
-//            $aField['type'] = 'select';
-            $aField['value'] = $aProfile[$aControllerField['value']]['contents'][$aField['realname']];
+            //            $aField['type'] = 'select';
+            if (!empty($aProfile[$aControllerField['value']]['contents'][$aField['realname']])) {
+                $aField['value'] = $aProfile[$aControllerField['value']]['contents'][$aField['realname']];
+            }
             if (empty($aField['value']) && array_key_exists('values', $aField)) {
                 $aField['values'][$aField['value']] = $aField['i18n']['optional']['select']['false'];
             }

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,10 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Cdiscount_Helper_Model_Table_Cdiscount_ConfigData');
 
 class ML_ShopwareCdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Cdiscount_Helper_Model_Table_Cdiscount_ConfigData {
@@ -26,19 +27,30 @@ class ML_ShopwareCdiscount_Helper_Model_Table_Cdiscount_ConfigData extends ML_Cd
     }     
     
     public function orderimport_shippingmethodField(&$aField) {
-        $aField['values'] = MLFormHelper::getShopInstance()->getShippingMethodValues();
+        $aMatching = MLI18n::gi()->get('cdiscount_configform_orderimport_shipping_values');
+        $aField['values'] =
+            array('matching' => $aMatching['matching']['title'])
+            +
+            MLFormHelper::getShopInstance()->getShippingMethodValues()
+        ;
     }
 
     public function orderimport_paymentstatusField (&$aField) {
         $aField['values'] = MLFormHelper::getShopInstance()->getPaymentStatusValues();
     }
-    
-    public function orderstatus_carrier_defaultField (&$aField) {
-        parent::orderstatus_carrier_defaultField($aField);
-        
-        $aField['values'] = 
-                array('-1'=>MLI18n::gi()->get('orderstatus_carrier_defaultField_value_shippingname'))
-                +
-                $aField['values'];
+
+    /**
+     * Populate Dropdown for Carrier select option
+     *
+     * @param $field
+     * @throws MLAbstract_Exception
+     */
+    public function orderstatus_carrier_selectField(&$field) {
+        $field = $this->selectWithMatchingOptionsFromTypeValueGenerator(array(
+            'marketplaceCarrier',
+            'shopFreeTextField',
+            'matchShopShippingOptions',
+            'freeText',
+        ), $field, 'carrier');
     }
 }

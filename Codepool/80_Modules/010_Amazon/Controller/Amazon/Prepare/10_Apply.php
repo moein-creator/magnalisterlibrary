@@ -85,7 +85,7 @@ class ML_Amazon_Controller_Amazon_Prepare_Apply extends ML_Productlist_Controlle
                 }
             }
         } catch (Exception $oEx) {
-            //            echo $oEx->getMessage();
+            MLMessage::gi()->addDebug($oEx);
         }
     }
 

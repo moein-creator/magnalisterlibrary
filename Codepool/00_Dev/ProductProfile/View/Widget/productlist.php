@@ -1,14 +1,15 @@
-<?php class_exists('ML',false) or die()?> 
-<?php if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) {?>
-    <?php 
-        if(MLSetting::gi()->get('blProductProfileTruncateTable')){
-            MLDatabase::getDbInstance()->query('truncate table magnalister_products');
-        }
-        /* @var $oList ML_Productlist_Model_ProductList_Abstract */
-        $oList=$this->getProductList();
-        $aStatistic=$oList->getStatistic();
-//        new dBug($aStatistic);
-//        new dBug($oList->getHead());
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
+<?php if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) { ?>
+    <?php
+    if (MLSetting::gi()->get('blProductProfileTruncateTable')) {
+        MLDatabase::getDbInstance()->query('truncate table magnalister_products');
+    }
+    /* @var $oList ML_Productlist_Model_ProductList_Abstract */
+    $oList = $this->getProductList();
+    $aStatistic = $oList->getStatistic();
+    //        new dBug($aStatistic);
+    //        new dBug($oList->getHead());
 //        new dBug(array('product'=>$oList->getList()->current(),'data'=>$oList->getList()->current()->mixedData()));
         
         
@@ -50,7 +51,7 @@
                 ->includeView('widget_productlist_action_bottom',       get_defined_vars())
             ;
             MLSettingRegistry::gi()->addJs('magnalister.productlist.js');
-            MLSetting::gi()->add('aCss', array('magnalister.productlist.css'), true); 
+        MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true);
         ?>
     </div>
     <?php

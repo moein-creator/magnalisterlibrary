@@ -74,7 +74,7 @@ table.ordersummary tbody td.qty {
 MLI18n::gi()->{'priceminister_config_producttemplate_content'} = '<p>#TITLE#</p><p>#ARTNR#</p><p>#SHORTDESCRIPTION#</p><p>#PICTURE1#</p><p>#PICTURE2#</p><p>#PICTURE3#</p><p>#DESCRIPTION#</p>';
 MLI18n::gi()->{'priceminister_config_orderstatus_autoacceptance'} = 'Please note: You have deacivated the automatic order confirmation. PriceMinister doesn&apos;t provide the shipping costs for not confirmed orders, therefore the PriceMinister orders will be created in your shop without shipping costs. We recommend to activate the automatic order confirmation.';
 MLI18n::gi()->{'priceminister_config_account__legend__account'} = 'Login Details';
-MLI18n::gi()->{'priceminister_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'priceminister_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'priceminister_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'priceminister_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'priceminister_config_account__field__username__label'} = 'Username';
@@ -152,11 +152,11 @@ MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.autoaccepta
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.autoacceptance__valuehint'} = 'automatic order confirmation';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.autoacceptance__help'} = 'PriceMinister doesn&apos;t provide the shipping costs for not confirmed orders. If you don&apos;t activate automatic order confirmation, the PriceMinister orders will be created in your shop without shipping costs. We recommend to activate this function.';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.accepted__label'} = 'Accept order with';
-MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.accepted__hint'} = '<span style="color:red;">Please read info for more explanation.</span>';
+MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.accepted__hint'} = '<span style="color:#e31a1c;">Please read info for more explanation.</span>';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.accepted__help'} = 'Before confirming shipment, please select default value for accepting order on PriceMinister.<br/><br/><b>IMPORTANT:</b><br/><br/> 
                         This acceptation must be done within 2 days after receiving order, otherwise your account on PriceMinister will be disabled.';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.refused__label'} = 'Refuse order with';
-MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.refused__hint'} = '<span style="color:red;">Please read info for more explanation.</span>';
+MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.refused__hint'} = '<span style="color:#e31a1c;">Please read info for more explanation.</span>';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.refused__help'} = 'Please select default value for refusing order on PriceMinister after receiving one in your shop.<br/><br/><b>IMPORTANT:</b><br/><br/> 
                         This refusal must be done within 2 days after receiving order, otherwise your account on PriceMinister will be disabled.';
 MLI18n::gi()->{'priceminister_config_orderimport__field__orderstatus.shipped__label'} = 'Set order as sent with';

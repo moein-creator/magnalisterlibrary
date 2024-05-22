@@ -48,7 +48,7 @@ class ML_Cdiscount_Model_Table_Cdiscount_CategoriesMarketplace extends ML_Modul_
         ),
         'Expires' => array(
             'isExpirable' => true,
-            'Type' => 'datetime',       'Null' => 'NO', 'Default' => NULL,  'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime',       'Null' => self::IS_NULLABLE_YES, 'Default' => NULL,  'Extra' => '', 'Comment' => ''
         ),
     );
     

@@ -11,3 +11,9 @@ MLI18n::gi()->{'Etsy_Productlist_Cell_aPreparedType__Chinese'} = 'Chinese auctio
 MLI18n::gi()->{'Etsy_Productlist_Cell_aPreparedType__FixedPriceItem'} = 'Fixed price';
 MLI18n::gi()->{'Etsy_Productlist_Cell_aPreparedType__StoresFixedPrice'} = 'Fixed price (Etsy Store)';
 MLI18n::gi()->{'Etsy_Productlist_Header_sPreparedType'} = 'Type of Auction';
+MLI18n::gi()->{'Etsy_Productlist_Prepare_sResetValuesButton'} = 'Reset (parts of) Item Preparation';
+MLI18n::gi()->{'Etsy_Productlist_Prepare_aResetValues__buttons__ok'} = 'ok';
+MLI18n::gi()->{'Etsy_Productlist_Prepare_aResetValues__buttons__abort'} = 'cancel';
+MLI18n::gi()->{'Etsy_Productlist_Prepare_aResetValues__checkboxes__whenmade'} = 'Reset "When made"';
+MLI18n::gi()->{'Etsy_Productlist_Prepare_aResetValues__checkboxes__unprepare'} = 'Undo complete preparation';
+

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -34,7 +34,11 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
     }
 
     public function getShopOrderLastChangedDate(){
-        return $this->getShopOrder()->getUpdatedAt();
+        // DateTimes in Magento are stored in Database in UTC timezone
+        $date = new DateTime($this->getShopOrder()->getUpdatedAt(), new DateTimeZone('UTC'));
+        $date->setTimezone(new DateTimeZone(MLShop::gi()->getTimeZone()));
+
+        return $date->format('Y-m-d H:i:s');
     }
 
     public static function getOutOfSyncOrdersArray($iOffset = 0 ,$blCount = false){
@@ -44,7 +48,7 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
         /* @var $oSelect Varien_Db_Select */
         $oSelect
             ->joinRight(array('magnalister_orders' => 'magnalister_orders'), 'main_table.increment_id = magnalister_orders.current_orders_id')
-            ->where("main_table.status != magnalister_orders.status and mpID = '".MLModul::gi()->getMarketPlaceId()."'");
+            ->where("main_table.status != magnalister_orders.status and mpID = '" . MLModule::gi()->getMarketPlaceId() . "'");
             
         if($blCount){
             return $oCollection->count();
@@ -68,7 +72,12 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
                 }
             }
         }
-        return empty($sShipDate) ? date('Y-m-d H:i:s') : $sShipDate;
+
+        // DateTimes in Magento are stored in Database in UTC timezone
+        $date = new DateTime($sShipDate, new DateTimeZone('UTC'));
+        $date->setTimezone(new DateTimeZone(MLShop::gi()->getTimeZone()));
+
+        return empty($sShipDate) ? date('Y-m-d H:i:s') : $date->format('Y-m-d H:i:s');
     }
 
     public function getShippingDate() {
@@ -76,8 +85,7 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
     }
 
     public function getShippingCarrier() {
-        $sDefaultCarrier = MLModul::gi()->getConfig('orderstatus.carrier.default');
-        $sDefaultCarrier = $sDefaultCarrier === null ? MLModul::gi()->getConfig('orderstatus.carrier') : $sDefaultCarrier;
+        $sDefaultCarrier = $this->getDefaultCarrier();
         if ($sDefaultCarrier == '-1') {
             return $this->getShopOrderCarrierOrShippingMethod();
         } elseif ($sDefaultCarrier == '') {
@@ -106,7 +114,7 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
         return Mage::getModel('adminhtml/url')->getUrl('adminhtml/sales_order/view/order_id/'.$oShopOrder->getId());
     }
     public function shopOrderByMagnaOrderData($aData) {
-        MLShop::gi()->initMagentoStore(MLModul::gi()->getConfig('orderimport.shop'));
+        MLShop::gi()->initMagentoStore(MLModule::gi()->getConfig('orderimport.shop'));
         $aOrder = MLHelper::gi('model_shoporder')
             ->init()
             ->setMlOrder($this)
@@ -150,7 +158,7 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
     public function getShopOrderInvoice($sType) {
         $sPdf = '';
 
-        if ($sType === 'SHIPMENT') {
+        if ($this->isInvoiceDocumentType($sType)) {
             foreach ($this->getShopOrder()->getInvoiceCollection() as $oInvoice) {
                 /**
                  * @var $oInvoice Mage_Sales_Model_Order_Invoice
@@ -162,7 +170,7 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
                     break;
                 }
             }
-        } elseif (in_array($sType, array('RETURN', 'REFUND'), true)) {
+        } elseif ($this->isCreditNoteDocumentType($sType)) {
             foreach ($this->getShopOrder()->getCreditmemosCollection() as $oCreditMemo) {
                 /**
                  * @var $oCreditMemo Mage_Sales_Model_Order_Creditmemo
@@ -199,4 +207,9 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
         }
         return '';
     }
+
+    public function getShopOrderProducts() {
+        return array();
+    }
+
 }

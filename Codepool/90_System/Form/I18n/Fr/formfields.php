@@ -74,7 +74,7 @@ MLI18n::gi()->add('formfields', array(
         ',
     ),
     'inventorysync.price' => array(
-        'label' => 'Prix d\'article',
+        'label' => 'Prix d&apos;article',
         'help' => '
             Synchronisation automatique via CronJob (recommandée)<br />
             <br />
@@ -569,4 +569,17 @@ MLI18n::gi()->{'formfields_config_uploadInvoiceOption_help_erp'} = '<li><p>Les f
             transmission des factures créées à partir d’un système tiers [...]”.</p></li>';
 MLI18n::gi()->{'formfields_config_uploadInvoiceOption_help_webshop'} = ' <li><p>Transmettre les factures créées dans la boutique</p>
         <p>Si votre système de e-boutique prend en charge la création des factures, vous pouvez les télécharger sur
+            {#setting:currentMarketplaceName#}.</p></li>';MLI18n::gi()->{'formfields_config_invoice_invoiceNumberOption_values_matching'} = 'Tirer le numéro de commande d’un {#i18n:shop_order_attribute_name#}';
+MLI18n::gi()->{'formfields_config_invoice_invoiceNumberOption_values_magnalister'} = 'Charger magnalister de la création des numéros de commande';
+MLI18n::gi()->{'formfields_config_uploadInvoiceOption_help_webshop'} = ' <li><p>Transmettre les factures créées dans la boutique</p>
+        <p>Si votre système de e-boutique prend en charge la création des factures, vous pouvez les télécharger sur
             {#setting:currentMarketplaceName#}.</p></li>';
+MLI18n::gi()->{'formfields_config_uploadInvoiceOption_help_erp'} = '<li><p>Les factures créées par des systèmes tiers (par exemple un système ERP) sont transmises à {#setting:currentMarketplaceName#}.</p>
+        <p>Les factures que vous avez créées à l’aide d’un système tiers (par exemple un système ERP) peuvent être
+            déposées
+            sur
+            le serveur de votre boutique en ligne, récupérées par magnalister et chargées sur la plateforme {#setting:currentMarketplaceName#}. Des
+            informations complémentaires apparaissent après le choix de cette option dans l’icône info sous “Paramètres
+            pour
+            la
+            transmission des factures créées à partir d’un système tiers [...]”.</p></li>';

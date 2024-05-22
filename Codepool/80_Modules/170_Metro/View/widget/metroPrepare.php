@@ -15,7 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 
 <p><?php echo MLI18n::gi()->get('ML_METRO_MANDATORY_FIELDS_INFO') ?></p>

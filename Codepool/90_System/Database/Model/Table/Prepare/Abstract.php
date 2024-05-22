@@ -46,14 +46,14 @@ abstract class ML_Database_Model_Table_Prepare_Abstract extends ML_Database_Mode
      * @return array
      */
     public function getPreparedFieldFilterValues () {
-        return MLI18n::gi()->get(ucfirst(MLModul::gi()->getMarketPlaceName()).'_Productlist_Filter_aPreparedStatus');
+        return MLI18n::gi()->get(ucfirst(MLModule::gi()->getMarketPlaceName()) . '_Productlist_Filter_aPreparedStatus');
     }
     /**
      * array of translated values for productlists
      * @return array
      */
     public function getPreparedProductListValues () {
-        return MLI18n::gi()->getGlobal(ucfirst(MLModul::gi()->getMarketPlaceName()).'_Productlist_Cell_aPreparedStatus');
+        return MLI18n::gi()->getGlobal(ucfirst(MLModule::gi()->getMarketPlaceName()) . '_Productlist_Cell_aPreparedStatus');
     }
     
     /**

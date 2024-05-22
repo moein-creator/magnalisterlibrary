@@ -12,7 +12,9 @@ MLI18n::gi()->WooCommerce_Product_Attributes_ItemNumber = 'Artikelnummer';
 MLI18n::gi()->WooCommerce_Product_Attributes_Description = 'Produkteschreibung';
 MLI18n::gi()->WooCommerce_Product_Attributes_Short_Description = 'Produkt Kurzbeschreibung';
 MLI18n::gi()->WooCommerce_Product_Attributes_Weight = 'Gewicht';
+
 MLI18n::gi()->WooCommerce_Product_Attributes_Length = 'Länge';
 MLI18n::gi()->WooCommerce_Product_Attributes_Width = 'Breite';
 MLI18n::gi()->WooCommerce_Product_Attributes_Height = 'Höhe';
+
 MLI18n::gi()->WooCommerce_Product_Attributes_Keywords = 'Produkt Schlagwörter';

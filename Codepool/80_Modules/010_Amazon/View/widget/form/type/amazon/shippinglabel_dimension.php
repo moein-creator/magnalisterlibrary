@@ -24,7 +24,7 @@
                 if ($aCurrentField['realname'] == 'shippinglabel.default.dimension.text') {
                     ?>
                         <tr>
-                            <td style="border:none;"><?php echo $aCurrentField['i18n']['label']; ?></td>
+                            <td style="border:none; vertical-align:middle;"><?php echo $aCurrentField['i18n']['label']; ?></td>
                             <td style="border:none;" colspan="<?php echo count($aField['subfields']) * 2 -1; ?>"><?php $this->includeType($aCurrentField); ?></td>
                         </tr>
                     <?php
@@ -34,7 +34,7 @@
                 foreach ($aField['subfields'] as $aCurrentField) {
                     if ($aCurrentField['realname'] != 'shippinglabel.default.dimension.text') {
                         ?>
-                            <td style="border:none;"><?php echo $aCurrentField['i18n']['label']; ?></td>
+                            <td style="border:none; vertical-align:middle;"><?php echo $aCurrentField['i18n']['label']; ?></td>
                             <td style="border:none;"><?php $this->includeType($aCurrentField); ?></td>
                         <?php
                     }

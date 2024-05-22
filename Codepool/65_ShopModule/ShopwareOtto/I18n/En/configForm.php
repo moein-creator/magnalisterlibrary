@@ -16,21 +16,34 @@
  * -----------------------------------------------------------------------------
  */
 
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.paymentmethod__label'} = 'Payment Methods';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.paymentmethod__help'} = '<p>Payment method that will apply to all orders imported from DaWanda.
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.paymentmethod__label'} = 'Payment Methods';
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.paymentmethod__help'} = '<p>Payment method that will apply to all orders imported from DaWanda.
 <p>
 Additional payment methods can be added to the list via Shopware > Settings > Payment Methods, then activated here.</p>
 <p>
 This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.</p>';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.paymentmethod__hint'} = '';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.shippingmethod__label'} = 'Shipping Service of the Orders';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.shippingmethod__help'} = '<p>Check24 does not assign any shipping method to imported orders.</p>
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.paymentmethod__hint'} = '';
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.shippingmethod__label'} = 'Shipping Service of the Orders';
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.shippingmethod__help'} = '<p>OTTO does not assign any shipping method to imported orders.</p>
 <p>Please choose here the available Web Shop shipping methods. The contents of the drop-down menu can be assigned in Shopware > Settings > Shipping Costs.</p>
 <p>This setting is important for bills and shipping notes, the subsequent processing of the order inside the shop, and for some ERPs.</p>';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.shippingmethod__hint'} = '';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.paymentstatus__label'} = 'Payment Status in Shop';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.paymentstatus__hint'} = '';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.paymentstatus__help'} = '<p>Otto does not assign any shipping method to imported orders.</p>
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.shippingmethod__hint'} = '';
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.paymentstatus__label'} = 'Payment Status in Shop';
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.paymentstatus__hint'} = '';
+MLI18n::gi()->{'otto_config_orderimport__field__orderimport.paymentstatus__help'} = '<p>Otto does not assign any shipping method to imported orders.</p>
 <p>Please choose here the available Web Shop shipping methods. The contents of the drop-down menu can be assigned in Shopware > Settings > Shipping Costs.</p>
 <p>This setting is important for bills and shipping notes, the subsequent processing of the order inside the shop, and for some ERPs.</p>';
-MLI18n::gi()->{'ayn24_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+MLI18n::gi()->{'otto_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+MLI18n::gi()->{'otto_config_free_text_attributes_opt_group'} = 'Free text fields';
+MLI18n::gi()->{'formfields__priceoptions__help'} = '<p>With this function you can transfer different prices to the marketplace and synchronize them automatically.<br />
+<br />
+Select a customer group from your webshop using the dropdown on the right.<br />
+<br />
+If you do not enter a price in the new customer group, the default price from the webshop will be used automatically. This makes it very easy to enter a different price even for just a few items. The other price configurations are also applied.<br />
+<br />
+<b>Example:</b></p>
+<ul>
+<li>Create a customer group in your webshop, e.g. "{#setting:currentMarketplaceName#} customers".</li>
+<li>In your webshop, add the wanted prices to the new customer group\'s items.</li>
+</ul>
+<p>The discount mode of the customer groups can also be used. You can enter a  discount there (in percent). If the discount mode is activated in the Shopware item, the discounted price is transferred to the marketplace via magnalister. Important: the marketplace price is not displayed as a strike price.</p>';

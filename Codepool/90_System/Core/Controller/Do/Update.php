@@ -362,7 +362,7 @@ class ML_Core_Controller_Do_Update extends ML_Core_Controller_Abstract {
             } else {// cp
                 $sAction ='cp';
                 $aPlugin = array(
-                    'src' => $this->getPath('staging').'/'.(strpos($sIdentPath, '__/') === 0 ? '__external' : '__plugin').'/'.$sIdentPath,
+                    'src' => $this->getPath('staging').(strpos($sIdentPath, '__/') === 0 ? '__external' : '__plugin').'/'.$sIdentPath,
                     'dst' => $sPlugin.str_replace('__.', '../',$aFolderData['server']['dst']),
                 );
             }
@@ -910,7 +910,7 @@ class ML_Core_Controller_Do_Update extends ML_Core_Controller_Abstract {
 
             $this->getProgressBarWidget()
                 ->setContent(MLI18n::gi()->get('sUpdateError_doAgain', array('link' => $this->getCurrentUrl(array('method'=>'init')))))
-                ->addLog('<span style="color:red">An error has occurred<br />&nbsp;&nbsp;&nbsp;&nbsp;Message: '.$mFinalize->getMessage().'<br />&nbsp;&nbsp;&nbsp;&nbsp;Code: '.$mFinalize->getCode().'</span>')
+                ->addLog('<span style="color:#e31a1c;">An error has occurred<br />&nbsp;&nbsp;&nbsp;&nbsp;Message: '.$mFinalize->getMessage().'<br />&nbsp;&nbsp;&nbsp;&nbsp;Code: '.$mFinalize->getCode().'</span>')
             ;
             $this->getProgressBarWidget()->render();
         } else {

@@ -35,5 +35,8 @@ class ML_ShopifyAmazon_Helper_Model_Table_Amazon_ConfigData extends ML_Amazon_He
 
     public function amazonvcs_invoiceField(&$aField) {
         unset($aField['values']['webshop']);
+        if (isset($aField['values']['erp'])) {
+            unset($aField['values']['erp']);
+        }
     }
 }

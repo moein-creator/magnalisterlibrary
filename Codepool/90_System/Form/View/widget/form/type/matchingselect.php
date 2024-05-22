@@ -11,14 +11,15 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-
+// Called from: View/widget/form/type/attributematch.php
+/* @var $aField array */
 if (!class_exists('ML', false))
     throw new Exception();
-$marketplaceName = MLModul::gi()->getMarketPlaceName();
+$marketplaceName = MLModule::gi()->getMarketPlaceName();
 
 $sName = str_replace('field', '', $aField['name']);
 $sNameWithoutValue = str_replace('[Values]', '', $sName);
@@ -41,8 +42,8 @@ $tabType = substr($sChangedSelector, $ini, $len);
     <table style="width:100%;margin-top: 15px">
         <?php if (!empty($aField['i18n']['matching']['titlesrc']) || !empty($aField['i18n']['matching']['titledst'])) { ?>
         <thead>
-            <th style="width: 35%"><?php echo $aField['i18n']['matching']['titlesrc']; ?></th>
-            <th style="width: 35%"><?php echo $aField['i18n']['matching']['titledst']; ?></th>
+            <th style="width: 35%; border-right: 1px solid #dadada;"><?php echo $aField['i18n']['matching']['titlesrc']; ?></th>
+            <th style="width: 35%; border-right: 1px solid #dadada;"><?php echo $aField['i18n']['matching']['titledst']; ?></th>
         </thead>
         <?php } ?>
         <tbody>
@@ -249,10 +250,10 @@ $tabType = substr($sChangedSelector, $ini, $len);
         if (!empty($firstValue['Marketplace'])) { // !empty(reset($aField['values'])['Marketplace']) is not supported by PHP 5.3
 ?>
 <span id="spanMatchingTable" style="padding-right:2em;">
-    <div style="font-weight: bold; background-color: #e9e9e9">
+    <div style="font-weight: bold;">
         <?php echo MLI18n::gi()->get($marketplaceName . '_prepare_variations_matching_table'); ?>
     </div>
-    <table id="<?php echo $sSelector ?>_button_matched_table" style="width:100%; background-color: #e9e9e9">
+    <table id="<?php echo $sSelector ?>_button_matched_table" style="width:100%;">
         <tbody>
         <?php
         $i = 1;
@@ -404,7 +405,7 @@ $tabType = substr($sChangedSelector, $ini, $len);
         ?>
 
             <tr>
-                <td style="width: 35%">
+                <td style="width: 39.75%">
                     <?php
                     /*
                      * After user match a shop-value with mp-value
@@ -418,7 +419,7 @@ $tabType = substr($sChangedSelector, $ini, $len);
                     echo $shopValue;
                     ?>
                 </td>
-                <td style="width: 35%">
+                <td style="width: 39.75%">
                     <?php
 
                     //here we display one of the row of marketplace-value

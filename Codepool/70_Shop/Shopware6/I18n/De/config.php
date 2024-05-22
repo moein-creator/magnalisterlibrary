@@ -9,5 +9,7 @@ MLI18n::gi()->Weight = 'Gewicht';
 MLI18n::gi()->Width = 'Breite';
 MLI18n::gi()->Height = 'Höhe';
 MLI18n::gi()->Length = 'Länge';
+MLI18n::gi()->UnitId = 'Maßeinheit';
+MLI18n::gi()->PurchaseUnit = 'Verkaufseinheit';
 MLI18n::gi()->ManufacturerId = 'Hersteller';
 MLI18n::gi()->ManufacturerNumber = 'Herstellernummer';

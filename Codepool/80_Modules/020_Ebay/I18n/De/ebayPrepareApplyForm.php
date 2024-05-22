@@ -36,7 +36,7 @@ MLI18n::gi()->add('ebay_prepare_apply_form', array(
     'field' => array(
         'title' => array(
             'label' => 'Produktname',
-            'hint' => 'Titel max. 80 Zeichen<br />Erlaubte Platzhalter:<br />#BASEPRICE# - Grundpreis<br />Bitte dazu den <span style="color:red;">Info-Text in der Konfiguration</span> (bei Template Produktname) beachten.',
+            'hint' => 'Titel max. 80 Zeichen<br />Erlaubte Platzhalter:<br />#BASEPRICE# - Grundpreis<br />Bitte dazu den <span style="color:#e31a1c;">Info-Text in der Konfiguration</span> (bei Template Produktname) beachten.',
             'optional' => array(
                 'checkbox' => array(
                     'labelNegativ' => 'Artikelname immer aktuell aus Web-Shop &uuml;bernehmen',
@@ -45,7 +45,7 @@ MLI18n::gi()->add('ebay_prepare_apply_form', array(
         ),
         'subtitle' => array(
             'label' => 'Untertitel',
-            'hint' => 'Untertitel max. 55 Zeichen <span style="color:red">kostenpflichtig</span>',
+            'hint' => 'Untertitel max. 55 Zeichen <span style="color:#e31a1c">kostenpflichtig</span>',
             'optional' => array(
                 'select' => array(
                     'false' => 'Nicht &Uuml;bertragen',
@@ -98,13 +98,13 @@ MLI18n::gi()->add('ebay_prepare_apply_form', array(
                 <br>
 				<b>eBay-Gebühren</b><br>
                 <br>
-				Durch Nutzung von "Galerie Plus" können im Hintergrund <span style="color:red">zusätzliche Gebühren von eBay</span> erhoben werden! RedGecko GmbH übernimmt für die anfallenden Gebühren keine Haftung.<br>
+				Durch Nutzung von "Galerie Plus" können im Hintergrund <span style="color:#e31a1c">zusätzliche Gebühren von eBay</span> erhoben werden! RedGecko GmbH übernimmt für die anfallenden Gebühren keine Haftung.<br>
                 <br>
 				<b>Weitere Infos</b><br>
                 <br>
 				Besuchen Sie für weitere Infos zu dem Thema die <a href="http://pages.ebay.de/help/sell/gallery-upgrade.html" target="_blank">eBay Hilfeseiten</a>.
             ',
-            'hint' => 'Galerie-Einstellung<br />("Plus" in einigen Kategorien <span style="color:red">kostenpflichtig</span>)',
+            'hint' => 'Galerie-Einstellung<br />("Plus" in einigen Kategorien <span style="color:#e31a1c">kostenpflichtig</span>)',
             'alert' => array(
                 'Plus' => array(
                     'title' => 'Galerie Plus',
@@ -113,7 +113,7 @@ MLI18n::gi()->add('ebay_prepare_apply_form', array(
                         <br>
                         Die hochgeladenen Fotos müssen mindestens 800 x 800 Pixel groß sein.<br>
                         <br>
-                        Dadurch können im Hintergrund  <span style="color:red;">zusätzliche Gebühren</span> von eBay erhoben werden!<br>
+                        Dadurch können im Hintergrund  <span style="color:#e31a1c;">zusätzliche Gebühren</span> von eBay erhoben werden!<br>
                         <br>Weitere Infos dazu finden Sie auf den <a href="http://pages.ebay.de/help/sell/gallery-upgrade.html" target="_blank">eBay Hilfeseiten</a>.<br>
                         <br>
                         RedGecko GmbH übernimmt für die anfallenden Gebühren keine Haftung.<br>
@@ -222,13 +222,17 @@ MLI18n::gi()->add('ebay_prepare_apply_form', array(
             'label' => 'Artikelzustand',
             'hint' => 'Zustand des Artikels (wird in den meisten Kategorien bei eBay angezeigt)',
         ),
+        'conditiondescriptors' => array(
+            'label' => 'Angaben zum Artikelzustand',
+            'hint' => 'Zusätzliche Angaben zum Artikelzustand (für einige Kategorien)',
+        ),
         'conditiondescription' => array(
             'label' => 'Beschreibung des Zustands',
             'hint' => 'Zusätzliche Angaben zum Artikelzustand. Nicht angezeigt bei Zuständen wie "Neu" oder "Neu mit ..."',
         ),
         'privatelisting' => array(
             'label' => 'Privat-Listing',
-            'hint' => 'Wenn aktiv, kann die Käufer / Bieterliste nicht von Dritten eingesehen werden <span style="color:red">kostenpflichtig</span>',
+            'hint' => 'Wenn aktiv, kann die Käufer / Bieterliste nicht von Dritten eingesehen werden <span style="color:#e31a1c">kostenpflichtig</span>',
             'valuehint' => 'Käufer / Bieterliste nicht öffentlich',
         ),
         'bestofferenabled' => array(
@@ -241,13 +245,10 @@ MLI18n::gi()->add('ebay_prepare_apply_form', array(
             'hint' => 'Nur verfügbar, wenn dieses Feature auf eBay freigeschaltet und aktiviert ist',
             'valuehint' => '\'eBay Plus\' aktivieren',
         ),
-        'hitcounter' => array(
-            'label' => 'Besucherz&auml;hler',
-            'hint' => '',
-        ),
+
         'starttime' => array(
             'label' => 'Startzeit<br />(falls vorbelegt)',
-            'hint' => 'Im Normalfall ist ein eBay-Artikel sofort nach dem Hochladen aktiv. Aber wenn Sie dieses Feld füllen, erst ab Startzeit (<span style="color:red">kostenpflichtig</span>).',
+            'hint' => 'Im Normalfall ist ein eBay-Artikel sofort nach dem Hochladen aktiv. Aber wenn Sie dieses Feld füllen, erst ab Startzeit (<span style="color:#e31a1c">kostenpflichtig</span>).',
         ),
         'primarycategory' => array(
             'label' => 'Prim&auml;rkategorie',
@@ -393,7 +394,7 @@ MLI18n::gi()->add('ebay_prepare_variations', array(
             'label' => '{#i18n:attributes_matching_web_shop_attribute#}',
         ),
         'saveaction' => array(
-            'label' => 'SPEICHERN UND SCHLIESSEN',
+            'label' => 'Speichern und schliessen',
         ),
         'resetaction' => array(
             'label' => '{#i18n:amazon_varmatch_reset_matching#}',

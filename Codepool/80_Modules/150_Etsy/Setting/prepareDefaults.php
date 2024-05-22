@@ -17,7 +17,7 @@
  */
 
 MLSetting::gi()->etsy_prepareDefaultsFields = array(
-    'whomade', 'whenmade', 'shippingtemplate', 'issupply'
+    'whomade', 'whenmade', 'shippingprofile', 'issupply'
 );
 
 MLSetting::gi()->etsy_prepareDefaultsOptionalFields = array();

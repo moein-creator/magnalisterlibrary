@@ -21,8 +21,8 @@
     foreach ($aField['subfields'] as $aCurrentField) {
         ?>
         <tr>
-            <td style="border:none; width:30%"><?php echo $aCurrentField['i18n']['label']; ?>:</td>
-            <td style="border:none; width:70%"><?php $this->includeType($aCurrentField); ?></td>
+            <td style="border:none; width:15%; vertical-align:middle"><?php echo $aCurrentField['i18n']['label']; ?>:</td>
+            <td style="border:none; width:85%"><?php $this->includeType($aCurrentField); ?></td>
         </tr>
         <?php
     }

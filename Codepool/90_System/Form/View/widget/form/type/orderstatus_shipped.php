@@ -29,7 +29,7 @@ if (!isset($aField)) {
             ?>
                 <tr>
                     <?php if ($i == 1) { ?>
-                        <td style="border:none;"><?php echo MLI18n::gi()->get('ML_LABEL_WEBSHOP_ORDERSTATUS'); ?>:</td>
+                        <td style="border:none; vertical-align:middle"><?php echo MLI18n::gi()->get('ML_LABEL_WEBSHOP_ORDERSTATUS'); ?>:</td>
                         <td style="border:none; width: 37%">
                             <?php
                             $this->includeType(array_merge($aField, array(
@@ -42,7 +42,7 @@ if (!isset($aField)) {
                         <td style="border:none;"></td>
                         <td style="border:none;"></td>
                     <?php } ?>
-                    <td style="border:none;"><?php echo $aCurrentField['i18n']['label']; ?>:</td>
+                    <td style="border:none; vertical-align:middle;"><?php echo $aCurrentField['i18n']['label']; ?>:</td>
                     <td style="border:none;"><?php $this->includeType($aCurrentField); ?></td>
                 </tr>
             <?php

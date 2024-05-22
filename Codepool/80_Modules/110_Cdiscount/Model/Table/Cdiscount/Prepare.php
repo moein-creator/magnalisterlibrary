@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,101 +11,101 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Database_Model_Table_Prepare_Abstract');
 
 class ML_Cdiscount_Model_Table_Cdiscount_Prepare extends ML_Database_Model_Table_Prepare_Abstract {
 
     protected $sTableName = 'magnalister_cdiscount_prepare';
+
     protected $aFields = array(
         'mpID' => array(
             'isKey' => true,
-            'Type' => 'int(11) unsigned', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11) unsigned', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'products_id' => array(
             'isKey' => true,
-            'Type' => 'int(11)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'EAN' => array(
-            'Type' => 'varchar(30)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(30)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'PrimaryCategory' => array(
-            'Type' => 'varchar(15)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(15)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'TopPrimaryCategory' => array(
-            'Type' => 'varchar(15)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(15)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Title' => array(
-            'Type' => 'varchar(132)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(132)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Subtitle' => array(
-            'Type' => 'varchar(132)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(132)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Description' => array(
-            'Type' => 'varchar(420)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(420)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'MarketingDescription' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Images' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'ItemCondition' => array(
-            'Type' => 'varchar(60)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(60)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShopVariation' => array(
-            'Type' => 'mediumtext', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'PreparationTime' => array(
-            'Type' => 'smallint(3) unsigned', 'Null' => 'NO', 'Default' => 0, 'Extra' => '', 'Comment' => ''
+            'Type' => 'smallint(3) unsigned', 'Null' => self::IS_NULLABLE_NO, 'Default' => 0, 'Extra' => '', 'Comment' => ''
         ),
         'ShippingProfileName' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShippingFee' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShippingFeeAdditional' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShippingFeeStandard' => array(
-            'Type' => 'float(6)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'float(6)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 0, 'Extra' => '', 'Comment' => ''
         ),
         'ShippingFeeTracked' => array(
-            'Type' => 'float(6)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'float(6)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 0, 'Extra' => '', 'Comment' => ''
         ),
         'ShippingFeeRegistered' => array(
-            'Type' => 'float(6)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'float(6)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 0, 'Extra' => '', 'Comment' => ''
         ),
         'ShippingFeeExtraStandard' => array(
-            'Type' => 'float(6)', 'Null' => 'NO', 'Default' => 0, 'Extra' => '', 'Comment' => ''
+            'Type' => 'float(6)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 0, 'Extra' => '', 'Comment' => ''
         ),
         'ShippingFeeExtraTracked' => array(
-            'Type' => 'float(6)', 'Null' => 'NO', 'Default' => 0, 'Extra' => '', 'Comment' => ''
+            'Type' => 'float(6)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 0, 'Extra' => '', 'Comment' => ''
         ),
         'ShippingFeeExtraRegistered' => array(
-            'Type' => 'float(6)', 'Null' => 'NO', 'Default' => 0, 'Extra' => '', 'Comment' => ''
+            'Type' => 'float(6)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 0, 'Extra' => '', 'Comment' => ''
         ),
         'Comment' => array(
-            'Type' => 'varchar(200)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(200)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'PrepareType' => array(
-            'Type' => "enum('manual','auto','apply')", 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment'=>''
+            'Type' => "enum('manual','auto','apply')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'manual', 'Extra' => '', 'Comment'=>''
         ),
         'Verified' => array(
-            'Type' => "enum('OK','ERROR','OPEN','EMPTY')", 'Null' => 'NO', 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
+            'Type' => "enum('OK','ERROR','OPEN','EMPTY')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
         ),
         'PreparedTS'   => array (
             'isInsertCurrentTime' => true,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => '0000-00-00 00:00:00', 'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'variation_theme' => array(
-            'Type' => 'varchar(200)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(200)', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
     );
 
@@ -131,7 +131,7 @@ class ML_Cdiscount_Model_Table_Cdiscount_Prepare extends ML_Database_Model_Table
             FROM " . $this->sTableName . " prepare
             INNER JOIN " . MLDatabase::factory('product')->getTableName() . " product on product.id = prepare.products_id
             INNER JOIN " . $oCat->getTableName() . " cat on cat.categoryid = " . $sField . "
-            WHERE prepare.mpid = " . MLModul::gi()->getMarketPlaceId() . "
+            WHERE prepare.mpid = " . MLModule::gi()->getMarketPlaceId() . "
             GROUP BY $sField
             ORDER BY count($sField)/count(product.parentid)+count(distinct product.parentid)-1 desc
             LIMIT 10

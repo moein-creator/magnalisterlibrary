@@ -18,68 +18,129 @@
  * -----------------------------------------------------------------------------
  */
 MLFilesystem::gi()->loadClass('Core_Controller_Abstract');
-//MLFilesystem::gi()->loadClass('Productlist_Controller_Widget_ProductList_Abstract');
 
 class ML_Amazon_Controller_Amazon_Prepare_Match_Auto extends ML_Core_Controller_Abstract {
 
     protected $aParameters = array('controller');
     //protected $aParameters = array('mp', 'mode', 'view', 'execute');
 
-    public function render() {
-        if ($this->getRequest('amazonProperties') !== null) {
-            MLMessage::gi()->addSuccess($this->__('Amazon_Label_sAutoMatchSuccess'));
-            throw new Exception('automatched');
-        }
-        parent::render();
-    }
+    public function callAjaxAmazonAutoMatching() {
+        $autoMatchingStats = $this->AutoMatchProduct();
+        $blFinalStep = $autoMatchingStats['iCurrent'] ===  (int)$autoMatchingStats['aStatistic']['iCountTotal'] && isset($autoMatchingStats['aStatistic']['iCountTotal']);
+        $aMessage = array(
+            'success' =>
+                MLRequest::gi()->data('saveSelection') == 'true'?
+                    false :$blFinalStep,
+            'error' => false,
+            'offset' => $autoMatchingStats['iCurrent'],
+            'info' => array(
+                'current' => $autoMatchingStats['iCurrent'],
+                'total' => $autoMatchingStats['aStatistic']['iCountTotal'],
+            ),
+        );
 
-    public function renderAjax() {
-        $oList = MLProductList::gi('amazon_prepare_match_auto');
-        $iOffset = (int) $this->getRequest('offset');
-        $iCurrent = $iOffset;
-        $oList->setFilters(array('iOffset' => $iOffset));
-        $aData = $this->getRequest('amazonProperties');
-        $aStatistic = $oList->getStatistic();
-        foreach ($oList->getList() as $oProduct) {
-            $aVariants = $oList->getVariants($oProduct);
-            $iCurrent++;
-            if (count($aVariants) == 0) {
-                $iOffset++;
-            } else {
-                foreach ($aVariants as $oVariant) {
-                    MLHelper::gi('Model_Table_Amazon_Prepare_Product')->auto($oVariant, $aData)->getTableModel()->save();
-                    MLDatabase::factory('selection')->set('pid', $oVariant->get('id'))->getList()->getQueryObject()->doDelete();
+        if ($blFinalStep) {
+            $ids = explode(',', $autoMatchingStats['productIds']);
+            foreach ($ids as $id) {
+                if($id !== '') {
+                    MLDatabase::factory('selection')->set('pid', $id)->getList()->getQueryObject()->doDelete();
                 }
             }
+            $aMessage['message'] =  trim(sprintf(
+                MLI18n::gi()->get('ML_AMAZON_TEXT_AUTOMATIC_MATCHING_SUMMARY'),
+                (string)$autoMatchingStats['success'],
+                (string)$autoMatchingStats['nosuccess'],
+                (string)$autoMatchingStats['almost']
+            ));
         }
-        if ($aStatistic['iCountTotal'] <= $iCurrent) {
-            echo json_encode(
-                array(
-                    'success' => true,
-                    'error' => false,
-                    'offset' => $iOffset,
-                    'info' => array(
-                        'current' => $iCurrent,
-                        'total' => $aStatistic['iCountTotal'],
-                    )
-                )
-            );
-        } else {
-            echo json_encode(
-                array(
-                    'success' => false,
-                    'error' => false,
-                    'offset' => $iOffset,
-                    'info' => array(
-                        'current' => $iCurrent,
-                        'total' => $aStatistic['iCountTotal'],
-                    )
-                )
-            );
+        MLSetting::gi()->add('aAjax', $aMessage );
+
+        $sAutoMatchStatistic = '<div id="ml-auto-matching-statistic"></div>';
+        foreach ($autoMatchingStats as $key => $item) {
+            if(!is_array($item)) {
+                $sAutoMatchStatistic .= '<input type="hidden" value="' . $item . '"
+                     name="' . MLHttp::gi()->parseFormFieldName('statistic[' . $key . ']') . '"/>';
+
+            }
         }
+        $sAutoMatchStatistic .= '</div>';
+        MLSetting::gi()->add('aAjaxPlugin', array('dom' => array('#ml-auto-matching-statistic' => array('content' => $sAutoMatchStatistic, 'action' => 'html'))));
+
     }
-    
-    
+
+    protected function AutoMatchProduct()
+    {
+        $statistic = MLRequest::gi()->data('statistic');
+        $autoMatchingStats = array(
+            'success' => isset($statistic['success'])?(int)$statistic['success']:0,
+            'almost' => isset($statistic['almost'])?(int)$statistic['almost']:0,
+            'nosuccess' => isset($statistic['nosuccess'])?(int)$statistic['nosuccess']:0,
+            'productIds' => isset($statistic['productIds'])?$statistic['productIds']:'',
+            'iCurrent' => 0,
+            'iOffset' =>0,
+            'aStatistic' =>array(),
+            'categories' => array(),
+            '_timer' => microtime(true)
+        );
+
+        $oList = MLProductList::gi('amazon_prepare_match_auto');
+        $autoMatchingStats['iOffset'] = (int) $this->getRequest('offset');
+        $autoMatchingStats['iCurrent'] = $autoMatchingStats['iOffset'];
+        $oList->setFilters(array('iOffset' => $autoMatchingStats['iOffset']));
+        $aData = $this->getRequest('amazonProperties');
+        $autoMatchingStats['aStatistic'] = $oList->getStatistic();
+        foreach ($oList->getList() as $oProduct){
+            $aVariants = $oList->getVariants($oProduct);
+            $autoMatchingStats['iCurrent']++;
+            $variantStatistic = array(
+                'success' => true,
+                'nosuccess' => false,
+                'almost' => false,
+            );
+            foreach ($aVariants as $oVariant) {
+                $aProduct =   MLHelper::gi('Model_Table_Amazon_PrepareData')->getProductArrayById($oVariant);
+                $searchResult = null;
+                if ($aProduct['EAN']) {
+                    $searchResult = MLHelper::gi('Model_Table_Amazon_PrepareData')->searchEanAndAsinOnAmazon('', $aProduct['EAN'], '');
+                } else {
+                    $variantStatistic['success'] &= false;
+                    $variantStatistic['nosuccess'] |= true;
+
+                }
+                //In popup message of magnalister it is mentioned that it try to find EAN and not the title, no doing that can cause unwanted matching
+                //if ($aProduct['Title'] && (count($searchResult) != 1)) {
+                //    $searchResult = MLHelper::gi('Model_Table_Amazon_PrepareData')->searchEanAndAsinOnAmazon($aProduct['Title'], '', '');
+                //}
+                if(is_array($searchResult)) {
+                    if (count($searchResult) != 1) {
+
+                        $variantStatistic['success'] &= false;
+                        if (count($searchResult) > 0) {
+                            $variantStatistic['almost'] |= true;
+                        }
+                        $variantStatistic['nosuccess'] |= true;
+                        MLHelper::gi('Model_Table_Amazon_Prepare_Product')->auto($oVariant, $aData, false)->getTableModel()->save();
+                    } else {
+                        MLHelper::gi('Model_Table_Amazon_Prepare_Product')->auto($oVariant, $aData, true)->getTableModel()->save();
+                    }
+                }
+                $autoMatchingStats['productIds'] .= $oVariant->get('id').',';
+            }
+            if($variantStatistic['success']) {
+                $autoMatchingStats['success']++;
+            }
+            if($variantStatistic['nosuccess']) {
+                $autoMatchingStats['nosuccess']++;
+            }
+            if($variantStatistic['almost']) {
+                $autoMatchingStats['almost']++;
+            }
+            break;
+        }
+
+        return $autoMatchingStats;
+    }
+
     public function getCurrentProduct(){
         $oTable = MLDatabase::factory('selection')->set('selectionname', 'match');
         $oSelectList = $oTable->getList();
@@ -95,12 +156,17 @@ class ML_Amazon_Controller_Amazon_Prepare_Match_Auto extends ML_Core_Controller_
         $aList = $oTable->getList()->getList();
         // if not products are selected do not go to matching
         if (empty($aList)) {
-           MLHttp::gi()->redirect($this->getParentUrl());
-           return null;
+            MLHttp::gi()->redirect($this->getParentUrl());
+            return null;
         }
         $oProduct = MLProduct::factory()->set('id', current($aList)->get('pid'));
         $aPreparedData = MLHelper::gi('Model_Service_Product')->addVariant($oProduct)->getData();
         return current($aPreparedData);
     }
+
+    protected function getPrepareProductHelper() {
+        return MLHelper::gi('Model_Table_Amazon_Prepare_Product');
+    }
+
 
 }

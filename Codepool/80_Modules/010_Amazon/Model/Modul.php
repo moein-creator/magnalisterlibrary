@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
@@ -11,39 +11,26 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
 
+    protected $amazonSite = null;
+    protected $currency = null;
+
+
     public function isConfigured() {
         $bReturn = parent::isConfigured();
-        $aFields = MLRequest::gi()->data('field');
-        $sCurrency = MLDatabase::factory('config')->set('mpid',$this->getMarketPlaceId())->set('mkey', 'currency')->get('value');  
-        if(!MLHttp::gi()->isAjax() && $aFields !== null && isset($aFields['site']) ){ // saving new site in configuration            
-            $aCurrencies = $this->getCurrencies();
-            $sCurrency = $aCurrencies[$aFields['site']];
-        }
-        if (!empty($sCurrency) && !in_array($sCurrency, array_keys(MLCurrency::gi()->getList()))) {
-            MLMessage::gi()->addWarn(sprintf(MLI18n::gi()->ML_AMAZON_ERROR_CURRENCY_NOT_IN_SHOP , $sCurrency));
-            return false;
-        }
-        if(MLModul::gi()->getConfig('shipping.template.active') == '1'){
-            $aTemplateName = MLModul::gi()->getConfig('shipping.template.name');
-            $blEmptyTemplate = true;
-            foreach ($aTemplateName as $iKey => $sValue) {
-                if($sValue !== ''){
-                    $blEmptyTemplate = false;
-                    break;
-                }
-            }
-            if($blEmptyTemplate){
-                MLMessage::gi()->addWarn(MLI18n::gi()->ML_AMAZON_ERROR_TEMPLATENAME_EMPTY);
+        if ($bReturn) {
+            if (!$this->ifCurrencyAvailable()) {
                 return false;
             }
+            $this->checkShippingTemplate();
         }
+
         return $bReturn;
     }
     
@@ -51,17 +38,20 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
      *
      * @var ML_Shop_Model_Price_Interface $oPrice 
      */
-    protected $oPrice=null;
+    protected $oPrice = null;
+
     public function getMarketPlaceName($blIntern = true){
         return $blIntern ? 'amazon' : MLI18n::gi()->get('sModuleNameAmazon');
     }
-    
-    public function getStockConfig($sType = null){
+
+    public function getStockConfig($sType = null) {
         return array(
-            'type'=>$this->getConfig('quantity.type'),
-            'value'=>$this->getConfig('quantity.value')
+            'type' => $this->getConfig('quantity.type'),
+            'value' => $this->getConfig('quantity.value'),
+            'max' => $this->getConfig('maxquantity'),
         );
     }
+
     public function getPublicDirLink(){
         $aResponse=MagnaConnector::gi()->submitRequestCached(array(
             'ACTION'=>'GetPublicDir',
@@ -77,7 +67,7 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         try {
             $aResponse = MagnaConnector::gi()->submitRequestCached(array(
                 'ACTION' => 'GetMainCategories',
-            ));
+            ), 24 * 60 * 60);
             if(isset($aResponse['DATA'])){
                 $aCategories=$aResponse['DATA'];
             }
@@ -90,17 +80,17 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         $aOut=array();
         try {
             $aRequest = MagnaConnector::gi()->submitRequestCached(array(
-                'ACTION' => 'GetProductTypesAndAttributes',
+                'ACTION'   => 'GetProductTypesAndAttributes',
                 'CATEGORY' => $sCategory
-            ));
+            ), 24 * 60 * 60);
         } catch (MagnaException $e) {
         }
         if(isset($aRequest['DATA'])){
             $aOut=$aRequest['DATA'];
         }else{
             $aOut= array(
-                'ProductTypes' => array('null' => ML_AMAZON_ERROR_APPLY_CANNOT_FETCH_SUBCATS),
-                'Attributes' => false
+                'ProductTypes' => array('null' => MLI18n::gi()->ML_AMAZON_ERROR_APPLY_CANNOT_FETCH_SUBCATS),
+                'Attributes'   => false
             );
         }
         return $aOut;
@@ -116,10 +106,10 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
 
         try {
             $aRequest = MagnaConnector::gi()->submitRequestCached(array(
-                'ACTION' => 'GetBrowseNodes',
-                'CATEGORY' => $sCategory,
+                'ACTION'      => 'GetBrowseNodes',
+                'CATEGORY'    => $sCategory,
                 'NewResponse' => $mNewResponse,
-            ));
+            ), 24 * 60 * 60);
         } catch (MagnaException $e) {
         }
 
@@ -137,22 +127,23 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         $sSync = $this->getConfig('stocksync.tomarketplace');
 
         return array(
-            'import'                               => array('api' => 'Orders.Import', 'value' => ($this->getConfig('import'))),
-            'preimport.start'                      => array('api' => 'Orders.Import.TS', 'value' => $sDate),
-            'stocksync.tomarketplace'              => array('api' => 'Callback.SyncInventory', 'value' => isset($sSync) ? $sSync : 'no'),
-            'amazonvcs.option'                     => array('api' => 'AmazonVCS.Option', 'value' => $this->getConfig('amazonvcs.option')),
-            'amazonvcs.invoice'                    => array('api' => 'AmazonVCS.InvoiceOption', 'value' => $this->getConfig('amazonvcs.invoice')),
-            'amazonvcsinvoice.mailcopy'            => array('api' => 'AmazonVCS.MailCopy', 'value' => $this->getConfig('amazonvcsinvoice.mailcopy')),
-            'amazonvcsinvoice.invoicenumberoption'       => array('api' => 'AmazonVCS.InvoiceNumberOption', 'value' => $this->getConfig('amazonvcsinvoice.invoicenumberoption')),
-            'amazonvcsinvoice.invoiceprefix'       => array('api' => 'AmazonVCS.InvoicePrefix', 'value' => $this->getConfig('amazonvcsinvoice.invoiceprefix')),
-            'amazonvcsinvoice.reversalinvoiceprefix' => array('api' => 'AmazonVCS.ReversalInvoicePrefix', 'value' => $this->getConfig('amazonvcsinvoice.reversalinvoiceprefix')),
+            'import'                                       => array('api' => 'Orders.Import', 'value' => ($this->getConfig('import'))),
+            'preimport.start'                              => array('api' => 'Orders.Import.TS', 'value' => $sDate),
+            'stocksync.tomarketplace'                      => array('api' => 'Callback.SyncInventory', 'value' => isset($sSync) ? $sSync : 'no'),
+            'amazonvcs.option'                             => array('api' => 'AmazonVCS.Option', 'value' => $this->getConfig('amazonvcs.option')),
+            'amazonvcs.invoice'                            => array('api' => 'AmazonVCS.InvoiceOption', 'value' => $this->getConfig('amazonvcs.invoice')),
+            'amazonvcsinvoice.mailcopy'                    => array('api' => 'AmazonVCS.MailCopy', 'value' => $this->getConfig('amazonvcsinvoice.mailcopy')),
+            'amazonvcsinvoice.language'                    => array('api' => 'AmazonVCS.Language', 'value' => $this->getConfig('amazonvcsinvoice.language')),
+            'amazonvcsinvoice.invoicenumberoption'         => array('api' => 'AmazonVCS.InvoiceNumberOption', 'value' => $this->getConfig('amazonvcsinvoice.invoicenumberoption')),
+            'amazonvcsinvoice.invoiceprefix'               => array('api' => 'AmazonVCS.InvoicePrefix', 'value' => $this->getConfig('amazonvcsinvoice.invoiceprefix')),
+            'amazonvcsinvoice.reversalinvoiceprefix'       => array('api' => 'AmazonVCS.ReversalInvoicePrefix', 'value' => $this->getConfig('amazonvcsinvoice.reversalinvoiceprefix')),
             'amazonvcsinvoice.reversalinvoicenumberoption' => array('api' => 'AmazonVCS.ReversalInvoiceNumberOption', 'value' => $this->getConfig('amazonvcsinvoice.reversalinvoicenumberoption')),
-            'amazonvcsinvoice.companyadressleft'   => array('api' => 'AmazonVCS.CompanyAddressLeft', 'value' => $this->getConfig('amazonvcsinvoice.companyadressleft')),
-            'amazonvcsinvoice.companyadressright'  => array('api' => 'AmazonVCS.CompanyAddressRight', 'value' => $this->getConfig('amazonvcsinvoice.companyadressright')),
-            'amazonvcsinvoice.headline'            => array('api' => 'AmazonVCS.Headline', 'value' => $this->getConfig('amazonvcsinvoice.headline')),
-            'amazonvcsinvoice.invoicehintheadline' => array('api' => 'AmazonVCS.InvoiceHintHeadline', 'value' => $this->getConfig('amazonvcsinvoice.invoicehintheadline')),
-            'amazonvcsinvoice.invoicehinttext'     => array('api' => 'AmazonVCS.InvoiceHintText', 'value' => $this->getConfig('amazonvcsinvoice.invoicehinttext')),
-            'amazonvcsinvoice.footercell1'         => array('api' => 'AmazonVCS.FooterCell1', 'value' => $this->getConfig('amazonvcsinvoice.footercell1')),
+            'amazonvcsinvoice.companyadressleft'           => array('api' => 'AmazonVCS.CompanyAddressLeft', 'value' => $this->getConfig('amazonvcsinvoice.companyadressleft')),
+            'amazonvcsinvoice.companyadressright'          => array('api' => 'AmazonVCS.CompanyAddressRight', 'value' => $this->getConfig('amazonvcsinvoice.companyadressright')),
+            'amazonvcsinvoice.headline'                    => array('api' => 'AmazonVCS.Headline', 'value' => $this->getConfig('amazonvcsinvoice.headline')),
+            'amazonvcsinvoice.invoicehintheadline'         => array('api' => 'AmazonVCS.InvoiceHintHeadline', 'value' => $this->getConfig('amazonvcsinvoice.invoicehintheadline')),
+            'amazonvcsinvoice.invoicehinttext'             => array('api' => 'AmazonVCS.InvoiceHintText', 'value' => $this->getConfig('amazonvcsinvoice.invoicehinttext')),
+            'amazonvcsinvoice.footercell1'                 => array('api' => 'AmazonVCS.FooterCell1', 'value' => $this->getConfig('amazonvcsinvoice.footercell1')),
             'amazonvcsinvoice.footercell2'         => array('api' => 'AmazonVCS.FooterCell2', 'value' => $this->getConfig('amazonvcsinvoice.footercell2')),
             'amazonvcsinvoice.footercell3'         => array('api' => 'AmazonVCS.FooterCell3', 'value' => $this->getConfig('amazonvcsinvoice.footercell3')),
             'amazonvcsinvoice.footercell4'         => array('api' => 'AmazonVCS.FooterCell4', 'value' => $this->getConfig('amazonvcsinvoice.footercell4')),
@@ -170,10 +161,10 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
     
     public function getMarketPlaces() {
         try {
-            $aRequest = MagnaConnector::gi()->submitRequest(array(
-                'ACTION' => 'GetMarketplaces',
+            $aRequest = MagnaConnector::gi()->submitRequestCached(array(
+                'ACTION'    => 'GetMarketplaces',
                 'SUBSYSTEM' => 'Amazon',
-            ));
+            ), 24 * 60 * 60);
             
         } catch (MagnaException $e) {            
         }        
@@ -182,11 +173,11 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
 
     public function getCarrierCodes() {
         try {
-            $aRequest = MagnaConnector::gi()->submitRequest(array(
-                'ACTION' => 'GetCarrierCodes',
-                'SUBSYSTEM' => 'Amazon',
+            $aRequest = MagnaConnector::gi()->submitRequestCached(array(
+                'ACTION'        => 'GetCarrierCodes',
+                'SUBSYSTEM'     => 'Amazon',
                 'MARKETPLACEID' => $this->getMarketPlaceId(),
-            ));
+            ), 24 * 60 * 60);
         } catch (MagnaException $e) {
             
         }
@@ -227,6 +218,9 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
     }
 
     public function performItemSearch($asin, $ean, $productsName) {
+        if (!is_string($ean)) {
+            $ean = '';
+        }
         $sCacheId = __FUNCTION__ . '_' . md5(json_encode(array($asin, $ean, $productsName)));
         try {
             $searchResults = MLCache::gi()->get($sCacheId);
@@ -291,14 +285,175 @@ class ML_Amazon_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         return true;
     }
 
+    /**
+     * Hint: for Prestashop and Shopify we do not check for any other status during status sync then these below
+     *
+     * @return string[]
+     */
     public function getStatusConfigurationKeyToBeConfirmedOrCanceled() {
         return array(
             'orderstatus.shippedaddress',
             'orderstatus.cancelled',
+            'bopis.orderstatus.readyforpickup',
+            'bopis.orderstatus.pickedup',
+            'bopis.orderstatus.refund',
         );
     }
 
     //    public function isAttributeMatchingNotMatchOptionImplemented() {
     //        return true;
     //    }
+
+    public function GetBopisStores() {
+        try {
+            $aResponse = MagnaConnector::gi()->submitRequestCached(array(
+                'ACTION' => 'GetBopisStores',
+            ), 6 * 60 * 60);
+            return $aResponse['DATA'];
+        } catch (Exception $oEx) {
+            return array();
+        }
+    }
+
+    public function GetAmazonTimezones() {
+        try {
+            $aResponse = MagnaConnector::gi()->submitRequestCached(array(
+                'ACTION' => 'GetAmazonTimezones',
+            ), 6 * 60 * 60);
+            return $aResponse['DATA'];
+        } catch (Exception $oEx) {
+            return array();
+        }
+    }
+
+    public function getMerchantDetails($blCachePurge = false) {
+        $merchantDetails = MagnaConnector::gi()->submitRequestCached(array(
+            'ACTION' => 'GetMerchantDetails',
+        ), 60 * 60 * 24 * 30,
+            $blCachePurge);
+        if (isset($merchantDetails['DATA'])) {
+            return $merchantDetails['DATA'];
+        }
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    protected function getCurrencyOfAmazonSite() {
+        $aFields = MLRequest::gi()->data('field');
+
+        if ($this->amazonSite === null) {
+            $this->amazonSite = MLDatabase::factory('config')->set('mpid', $this->getMarketPlaceId())->set('mkey', 'site')->get('value');
+        }
+
+        if (!MLHttp::gi()->isAjax() && $aFields !== null && isset($aFields['site'])) { // saving new site in configuration
+            $this->amazonSite = $aFields['site'];
+            $this->currency = null;
+        }
+        //get the currency from magnalister API
+        $aCurrencies = $this->getCurrencies();
+        $sCurrency = empty($this->amazonSite) ? null : $aCurrencies[$this->amazonSite];
+        if (!empty($sCurrency)) {
+            MLDatabase::factory('config')->set('mpId', $this->getMarketPlaceId())->set('mkey', 'currency')->set('value', $sCurrency)->save();
+        }
+        return $sCurrency;
+    }
+
+    public function getConfig($sName = null) {
+        $mValue = parent::getConfig($sName);
+        if ($mValue === null && $sName === 'currency') {
+            $mValue = $this->getCurrencyOfAmazonSite();
+        } else if ($sName === null && is_array($mValue)) {
+            $mValue['currency'] = $this->getCurrencyOfAmazonSite();
+        }
+        return $mValue;
+    }
+
+    protected function ifCurrencyAvailable() {
+        if ($this->currency === null) {
+            $this->currency = MLDatabase::factory('config')->set('mpid', $this->getMarketPlaceId())->set('mkey', 'currency')->get('value');
+        }
+
+        if (empty($this->currency)) {
+            $this->currency = $this->getCurrencyOfAmazonSite();
+            if (!empty($this->currency)) {
+                $this->setConfig('currency', $this->currency);
+            }
+        }
+        if (!empty($this->currency) && !in_array($this->currency, array_keys(MLCurrency::gi()->getList()))) {
+            MLMessage::gi()->addWarn(sprintf(MLI18n::gi()->ML_AMAZON_ERROR_CURRENCY_NOT_IN_SHOP, $this->currency));
+            return false;
+        } else {
+            //Set the currency in to the config data and get it from MLModule::gi()->getConfig('currency');
+            if ($this->getConfig('currency') !== $this->currency) {
+                $this->setConfig('currency', $this->currency);
+            }
+        }
+        return true;
+    }
+
+    protected function checkShippingTemplate() {
+        $aTemplateName = MLModule::gi()->getConfig('shipping.template.name');
+        if ($this->isShippingTemplateFilled($aTemplateName)) {
+            $aFields = MLRequest::gi()->data('field');
+            if (!MLHttp::gi()->isAjax() && $aFields !== null && isset($aFields['shipping.template.name'])) { // saving new shipping template in configuration
+                $aTemplateName = $aFields['shipping.template.name'];
+            }
+        }
+        if ($this->isShippingTemplateFilled($aTemplateName)) {
+            MLMessage::gi()->addWarn(MLI18n::gi()->ML_AMAZON_ERROR_TEMPLATENAME_EMPTY);
+        }
+    }
+
+    protected function isShippingTemplateFilled($aTemplateName) {
+        $blEmptyTemplate = true;
+        if (is_array($aTemplateName)) {
+            foreach ($aTemplateName as $iKey => $sValue) {
+                if ($sValue !== '') {
+                    $blEmptyTemplate = false;
+                    break;
+                }
+            }
+        }
+        return $blEmptyTemplate;
+    }
+
+    public function getPriceObject($sType = null) {
+        if ($sType === 'b2b') {
+            $sKind = $this->getConfig('b2b.price.addkind');
+            if (isset($sKind)) {
+                $fFactor = (float)$this->getConfig('b2b.price.factor');
+                $iSignal = $this->getConfig('b2b.price.signal');
+                $iSignal = $iSignal === '' ? null : (int)$iSignal;
+                $blSpecial = (boolean)$this->getConfig('b2b.price.usespecialoffer');
+                $sGroup = $this->getConfig('b2b.price.group');
+                $oPrice = MLPrice::factory()->setPriceConfig($sKind, $fFactor, $iSignal, $sGroup, $blSpecial);
+                return $oPrice;
+            }
+        }
+        return parent::getPriceObject($sType);
+    }
+
+
+    public function getListOfConfigurationKeysNeedShopValidationOnlyActive() {
+        if (self::$aListOfConfigurationKeysNeedShopValidationOnlyActive === null) {
+            $aReturn = array(
+                'price.group' => 'config' . $this->getPriceConfigurationUrlPostfix(),
+            );
+            $aFields = MLRequest::gi()->data('field');
+            if (!MLHttp::gi()->isAjax() && $aFields !== null && isset($aFields['b2bactive'])) {
+                $blB2bPriceActive = $aFields['b2bactive'] === 'true';
+            } else {
+                $blB2bPriceActive = $this->getConfigAndDefaultConfig('b2bactive') === 'true';
+            }
+            if ($blB2bPriceActive) {
+                $aReturn['b2b.price.group'] = 'config_price';
+            }
+            //MLMessage::gi()->addDebug(__LINE__ . ':' . microtime(true), array($blB2bPriceActive, $aReturn));
+            self::$aListOfConfigurationKeysNeedShopValidationOnlyActive = $aReturn;
+        }
+
+        return self::$aListOfConfigurationKeysNeedShopValidationOnlyActive;
+    }
 }

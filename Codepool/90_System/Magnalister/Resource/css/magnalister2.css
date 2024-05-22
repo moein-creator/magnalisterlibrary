@@ -2,7 +2,8 @@ div.magnamain{
     background-color:white;
 }
 div.magnamain table.datagrid a, div.magnamain form.categoryView table.list a  {
-    color:#E31A1C;
+/*    color:#E31A1C;*/
+    color: #000;
 }
 
 .hideChild:hover>tr.childToHide{
@@ -17,8 +18,8 @@ div.magnamain table.datagrid a, div.magnamain form.categoryView table.list a  {
     border:none;
     outline:none;
     cursor: pointer;
-    color:gray;
 }
+
 .noButton[disabled]{
     color:inherit;
     cursor: inherit;
@@ -44,3 +45,14 @@ div.magnamain table.datagrid a, div.magnamain form.categoryView table.list a  {
 td.input .select2 {
     min-width: 25em !important;
 }
+@media screen and (max-width: 1360px) {
+    td.input .select2 {
+        min-width: 15em !important;
+    }
+}
+
+/*@media screen and (max-width: 999px) {
+    td.input .select2 {
+        min-width: 15em !important;
+    }
+}*/

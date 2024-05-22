@@ -28,15 +28,15 @@ Wählen Sie ein Transportunternehmen aus der Dropdown-Liste. Es werden die Unter
 <br>
 Diese Option bietet sich an, wenn Sie für Amazon Bestellungen <strong>immer das gleiche Transportunternehmen nutzen</strong> möchten.<br>
 <ul>
-	<li><span class="bold underline">Von Amazon vorgeschlagene Transportunternehmen mit Versanddienstleistern aus Webshop Versandkosten-Modul matchen</span></li>
+	<li><span class="bold underline">Von Amazon vorgeschlagene Transportunternehmen mit Versanddienstleistern aus den Webshop-Versandarten matchen</span></li>
 </ul>
-Sie können die von Amazon empfohlenen Transportunternehmen mit den im WooCommerce Versandkosten-Modul angelegten Dienstleistern matchen. Über das “+” Symbol können Sie mehrere Matchings vornehmen.<br>
+Sie können die von Amazon empfohlenen Transportunternehmen mit den in den WooCommerce-Versandart angelegten Dienstleistern matchen. Über das “+” Symbol können Sie mehrere Matchings vornehmen.<br>
 <br>
-Infos, welcher Eintrag aus dem WooCommerce Versandkosten-Modul beim Amazon Bestellimport verwendet wird, entnehmen Sie bitte dem Info Icon unter “Bestellimport” -> “Versandart der Bestellungen”.<br>
+Infos, welcher Eintrag aus den WooCommerce-Versandarten beim Amazon Bestellimport verwendet wird, entnehmen Sie bitte dem Info Icon unter “Bestellimport” -> “Versandart der Bestellungen”.<br>
 <br>
-Diese Option bietet sich an, wenn Sie auf <strong>bestehende Versandkosten-Einstellungen</strong> aus dem <strong>WooCommerce</strong> Versandkosten-Modul zurückgreifen möchten.<br>
+Diese Option bietet sich an, wenn Sie auf <strong>bestehende Versandart-Einstellungen</strong> aus den <strong>WooCommerce</strong> Versandarten zurückgreifen möchten.<br>
 <ul>
-    <li><span class="bold underline">magnalister fügt ein “Individuelles Feld” in den Bestelldetails  hinzu</span></li>
+    <li><span class="bold underline">magnalister fügt ein “Individuelles Feld” in den Bestelldetails hinzu</span></li>
 </ul>
 Wenn Sie diese Option wählen, fügt magnalister beim Bestellimport ein Feld in den Bestelldetails bei der WooCommerce Bestellung hinzu. In dieses Feld können Sie das Transportunternehmen eintragen.<br>
 <br>
@@ -59,13 +59,13 @@ Wählen Sie hier den Lieferservice ( = Versandart), der allen Amazon Bestellunge
 <br>
 Sie haben folgende Optionen:
 <ul>
-	<li><span class="bold underline">Lieferservice mit Einträgen aus Webshop Versandkosten-Modul matchen</span></li>
+	<li><span class="bold underline">Lieferservice mit Einträgen aus den Webshop-Versandarten matchen</span></li>
 </ul>
-Sie können einen beliebigen Lieferservice mit den im WooCommerce Versandkosten-Modul angelegten Einträgen matchen. Über das “+” Symbol können Sie mehrere Matchings vornehmen.<br>
+Sie können einen beliebigen Lieferservice mit den in der WooCommerce-Versandart angelegten Einträgen matchen. Über das “+” Symbol können Sie mehrere Matchings vornehmen.<br>
 <br>
-Infos, welcher Eintrag aus dem WooCommerce Versandkosten-Modul beim Amazon Bestellimport verwendet wird, entnehmen Sie bitte dem Info Icon unter “Bestellimport” -> “Versandart der Bestellungen”.<br>
+Infos, welcher Eintrag aus den WooCommerce-Versandarten beim Amazon Bestellimport verwendet wird, entnehmen Sie bitte dem Info Icon unter “Bestellimport” -> “Versandart der Bestellungen”.<br>
 <br>
-Diese Option bietet sich an, wenn Sie auf <strong>bestehende Versandkosten-Einstellungen aus</strong> dem <strong>WooCommerce</strong> Versandkosten-Modul zurückgreifen möchten.<br>
+Diese Option bietet sich an, wenn Sie auf <strong>bestehende Versandart-Einstellungen aus</strong> den <strong>WooCommerce</strong> Versandarten zurückgreifen möchten.<br>
 <ul>
 	<li><span class="bold underline">magnalister fügt ein “Individuelles Feld” in den Bestelldetails hinzu</span></li>
 </ul>
@@ -85,3 +85,5 @@ Diese Option bietet sich an, wenn Sie <strong>für alle Amazon Bestellungen ein 
 	<li>Die Nicht-Übermittlung des Lieferservices kann zu einem vorübergehenden Entzug der Verkaufsberechtigung führen.</li>
 </ul>
 ';
+
+MLI18n::gi()->{'amazon_config_vcs__field__amazonvcs.invoice__values__germanmarket'} = 'Von German Market erstellte Rechnungen werden zu Amazon übermittelt';

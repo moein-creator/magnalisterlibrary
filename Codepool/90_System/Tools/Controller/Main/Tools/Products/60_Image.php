@@ -41,7 +41,7 @@ class ML_Tools_Controller_Main_Tools_Products_Image extends ML_Core_Controller_A
     protected function getSku() {
         try {
             $sku = MLRequest::gi()->get('sku');
-        } catch (Exception $oEx) {
+        } catch (MLRequest_Exception $oEx) {
             $sku = '';
         }
 
@@ -51,7 +51,7 @@ class ML_Tools_Controller_Main_Tools_Products_Image extends ML_Core_Controller_A
     protected function getChunksPerPage() {
         try {
             $iChunks = MLRequest::gi()->get('chunksize');
-        } catch (Exception $oEx) {
+        } catch (MLRequest_Exception $oEx) {
             $iChunks = $this->iDefaultChunkSize;
         }
         $iChunks = (int) $iChunks;
@@ -75,7 +75,7 @@ class ML_Tools_Controller_Main_Tools_Products_Image extends ML_Core_Controller_A
         }
         return $sPlatform;
     }
-
+    
     protected function getSizeValue() {
         try {
             $sSize = MLRequest::gi()->get('imagesizes');
@@ -93,7 +93,7 @@ class ML_Tools_Controller_Main_Tools_Products_Image extends ML_Core_Controller_A
         }
         return $blChecked;
     }
-
+    
     protected function oldChecked() {
         try {
             $blChecked = (MLRequest::gi()->get('oldimage') == 'old');
@@ -113,14 +113,14 @@ class ML_Tools_Controller_Main_Tools_Products_Image extends ML_Core_Controller_A
         $iFrom = $iPage * $iCount;
         MLSetting::gi()->add('aAjax', array('debuging' => array($iPage, $iCount, $iFrom)));
         $this->oList->setLimit($iFrom, $iCount);
-
+        
         if (MLCache::gi()->exists('Model_Image__BrokenImageResize')) {
             $aImage = MLCache::gi()->get('Model_Image__BrokenImageResize');
-
+            
             try {
                 $sUrl = MLImage::gi()->getFallBackUrl($aImage['sSrc'], $aImage['sDst'], $aImage['iMaxWidth'], $aImage['iMaxHeight']);
                 $this->mReturnInfo .= 'destination : '.$aImage['sDst'].'<br>source : '.$aImage['sSrc'].'<br>url : '.$sUrl.'<br><iframe  src="'.$sUrl.'"></iframe><br>';
-
+                               
                 MLDatabase::getTableInstance('image')
                         ->set('sourcePath', $aImage['sSrc'])
                         ->set('destinationPath', $aImage['sDst'])
@@ -204,7 +204,7 @@ class ML_Tools_Controller_Main_Tools_Products_Image extends ML_Core_Controller_A
 
         return array($iWidth, $iHeight);
     }
-
+    
     protected function getInfo() {
         if (MLRequest::gi()->data('sku') != '') {
             return "100";

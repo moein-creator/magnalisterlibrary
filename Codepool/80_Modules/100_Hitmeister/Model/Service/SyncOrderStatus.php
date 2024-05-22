@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -90,6 +90,9 @@ class ML_Hitmeister_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service
                         )
                     ));
                 }
+
+                $oOrder->set('order_status_sync_last_check_date', 'NOW()'); // update date when last check happened
+                $oOrder->save();
             }
             //echo print_m($aShippedRequest, '$aShippedRequest')."\n";
             //echo print_m($aCanceledRequest, '$aCanceledRequest')."\n";
@@ -113,13 +116,84 @@ class ML_Hitmeister_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service
             $sErrorCode = $aError['ERRORCODE'];
         }
         if (in_array($sErrorCode, array(
-                '1497954205', // 1497954205: The following tracking_number is not valid
-                '1382002841', // 1382002841: Unit is already in status cancelled
-            ))
+            '1497954205', // 1497954205: The following tracking_number is not valid
+            '1382002841', // 1382002841: Unit is already in status cancelled
+        ))
         ) {
             $this->saveOrderData($aModels[$sMarketplaceOrderId]);
             unset($aModels[$sMarketplaceOrderId]);
         }
     }
-    
+
+    protected function getCarrier($oOrder)
+    {
+        $sCarrier = $oOrder->getShippingCarrier();
+        $sConfigCarrier = MLModule::gi()->getConfig('orderstatus.carrier');
+
+        //order attribute freetext field(only in Shopware 5)
+        if (is_string($sConfigCarrier) && strpos($sConfigCarrier, 'a_') === 0) {
+            return $oOrder->getAttributeValue($sConfigCarrier);
+        } elseif (
+            $sConfigCarrier == null || $sConfigCarrier == '-1'//shipping method will be transferred as carrier
+        ) {
+            return $sCarrier;
+        } else {
+            return $sConfigCarrier;
+        }
+    }
+
+    /**
+     * Skip processing for FBK orders.
+     *
+     * @param $oOrder ML_Shop_Model_Order_Abstract
+     * @return bool
+     */
+    protected function skipAOModifyOrderProcessing($oOrder) {
+        $aData = $oOrder->get('data');
+
+        // Skip processing FBK orders
+        if ($aData['FulfillmentType'] === 'fulfilled_by_kaufland') {
+            $this->saveOrderData($oOrder);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $sAction
+     * @param $aRequest
+     * @param ML_Shop_Model_Order_Abstract[] $aModels
+     * @param $singleOrderRequestOrderId
+     * @return void
+     */
+    protected function submitRequestAndProcessResult($sAction, $aRequest, $aModels, $singleOrderRequestOrderId = false) {
+        if ($sAction === 'ConfirmShipment') {
+            //check if user lets generate the invoices via magnalister - if so then submit VAT details about products
+            if (MLModule::gi()->getConfig('invoice.option') === 'magna') {
+                $requestData = array();
+                try {
+                    //request api to provide VAT details
+                    foreach ($aModels as $orderId => $orderModel) {
+                        $requestData[$orderId] = $orderModel->getShopOrderProducts();
+                    }
+
+                    if (!empty($requestData)) {
+                        try {
+                            MagnaConnector::gi()->submitRequest(array(
+                                'ACTION' => 'UpdateVatDetailsForOrderProducts',
+                                'DATA' => $requestData,
+                            ), true);
+                        } catch (MagnaException $e) {
+                        }
+                    }
+                } catch (Exception $ex) {
+                }
+            }
+
+        }
+
+        parent::submitRequestAndProcessResult($sAction, $aRequest, $aModels, $singleOrderRequestOrderId);
+    }
 }

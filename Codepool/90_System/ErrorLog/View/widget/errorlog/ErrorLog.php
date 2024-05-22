@@ -26,13 +26,21 @@ MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true);
                 <input type="checkbox" id="selectAll"/><label for="selectAll"><?php echo $this->__('ML_LABEL_CHOICE') ?></label>
             </th>
             <?php foreach ($this->getFields() as $aFiled) { ?>
-                <th> <?php
-                    echo $aFiled['Label'];
-                    if (isset($aFiled['Sorter']) && $aFiled['Sorter'] != null) {
-                        ?>
-                        <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>"/>
-                        <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>"/>
-                    <?php } ?>
+                <th>
+                    <div class="ml-errorlog-th">
+                        <div> <?php
+                            echo $aFiled['Label'];
+                            if (isset($aFiled['Sorter']) && $aFiled['Sorter'] != null) {
+                            ?>
+                        </div>
+                            <div style="width: 42px;">
+                                <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>"/>
+                                <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>"/>
+                            </div>
+
+                        <?php } ?>
+                    </div>
+
                 </th>
             <?php } ?>
         </tr>
@@ -54,7 +62,7 @@ MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true);
                     'SKU' => $oErrorlog->get('products_model'),
                 ))));
                 ?>
-                <tr class="<?php echo(($oddEven = !$oddEven) ? 'odd' : 'even') ?>">
+                <tr>
                     <td>
                         <input type="checkbox" name="<?php echo MLHttp::gi()->parseFormFieldName('ids[]') ?>" value="<?php echo $oErrorlog->get('id') ?>">
                         <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName("details[".$oErrorlog->get('products_model')."]") ?>" value="<?php echo $sDetails ?>">

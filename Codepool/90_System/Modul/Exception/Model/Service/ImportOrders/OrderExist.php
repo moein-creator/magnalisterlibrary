@@ -1,6 +1,6 @@
 <?php
 class ML_Modul_Exception_Model_Service_ImportOrders_OrderExist extends Exception{
-    protected $oShopOrder=null;
+    protected $sShopOrder = null;
     public function __construct($message, $code, $previous) {
         parent::__construct('Order Exist');
     }

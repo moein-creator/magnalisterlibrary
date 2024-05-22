@@ -2,6 +2,11 @@
 
 class ML_Prestashop_Helper_Model_Product {
 
+    /**
+     * @var ML_Database_Model_Query_Select|object
+     */
+    private $oSelectQuery;
+
     public function getProductFeatureValue($id_product, $id_feature, $id_lang) {
         $value = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
 				SELECT value

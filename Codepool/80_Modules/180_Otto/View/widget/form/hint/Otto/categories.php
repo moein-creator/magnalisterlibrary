@@ -16,7 +16,8 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <button
         data-field="<?php echo $aField['id'] ?>"

@@ -30,7 +30,7 @@ class ML_GoogleShopping_Model_Table_GoogleShopping_Prepare extends ML_Database_M
         ),
         'PreparedTS'   => array(
             'isInsertCurrentTime' => true,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => '0000-00-00 00:00:00', 'Extra' => '', 'Comment'=>''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment'=>''
         ),
         'channel' => array(
             'Type' => 'varchar(6)', 'Null' => 'NO', 'Default' => 'online', 'Extra' => '', 'Comment'=>''
@@ -72,7 +72,7 @@ class ML_GoogleShopping_Model_Table_GoogleShopping_Prepare extends ML_Database_M
             'Type' => 'text', 'Null' => 'NO', 'Default' => null,'Extra' => '', 'Comment'=>''
         ),
         'ShopVariation' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => null, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => 'NO', 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'CustomAttributes' => array(
             'Type' => 'text', 'Null' => 'NO', 'Default' => null, 'Extra' => '', 'Comment' => ''
@@ -104,12 +104,12 @@ class ML_GoogleShopping_Model_Table_GoogleShopping_Prepare extends ML_Database_M
             FROM ".$this->sTableName." prepare
             INNER JOIN ".MLDatabase::factory('product')->getTableName()." product on product.id = prepare.products_id
             INNER JOIN ".$oCat->getTableName()." cat on cat.categoryid = ".$sField."
-            WHERE prepare.mpid = ".MLModul::gi()->getMarketPlaceId()."
+            WHERE prepare.mpid = " . MLModule::gi()->getMarketPlaceId() . "
             GROUP BY $sField
             ORDER BY count($sField)/count(product.parentid)+count(distinct product.parentid)-1 desc
             LIMIT 10
         ";
-            //var_dump($sQuery);die;
+
         foreach (MLDatabase::getDbInstance()->fetchArray($sQuery, true) as $iCatId) {
             $oCat->init(true)->set('categoryid', $iCatId);
             $sCat = '';

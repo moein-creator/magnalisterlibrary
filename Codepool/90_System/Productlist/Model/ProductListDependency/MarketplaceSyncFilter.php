@@ -110,7 +110,7 @@ class ML_ProductList_Model_ProductListDependency_MarketplaceSyncFilter extends M
     public function getMasterIdents() {
         $sValue = $this->getFilterValue();
         if ($sValue !== 'all' && in_array($sValue, array_keys($this->getFilterValues()))) {
-            $sProductTable = MLDatabase::getTableInstance('product')->getTableName();
+            $sProductTable = MLProduct::factory()->getTableName();
             // get masterarticles which have prepared variants
             $sSql = "
                 SELECT master.id
@@ -269,7 +269,7 @@ class ML_ProductList_Model_ProductListDependency_MarketplaceSyncFilter extends M
                         ->set('ProductsSku', $sSku)
                         ->set('transferred', 1)
                         ->set('deletedBy', '')->save();
-                } catch (\Exception $ex) {
+                } catch (Exception $ex) {
                     MLMessage::gi()->addDebug($ex);
                 }
             } else {
@@ -327,7 +327,7 @@ class ML_ProductList_Model_ProductListDependency_MarketplaceSyncFilter extends M
                         ->set('ProductsSku', $aItem['SKU'])
                         ->set('transferred', 1)
                         ->set('deletedBy', $aItem['deletedBy'])->save();
-                } catch (\Exception $ex) {
+                } catch (Exception $ex) {
                     MLMessage::gi()->addDebug($ex);
                 }
             } else {
@@ -394,7 +394,7 @@ class ML_ProductList_Model_ProductListDependency_MarketplaceSyncFilter extends M
                     if ($this->{'step'.$sStep}($oProgress, $sCacheName)) {
                         array_shift($aSteps);
                     }
-                } catch (\Exception $ex) {
+                } catch (Exception $ex) {
                     MLMessage::gi()->addDebug($ex);
                 }
             } else {

@@ -18,8 +18,8 @@
 MLSetting::gi()->add('formgroups', array(
     'tabident' => array(
         'legend' => array(
-            'i18n' => '',
-            'classes' => array('mlhidden'),
+            'i18n' => 'Tab',
+            'classes' => array(''),
         ),
         'fields' => array(
             'tabident' => '{#setting:formfields__tabident#}'

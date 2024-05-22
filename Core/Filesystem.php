@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -125,8 +125,11 @@ class MLFilesystem {
                 }
                 $sCacheFile .= '.json';
                 if (file_exists($sCacheFile)) {
-                    $aOut = array_merge_recursive($aOut, json_decode(file_get_contents($sCacheFile), true));
-                    continue;
+                    $mJson = json_decode(file_get_contents($sCacheFile), true);
+                    if (is_array($mJson)) {
+                        $aOut = array_merge_recursive($aOut, $mJson);
+                        continue;
+                    }
                 }
             }
             $aSubPaths = $this->glob($sValue . $sDs . '*');
@@ -421,7 +424,7 @@ class MLFilesystem {
         $aBasePaths = $this->getBasePaths($sFileType);
         if (isset($aBasePaths[$sFilename][$iIndex])) {
             if (!file_exists($aBasePaths[$sFilename][$iIndex]['path'])) {
-                throw new ML_Filesystem_Exception('File `' . $aBasePaths[$sFilename][$iIndex]['path'] . '` don\'t exists', 1444988637);
+                throw new ML_Filesystem_Exception('File `' . $aBasePaths[$sFilename][$iIndex]['path'] . "` doesn't exists", 1444988637);
             }
             return $aBasePaths[$sFilename][$iIndex];
         } else {
@@ -431,7 +434,7 @@ class MLFilesystem {
                 foreach ($aBasePaths[$sVector] as $aInfo) {
                     if ($aInfo['class'] == $sPrefix . $sFilename) {
                         if (!file_exists($aInfo['path'])) {
-                            throw new ML_Filesystem_Exception('File `' . $aInfo['path'] . '` don\'t exists', 1444988637);
+                            throw new ML_Filesystem_Exception('File `' . $aInfo['path'] . "` doesn't exists", 1444988637);
                         }
                         return $aInfo;
                     }

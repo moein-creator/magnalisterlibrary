@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -22,7 +22,11 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
 
     protected $sPlatformName = '';
 
+    /** @var null|array */
     public static $aLanguages = null;
+
+    protected static $aProductFields = array();
+
     public function getDescriptionValues() {
         if(self::$aLanguages === null) {
             self::$aLanguages = array();
@@ -88,13 +92,18 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
      * @return array
      */
     public function getCustomerGroupValues($blNotLoggedIn = false) {
+        /** @var ML_Shopware_Helper_Model_Shop $shopHelper */
+        $shopHelper = MLHelper::gi('model_shop');
+
         $aGroupsName = $this->getCustomerGroupsOfShopware();
         $oQueryBuilder = Shopware()->Models()->createQueryBuilder();
         if ($blNotLoggedIn) {
             $aRes = $oQueryBuilder
-                        ->select('snippet.value')
-                        ->from('Shopware\Models\Snippet\Snippet', 'snippet')
-                        ->where("snippet.name = 'RegisterLabelNoAccount' AND snippet.namespace = 'frontend/register/personal_fieldset' And snippet.localeId = " . Shopware()->Shop()->getLocale()->getId())->getQuery()->getArrayResult();
+                ->select('snippet.value')
+                ->from('Shopware\Models\Snippet\Snippet', 'snippet')
+                ->where("snippet.name = 'RegisterLabelNoAccount' AND snippet.namespace = 'frontend/register/personal_fieldset' And snippet.localeId = ".$shopHelper->getLocalOfBackendUser()->getId())
+                ->getQuery()
+                ->getArrayResult();
             if (!empty($aRes)) {
                 $aGroupsName['-'] = $aRes[0]['value'];
             } else {
@@ -115,41 +124,37 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
     }
 
     public function getOrderStatusValues() {
-        $oQueryBuilder = Shopware()->Models()->createQueryBuilder();
-        $aRes = $oQueryBuilder
-                        ->select('snippet.name,snippet.value')
-                        ->from('Shopware\Models\Snippet\Snippet', 'snippet')
-                        ->where("snippet.namespace = 'backend/static/order_status' And snippet.localeId = " . Shopware()->Shop()->getLocale()->getId())->getQuery()->getArrayResult();
-        $aStatusI18N = array();
-        foreach ($aRes as $aRow) {
-            $aStatusI18N[$aRow['name']] = $aRow['value'];
-        }
+        /** @var ML_Shopware_Helper_Model_Shop $shopHelper */
+        $shopHelper = MLHelper::gi('model_shop');
+        $aStatusI18N = $shopHelper->getI18nSnippets('backend/static/order_status');
+
         $orderStates = MLDatabase::getDbInstance()->fetchArray("select * from  `s_core_states` where `group` = 'state' order By `position`");
         $aOrderStatesName = array();
-        if(isset($orderStates[0]['name'])){
+        if (isset($orderStates[0]['name'])) {
             foreach ($orderStates as $aRow) {
                 $sI18NIndex = $aRow['name'];
                 $aOrderStatesName[$aRow['id']] = isset($aStatusI18N[$sI18NIndex]) ? $aStatusI18N[$sI18NIndex] : $aRow['description'];
-            }            
+            }
         } else {
             foreach ($orderStates as $aRow) {
                 $sI18NIndex = strtolower(str_replace(array(' / ', ' '), '_', $aRow['description']));
                 $sI18NIndex = strtolower(str_replace(
-                                array(
-                    'in_work',
-                    'canceled',
-                    'clarification_needed',
-                    'partial_delivered',
-                    'fully_completed',
-                    'delivered_completely'
-                                ), array(
-                    'in_process',
-                    'cancelled',
-                    'clarification_required',
-                    'partially_delivered',
-                    'completed',
-                    'completely_delivered'
-                                ), $sI18NIndex));
+                    array(
+                        'in_work',
+                        'canceled',
+                        'clarification_needed',
+                        'partial_delivered',
+                        'fully_completed',
+                        'delivered_completely'
+                    ), array(
+                        'in_process',
+                        'cancelled',
+                        'clarification_required',
+                        'partially_delivered',
+                        'completed',
+                        'completely_delivered'
+                    ), $sI18NIndex)
+                );
 
                 $aOrderStatesName[$aRow['id']] = isset($aStatusI18N[$sI18NIndex]) ? $aStatusI18N[$sI18NIndex] : $aRow['description'];
             }
@@ -157,26 +162,18 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
         $aCanceledStatus = $aOrderStatesName[-1];
         unset($aOrderStatesName[-1]);
         $aOrderStatesName[-1] = $aCanceledStatus;
+
         return $aOrderStatesName;
     }
 
     public function getPaymentStatusValues() {
-        $oQueryBuilder = Shopware()->Models()->createQueryBuilder();
-        $aRes = $oQueryBuilder
-                        ->select('snippet.name,snippet.value')
-                        ->from('Shopware\Models\Snippet\Snippet', 'snippet')
-                        ->where("snippet.namespace = 'backend/static/payment_status' And snippet.localeId = " . Shopware()->Shop()->getLocale()->getId())->getQuery()->getArrayResult();
-        $aStatusI18N = array();
-        foreach ($aRes as $aRow) {
-            $aStatusI18N[$aRow['name']] = $aRow['value'];
-        }
+        /** @var ML_Shopware_Helper_Model_Shop $shopHelper */
+        $shopHelper = MLHelper::gi('model_shop');
+
         MLDatabase::getDbInstance()->setCharset(MLDatabase::getDbInstance()->tableEncoding('s_core_states'));
-        $paymentStates = Shopware()->Db()->fetchAll("select id, description from `s_core_states` where `group` = 'payment' order By `position` ");
-        $aPaymentStatesName = array();
-        foreach ($paymentStates as $aRow) {
-            $aPaymentStatesName[$aRow['id']] = $aRow['description'];
-        }
-        return $aPaymentStatesName;
+        $paymentStates = Shopware()->Db()->fetchAll("select id, name, description from `s_core_states` where `group` = 'payment' order By `position` ");
+
+        return $shopHelper->getTranslatedValues('backend/static/payment_status', $paymentStates);
     }
 
     public function getEan() {
@@ -195,9 +192,13 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
     protected function translateProductFields($sName, $sDefault){
         if(empty(self::$aShopwareSnippet)) {
             $oQueryBuilder = Shopware()->Models()->createQueryBuilder();
-            $aSnippets = $oQueryBuilder->select('snippet2.value,snippet2.name')->from('Shopware\Models\Snippet\Snippet', 'snippet2')
-                            ->where("(snippet2.name LIKE 'columns/product/Article_%' OR snippet2.name LIKE 'columns/product/Detail_%')"
-                                    . " AND snippet2.namespace = 'backend/article_list/main' And snippet2.localeId = " . Shopware()->Shop()->getLocale()->getId())->getQuery()->getArrayResult();
+            $aSnippets = $oQueryBuilder
+                ->select('snippet2.value,snippet2.name')
+                ->from('Shopware\Models\Snippet\Snippet', 'snippet2')
+                ->where("(snippet2.name LIKE 'columns/product/Article_%' OR snippet2.name LIKE 'columns/product/Detail_%')"
+                                    . " AND snippet2.namespace = 'backend/article_list/main' And snippet2.localeId = ".Shopware()->Shop()->getLocale()->getId())
+                ->getQuery()
+                ->getArrayResult();
             foreach ($aSnippets as $aSnippet){
                 self::$aShopwareSnippet[$aSnippet['name']] = $aSnippet['value'];
             }
@@ -205,13 +206,13 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
         return isset(self::$aShopwareSnippet[$sName]) ? self::$aShopwareSnippet[$sName] : $sDefault;
     }
 
-    protected static $aProductFields = array();
     protected function getProductTableFields() {
-        if(empty(self::$aProductFields )){
-            foreach(array(
-                        'Shopware\Models\Article\Article' => 'Article',
-                        'Shopware\Models\Article\Detail' => 'Detail',
-                        ) as $sModel => $sFieldKey ){
+        if (empty(self::$aProductFields)) {
+            foreach (array(
+                         'Shopware\Models\Article\Article' => 'Article',
+                         'Shopware\Models\Article\Detail' => 'Detail',
+                     ) as $sModel => $sFieldKey
+            ) {
                 $aColumns = Shopware()->Models()->getClassMetadata($sModel)->columnNames;
                 foreach ($aColumns as $sKey => &$sName) {
                     $sSearchName = $sKey;
@@ -265,6 +266,9 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
     }
 
     public function getBrand() {
+        return $this->getListOfArticleFields();
+    }
+    public function getShopSystemAttributeList() {
         return $this->getListOfArticleFields();
     }
 
@@ -322,9 +326,6 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
         $aAttributes['p_description_long'] = 'Description';
         $aAttributes['pd_Ean'] = 'EAN';
         $aAttributes['pd_Weight'] = 'Weight';
-        $aAttributes['pd_Width'] = 'Width';
-        $aAttributes['pd_Height'] = 'Height';
-        $aAttributes['pd_Len'] = 'Length';
 
         // NOTE: Properties are multivalue field and therefore are not added unless explicitly requested
         if ($getProperties) {
@@ -336,21 +337,21 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
         return $aAttributes;
     }
 
-    /**
-     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
-     *
-     * @return array Collection of attributes with options
-     */
-    public function getAttributeListWithOptions() {
-        $aAttributes = $this->getPossibleVariationGroupNames();
-        foreach ($aAttributes as $sKey => $sAttribute) {
-            $aAttributes[$sKey] = mb_convert_encoding($sAttribute, 'HTML-ENTITIES');
-        }
-
-        // NOTE: Properties are multivalue field and therefore are not added
-
-        return $aAttributes;        
-    }
+    //    /**
+    //     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
+    //     *
+    //     * @return array Collection of attributes with options
+    //     */
+    //    public function getAttributeListWithOptions() {
+    //        $aAttributes = $this->getPossibleVariationGroupNames();
+    //        foreach ($aAttributes as $sKey => $sAttribute) {
+    //            $aAttributes[$sKey] = mb_convert_encoding($sAttribute, 'HTML-ENTITIES');
+    //        }
+    //
+    //        // NOTE: Properties are multivalue field and therefore are not added
+    //
+    //        return $aAttributes;
+    //    }
 
     /**
      * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
@@ -359,8 +360,8 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
      * @return array Collection of attributes with options
      */
     public function getAttributeOptions($sAttributeCode, $iLangId = null) {
-		$aAttributeCode = explode('_', $sAttributeCode, 2);
-		$attributes = array();
+        $aAttributeCode = explode('_', $sAttributeCode, 2);
+        $attributes = array();
 
         // Getting values for variation attributes
 		if ($aAttributeCode[0] === 'c') {
@@ -435,27 +436,29 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
     public function getTaxClasses() {
         $oQueryBuilder = Shopware()->Models()->createQueryBuilder();
         $aTaxes = $oQueryBuilder
-                        ->select('tax.id as value , tax.name as label')
-                        ->from('Shopware\Models\Tax\Tax', 'tax')->getQuery()->getArrayResult();
+            ->select('tax.id as value , tax.name as label')
+            ->from('Shopware\Models\Tax\Tax', 'tax')->getQuery()->getArrayResult();
         return $aTaxes;
     }
 
     public function getPaymentMethodValues(){
+        /** @var ML_Shopware_Helper_Model_Shop $shopHelper */
+        $shopHelper = MLHelper::gi('model_shop');
+
         $oBuilder = Shopware()->Models()->createQueryBuilder()
-        ->from('Shopware\Models\Payment\Payment', 'p');
-        $oBuilder->select(
+            ->select(
                 array(
                     'p.id as id',
                     'p.description as description',
+                    'p.name as name',
                 )
-        );
+            )
+            ->from('Shopware\Models\Payment\Payment', 'p');
 //        $oBuilder->where('p.active = 1');
+
         $aPayments = $oBuilder->getQuery()->getArrayResult();
-        $aResult = array();
-        foreach ($aPayments as $aPayment) {
-            $aResult[$aPayment['id']] = $aPayment['description'];
-        }
-        return $aResult;
+
+        return $shopHelper->getTranslatedValues('backend/static/payment', $aPayments);
     }
     
     public function getShopShippingModuleValues(){
@@ -549,7 +552,12 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
         if (isset($aForm['field']) && isset($aForm['field']['priceoptions'])) {
             $aForm['field']['price.discountmode'] = array('label' => MLI18n::gi()->{'global_config_price_field_price.discountmode_label'});
         }
-        
+
+        // Form Groups on Metro or OTTO
+        if (isset($aForm['price']['fields']['priceoptions']['subfields']['usespecialoffer']['i18n'])) {
+            $aForm['price']['fields']['priceoptions']['subfields']['usespecialoffer']['i18n'] = array('label' => MLI18n::gi()->{'global_config_price_field_price.discountmode_label'});
+        }
+
         if (isset($aForm['field']) && isset($aForm['field']['fixed.priceoptions'])) {
             $aForm['field']['fixed.price.discountmode'] = $aForm['field']['chinese.price.discountmode'] = array('label' => MLI18n::gi()->{'global_config_price_field_price.discountmode_label'});
         }
@@ -658,71 +666,87 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
                 'name' => MLI18n::gi()->get('ItemName'),
                 'type' => 'text',
             ),
-            'pd_Number' => array(
+            'pd_Number'               => array(
                 'name' => MLI18n::gi()->get('ItemNumber'),
                 'type' => 'text',
             ),
-            'p_description' => array(
+            'p_description'           => array(
                 'name' => MLI18n::gi()->get('ShortDescription'),
                 'type' => 'text',
             ),
-            'p_description_long' => array(
+            'p_description_long'      => array(
                 'name' => MLI18n::gi()->get('Description'),
                 'type' => 'text',
             ),
-            'pd_Ean' => array(
+            'pd_Ean'                  => array(
                 'name' => MLI18n::gi()->get('EAN'),
                 'type' => 'text',
             ),
-            'pd_Weight' => array(
-                'name' => MLI18n::gi()->get('Weight'),
+            'pd_Weight'               => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightValue'),
+                'type' => 'text',
+            ),
+            'pd_WeightWithUnit'       => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightWithUnit'),
+                'type' => 'text',
+            ),
+            'pd_WeightUnit'           => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightUnit'),
                 'type' => 'text',
             ),
             'pd_WeightMultiplied1000' => array(
                 'name' => MLI18n::gi()->get('WeightMultiplied1000'),
                 'type' => 'text',
             ),
-            'pd_BasePriceUnitName' => array(
-                'name' => MLI18n::gi()->get('BasePriceUnitName'),
+            'pd_BasePriceUnitName'    => array(
+                'name' => MLI18n::gi()->get('Shopware_Product_DefaultAttribute_BasePriceUnitName'),
                 'type' => 'text',
             ),
-            'pd_BasePriceUnit' => array(
-                'name' => MLI18n::gi()->get('BasePriceUnit'),
+            'pd_BasePriceUnitShort'    => array(
+                'name' => MLI18n::gi()->get('Shopware_Product_DefaultAttribute_BasePriceUnitShort'),
                 'type' => 'text',
             ),
-            'pd_BasePriceValue' => array(
-                'name' => MLI18n::gi()->get('BasePriceValue'),
+            'pd_BasePriceBasicUnit'    => array(
+                'name' => MLI18n::gi()->get('Shopware_Product_DefaultAttribute_BasePriceBasicUnit'),
                 'type' => 'text',
             ),
-            'pd_Width' => array(
-                'name' => MLI18n::gi()->get('Width'),
+            'pd_BasePriceUnit'        => array(
+                'name' => MLI18n::gi()->get('Shopware_Product_DefaultAttribute_BasePriceUnit'),
                 'type' => 'text',
             ),
-            'pd_Height' => array(
-                'name' => MLI18n::gi()->get('Height'),
+            'pd_BasePriceValue'       => array(
+                'name' => MLI18n::gi()->get('Shopware_Product_DefaultAttribute_BasePriceValue'),
                 'type' => 'text',
             ),
-            'pd_Len' => array(
-                'name' => MLI18n::gi()->get('Length'),
+            'pd_Width'                => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthValue'),
                 'type' => 'text',
             ),
-            'sp_Supplier' => array(
+            'pd_Height'               => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightValue'),
+                'type' => 'text',
+            ),
+            'pd_Len'                  => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthValue'),
+                'type' => 'text',
+            ),
+            'sp_Supplier'             => array(
                 'name' => MLI18n::gi()->get('Supplier'),
                 'type' => 'select',
             ),
-            'pd_Suppliernumber' => array(
+            'pd_Suppliernumber'       => array(
                 'name' => MLI18n::gi()->get('SupplierNumber'),
                 'type' => 'text',
             ),
-            'pd_Releasedate' => array(
+            'pd_Releasedate'          => array(
                 'name' => MLI18n::gi()->get('ReleaseDate'),
                 'type' => 'text',
             ),
-            'pd_Minpurchase' => array(
+            'pd_Minpurchase'   => array(
                 'name' => MLI18n::gi()->get('MinPurchase'),
                 'type' => 'text',
             ),
-            'pd_Maxpurchase' => array(
+            'pd_Maxpurchase'   => array(
                 'name' => MLI18n::gi()->get('MaxPurchase'),
                 'type' => 'text',
             ),
@@ -730,16 +754,44 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
                 'name' => MLI18n::gi()->get('PurchaseSteps'),
                 'type' => 'text',
             ),
-            'p_pseudosales' => array(
+            'p_pseudosales'    => array(
                 'name' => MLI18n::gi()->get('PseudoSales'),
                 'type' => 'text',
             ),
-            'p_keywords' => array(
+            'p_keywords'       => array(
                 'name' => MLI18n::gi()->get('Keywords'),
                 'type' => 'text',
             ),
         );
 
+        if (MLSetting::gi()->dimensionUnit !== null) {
+            $aShopDefaultFieldsAttributes = $aShopDefaultFieldsAttributes + array(
+                    'pd_WidthWithUnit'  => array(
+                        'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthWithUnit'),
+                        'type' => 'text',
+                    ),
+                    'pd_WidthUnit'      => array(
+                        'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthUnit'),
+                        'type' => 'text',
+                    ),
+                    'pd_HeightWithUnit' => array(
+                        'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightWithUnit'),
+                        'type' => 'text',
+                    ),
+                    'pd_HeightUnit'     => array(
+                        'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightUnit'),
+                        'type' => 'text',
+                    ),
+                    'pd_LengthWithUnit' => array(
+                        'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthWithUnit'),
+                        'type' => 'text',
+                    ),
+                    'pd_LengthUnit'     => array(
+                        'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthUnit'),
+                        'type' => 'text',
+                    ),
+                );
+        }
         return $aShopDefaultFieldsAttributes;
     }
 
@@ -763,10 +815,8 @@ class ML_Shopware_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Ab
     /**
      * Returns free text fields for attribute matching
      *
-     * @return array
+     * @return bool
      */
-
-
     public function shouldBeDisplayedAsVariationAttribute($sAttributeKey) {
         return substr($sAttributeKey, 0, 2) === 'c_';
     }

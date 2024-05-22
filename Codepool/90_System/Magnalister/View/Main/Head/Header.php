@@ -88,7 +88,7 @@ if (!class_exists('ML', false))
         var blockUICSS = {
             'border': 'none',
             'padding': '15px',
-            'background-color': 'green',
+            'background-color': '#deded7',
             'border-radius': '10px',
             '-moz-border-radius': '10px',
             '-webkit-border-radius': '10px',
@@ -136,9 +136,9 @@ if (!class_exists('ML', false))
             },
             css: {
                 'background': '#fff',
-                'width': '200px',
-                'margin-left': '-100px',
-                'height': '16px',
+                'width': '300px',
+                'margin-left': '-150px',
+                'height': '25px',
                 'left': '50%',
                 'padding': '10px',
                 'border': 'none',

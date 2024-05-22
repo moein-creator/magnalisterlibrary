@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -63,6 +63,7 @@ abstract class ML_Modul_Model_Service_SyncOrderStatus_Abstract extends ML_Modul_
             $aChanged = $oOrder->getOutOfSyncOrdersArray($iOffset);
             $oList = $oOrder->getList();
             $oList->getQueryObject()->where("current_orders_id IN ('".implode("', '", $aChanged)."')");
+            $oList->getQueryObject()->orderBy('order_status_sync_last_check_date ASC');
 
             $aCanceledRequest = array();
             $aCanceledModels = array();
@@ -97,23 +98,30 @@ abstract class ML_Modul_Model_Service_SyncOrderStatus_Abstract extends ML_Modul_
                             $this->otherActions($oOrder);
                             // In this case update order status in magnalister tables
                             $oOrder->set('status', $sShopStatus); // use the same order status as request beginning because during process it could change
+                            $oOrder->set('order_status_sync_last_check_date', 'NOW()'); // update date when last check happened
                             $oOrder->save();
                             continue;
                         }
                     }
                 } catch (Exception $oExc) {
-                    $this->out('Exception by order synchronization: '.$oExc->getMessage().'. Check the following log for more information:'.'SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_Exception');
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_Exception', array(
+                    $this->out($oOrder->get('data')[$this->sOrderIdentifier].':: Exception by order synchronization: ' . $oExc->getMessage() . '. Check the following log for more information:' . 'SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_Exception');
+                    MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_Exception', array(
                         'Exception' => array(
                             'Message'   => $oExc->getMessage(),
                             'Code'      => $oExc->getCode(),
                             'Backtrace' => $oExc->getTrace(),
                         )
                     ));
+                    if ($oExc->getMessage() === 'This order is not found in shop') {
+                        $oOrder->set('order_exists_in_shop', 0);
+                    }
                 }
+
+                $oOrder->set('order_status_sync_last_check_date', 'NOW()'); // update date when last check happened
+                $oOrder->save();
             }
-//            echo print_m($aShippedRequest, '$aShippedRequest')."\n";
-//            echo print_m($aCanceledRequest, '$aCanceledRequest')."\n";
+            //echo print_m($aShippedRequest, '$aShippedRequest')."\n";
+            //echo print_m($aCanceledRequest, '$aCanceledRequest')."\n";
             $this->submitRequestAndProcessResult('ConfirmShipment', $aShippedRequest, $aShippedModels);
             $this->submitRequestAndProcessResult('CancelShipment', $aCanceledRequest, $aCanceledModels);
         }
@@ -225,7 +233,7 @@ abstract class ML_Modul_Model_Service_SyncOrderStatus_Abstract extends ML_Modul_
                     'Response' => $aResponse,
                 ));
             } catch (MagnaException $oEx) {
-                MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_Exception', array(
+                MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_Exception', array(
                     'RequestData' => $aRequest,
                     'Exception' => array(
                         'Message' => $oEx->getMessage(),
@@ -242,7 +250,7 @@ abstract class ML_Modul_Model_Service_SyncOrderStatus_Abstract extends ML_Modul_
     }
 
     protected function isCancelled($sShopStatus) {
-        $oModule = MLModul::gi();
+        $oModule = MLModule::gi();
         $sCancelState = $oModule->getConfig('orderstatus.cancelled');
         if ($sCancelState === null) {
             $sCancelState = $oModule->getConfig('orderstatus.canceled');

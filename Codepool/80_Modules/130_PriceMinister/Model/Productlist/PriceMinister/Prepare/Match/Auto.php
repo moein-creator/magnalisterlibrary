@@ -38,7 +38,7 @@ class ML_PriceMinister_Model_ProductList_PriceMinister_Prepare_Match_Auto extend
                     and
                     s.selectionname='match'
                     and
-                    mpid='".MLModul::gi()->getMarketPlaceId()."'
+                    mpid='" . MLModule::gi()->getMarketPlaceId() . "'
             ";
             $this->iCountTotal=  MLDatabase::getDbInstance()->fetchOne(sprintf($sSql,' distinct count(p.ParentId) '));
             foreach(MLDatabase::getDbInstance()->fetchArray(sprintf($sSql,' distinct p.ParentId ')." limit ".$this->iOffset.", ".$this->iCountPerPage) as $aRow){

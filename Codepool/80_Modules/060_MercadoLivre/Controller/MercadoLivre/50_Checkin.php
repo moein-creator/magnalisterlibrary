@@ -21,9 +21,9 @@ MLFilesystem::gi()->loadClass('Productlist_Controller_Widget_ProductList_UploadA
 class ML_MercadoLivre_Controller_MercadoLivre_Checkin extends ML_Productlist_Controller_Widget_ProductList_UploadAbstract {
 
     public function getStock(ML_Shop_Model_Product_Abstract $oProduct) {
-        $aStockConf = MLModul::gi()->getStockConfig();
+        $aStockConf = MLModule::gi()->getStockConfig();
 
-        $checkinListingType = MLModul::gi()->getConfig('checkin.listingtype');
+        $checkinListingType = MLModule::gi()->getConfig('checkin.listingtype');
 
         if ($checkinListingType === 'free') {
             return 1;
@@ -35,7 +35,7 @@ class ML_MercadoLivre_Controller_MercadoLivre_Checkin extends ML_Productlist_Con
     public function getConditions(ML_Shop_Model_Product_Abstract $oProduct) {
         $catSettings = $this->getGategorySettings($oProduct);
         if ($catSettings !== null) {
-            $checkinItemCondition = MLModul::gi()->getConfig('checkin.itemcondition');
+            $checkinItemCondition = MLModule::gi()->getConfig('checkin.itemcondition');
             $itemConditions = array();
 
             foreach ($catSettings['ItemConditions'] as $itemCondition) {
@@ -54,9 +54,9 @@ class ML_MercadoLivre_Controller_MercadoLivre_Checkin extends ML_Productlist_Con
     }
 
     public function getListingTypes() {
-        $listingTypes = MLModul::gi()->getConfig('site.listing_types');
+        $listingTypes = MLModule::gi()->getConfig('site.listing_types');
 
-        $checkinListingType = MLModul::gi()->getConfig('checkin.listingtype');
+        $checkinListingType = MLModule::gi()->getConfig('checkin.listingtype');
         $availableListingTypes = array();
 
         foreach ($listingTypes as $value => $name) {
@@ -72,7 +72,7 @@ class ML_MercadoLivre_Controller_MercadoLivre_Checkin extends ML_Productlist_Con
     public function getBuyingModes(ML_Shop_Model_Product_Abstract $oProduct) {
         $catSettings = $this->getGategorySettings($oProduct);
         if ($catSettings !== null) {
-            $checkinBuyingMode = MLModul::gi()->getConfig('checkin.buyingmode');
+            $checkinBuyingMode = MLModule::gi()->getConfig('checkin.buyingmode');
             $buyingModes = array();
 
             foreach ($catSettings['BuyingModes'] as $buyingMode) {
@@ -86,7 +86,7 @@ class ML_MercadoLivre_Controller_MercadoLivre_Checkin extends ML_Productlist_Con
     }
 
     public function getShippingModes() {
-        $checkinShippingMode = MLModul::gi()->getConfig('checkin.shippingmode');
+        $checkinShippingMode = MLModule::gi()->getConfig('checkin.shippingmode');
 
         return array(
             'custom' => $checkinShippingMode === 'custom',

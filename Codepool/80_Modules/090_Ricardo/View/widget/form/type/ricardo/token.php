@@ -15,7 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 
 $expires = '';
 try {
@@ -33,7 +34,7 @@ try {
 
 }
 ?>
-<input class="mlbtn<?php echo $firstToken ?> action" type="button" value="<?php echo $this->__('ML_RICARDO_BUTTON_TOKEN_NEW') ?>" id="requestToken"/>
+<input class="mlbtn<?php echo $firstToken ?> action text" type="button" value="<?php echo $this->__('ML_RICARDO_BUTTON_TOKEN_NEW') ?>" id="requestToken"/>
 <?php echo $expires ?>
 <script type="text/javascript">/*<![CDATA[*/
     jqml(document).ready(function () {

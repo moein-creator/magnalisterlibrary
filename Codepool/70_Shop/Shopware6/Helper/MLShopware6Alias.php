@@ -33,16 +33,26 @@ class MLShopware6Alias {
      * get Shopware 6 product helper class
      * @return ML_Shopware6_Helper_Model_Product|Object
      */
-    public static function getProductHelper(){
+    public static function getProductHelper() {
         return MLHelper::gi('model_product');
     }
+
+    /**
+     * get Shopware 6 currency model class
+     * @return ML_Shopware6_Model_Currency|Object
+     */
+    public static function getCurrencyModel() {
+        return MLCurrency::gi();
+    }
+
     /**
      * get Shopware 6 price helper class
      * @return ML_Shopware6_Model_Price|Object
      */
-    public static function getPriceModel(){
+    public static function getPriceModel() {
         return MLPrice::factory();
     }
+
     /**
      * get Shopware 6 price helper class
      * @return ML_Shopware6_Helper_Model_Price|Object
@@ -76,7 +86,7 @@ class MLShopware6Alias {
 
     /**
      * @param $sRepositoryName string if ".repository" is not appended it will be appended automatically
-     * @return EntityRepositoryInterface|SalesChannelRepositoryInterface
+     * @return EntityRepositoryInterface|SalesChannelRepositoryInterface|Shopware\Core\Framework\DataAbstractionLayer\EntityRepository
      */
     public static function getRepository(string $sRepositoryName) {
         if(strpos($sRepositoryName, '.repository') === false){

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -33,9 +33,15 @@ class ML_Cdiscount_Helper_Model_Service_Product {
 
     /** @var ML_Shop_Model_Product_Abstract $oProduct  */
     protected $oProduct = null;
+    /** @var ML_Shop_Model_Product_Abstract $oProduct */
+    protected $oVariant = null;
     protected $aData = null;
 
     protected $aLang = null;
+    /**
+     * @var string
+     */
+    private $sPrepareType;
 
     public function __call($sName, $mValue) {
         return $sName . '()';
@@ -60,7 +66,7 @@ class ML_Cdiscount_Helper_Model_Service_Product {
 
     public function resetData() {
         $this->aData = null;
-        $this->aLang = MLModul::gi()->getConfig('lang');
+        $this->aLang = MLModule::gi()->getConfig('lang');
         return $this;
     }
 
@@ -92,6 +98,7 @@ class ML_Cdiscount_Helper_Model_Service_Product {
                 'RawShopVariation',
                 'RawAttributesMatching',
                 'variation_theme',
+                'PreparedImages'
             );
 
             foreach ($aFields as $sField) {
@@ -184,7 +191,7 @@ class ML_Cdiscount_Helper_Model_Service_Product {
         if (empty($sTitle) === false && $sTitle !== '') {
             $sTitle = html_entity_decode(fixHTMLUTF8Entities($sTitle), ENT_COMPAT, 'UTF-8');
         } else {
-            $iLang = MLModul::gi()->getConfig('lang');
+            $iLang = MLModule::gi()->getConfig('lang');
             $this->oVariant->setLang($iLang);
             $parent = $this->oVariant->getParent();
             if (isset($parent)) {
@@ -203,7 +210,7 @@ class ML_Cdiscount_Helper_Model_Service_Product {
     }
 
     protected function getVariantTitle() {
-        $iLang = MLModul::gi()->getConfig('lang');
+        $iLang = MLModule::gi()->getConfig('lang');
         $this->oVariant->setLang($iLang);
         $sTitle = $this->oVariant->getName();
         $sTitle = html_entity_decode(fixHTMLUTF8Entities($sTitle), ENT_COMPAT, 'UTF-8');
@@ -221,7 +228,7 @@ class ML_Cdiscount_Helper_Model_Service_Product {
     protected function getSubtitle() {
         $sSubtitle = $this->oPrepare->get('Subtitle');
         if (empty($sSubtitle)) {
-            $iLang = MLModul::gi()->getConfig('lang');
+            $iLang = MLModule::gi()->getConfig('lang');
             $this->oVariant->setLang($iLang);
             $sSubtitle = $this->oVariant->getName();
         }
@@ -242,7 +249,7 @@ class ML_Cdiscount_Helper_Model_Service_Product {
     {
         $sDescription = $this->oPrepare->get('Description');
         if (empty($sDescription)) {
-            $iLang = MLModul::gi()->getConfig('lang');
+            $iLang = MLModule::gi()->getConfig('lang');
             $this->oVariant->setLang($iLang);
             //Check first if in config something is set for description. If not use product description from shop.
             $sDescription = $this->oVariant->getModulField('standarddescription');
@@ -261,7 +268,7 @@ class ML_Cdiscount_Helper_Model_Service_Product {
     {
         $sDescription = $this->oPrepare->get('MarketingDescription');
         if (empty($sDescription)) {
-            $iLang = MLModul::gi()->getConfig('lang');
+            $iLang = MLModule::gi()->getConfig('lang');
             $this->oVariant->setLang($iLang);
             //Check first if in config something is set for description. If not use product description from shop.
             $sDescription = $this->oVariant->getModulField('marketingdescription');
@@ -294,7 +301,7 @@ class ML_Cdiscount_Helper_Model_Service_Product {
                     $aImage = MLImage::gi()->resizeImage($sImage, 'products', 3000, 3000);
                     $sImagePath = $aImage['url'];
 
-                    $aOut[] = array('URL' => $sImagePath);
+                    $aOut[] = $sImagePath;
                 } catch(Exception $ex) {
                     // Happens if image doesn't exist.
                 }
@@ -306,15 +313,15 @@ class ML_Cdiscount_Helper_Model_Service_Product {
 
     protected function getQuantity() {
         $iQty = $this->oVariant->getSuggestedMarketplaceStock(
-            MLModul::gi()->getConfig('quantity.type'),
-            MLModul::gi()->getConfig('quantity.value')
+            MLModule::gi()->getConfig('quantity.type'),
+            MLModule::gi()->getConfig('quantity.value')
         );
 
         return $iQty < 0 ? 0 : $iQty;
     }
 
     protected function getPrice() {
-        return $this->oVariant->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
+        return $this->oVariant->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
     }
 
     protected function getBrand() {
@@ -567,4 +574,34 @@ class ML_Cdiscount_Helper_Model_Service_Product {
         return $truncate;
     }
 
+
+    protected function getPreparedImages() {
+        $aImagesPrepare = $this->oPrepare->get('Images');
+        $aOut = array();
+        if (empty($aImagesPrepare) === false) {
+            $aImages = $this->oVariant->getParent()->getImages();
+
+            foreach ($aImages as $sImage) {
+                $sImageName = $this->substringAferLast('\\', $sImage);
+                if (isset($sImageName) === false || strpos($sImageName, '/') !== false) {
+                    $sImageName = $this->substringAferLast('/', $sImage);
+                }
+
+                if (in_array($sImageName, $aImagesPrepare) === false) {
+                    continue;
+                }
+
+                try {
+                    $aImage = MLImage::gi()->resizeImage($sImage, 'products', 3000, 3000);
+                    $sImagePath = $aImage['url'];
+
+                    $aOut[] = $sImagePath;
+                } catch (Exception $ex) {
+                    // Happens if image doesn't exist.
+                }
+            }
+        }
+
+        return $aOut;
+    }
 }

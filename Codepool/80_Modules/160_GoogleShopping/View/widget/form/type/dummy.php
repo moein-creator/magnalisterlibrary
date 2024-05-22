@@ -15,6 +15,7 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <p style="text-align: center; font-weight: bold; color: #E31A1C;">Google Shopping orders are not supported right now, just click on save button in order to proceed.</p>

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -25,54 +25,51 @@ class ML_Idealo_Model_Table_Idealo_Prepare extends ML_Database_Model_Table_Prepa
     protected $aFields = array(
         'mpID' => array(
             'isKey' => true,
-            'Type' => 'int(11) unsigned', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11) unsigned', 'Null' => self::IS_NULLABLE_NO, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'products_id' => array(
             'isKey' => true,
-            'Type' => 'int(11)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_NO, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'PreparedTS' => array(
             'isInsertCurrentTime' => true,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => '0000-00-00 00:00:00', 'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
-        'Verified' => array(//todo
-            'Type' => "enum('OK','ERROR','OPEN','EMPTY')", 'Null' => 'NO', 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
+        'Verified' => array(
+            'Type' => "enum('OK','ERROR','OPEN','EMPTY')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
         ),
         'Title' => array(
-            'Type' => 'varchar(255)', 'Null' => 'YES', 'Default' => null, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(255)', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'Description' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => null, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'Image' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => null, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
-        'Checkout' => array(
-            'Type' => "tinyint(1)", 'Null' => 'YES', 'Default' => null, 'Extra' => '', 'Comment' => ''
+        'Checkout' => array( //@depricated no used anymore
+            'Type' => "tinyint(1)", 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'PaymentMethod' => array(
-            'Type' => 'varchar(124)', 'Null' => 'NO', 'Default' => '', 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(124)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
-        //        'ShippingCountry' => array(
-        //            'Type' => 'varchar(124)', 'Null' => 'NO', 'Default' => '', 'Extra' => '', 'Comment'=>''
-        //        ),
         'ShippingCost' => array(
-            'Type' => 'decimal(15,4)', 'Null' => 'NO', 'Default' => 1, 'Extra' => '', 'Comment' => ''
+            'Type' => 'decimal(15,4)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 1, 'Extra' => '', 'Comment' => ''
         ),
         'ShippingCostMethod' => array(
-            'Type' => 'varchar(20)', 'Null' => 'NO', 'Default' => null, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(20)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShippingTime' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => null, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
-        'FulFillmentType' => array(
-            'Type' => 'varchar(32)', 'Null' => 'YES', 'Default' => '', 'Extra' => '', 'Comment' => ''
+        'FulFillmentType' => array( //@depricated no used anymore
+            'Type' => 'varchar(32)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
-        'TwoManHandlingFee' => array(
-            'Type' => 'varchar(16)', 'Null' => 'YES', 'Default' => '0.00', 'Extra' => '', 'Comment' => ''
+        'TwoManHandlingFee' => array( //@depricated no used anymore
+            'Type' => 'varchar(16)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '0.00', 'Extra' => '', 'Comment' => ''
         ),
-        'DisposalFee' => array(
-            'Type' => 'varchar(16)', 'Null' => 'YES', 'Default' => '0.00', 'Extra' => '', 'Comment' => ''
+        'DisposalFee' => array( //@depricated no used anymore
+            'Type' => 'varchar(16)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '0.00', 'Extra' => '', 'Comment' => ''
         ),
     );
     protected $aTableKeys = array(

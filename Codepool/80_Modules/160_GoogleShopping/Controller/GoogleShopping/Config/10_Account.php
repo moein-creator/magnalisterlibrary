@@ -52,8 +52,6 @@ class ML_GoogleShopping_Controller_GoogleShopping_Config_Account extends ML_Form
             } catch (MagnaException $e) {
                 $iframeURL = $e->getMessage();
             }
-            print_r($iframeURL);
-            die();
         } else {
             parent::renderAjax();
         }
@@ -65,8 +63,8 @@ class ML_GoogleShopping_Controller_GoogleShopping_Config_Account extends ML_Form
 
         if ($blExecute) {
             $sTargetCountry = $this->getRequestField('googleshopping.targetcountry');
-            if (MLModul::gi()->getConfig('googleshopping.targetcountry') !== $sTargetCountry) {
-                MLDatabase::factory('config')->set('mpid', MLModul::gi()->getMarketPlaceId())->set('mkey', 'googleshopping.language')->delete();
+            if (MLModule::gi()->getConfig('googleshopping.targetcountry') !== $sTargetCountry) {
+                MLDatabase::factory('config')->set('mpid', MLModule::gi()->getMarketPlaceId())->set('mkey', 'googleshopping.language')->delete();
             }
         }
 

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -198,7 +198,8 @@ class ML_Hood_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             if ($key == '-1') {
                 $sDefine = 'ML_HOOD_LABEL_FSK_NOINFO';
             }
-            $aOut[$key] = (defined($sDefine) ? constant($sDefine) : $sDuration);
+            $translate = MLI18n::gi()->$sDefine;
+            $aOut[$key] = (!empty($translate) ? $translate : $sDuration);
         }
 
         return $aOut;
@@ -225,7 +226,8 @@ class ML_Hood_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             if ($key == '-1') {
                 $sDefine = 'ML_HOOD_LABEL_USK_NOINFO';
             }
-            $aOut[$key] = (defined($sDefine) ? constant($sDefine) : $sDuration);
+            $translate = MLI18n::gi()->$sDefine;
+            $aOut[$key] = (!empty($translate) ? $translate : $sDuration);
         }
         return $aOut;
     }
@@ -264,44 +266,6 @@ class ML_Hood_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             'veryGood'    => $oI18n->get('ML_HOOD_CONDITION_VERY_GOOD'),
             'usedGood'    => $oI18n->get('ML_HOOD_CONDITION_GOOD'),
             'acceptable'  => $oI18n->get('ML_HOOD_CONDITION_ACCEPTABLE'),
-        );
-    }
-
-    public function getDaysValue() {
-        $oI18n = MLI18n::gi();
-        return array(
-            'X'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_X'),
-            '0'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_0'),
-            '1'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_1'),
-            '2'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_2'),
-            '3'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_3'),
-            '4'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_4'),
-            '5'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_5'),
-            '6'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_6'),
-            '7'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_7'),
-            '8'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_8'),
-            '9'  => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_9'),
-            '10' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_10'),
-            '11' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_11'),
-            '12' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_12'),
-            '13' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_13'),
-            '14' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_14'),
-            '15' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_15'),
-            '16' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_16'),
-            '17' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_17'),
-            '18' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_18'),
-            '19' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_19'),
-            '20' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_20'),
-            '21' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_21'),
-            '22' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_22'),
-            '23' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_23'),
-            '24' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_24'),
-            '25' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_25'),
-            '26' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_26'),
-            '27' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_27'),
-            '28' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_28'),
-            '29' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_29'),
-            '30' => $oI18n->get('ML_HOOD_LABEL_LISTINGDURATION_DAYS_30'),
         );
     }
 
@@ -364,6 +328,10 @@ class ML_Hood_Model_Modul extends ML_Modul_Model_Modul_Abstract {
             $this->aPrice[$sType]->setPriceConfig($sKind, $fFactor, $iSignal, $sGroup, $blSpecial);
         }
         return $this->aPrice[$sType];
+    }
+
+    public function getPriceGroupKeys(){
+        return array('chinese.price.group', 'fixed.price.group');
     }
 
     public function getStockConfig($sType = null) {
@@ -484,6 +452,20 @@ class ML_Hood_Model_Modul extends ML_Modul_Model_Modul_Abstract {
 
     public function isOrderPaymentMethodAvailable(){
         return true;
+    }
+
+    public function getNoneRepeatedStatusConfigurationKey() {
+        $configFields = parent::getNoneRepeatedStatusConfigurationKey();
+
+        $configFields = array_filter($configFields, function ($sKey) {
+            return !in_array($sKey, array(
+                'orderstatus.canceled.nostock',
+                'orderstatus.canceled.revoked',
+                'orderstatus.canceled.nopayment',
+                'orderstatus.canceled.defect',
+            ));
+        });
+        return $configFields;
     }
 
 }

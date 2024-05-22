@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -29,6 +29,7 @@ MLSetting::gi()->add('aModules', array(
             'lang',
             'itemsperpage',
             'checkin.status',
+            'shippinggroup',
             'quantity.type',
             'price.addkind',
             'price.factor',
@@ -37,6 +38,7 @@ MLSetting::gi()->add('aModules', array(
             'preimport.start',
             'customergroup',
             'import',
+            'orderstatus.fbk',
             'orderstatus.open',
             'orderstatus.sync',
             'orderstatus.shipped',
@@ -45,6 +47,7 @@ MLSetting::gi()->add('aModules', array(
             'stocksync.tomarketplace',
             'inventorysync.price',
             'orderimport.shop',
+//            'handlingtime',
         ),
         'authKeys' => array(
             'clientkey' => 'CLIENTKEY',

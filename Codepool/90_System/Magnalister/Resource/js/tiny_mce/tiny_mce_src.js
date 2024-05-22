@@ -15940,7 +15940,7 @@ tinymce.ForceBlocks = function(editor) {
 
 			// Creates a caret container bogus element
 			function createCaretContainer(fill) {
-				var caretContainer = dom.create('span', {id: caretContainerId, 'data-mce-bogus': true, style: debug ? 'color:red' : ''});
+				var caretContainer = dom.create('span', {id: caretContainerId, 'data-mce-bogus': true, style: debug ? 'color:#e31a1c' : ''});
 
 				if (fill) {
 					caretContainer.appendChild(ed.getDoc().createTextNode(INVISIBLE_CHAR));

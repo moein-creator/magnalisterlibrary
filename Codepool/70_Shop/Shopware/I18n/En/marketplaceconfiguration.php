@@ -32,27 +32,9 @@ If you choose “Automatic Allocation”, magnalister will accept the shipping s
 Additional payment methods can be added to the list via Shopware > Settings > Shipping costs, then activated here.</p>
 <p>
 This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.</p> ';
-MLI18n::gi()->{'Shopware_Amazon_Configuration_ShippingMethod_Info'} = '<b>Shipping Service of the Orders</b><br />
-<br />
-Select the shipping service that will be assigned to all orders by default.<br />
-<br />
-You have the following options:
-<ol>
-<li><b>Shipping services supported by the marketplace</b><br />
-<br />
-Select a shipping method from the list in the dropdown box. Only the options that are supported by the marketplace will be displayed.<br />
-<br />
-</li>
-<li><b>Shipping services from the webshop free text field manager</b><br />
-<br />
-Select a shipping service from a free text field of the webshop.<br />
-<br />
-</li>
-<li><b>Allocate automatically</b><br />
-<br />
-magnalister automatically selects the shipping service that is stored first for the destination country of the order in the shipping module of the webshop.
-</li>
-</ol>';
+MLI18n::gi()->{'Shopware_Amazon_Configuration_ShippingMethod_Info'} = '<p>Amazon does not assign any shipping method to imported orders.</p>
+<p>Please choose here the available Web Shop shipping methods. The contents of the drop-down menu can be assigned in Shopware > Settings > Shipping Costs.</p>
+<p>This setting is important for bills and shipping notes, the subsequent processing of the order inside the shop, and for some ERPs.</p>';
 MLI18n::gi()->{'Shopware_Ebay_Configuration_Updateable_OrderStatus_Label'} = 'Update Order Status When';
 MLI18n::gi()->{'Shopware_Ebay_Configuration_Updateable_PaymentStatus_Label'} = 'Update Payment Status When';
 MLI18n::gi()->{'Shopware_Ebay_Configuration_Updateable_PaymentStatus_Info'} = 'Order statuses that can be triggered by eBay payments. 

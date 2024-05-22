@@ -30,3 +30,15 @@ MLI18n::gi()->{'check24_config_orderimport__field__paymentstatus__label'} = 'Sta
 MLI18n::gi()->{'check24_config_orderimport__field__paymentstatus__help'} = 'Sélectionnez ici le statut de paiement qui sera automatiquement attribué aux commandes lors de l’importation des commandes depuis la place de marché.';
 MLI18n::gi()->{'check24_config_orderimport__field__paymentstatus__hint'} = '';
 MLI18n::gi()->{'check24_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+MLI18n::gi()->{'check24_config_price__field__priceoptions__help'} = '<p>Avec cette fonction, vous pouvez transférer des prix divergents sur le marché et les faire synchroniser automatiquement.<br />
+<br />
+Pour ce faire, sélectionnez un groupe clients de votre boutique dans le menu déroulant de droite.<br />
+<br />
+Si vous ne saisissez pas de prix divergent dans le nouveau groupe de clients, le prix par défaut de votre boutique sera automatiquement transmis à eBay. Ainsi vous pouvez facilement appliquer un prix adapté pour un nombre limité d’articles Les autres paramètres relatifs au prix seront également appliqués au prix de vente.<br />
+<br />
+<b>Exemple :</b></p>
+<ul>
+<li>Ajoutez un groupe client dans votre boutique, par exemple "Clients eBay"</li>
+<li>Sur les fiches produits dans votre boutique, saisissez le prix souhaité</li>
+</ul>
+<p>Le mode de rabais des groupes de clients peut également être utilisé. Vous pouvez y enregistrer une remise (en pourcentage). À condition que le mode de remise soit activé dans l\'article Shopware, le prix soldé est transmis via magnalister à la place de marché. Il est important que le prix du marché ne soit pas affiché comme prix d\'exercice.</p>';

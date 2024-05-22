@@ -1,4 +1,20 @@
 <?php
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
 
 MLFilesystem::gi()->loadClass('Listings_Controller_Widget_Listings_InventoryAbstract');
 
@@ -10,6 +26,10 @@ class ML_Ebay_Controller_Ebay_Listings_Inventory extends ML_Listings_Controller_
     protected $priceBrutto;
     protected $blHasDeleteTable = false;
 
+    public static function getTabTitle() {
+        return MLI18n::gi()->get('ML_GENERIC_INVENTORY');
+    }
+
     protected function manipulateInventoryRequest($request) {
         $request['EXTRA'] = 'ShowPending';
         return $request;
@@ -17,7 +37,7 @@ class ML_Ebay_Controller_Ebay_Listings_Inventory extends ML_Listings_Controller_
 
     public function __construct() {
         parent::__construct();
-        if(MLModul::gi()->getGetNumberOfNewErrors() > 0){
+        if (MLModule::gi()->getGetNumberOfNewErrors() > 0) {
             MLMessage::gi()->addWarn(MLI18n::gi()->sEbayErrorLast5Minute, array(), true, '.ml-js-ebay-matching-warning-after5min');
         }
         $this->aSetting['maxTitleChars'] = 80;
@@ -51,12 +71,12 @@ class ML_Ebay_Controller_Ebay_Listings_Inventory extends ML_Listings_Controller_
                 'Getter' => 'getEBayLink',
                 'Field' => null,
             ),
-            'ePID' => array(
-                'Label' => $oI18n->ML_LABEL_EBAY_EPID,
-                'Sorter' => null,
-                'Getter' => 'getEBayEPIDLink',
-                'Field' => null,
-            ),
+//            'ePID' => array(
+//                'Label' => $oI18n->ML_LABEL_EBAY_EPID,
+//                'Sorter' => null,
+//                'Getter' => 'getEBayEPIDLink',
+//                'Field' => null,
+//            ),
 //            'PrepareKind' => array(
 //                'Label' => $oI18n->ML_EBAY_LABEL_PREPARE_KIND,
 //                'Sorter' => null,
@@ -124,9 +144,11 @@ class ML_Ebay_Controller_Ebay_Listings_Inventory extends ML_Listings_Controller_
     }
 
     protected function getEBayLink($item) {
-        return '<td><a class="ml-js-noBlockUi" href="' . $item['SiteUrl'] . '?ViewItem&item=' . $item['ItemID'] . '" target="_blank">' . $item['ItemID'] . '</a></td>';
+        $addStyle = (empty($item['ShopTitle']) || $item['ShopTitle'] === '&mdash;') ? 'style="color:#e31e1c;"' : '';
+        return '<td><a '. $addStyle .' class="ml-js-noBlockUi" href="' . $item['SiteUrl'] . '?ViewItem&item=' . $item['ItemID'] . '" target="_blank">' . $item['ItemID'] . '</a></td>';
     }
 
+    /* deprecated */
     protected function getEBayEPIDLink($item) {
         if (isset($item['ePID'])) {
             if (isset($item['productWebUrl'])) {

@@ -20,6 +20,14 @@ MLFilesystem::gi()->loadClass('Otto_Helper_Model_Table_Otto_ConfigData');
 
 class ML_ShopwareOtto_Helper_Model_Table_Otto_ConfigData extends ML_Otto_Helper_Model_Table_Otto_ConfigData {
 
+    public function orderimport_paymentmethodField(&$aField) {
+        $aPayment = MLFormHelper::getShopInstance()->getPaymentMethodValues();
+        $aField['values'] =
+            array(MLModule::gi()->getMarketPlaceName(false) => MLModule::gi()->getMarketPlaceName(false))
+            +
+            $aPayment;
+
+    }
     public function orderimport_paymentstatusField (&$aField) {
         $aField['values'] = MLFormHelper::getShopInstance()->getPaymentStatusValues();
     }

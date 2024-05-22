@@ -20,5 +20,5 @@ global $magnaConfig;
 return (
         isset($magnaConfig['maranon']['Marketplaces'][MLRequest::gi()->data('mp')]) && $magnaConfig['maranon']['Marketplaces'][MLRequest::gi()->data('mp')]=='etsy' //etsy module activation
         &&
-        class_exists('Shopware\Storefront\Framework\Routing\StorefrontResponse') //showpare 6shop activation
+        class_exists('Shopware\Storefront\Framework\Routing\StorefrontRouteScope') //showpare 6shop activation
 )?true:false;

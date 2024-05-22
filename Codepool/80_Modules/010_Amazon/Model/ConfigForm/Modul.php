@@ -25,12 +25,12 @@ class ML_Amazon_Model_ConfigForm_Modul extends ML_Modul_Model_ConfigForm_Modul_A
     }
 
     public function getCarrierCodeValues($bCalledFromConfigForm = true) {
-        $aCarrierCodes = MLModul::gi()->getCarrierCodes();
+        $aCarrierCodes = MLModule::gi()->getCarrierCodes();
         if (MLHttp::gi()->isAjax() && $bCalledFromConfigForm) {
             $aFields = MLRequest::gi()->data('field');
             $sAdditional = $aFields['orderstatus.carrier.additional'];
         } else {
-            $sAdditional = MLModul::gi()->getConfig('orderstatus.carrier.additional');
+            $sAdditional = MLModule::gi()->getConfig('orderstatus.carrier.additional');
         }
         $aAdditional = explode(',', $sAdditional);
         if (!empty($aAdditional)) {
@@ -40,7 +40,7 @@ class ML_Amazon_Model_ConfigForm_Modul extends ML_Modul_Model_ConfigForm_Modul_A
                 }
             }
             if (MLHttp::gi()->isAjax() && $bCalledFromConfigForm) {
-                MLModul::gi()->setConfig('orderstatus.carrier.additional', $sAdditional, true);
+                MLModule::gi()->setConfig('orderstatus.carrier.additional', $sAdditional, true);
             }
         }
 

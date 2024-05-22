@@ -17,15 +17,16 @@
  */
 
 /* @var $this ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Form */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 //        new dBug($aStatistic);
 //        new dBug($oList->getHead());
 //        new dBug(array('product'=>$oList->getList()->current(),'data'=>$oList->getList()->current()->mixedData()));
 ?>
-<div class="ml-plist <?php echo MLModul::gi()->getMarketPlaceName(); ?>">
+<div class="ml-plist <?php echo MLModule::gi()->getMarketPlaceName(); ?>">
     <?php
-    $sMpId = MLModul::gi()->getMarketPlaceId();
-    $sMpName = MLModul::gi()->getMarketPlaceName();
+    $sMpId = MLModule::gi()->getMarketPlaceId();
+    $sMpName = MLModule::gi()->getMarketPlaceName();
     $aStatistic = isset($aStatistic) ? $aStatistic : array();
     ?>
     <form action="<?php echo $this->getUrl(array('controller' => "{$sMpName}:{$sMpId}_shippinglabel_upload_shippingmethod")); ?>" method="post">

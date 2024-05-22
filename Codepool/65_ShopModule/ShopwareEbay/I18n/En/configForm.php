@@ -15,6 +15,9 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+MLI18n::gi()->{'ebay_config_carrier_option_group_shopfreetextfield_option_carrier'} = 'Shipping Carriers from webshop custom fields for orders';
+MLI18n::gi()->{'ebay_config_carrier_option_group_marketplace_carrier'} = 'Shipping Carriers suggested by eBay';
+MLI18n::gi()->{'ebay_config_carrier_option_group_additional_option'} = 'Additional options';
 
 MLI18n::gi()->{'ebay_config_producttemplate_content'} = '<style>
 ul.magna_properties_list {
@@ -121,31 +124,34 @@ MLI18n::gi()->{'ebay_config_producttemplate__field__template.content__label'} = 
 MLI18n::gi()->{'ebay_config_producttemplate__field__template.content__hint'} = 'List of available placeholders for Content:
 <dl>
     <dt>#TITLE#</dt>
-            <dd>Product Name (Title)</dd>
+            <dd>Product Name (Title)</dd><br>
     <dt>#ARTNR#</dt>
-            <dd>Item Number in Shop</dd>
+            <dd>Item Number in Shop</dd><br>
     <dt>#PID#</dt>
-            <dd>Product ID in Shop</dd>
+            <dd>Product ID in Shop</dd><br>
     <!--<dt>#PRICE#</dt>
             <dd>Price</dd>
     <dt>#VPE#</dt>
             <dd>Price per packing unit</dd>-->
     <dt>#SHORTDESCRIPTION#</dt>
-            <dd>Short description from the Shop</dd>
+            <dd>Short description from the Shop</dd><br>
     <dt>#DESCRIPTION#</dt>
-            <dd>Description from the Shop</dd>
+            <dd>Description from the Shop</dd><br>
     <dt>#MOBILEDESCRIPTION#</dt>
-        <dd>Short description for mobile devices (if defined)</dd>
+        <dd>Short description for mobile devices (if defined)</dd><br>
     <dt>#PICTURE1#</dt>
-            <dd>First product image</dd>
+            <dd>First product image</dd><br>
     <dt>#PICTURE2# etc.</dt>
             <dd>Second product image; with #PICTURE3#, #PICTURE4# etc, you can transfer as many pictures as you have available in your Shop.</dd><br><dt>Free text field:</dt><br><dt>#Description1#&nbsp;#Freetextfield1#</dt><dt>#Description2#&nbsp;#Freetextfield2#</dt><dt>#Description..#&nbsp;#Freetextfield..#</dt><br><dd>Transfer of item free text field&nbsp;the characters after the placeholder (e.g. #Freetextfield1#) designates the position of the free text field.***
-                           <br> See Settings > Basic Settings > Items > Item Free Text Field***</dd><dt>#PROPERTIES#</dt><dd>A list of all product attributes. Appearance can be determined with CSS (see the code from the Standard Template)</dd></dl>br';
+                   <br> See Settings > Basic Settings > Items > Item Free Text Field***</dd><br>
+   <dt>#PROPERTIES#</dt>
+        <dd>A list of all product attributes. Appearance can be determined with CSS (see the code from the Standard Template)</dd>
+    </dl>';
 MLI18n::gi()->add('ebay_config_price', array(
     'field' => array(
-        'fixed.priceoptions' => array(
+        'fixed.priceoptions'   => array(
             'label' => 'Sales Price from Customer Group',
-            'help' => '<p>With this function you can transfer different prices to the marketplace and synchronize them automatically.<br />
+            'help'  => '<p>With this function you can transfer different prices to the marketplace and synchronize them automatically.<br />
 <br />
 Select a customer group from your webshop using the dropdown on the right.<br />
 <br />

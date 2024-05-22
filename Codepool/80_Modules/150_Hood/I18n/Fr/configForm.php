@@ -131,10 +131,12 @@ Nous vous remercions d\'avoir effectué une commande sur #MARKETPLACE# et d’av
 <p>Notre équipe #ORIGINATOR#</p>
 ';
 MLI18n::gi()->{'hood_config_account__legend__account'} = 'Mes coordonnées';
-MLI18n::gi()->{'hood_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'hood_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'hood_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'hood_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'hood_config_account__field__username__label'} = 'Pseudo';
+MLI18n::gi()->{'hood_config_account__field__mpusername__label'} = 'Nom d\'utilisateur hood.de';
+MLI18n::gi()->{'hood_config_account__field__apikey__label'} = 'Mote de passe hood.de';
 MLI18n::gi()->{'hood_config_account__field__username__help'} = 'Donnez ici votre pseudo hood.';
 MLI18n::gi()->{'hood_config_account__field__username__hint'} = '';
 MLI18n::gi()->{'hood_config_account__field__password__label'} = 'Mot de passe';
@@ -163,9 +165,12 @@ MLI18n::gi()->{'hood_config_prepare__field__postalcode__label'} = 'Code postal';
 MLI18n::gi()->{'hood_config_prepare__field__postalcode__help'} = 'Saisissez ici le code postal de votre boutique, pour que nous puissions vous localiser. Cette localisation est utilisé pour indiquer automatiquement votre adresse de vendeur sur vos pages hood.';
 MLI18n::gi()->{'hood_config_prepare__field__location__label'} = 'Ville';
 MLI18n::gi()->{'hood_config_prepare__field__country__label'} = 'Pays';
-MLI18n::gi()->{'hood_config_prepare__field__mwst__label'} = 'TVA';
-MLI18n::gi()->{'hood_config_prepare__field__mwst__help'} = 'Montant de la TVA, qui sera affiché sur hood. A ne remplir seulement, que si vous avez un compte marchand commercial sur hood.';
+MLI18n::gi()->{'hood_config_prepare__field__mwst__label'} = 'TVA Fallback';
+MLI18n::gi()->{'hood_config_prepare__field__mwst__help'} = 'Montant de la TVA qui est affichée chez Hood.de, si elle n\'est pas déposée sur l\'article. Valeurs différentes de 0 autorisées uniquement si vous avez un compte professionnel chez Hood.de.';
 MLI18n::gi()->{'hood_config_prepare__field__mwst__hint'} = '&nbsp;Taux d\'imposition pour les marchands en %';
+MLI18n::gi()->{'hood_config_prepare__field__forcefallback__label'} = 'Toujours utiliser le fallback';
+MLI18n::gi()->{'hood_config_prepare__field__forcefallback__help'} = 'Si cette option est activée, la valeur par défaut est toujours utilisée pour la TVA, indépendamment de ce qui est enregistré pour l\'article.';
+
 MLI18n::gi()->{'hood_config_prepare__field__conditiontype__label'} = 'Etat de l\'article';
 MLI18n::gi()->{'hood_config_prepare__field__conditiontype__help'} = 'Information sur l\'état de l\'article.<br>
 <br>
@@ -177,6 +182,10 @@ MLI18n::gi()->{'hood_config_prepare__field__lang__help'} = 'Votre boutique vous 
 Sur hood, vous devez choisir l’une d’entre elles. <br>
 <br>
 C’est aussi dans cette langue que vous seront délivrés les éventuels messages d’erreur.';
+MLI18n::gi()->{'hood_config_prepare__field__shippingtime.min__label'}='Délai de livraison en jours (min)';
+MLI18n::gi()->{'hood_config_prepare__field__shippingtime.min__help'}='Indiquez ici le délai de livraison le plus court (sous forme de chiffre). Utilisez 0 si vous livrez le jour même. Si vous ne saisissez pas de chiffre ici, la valeur enregistrée dans votre compte Hood.de sera utilisée.';
+MLI18n::gi()->{'hood_config_prepare__field__shippingtime.max__label'}='Délai de livraison en jour (max)';
+MLI18n::gi()->{'hood_config_prepare__field__shippingtime.max__help'}='Indiquez ici le délai de livraison le plus long (sous forme de chiffre). Utilisez 0 si vous livrez le jour même. Si vous ne saisissez pas de chiffre ici, la valeur enregistrée dans votre compte Hood.de sera utilisée.';
 MLI18n::gi()->{'hood_config_prepare__field__dispatchtimemax__label'} = 'Délai de livraison';
 MLI18n::gi()->{'hood_config_prepare__field__dispatchtimemax__help'} = 'Saisissez le délai maximal de livraison.';
 MLI18n::gi()->{'hood_config_prepare__field__topten__label'} = 'Sélection rapide des catégories';
@@ -502,7 +511,7 @@ MLI18n::gi()->{'hood_config_sync__field__stocksync.frommarketplace__hint'} = '';
 MLI18n::gi()->{'hood_config_sync__field__stocksync.frommarketplace__help'} = 'Si cette fonction est activée le nombre de commandes effectués et payés sur hood sera soustrait de votre stock boutique.<br>
 <br>
 <b>Attention :</b> cette fonction ne s’exécute que si  l’importation des commandes est activée!';
-MLI18n::gi()->{'hood_config_sync__field__inventorysync.price__label'} = 'Prix de l\'article';
+MLI18n::gi()->{'hood_config_sync__field__inventorysync.price__label'} = 'Prix de l&apos;article';
 MLI18n::gi()->{'hood_config_sync__field__inventorysync.price__hint'} = '';
 MLI18n::gi()->{'hood_config_sync__field__inventorysync.price__help'} = '<b>Synchronisation automatique via CronJob (recommandée)</b><br>
 <br>
@@ -692,6 +701,7 @@ MLI18n::gi()->{'hood_config_emailtemplate__field__mail.copy__help'} = 'Activez c
 MLI18n::gi()->{'hood_config_producttemplate__legend__product__title'} = 'Template d\'articles';
 MLI18n::gi()->{'hood_config_producttemplate__legend__product__info'} = 'Template pour une personnalisation de la présentation de vos article sur vos pages hood (Vous pouvez désactiver l\'éditeur sous "Configuartion générale"&rarr;"Réglages expert".)';
 MLI18n::gi()->{'hood_config_producttemplate__field__template.name__label'} = 'Nom du template d\'articles';
+// For shopify this help is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyHood/I18n/Fr/configForm.php
 MLI18n::gi()->{'hood_config_producttemplate__field__template.name__help'} = '<b>Nom du produit sur hood </b><br>
 Saisissez dans ce champ le nom de l’article, tel que vous voulez qu’il apparaisse sur votre page hood. <br>
 paramètre générique possible : <br>
@@ -718,6 +728,7 @@ Dans le cas des déclinaisons d’articles,  hood ne prévoit pas l’indication
 </ul>
 
 Dans ce cas également, il faut désactiver la synchronisation des prix, étant donné que les titres des différentes versions d’article ne peuvent pas être modifiés sur hood.';
+// For shopify this hint is overwritten, if you change something here, also change it in 60_ShopModule_Shopify/ShopifyHood/I18n/Fr/configForm.php
 MLI18n::gi()->{'hood_config_producttemplate__field__template.name__hint'} = 'Liste des champs disponibles pour la rubrique
 <BLOCKQUOTE>
   <p>#TITLE# - nom du produit</p>

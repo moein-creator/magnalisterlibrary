@@ -59,7 +59,7 @@ class ML_Amazon_Model_List_Amazon_Overview {
         if ($this->aList === null) {
             $this->iCountTotal = 0;
             try {
-                $aResponse = MagnaConnector::gi()->submitRequestCached($this->prepareRequest(), 0);
+                $aResponse = MagnaConnector::gi()->submitRequest($this->prepareRequest());
             } catch (MagnaException $oExc) {
 
             }
@@ -70,18 +70,19 @@ class ML_Amazon_Model_List_Amazon_Overview {
                 foreach ($this->aList as &$aOrder) {
                     $aOrder['AmazonOrderID'] = $aOrder['ShipmentId'];
                     $aOrder['isselected'] = $this->isSelected($aOrder['AmazonOrderID']);
-                    if (isset($aOrder['ShippingService']) && !empty($aOrder['ShippingService'])) {
+                    if (!empty($aOrder['ShippingService'])) {
                         $aOrder['ShippingCost'] = MLPrice::factory()->format($aOrder['ShippingService']['Rate']['Amount'], $aOrder['ShippingService']['Rate']['CurrencyCode']);
                         $aOrder['SenderAndTrackingId'] = $aOrder['ShippingService']['CarrierName'].' <br>'.$aOrder['TrackingId'];
                         $aOrder['CustomerName'] = $aOrder['Address']['ShipToAddress']['Name'];
-
+                        $aOrder['CreatedDate'] = date(MLI18n::gi()->get('sDateTimeFormat'), strtotime($aOrder['CreatedDate']));
+                        if ($aOrder['ShippingDate'] === '0000-00-00 00:00:00') {
+                            $aOrder['ShippingDate'] = '&mdash;';
+                        } else {
+                            $aOrder['ShippingDate'] = date(MLI18n::gi()->get('sDateTimeFormat'), strtotime( $aOrder['ShippingDate']));
+                        }
                     }
-                    if (isset($aOrder['ShippingService']) && !empty($aOrder['ShippingService'])) {
-                        $aOrder['CustomerName'] = $aOrder['Address']['ShipToAddress']['Name'];
 
-                    }
-
-                    if (isset($aOrder['ItemList']) && !empty($aOrder['ItemList'])) {
+                    if (!empty($aOrder['ItemList'])) {
                         $aProduct = current($aOrder['ItemList']);
                         $aOrder['Product'] = isset($aProduct['ProductName']) ? $aProduct['ProductName'] : '---';
                     }
@@ -180,7 +181,7 @@ class ML_Amazon_Model_List_Amazon_Overview {
             'type' => 'product',
         );
         $aHead['ShippingCost'] = array(
-            'title' => MLI18n::gi()->get('ML_GENERIC_SHIPPING_COST'),
+            'title' => MLI18n::gi()->get('ML_Amazon_Shippinglabel_TotalPrice'),
             'type' => 'shippingcost',
         );
         $aHead['SenderAndTrackingId'] = array(

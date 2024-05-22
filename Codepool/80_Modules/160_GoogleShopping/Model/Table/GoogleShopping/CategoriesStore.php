@@ -32,7 +32,7 @@ class ML_GoogleShopping_Model_Table_GoogleShopping_CategoriesStore extends ML_Mo
     }
     
     protected function setDefaultValues() {
-        $this->set('mpid', MLModul::gi()->getMarketPlaceId());
+        $this->set('mpid', MLModule::gi()->getMarketPlaceId());
         return $this;
     }
     

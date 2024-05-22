@@ -59,7 +59,7 @@ if(count($aMessages)){
                                     if ($sClass != 'debug' && !$blLine && $blClose) {
                                         $blLine = true;
                                         ?>
-                                            <a role="button" class="ml-js-noBlockUi close-message" href="#" style="">
+                                            <a role="button" class="ml-js-noBlockUi close-message" href="#">
                                                 <span class="close-message-icon">close</span>
                                             </a>
                                         <?php

@@ -15,7 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <td colspan="2"><h4><?php echo $aFieldset['legend']['i18n']; ?></h4></td>
 <td colspan="2" style="padding:0">

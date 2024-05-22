@@ -42,7 +42,7 @@ class ML_Magnalister_Controller_Main_Content_Welcome extends ML_Core_Controller_
         $sKey = strtoupper(__CLASS__) . '__marketing_'.MLLanguage::gi()->getCurrentIsoCode();
         $sConfigured = MLDatabase::factory('config')->set('mpId', 0)->set('mkey', 'general.keytype')->get('value') != null ? '1' : '0' ;
         $sUrl = MLSetting::gi()->get('sApiRelatedUrl') . 'Marketing/' .
-            '?shop=' . MLShop::gi()->getShopSystemName() . '&' .
+            '?shop=' . MLShop::gi()->getShopNameForMarketingContent() . '&' .
             'build=' . MLSetting::gi()->get('sClientBuild').'&'.
             'lang='.MLLanguage::gi()->getCurrentIsoCode().'&'.
             'configured='.$sConfigured;

@@ -12,7 +12,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -69,27 +69,27 @@ class ML_ZzzzDummy_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
      * @TODO Check all usage of this method and if properties should always be present, remove this parameter,
      *      since it is used only in Shopware.
      *
-	 * @return array Collection of prefixed attributes
-	 */
+     * @return array Collection of prefixed attributes
+     */
     public function getPrefixedAttributeList($getProperties = false) {
         $aOut = array();
         return $aOut;
-	}
-
-    /**
-     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
-     * 
-     * @return array Collection of attributes with options
-     */
-    public function getAttributeListWithOptions() {
-        $aOut = array();
-        return $aOut;
     }
+    //
+    //    /**
+    //     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
+    //     *
+    //     * @return array Collection of attributes with options
+    //     */
+    //    public function getAttributeListWithOptions() {
+    //        $aOut = array();
+    //        return $aOut;
+    //    }
 
     /**
      * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
      * If $iLangId is set, uses languages from selected store ($iLangId is store id in magento).
-     * 
+     *
      * @return array Collection of attributes with options
      */
     public function getAttributeOptions($sAttributeCode, $iLangId = null) {

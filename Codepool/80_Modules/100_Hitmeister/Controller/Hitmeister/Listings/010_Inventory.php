@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -20,6 +20,14 @@ MLFilesystem::gi()->loadClass('Listings_Controller_Widget_Listings_InventoryAbst
 
 class ML_Hitmeister_Controller_Hitmeister_Listings_Inventory extends ML_Listings_Controller_Widget_Listings_InventoryAbstract {
     protected $aParameters = array('controller');
+
+    public function __construct() {
+        parent::__construct();
+
+        if (empty($this->sCurrency)) {
+            $this->sCurrency = MLModule::gi()->getConfig('currency');
+        }
+    }
 
     public static function getTabTitle() {
         return MLI18n::gi()->get('ML_GENERIC_INVENTORY');
@@ -86,11 +94,17 @@ class ML_Hitmeister_Controller_Hitmeister_Listings_Inventory extends ML_Listings
                 'Getter' => null,
                 'Field' => 'MarketplaceTitle',
             ),
+            'UnitId' => array(
+                'Label' => $oI18n->ML_MAGNACOMPAT_LABEL_MP_ITEMID,
+                'Sorter' => null,
+                'Getter' => 'getLink',
+                'Field' => null,
+            ),
             'EAN' => array(
                 'Label' => $oI18n->ML_LABEL_EAN,
-                'Sorter' => 'ean',
-                'Getter' => 'getEANLink',
-                'Field' => null,
+                'Sorter' => 'EAN',
+                'Getter' => null,
+                'Field' => 'EAN',
             ),
             'Price' => array(
                 'Label' => $this->__('ML_LABEL_SHOP_PRICE_NETTO').' / '.$oI18n->Hitmeister_Productlist_Label_Price,
@@ -151,18 +165,22 @@ class ML_Hitmeister_Controller_Hitmeister_Listings_Inventory extends ML_Listings
         }
     }
 
-    protected function getEANLink($item) {
-        if (empty($item['EAN'])) {
+    protected function getLink($item) {
+        if (empty($item['UnitId'])) {
             return '<td>&mdash;</td>';
         }
-
-        return '<td><a href="http://www.hitmeister.de/item/search/?search_value='.$item['EAN'].'" target="_blank">'.$item['EAN'].'</a></td>';
+        $addStyle = ($item['Title'] === '&mdash;' && $item['SKU'] !== '&mdash;') ? 'color:#e31e1c;' : '';
+        return '
+        <td>
+            <a style=" '.$addStyle.'" href="'.$item['ProductUrl'].'" target="_blank">'.$item['UnitId'].'</a>
+        </td>';
     }
 
     protected function getSku($item) {
+        $addStyle = ($item['Title'] === '&mdash;' && $item['SKU'] !== '&mdash;') ? 'color:#e31e1c;' : '';
         $html = '<td>'.$item['SKU'].'</td>';
         if (!empty($item['editUrl'])) {
-            $html = '<td><div class="product-link" ><a class="ml-js-noBlockUi" href="'.$item['editUrl'].'" target="_blank" title="'.MLI18n::gi()->ML_LABEL_EDIT.'">'.$item['SKU'].'</a></div></td>';
+            $html = '<td><div class="product-link" ><a class="ml-js-noBlockUi" style="' . $addStyle . '" href="'.$item['editUrl'].'" target="_blank" title="'.MLI18n::gi()->ML_LABEL_EDIT.'">'.$item['SKU'].'</a></div></td>';
         }
 
         return $html;
@@ -278,4 +296,5 @@ class ML_Hitmeister_Controller_Hitmeister_Listings_Inventory extends ML_Listings
             $this->iOffset = 0;
         }
     }
+
 }

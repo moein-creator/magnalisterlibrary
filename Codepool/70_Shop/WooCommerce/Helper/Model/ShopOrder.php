@@ -11,12 +11,17 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
-class ML_WooCommerce_Helper_Model_ShopOrder {
+use Automattic\WooCommerce\Proxies\LegacyProxy;
+
+MLFilesystem::gi()->loadClass('Shop_Helper_Model_ShopOrder_Abstract');
+wc_load_cart();
+
+class ML_WooCommerce_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrder_Abstract {
 
     /**
      * @var wpdb $oPressDB
@@ -103,7 +108,7 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
     /**
      * @param WC_Order $oOrder
      *
-     * @return \ML_WooCommerce_Helper_Model_ShopOrder
+     * @return ML_WooCommerce_Helper_Model_ShopOrder
      */
     public function setOrder($oOrder) {
         $this->blNewAddress = true;
@@ -122,25 +127,21 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
      * order import or update
      * @return array
      */
-    public function shopOrder() {  //$this->aCurrentData = [];
+    public function shopOrder() {
         if (empty($this->aCurrentData)) {
             $aReturnData = $this->createOrder();
         } elseif (!is_object($this->oCurrentOrder)) {// if order doesn't exist in shop  we create new order
-            $this->aNewData = MLHelper::gi('model_service_orderdata_merge')->mergeServiceOrderData($this->aNewData,
-                $this->aCurrentData, $this->oOrder);
+            $this->aNewData = MLHelper::gi('model_service_orderdata_merge')->mergeServiceOrderData($this->aNewData, $this->aCurrentData, $this->oOrder);
             $aReturnData = $this->createOrder();
         } else {//update order if exist
             $this->iCustomerId = $this->oCurrentOrder->get_customer_id();
             if ($this->checkForUpdate()) {
-                $this->aNewData = MLHelper::gi('model_service_orderdata_merge')->mergeServiceOrderData($this->aNewData,
-                    $this->aCurrentData, $this->oOrder);
-                $this
-                    ->updateOrderStatus();
+                $this->aNewData = MLHelper::gi('model_service_orderdata_merge')->mergeServiceOrderData($this->aNewData, $this->aCurrentData, $this->oOrder);
+                $this->updateOrderStatus();
                 $aReturnData = $this->aNewData;
             } else {
                 $this->aNewProduct = $this->aNewData['Products'];
-                $this->aNewData = MLHelper::gi('model_service_orderdata_merge')->mergeServiceOrderData($this->aNewData,
-                    $this->aCurrentData, $this->oOrder);
+                $this->aNewData = MLHelper::gi('model_service_orderdata_merge')->mergeServiceOrderData($this->aNewData, $this->aCurrentData, $this->oOrder);
                 $aReturnData = $this->updateOrder();
             }
         }
@@ -331,12 +332,12 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
     public function formAddress($aData, $typeData) {
         $sAddressField2 = '';
 
-        // Process AddressAddition field if provided from API and is not empty
         if (array_key_exists('AddressAddition', $aData[$typeData]) && !empty($aData[$typeData]['AddressAddition'])) {
             $sAddressField2 = $aData[$typeData]['AddressAddition'];
         }
-
-        return $address = array(
+        // Process AddressAddition field if provided from API and is not empty
+        $state = $this->getStateKey($aData[$typeData]['CountryCode'], $aData[$typeData]['Suburb']);
+        return array(
             'first_name' => $aData[$typeData]['Firstname'],
             'last_name'  => $aData[$typeData]['Lastname'],
             'company'    => $aData[$typeData]['Company'],
@@ -345,10 +346,36 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
             'address_1'  => $aData[$typeData]['StreetAddress'],
             'address_2'  => $sAddressField2,
             'city'       => $aData[$typeData]['City'],
-            'state'      => $aData[$typeData]['CountryCode'],
+            'state'      => $state,
             'postcode'   => $aData[$typeData]['Postcode'],
             'country'    => $aData[$typeData]['CountryCode'],
         );
+    }
+
+    /**
+     * @param $sCountryCode
+     * @param $sStateName
+     * @return int|string
+     */
+    protected function getStateKey($sCountryCode, $sStateName) {
+        $oCountries = new WC_Countries();
+        $states = $oCountries->get_states($sCountryCode);
+        $foundStateKey = '';
+        foreach ($states as $stateKey => $stateName) {
+            if (strtolower($stateKey) === strtolower($sStateName)) {
+                $foundStateKey = $stateKey;
+                break;
+            }
+            if (strtolower($stateKey) === strtolower($sCountryCode.'-'.$sStateName)) {
+                $foundStateKey = $stateKey;
+                break;
+            }
+            if ($stateName === $sStateName) {
+                $foundStateKey = $stateKey;
+                break;
+            }
+        }
+        return $foundStateKey;
     }
 
     /**
@@ -357,8 +384,6 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
      * @throws Exception
      */
     public function createOrder($id = null) {
-        $includeTax = get_option('woocommerce_prices_include_tax');
-        update_option('woocommerce_prices_include_tax', 'yes');
         $aData = $this->aNewData;
         $aAddresses = $aData['AddressSets'];
 
@@ -398,7 +423,7 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
             $order->set_address($addressShipping, 'shipping');
             $order->set_address($addressBilling, 'billing');
             // If Currency is given by API apply it to the order on WooCommerce
-            if (array_key_exists( 'Currency', $aData['Order']) && !empty($aData['Order']['Currency'])) {
+            if (array_key_exists('Currency', $aData['Order']) && !empty($aData['Order']['Currency'])) {
                 $order->set_currency($aData['Order']['Currency']);
             }
 
@@ -415,88 +440,8 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
 
             $order->apply_changes();
         }
-        $aTotalProducts = array();
-        // add orders totals
-        foreach ($aData['Totals'] as $aTotal) {
-            switch ($aTotal['Type']) {
-                case 'Shipping':
-                {
-                    //Shipping cost will be edited separately
-                    break;
-                }
-                case 'Payment':
-                default:
-                {
-                    if ((float)$aTotal['Value'] !== 0.0) {
-                        $aTotalProducts[] = [
-                            'SKU'        => isset($aTotal['SKU']) ? $aTotal['SKU'] : '',
-                            'ItemTitle'  => (isset($aTotal['Code']) && $aTotal['Code'] !== '' && !is_numeric($aTotal['Code'])) ? $aTotal['Code'] : $aTotal['Type'],
-                            'Quantity'   => 1,
-                            'Price'      => $aTotal['Value'],
-                            'Tax'        => array_key_exists('Tax', $aTotal) ? $aTotal['Tax'] : false,
-                            'ForceMPTax' => array_key_exists('Tax', $aTotal) ? $aTotal['Tax'] : false,
-                        ];
-
-                    }
-                    break;
-                }
-            }
-        }
-        $aAllItems = array_merge($aData['Products'], $aTotalProducts);
-
-        foreach ($aAllItems as $aProduct) {
-            $oMLProduct = MLProduct::factory();
-            if (empty($aProduct['SKU']) || !$oMLProduct->getByMarketplaceSKU($aProduct['SKU'])->exists()) {
-                $oProduct = new WC_Product_Simple();
-                if (!array_key_exists('SKU', $aProduct)) {
-                    $aProduct['SKU'] = '';
-                }
-                $oProduct->set_name($aProduct['ItemTitle'].' (SKU: '.$aProduct['SKU'].')');
-            } else {
-                $oProduct = wc_get_product($oMLProduct->get('ProductsId'));
-            }
-
-            $oProduct->set_price($aProduct['Price']);
-
-            if (
-                $aProduct['Tax']
-                && (array_key_exists('ForceMPTax', $aProduct))
-                && $aProduct['ForceMPTax']
-            ) {
-                $taxClass = $this->resolveTaxClass($aProduct, $addressShipping);
-                $oProduct->set_tax_class($taxClass[0]);
-                $this->tempTaxClasses[] = $taxClass;
-            }
-
-            $item_id = $order->add_product($oProduct, $aProduct['Quantity']);
-            $item = new WC_Order_Item_Product($item_id);
-            if ($id !== null) {//if order exists
-                $blAdd = true;
-                if ($id !== null) {
-                    if ($this->blNewProduct) {
-                        if (!(isset($aProduct['MOrderID']))) { // old product without mlorderid
-                            $blAdd = false;
-                        } else if ($aProduct['MOrderID'] != $this->aNewData['MPSpecific']['MOrderID']) { // product related to older imported with mlorderid
-                            $blAdd = false;
-                        }
-                    } else {
-                        $blAdd = false;
-                    }
-                }
-                if (!$blAdd) {
-                    //This solution get from WooCommerce "wc-stock-function". It is used only for merging order, and prevent to reduce previously imported item
-                    $item->add_meta_data('_reduced_stock', $aProduct['Quantity'], true);
-                    $item->save();
-                }
-            }
-
-            // For like Amazon FBA Orders StockSync could be false and for this products we should not reduce the stock
-            if (isset($aProduct['StockSync']) && !$aProduct['StockSync']) {
-                $item->add_meta_data('_reduced_stock', $aProduct['Quantity'], true);
-                $item->save();
-            }
-        }
-        $order->apply_changes();
+        $includeTax = get_option('woocommerce_prices_include_tax');
+        $this->addTotalAndProductToOrder($aData, $addressShipping, $order, $id);
 
         if (!$id) {
             $order->add_order_note('Order automatically imported from API magnalister.');
@@ -506,10 +451,8 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
         $order->update_taxes();
         $order->set_status($this->manageOrderStatus($aData));
         $order->calculate_totals(false);
-
+        $order->add_meta_data('_prices_include_tax', $includeTax === 'yes');
         $order->save();
-        update_option('woocommerce_prices_include_tax', $includeTax);
-
         // Remove temp tax classes
         if (!empty($this->tempTaxClasses)) {
             foreach ($this->tempTaxClasses as $tempTaxClass) {
@@ -531,7 +474,7 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
     private function resolveTaxClass($product, $address) {
 
         $country = $address['country'];
-        $mp = MLModul::gi()->getMarketPlaceName();
+        $mp = MLModule::gi()->getMarketPlaceName();
         $taxClassName = ucfirst($mp).' Tax '.$product['Tax'].'%';
         $taxClassSlug = str_replace(array(' ', '%'), array('-', ''), strtolower($taxClassName)).$product['Tax'];
         WC_Tax::create_tax_class($taxClassName, $taxClassSlug);
@@ -583,29 +526,6 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
         $this->oOrder->set('current_orders_id', $idOrder); //very important
     }
 
-    /**
-     * {
-     * "Type":"Shipping",
-     * "Code":"DE_DHLPaket",
-     * "Value":4.5,
-     * "Tax":false
-     * }
-     * get specific total of Order data by total Type
-     *
-     * @param string $sName
-     *
-     * @return array
-     */
-    public function getTotal($sName) {
-        $aTotals = $this->aNewData['Totals'];
-        foreach ($aTotals as $aTotal) {
-            if ($aTotal['Type'] == $sName) {
-                return $aTotal;
-            }
-        }
-
-        return array();
-    }
 
     /**
      * @param $order WC_Order
@@ -652,10 +572,10 @@ class ML_WooCommerce_Helper_Model_ShopOrder {
 
         $shippingTotal = $taxable ? $this->reverseTax($aShipping['Value'], count($taxData) > 0 ? $taxData[0]['rate_percent'] : null) : $aShipping['Value'];
         //setting added for germinized plugin, shipping costs set in the database do not include taxes when we import orders
-        if ('yes' === get_option( 'woocommerce_gzd_shipping_tax' ) && $taxable) {
-            $order->update_meta_data( '_additional_costs_include_tax', 'no');
-        } else if ('yes' === get_option( 'woocommerce_gzd_shipping_tax' ) && !$taxable) {
-            $order->update_meta_data( '_additional_costs_include_tax', 'yes');
+        if ('yes' === get_option('woocommerce_gzd_shipping_tax') && $taxable) {
+            $order->update_meta_data('_additional_costs_include_tax', 'no');
+        } else if ('yes' === get_option('woocommerce_gzd_shipping_tax') && !$taxable) {
+            $order->update_meta_data('_additional_costs_include_tax', 'yes');
         }
         $shippingItem->set_total($shippingTotal);
         $shippingItem->calculate_taxes();
@@ -768,21 +688,64 @@ option_name LIKE "woocommerce_free_shipping_%") AND option_id = '.$optionId;
     }
 
     /**
+     * @param $customerId int
+     * @param $aAddress array
+     * @return void
+     */
+    protected function saveCustomerBillingAddress($customerId, $aAddress) {
+        $state = $this->getStateKey($aAddress['CountryCode'], $aAddress['Suburb']);
+        $oCustomer = $this->getCustomerWithCustomerId($customerId);
+        $oCustomer->set_billing_address($aAddress['StreetAddress']);
+        $oCustomer->set_billing_first_name($aAddress['Firstname']);
+        $oCustomer->set_billing_last_name($aAddress['Lastname']);
+        $oCustomer->set_billing_company($aAddress['Company']);
+        $oCustomer->set_billing_postcode($aAddress['Postcode']);
+        $oCustomer->set_billing_city($aAddress['City']);
+        $oCustomer->set_billing_country($aAddress['CountryCode']);
+        $oCustomer->set_billing_phone($aAddress['Phone']);
+        $oCustomer->set_billing_email($aAddress['EMail']);
+        $oCustomer->set_billing_state($state);
+        $oCustomer->save();
+    }
+
+    /**
+     * @param $customerId int
+     * @param $aAddress array
+     * @return void
+     */
+    protected function saveCustomerShippingAddress($customerId, $aAddress) {
+        $state = $this->getStateKey($aAddress['CountryCode'], $aAddress['Suburb']);
+        $oCustomer = $this->getCustomerWithCustomerId($customerId);
+        $oCustomer->set_shipping_address($aAddress['StreetAddress']);
+        $oCustomer->set_shipping_first_name($aAddress['Firstname']);
+        $oCustomer->set_shipping_last_name($aAddress['Lastname']);
+        $oCustomer->set_shipping_company($aAddress['Company']);
+        $oCustomer->set_shipping_postcode($aAddress['Postcode']);
+        $oCustomer->set_shipping_city($aAddress['City']);
+        $oCustomer->set_shipping_country($aAddress['CountryCode']);
+        // supported since woocommerce 5.6+
+        if (method_exists($oCustomer, 'set_shipping_phone')) {
+            $oCustomer->set_shipping_phone($aAddress['Phone']);
+        }
+        $oCustomer->set_shipping_state($state);
+        $oCustomer->save();
+    }
+
+    /**
      * save order shipping address
      */
     public function SaveCustomerAddress($aAddress, $fieldType, $customerId) {
+        $state = $this->getStateKey($aAddress['CountryCode'], $aAddress['Suburb']);
         update_post_meta($customerId, $fieldType.'_first_name', $aAddress['Firstname']);
         update_post_meta($customerId, $fieldType.'_last_name', $aAddress['Lastname']);
         update_post_meta($customerId, $fieldType.'_company', $aAddress['Company']);
         update_post_meta($customerId, $fieldType.'_address_1', $aAddress['StreetAddress']);
-        update_post_meta($customerId, $fieldType.'_address_2', $aAddress['Street']);
-        update_post_meta($customerId, $fieldType.'_address_2', $aAddress['Street'].' '.$aAddress['Housenumber']);
         update_post_meta($customerId, $fieldType.'_postcode', $aAddress['Postcode']);
-        update_post_meta($customerId, $fieldType.'_city', $aAddress['City'].', Suburb : '.$aAddress['Suburb']);
+        update_post_meta($customerId, $fieldType.'_city', $aAddress['City']);
         update_post_meta($customerId, $fieldType.'_country', $aAddress['CountryCode']);
         update_post_meta($customerId, $fieldType.'_phone', $aAddress['Phone']);
         update_post_meta($customerId, $fieldType.'_email', $aAddress['EMail']);
-        update_post_meta($customerId, $fieldType.'_state', $aAddress['CountryCode']);
+        update_post_meta($customerId, $fieldType.'_state', $state);
     }
 
     /**
@@ -803,7 +766,7 @@ option_name LIKE "woocommerce_free_shipping_%") AND option_id = '.$optionId;
         $customerId = email_exists($customerEmail);
         // Add customer if customer doesn't exists
         if (!$customerId) {
-           if (username_exists($userName)) {
+            if (username_exists($userName)) {
                 $userName .= uniqid('', false);
             }
             $sPassword = wp_generate_password(10, false);
@@ -812,16 +775,16 @@ option_name LIKE "woocommerce_free_shipping_%") AND option_id = '.$optionId;
             $newCustomersId = wc_create_new_customer($customerEmail, $userName, $sPassword);
 
             if ($newCustomersId instanceof WP_Error) {
-                if($newCustomersId->get_error_message() === 'Du musst der Datenschutzerklärung zustimmen.') {
+                if ($newCustomersId->get_error_message() === 'Du musst der Datenschutzerklärung zustimmen.') {
                     $sMessage = MLI18n::gi()->get('WooCommerce_OrderImport_ThirdParty_GDPR_Error', array('MPOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId')));
                     MLErrorLog::gi()->addError(0, ' ', $sMessage, array('MOrderID' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId')));
                     MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
-                        'MOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
-                        'PHP'      => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
-                        'Error Object'    => serialize($newCustomersId)
+                        'MOrderId'     => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
+                        'PHP'          => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
+                        'Error Object' => serialize($newCustomersId)
                     ));
                 }
-                throw new Exception($sMessage . ' ('. $newCustomersId->get_error_message().')');
+                throw new Exception($sMessage.' ('.$newCustomersId->get_error_message().')');
             } else if (!is_numeric($newCustomersId)) {
                 MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
                     'MOrderId'                => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
@@ -842,9 +805,10 @@ option_name LIKE "woocommerce_free_shipping_%") AND option_id = '.$optionId;
         } else {
             $this->iCustomerId = $customerId;
         }
-
-        $this->SaveCustomerAddress($aAddresses['Shipping'], '_shipping', $this->iCustomerId);
-        $this->SaveCustomerAddress($aAddresses['Billing'], '_billing', $this->iCustomerId);
+        $this->saveCustomerBillingAddress($this->iCustomerId, $aAddresses['Billing']);
+        $this->saveCustomerShippingAddress($this->iCustomerId, $aAddresses['Shipping']);
+        //$this->SaveCustomerAddress($aAddresses['Shipping'], '_shipping', $this->iCustomerId);
+        //$this->SaveCustomerAddress($aAddresses['Billing'], '_billing', $this->iCustomerId);
 
         return $this->iCustomerId;
     }
@@ -954,4 +918,125 @@ option_name LIKE "woocommerce_free_shipping_%") AND option_id = '.$optionId;
             throw new Exception('order doesn\'t exist in shop');
         }
     }
+
+    /**
+     * @param array $aData
+     * @param array $addressShipping
+     * @param WC_Order|null $order
+     * @param $id
+     * @return void
+     * @throws Exception
+     */
+    protected function addTotalAndProductToOrder($aData, $addressShipping, $order, $id): void {
+        $aTotalProducts = array();
+        // add orders totals
+        foreach ($aData['Totals'] as $aTotal) {
+            switch ($aTotal['Type']) {
+                case 'Shipping':
+                {
+                    //Shipping cost will be edited separately
+                    break;
+                }
+                case 'Payment':
+                default:
+                {
+                    if ((float)$aTotal['Value'] !== 0.0) {
+                        $aTotalProducts[] = [
+                            'SKU'        => isset($aTotal['SKU']) ? $aTotal['SKU'] : '',
+                            'ItemTitle'  => (isset($aTotal['Code']) && $aTotal['Code'] !== '' && !is_numeric($aTotal['Code'])) ? $aTotal['Code'] : $aTotal['Type'],
+                            'Quantity'   => 1,
+                            'Price'      => $aTotal['Value'],
+                            'Tax'        => array_key_exists('Tax', $aTotal) ? $aTotal['Tax'] : false,
+                            'ForceMPTax' => array_key_exists('Tax', $aTotal) ? $aTotal['Tax'] : false,
+                        ];
+
+                    }
+                    break;
+                }
+            }
+        }
+        $aAllItems = array_merge($aData['Products'], $aTotalProducts);
+
+        foreach ($aAllItems as $aProduct) {
+            $oMLProduct = MLProduct::factory();
+            if (
+                empty($aProduct['SKU']) ||
+                (
+                    !$oMLProduct->getByMarketplaceSKU($aProduct['SKU'])->exists() &&//searching sku in variation products
+                    !$oMLProduct->getByMarketplaceSKU($aProduct['SKU'], true)->exists()//searching sku in single product
+                )
+            ) {
+                $blProductExists = false;
+                $aProduct['Tax'] = $this->getFallbackTax();
+                $oProduct = new WC_Product_Simple();
+                if (!array_key_exists('SKU', $aProduct)) {
+                    $aProduct['SKU'] = '';
+                }
+                $oProduct->set_name($aProduct['ItemTitle'] . ' (SKU: ' . $aProduct['SKU'] . ')');
+                $fTaxRate = $aProduct['Tax'];
+            } else {
+                $blProductExists = true;
+                $oProduct = wc_get_product($oMLProduct->get('ProductsId'));
+                $fTaxRate = $oMLProduct->getTax();
+            }
+
+            if (
+                $aProduct['Tax']  &&
+                (
+                    !$blProductExists ||
+                    (array_key_exists('ForceMPTax', $aProduct)) && $aProduct['ForceMPTax']
+                )
+            ) {
+                $taxClass = $this->resolveTaxClass($aProduct, $addressShipping);
+                $oProduct->set_tax_class($taxClass[0]);
+                $this->tempTaxClasses[] = $taxClass;
+            }
+            $oProduct->set_price($aProduct['Price']);
+
+            $item_id = $order->add_product($oProduct, $aProduct['Quantity'], array(
+                'order' => $order
+            ));
+            $item = new WC_Order_Item_Product($item_id);
+            if ($id !== null) {//if order exists
+                $blAdd = true;
+                if ($id !== null) {
+                    if ($this->blNewProduct) {
+                        if (!(isset($aProduct['MOrderID']))) { // old product without mlorderid
+                            $blAdd = false;
+                        } else if ($aProduct['MOrderID'] != $this->aNewData['MPSpecific']['MOrderID']) { // product related to older imported with mlorderid
+                            $blAdd = false;
+                        }
+                    } else {
+                        $blAdd = false;
+                    }
+                }
+                if (!$blAdd) {
+                    //This solution get from WooCommerce "wc-stock-function". It is used only for merging order, and prevent to reduce previously imported item
+                    $item->add_meta_data('_reduced_stock', $aProduct['Quantity'], true);
+                    $item->save();
+                }
+            }
+
+            // For like Amazon FBA Orders StockSync could be false and for this products we should not reduce the stock
+            if (isset($aProduct['StockSync']) && !$aProduct['StockSync']) {
+                $item->add_meta_data('_reduced_stock', $aProduct['Quantity'], true);
+                $item->save();
+            }
+        }
+        $order->apply_changes();
+
+    }
+
+    /**
+     * @param $customerId
+     * @return WC_Customer
+     */
+    protected function getCustomerWithCustomerId($customerId) {
+        $oCustomer = new WC_Customer($customerId);
+        if (!is_object($oCustomer) && is_object(wc_get_container()->get(LegacyProxy::class))) {
+            $oCustomer = wc_get_container()->get(LegacyProxy::class)->get_instance_of(WC_Customer::class, $customerId);
+        }
+        return $oCustomer;
+    }
+
 }

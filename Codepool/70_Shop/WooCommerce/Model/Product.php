@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -402,8 +402,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
     public function getImageUrl($iX = 40, $iY = 40) {
         $this->load();
         try {
-            $aImg = wp_get_attachment_image_src(get_post_thumbnail_id($this->oProduct->get_id()),
-                'single-post-thumbnail');
+            $aImg = $this->getImages();
             if ($aImg) {
                 $aImg = $aImg[0];
 
@@ -427,27 +426,27 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
             $aImgs = array();
             $idProduct = $this->oProduct->get_id();
             $aGalleryImages = MagnalisterWooCommerceAlias::getProductHelper()->getWCProductImages($idProduct);
-            $variationImages = MagnalisterWooCommerceAlias::getProductHelper()->getProductDetails($this->getLoadedProduct()->get_id());
+            $aCoverImg = array();
+            if ($this->get('parentid') == 0) {
+                $variationImages = MagnalisterWooCommerceAlias::getProductHelper()->getProductDetails($this->getLoadedProduct()->get_id());
+            } else {
+                $variationImages = MagnalisterWooCommerceAlias::getProductHelper()->getProductDetails($this->getLoadedProduct()->get_id(), $this->get('ProductsId'));
+            }
+            $aCoverImg[] = MagnalisterWooCommerceAlias::getProductHelper()->getFeaturedWCProductImage($idProduct);
+
             if (!empty($variationImages)) {
                 foreach ($variationImages as $aVariation) {
                     $aVarCoverImage = $aVariation['image']['url'];
                     $aVarImage = $aGalleryImages;
                     $aImgs = array_merge($aImgs, array($aVarCoverImage), $aVarImage);
                 }
-            } else {
-                $aImgs = $aGalleryImages;
             }
-            $aCoverImg = MLHelper::gi('model_product')->getFeaturedWCProductImage($idProduct);
-
-            $aImgs = array_merge(array($aCoverImg), $aImgs);
-
+            $aImgs = array_merge($aCoverImg, $aImgs, $aGalleryImages);
             if (empty($aImgs) || $aImgs[0] == '') {
                 $aImgs = array();
             }
-
             $this->aImages = array_unique($aImgs);
         }
-
         return $this->aImages;
     }
 
@@ -477,12 +476,12 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
         return implode(',', $aKeywords);
     }
 
-    public function getModulField($sFieldName, $blGeneral = false) {
+    public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false) {
         $this->load();
         if ($blGeneral) {
             $sField = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', $sFieldName)->get('value');
         } else {
-            $sField = MLModul::gi()->getConfig($sFieldName);
+            $sField = MLModule::gi()->getConfig($sFieldName);
         }
         $sField = empty($sField) ? $sFieldName : $sField;
 
@@ -546,7 +545,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     /**
      * Gets the price depending on the marketplace config.
-     * @param \ML_Shop_Model_Price_Interface $oPrice
+     * @param ML_Shop_Model_Price_Interface $oPrice
      * @param bool $blGros
      * @param bool $blFormated
      *
@@ -555,20 +554,20 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
      *     A float if $blFormated == false
      *
      */
-    public function getSuggestedMarketplacePrice(\ML_Shop_Model_Price_Interface $oPrice, $blGros = true, $blFormated = false) {
+    public function getSuggestedMarketplacePrice(ML_Shop_Model_Price_Interface $oPrice, $blGros = true, $blFormated = false) {
         $this->load();
-        $mpDBcurrency = MLModul::gi()->getConfig('currency');
+        $mpDBcurrency = MLModule::gi()->getConfig('currency');
         $shopCurrency = strtoupper(MLHelper::gi('model_price')->getShopCurrency());
-        $mpCurrency = strtoupper(empty($mpDBcurrency) ? getCurrencyFromMarketplace(MLModul::gi()->getMarketPlaceId()) : $mpDBcurrency);
+        $mpCurrency = strtoupper(empty($mpDBcurrency) ? getCurrencyFromMarketplace(MLModule::gi()->getMarketPlaceId()) : $mpDBcurrency);
 
         $aConf = $oPrice->getPriceConfig();
         $sPriceKind = $aConf['kind'];
         $fPriceFactor = (float)$aConf['factor'];
         $iPriceSignal = $aConf['signal'];
 
-        $fShopPrice = (float)$this->getPriceProduct();
-        if (!empty($mpCurrency) && MLModul::gi()->getConfig('exchangerate_update')) {
-            $fShopPrice *= MLModul::gi()->getExchangeRateRatio($shopCurrency, $mpCurrency) ?: $fShopPrice;
+        $fShopPrice = $blGros ? (float)$this->getPriceProduct() : (float)$this->getNetPriceProduct();
+        if (!empty($mpCurrency) && MLModule::gi()->getConfig('exchangerate_update')) {
+            $fShopPrice *= MLModule::gi()->getExchangeRateRatio($shopCurrency, $mpCurrency) ?: $fShopPrice;
         }
 
         if ($sPriceKind == 'addition') {
@@ -616,6 +615,15 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
         ));
     }
 
+    public function getNetPriceProduct() {
+        $product = $this->wcObjProduct();
+
+        return wc_get_price_excluding_tax($product, array(
+            'qty' => '',
+            'price' => $product->get_price(),
+        ));
+    }
+
     /**
      * Formatting price
      *
@@ -650,7 +658,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
     /**
      * returns tax-value for product
      *
-     * @param array $aAddressData
+     * @param array|null $aAddressData
      *
      * @return float
      */
@@ -735,7 +743,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getSuggestedMarketplaceStock($sType, $fValue, $iMax = null) {
         if (
-            MLModul::gi()->getConfig('inventar.productstatus') == 'true'
+            MLModule::gi()->getConfig('inventar.productstatus') == 'true'
             && !$this->isActive()
         ) {
             return 0;
@@ -795,21 +803,28 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
         foreach ($aProperties as $key => $value) {
             $aData = array();
             $sKey = null;
-            if (in_array('name', $aFields, true) && strpos($key, '_pa_')) {
+            if (strpos($key, '_pa_')) {
                 $sKey = explode('attribute_pa_', $key)[1];
-            }
-            if (in_array('name', $aFields, true) && !strpos($key, '_pa_')) {
+            } else {
                 $sKey = explode('attribute_', $key)[1];
             }
-            $aData['name'] = $this->getAttributeGroupName($sKey);
+            if(in_array('name', $aFields, true)) {
+                $aData['name'] = $this->getAttributeGroupName($sKey);
+            }
             if (in_array('value', $aFields, true)) {
-                $aData['value'] = $this->getAttributeValueName($value);
+                $aData['value'] = $product->get_attribute('pa_'.$sKey);
+                // when attribute is may set at product level
+                if ($aData['value'] === '') {
+                    $aData['value'] = $this->getAttributeValueName($value);
+                }
             }
             if (in_array('code', $aFields, true)) {//an identifier for group of id_attribute_group , that used in eBay, Etsy and Hood at the moment
                 $aData['code'] = 'pa_'.$sKey;
             }
             if (in_array('valueid', $aFields, true)) {//an identifier for group of id_attribute , that used in eBay, Etsy and Hood at the moment
-                $aData['valueid'] = $this->getAttributeValueId($value);
+                $attribute = 'pa_'.$sKey;
+                $term = taxonomy_exists($attribute) ? get_term_by('slug', $value, $attribute) : false;
+                $aData['valueid'] = !is_wp_error($term) && $term ? $term->term_id : $this->getAttributeValueId($value);
             }
 
             $aOut[] = $aData;
@@ -836,8 +851,8 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
         $configuratorOptions = $wpdb->get_results(
             $wpdb->prepare("SELECT * FROM `$wpdb->terms` WHERE `slug` = %s", $attributeName), ARRAY_A);
 
-
-        return isset($configuratorOptions[0]['name']) ? $configuratorOptions[0]['name'] : null;
+        // when there is no term us given value as attribute value
+        return isset($configuratorOptions[0]['name']) ? $configuratorOptions[0]['name'] : $attributeName;
     }
 
 
@@ -1043,7 +1058,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
             $aCustomField = get_post_meta((int)$this->get('ProductsId'), $sName);
             $mValue = empty($aCustomField) ? '' : $aCustomField[0];
         } elseif (strpos($sName, 'hwp') === 0) {
-            if ($this->get('ParentId') === '0') {
+            if ($this->isSingle() || $this->get('ParentId') === '0') {
                 $aCustomField = get_post_meta((int)$this->get('ProductsId'), $sName);
             } else {
                 $aCustomField = get_post_meta((int)$this->get('ProductsId'), 'hwp_var_gtin');
@@ -1064,6 +1079,8 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
                 $mValue = $this->getArticleDetail()->{'get_'.$sName}();
             } elseif (method_exists($this->oProduct, 'get_'.$sName)) {
                 $mValue = $this->oProduct->{'get_'.$sName}();
+            } elseif (in_array(explode('_', $sName)[0], array('weight', 'width', 'height', 'length'))) {
+                return $this->getDimensions(explode('_', $sName)[0], str_replace(explode('_', $sName)[0].'_', '', $sName));
             } else {
                 MLMessage::gi()->addDebug('method get_'.$sName.' does not exist in Article or ArticleDetails');
 
@@ -1356,7 +1373,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
         $sUnit = get_option('woocommerce_dimension_unit');
         $sValue = $this->getLoadedProduct()->get_width();
 
-        return array(
+        return array( 
             'Unit'  => $sUnit,
             'Value' => $sValue,
         );
@@ -1382,6 +1399,31 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
         );
     }
 
+    private function getDimensions($pd, $type) {
+        switch ($pd) {
+            case 'width':
+                $aDim = $this->getWidth();
+                break;
+            case 'height':
+                $aDim = $this->getHeight();
+                break;
+            case 'length':
+                $aDim = $this->getLength();
+                break;
+            case 'weight':
+                $aDim = $this->getWeight();
+                break;
+        }
+        
+        if ($type == 'unit_name') {
+            return $aDim['Value'] . ' ' . $aDim['Unit'];
+        } else if ($type == 'unit') {
+            return $aDim['Unit'];
+        }
+        
+        return $aDim['Value'];
+    }
+
     //    public function update() {
     //        unset($this->aData['id']);
     //        parent::update();
@@ -1393,7 +1435,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getEanDefaultField()
     {
-        $globalEan = MLModul::gi()->getConfig('ean');
+        $globalEan = MLModule::gi()->getConfig('ean');
         $matchingAttributeGroups = MLFormHelper::getShopInstance()->getGroupedAttributesForMatching();
 
         if (isset($globalEan)) {
@@ -1413,7 +1455,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getManufacturerDefaultField()
     {
-        $globalManufacturer = MLModul::gi()->getConfig('manufacturer');
+        $globalManufacturer = MLModule::gi()->getConfig('manufacturer');
         $matchingAttributeGroups = MLFormHelper::getShopInstance()->getGroupedAttributesForMatching();
         if (isset($globalManufacturer)) {
             $result = '';
@@ -1432,7 +1474,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getManufacturerPartNumberDefaultField()
     {
-        $globalManPartNumber = MLModul::gi()->getConfig('manufacturerpartnumber');
+        $globalManPartNumber = MLModule::gi()->getConfig('manufacturerpartnumber');
         $matchingAttributeGroups = MLFormHelper::getShopInstance()->getGroupedAttributesForMatching();
         if (isset($globalManPartNumber)) {
             $result = '';
@@ -1451,7 +1493,7 @@ class ML_WooCommerce_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getBrandDefaultField()
     {
-        $globalManufacturer = MLModul::gi()->getConfig('manufacturer');
+        $globalManufacturer = MLModule::gi()->getConfig('manufacturer');
         $matchingAttributeGroups = MLFormHelper::getShopInstance()->getGroupedAttributesForMatching();
         if (isset($globalManufacturer)) {
             $result = '';

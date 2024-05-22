@@ -17,4 +17,4 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-return ((class_exists('Enlight_Application',false) &&  Enlight_Application::Instance()->App() == 'Shopware') ? true : false);
+return false && ((class_exists('Enlight_Application', false) && Enlight_Application::Instance()->App() == 'Shopware') ? true : false);

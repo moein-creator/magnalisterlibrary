@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -183,6 +183,10 @@ Alle Schlüsselwörter zusammen dürfen nicht größer als 250 Bytes sein (1 Zei
             'label' => 'Verk&auml;uferversandgruppe',
             'hint' => 'Unter &quot;Konfiguration -&gt; Artikelvorbereitung&quot; k&ouml;nnen Sie die verschiedenen Versandgruppen anlegen'
         ),
+        'bopisstores' => array(
+            'label' => 'Produkt für "Click & Collect in store" aktivieren',
+            'hint' => 'Bitte wählen Sie die Ladengeschäfte aus bei welchen Sie dieses Produkt für "Click & Collect in store" aktivieren wollen'
+        ),
         'b2bactive' => array(
             'label' => 'Amazon B2B verwenden',
             'help' => 'Wenn aktiviert, k&ouml;nnen Artikel f&uuml;r den Business-to-Business Verkauf an Amazon &uuml;bermittelt werden, wie unten konfiguriert. <b>Bitte stellen Sie sicher, dass Ihr Amazon Konto f&uuml;r Amazon Business freigeschaltet ist.</b> Andernfalls wird das Hochladen von B2B-Artikeln zu Fehlern f&uuml;hren.',
@@ -307,7 +311,7 @@ MLI18n::gi()->add('amazon_prepare_variations', array(
             'label' => '{#i18n:attributes_matching_web_shop_attribute#}',
         ),
         'saveaction' => array(
-            'label' => 'SPEICHERN UND SCHLIESSEN',
+            'label' => 'Speichern und schliessen',
         ),
         'resetaction' => array(
             'label' => '{#i18n:amazon_varmatch_reset_matching#}',

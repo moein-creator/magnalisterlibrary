@@ -28,7 +28,7 @@ class ML_ShopwareEbay_Model_Service_UpdateOrders extends ML_Ebay_Model_Service_U
                 $oOrder->setUpdatableOrderStatus(false);
             }
 
-            return empty($aMessage) ? 'cannot update order and payment status' : implode($aMessage, ', ');
+            return empty($aMessage) ? 'cannot update order and payment status' : implode(', ', $aMessage);
         } else {
             throw new Exception("Order doesn't exist");
         }

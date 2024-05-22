@@ -27,7 +27,7 @@ class ML_Amazon_Model_OrderLogo
             ->set('mkey', 'orderstatus.shippedaddress')->get('value');
 
         $fulfillment = $aData['FulfillmentChannel'];
-        if ($fulfillment !== 'MFN-Prime' && $fulfillment !== 'MFN' && $fulfillment !== 'Business') {
+        if (!in_array($fulfillment, array('MFN', 'MFN-Prime', 'Business', 'Bopis'))) {
             $sLogo = 'amazon_fba';
 
             if (isset($aData['IsBusinessOrder']) && $aData['IsBusinessOrder'] == 'true') {
@@ -52,6 +52,8 @@ class ML_Amazon_Model_OrderLogo
                 }
             } elseif ($fulfillment === 'Business') {
                 $suffix = '_business';
+            } elseif ($fulfillment === 'Bopis') {
+                $suffix = '_bopis';
             }
 
             $sStatus = $oModel->get('status');

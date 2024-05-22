@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -22,13 +22,14 @@
  * @var $sError string
  * @var $sSuccess string
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <div style="display:none;" id="js-ml-modal-uploadConfirmPurge" title="<?php echo MLI18n::gi()->get('ML_HINT_HEADLINE_CONFIRM_PURGE'); ?>">
     <?php echo MLI18n::gi()->get('etsy_checkin_purge_popup_text'); ?>
 </div>
 
-<?php if (MLModul::gi()->getConfig('checkin.dontshowwarning') !== '1') { ?>
+<?php if (MLModule::gi()->getConfig('checkin.dontshowwarning') !== '1') { ?>
     <div id="js-ml-modal-uploadWarning" style="display:none;" title="<?php echo MLI18n::gi()->get('ML_STATUS_FILTER_SYNC_ITEM') ?>">
         <p><?php echo MLI18n::gi()->get('etsy_checkin_popup_text') ?></p>
         <input id="ml-checkbox-dontshowitagain" type="checkbox" value="1"/>
@@ -50,8 +51,8 @@ class_exists('ML', false) or die();
                                     var eDialog = jqml('#recursiveAjaxDialog');
                                     if (eDialog.find(".requestErrorBox").is(':hidden')) {
                                         window.location.href = '<?php
-                                            $sMpId = MLModul::gi()->getMarketPlaceId();
-                                            $sMpName = MLModul::gi()->getMarketPlaceName();
+                                            $sMpId = MLModule::gi()->getMarketPlaceId();
+                                            $sMpName = MLModule::gi()->getMarketPlaceName();
                                             echo $this->getUrl(array('controller' => "{$sMpName}:{$sMpId}_errorlog"));
                                             ?>';
                                     } else {

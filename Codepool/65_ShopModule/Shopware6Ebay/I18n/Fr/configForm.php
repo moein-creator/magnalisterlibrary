@@ -65,8 +65,6 @@ ul.magna_properties_list li span.magna_property_value {
 <p>#PICTURE3#</p>
 <p>#DESCRIPTION#</p>
 <p>#MOBILEDESCRIPTION#</p>
-<p>#Description1# #Freetextfield1#</p>
-<p>#Description2# #Freetextfield2#</p>
 <div>#PROPERTIES#</div>';
 MLI18n::gi()->{'ebay_config_orderimport__field__updateablepaymentstatus__label'} = 'Autoriser les changements de statut de paiement si';
 MLI18n::gi()->{'ebay_config_orderimport__field__updateablepaymentstatus__help'} = 'Vous pouvez avec cette fonction synchroniser le changement de statut des commandes après paiements sur eBay. <br>
@@ -140,15 +138,11 @@ MLI18n::gi()->{'ebay_config_producttemplate__field__template.content__hint'} = '
 <p>deuxième image de l’article; vous pouvez ajouter plus d’images de l’article (autant que dans votre boutique) en saisissant #PICTURE3#, #PICTURE4# etc.</p>
 </BLOCKQUOTE>
 <br>
-<p><font color="red">(les paramètres suivants ne sont pas disponibles sur Shopware)</font></p>
+
 <br>
 <br>
 
 Champs de texte libre pour description d’article :<br>
-<br>
-#Description1# #Freetextfield1#<br>
-#Description2# #Freetextfield2#<br>
-#description12# #freetextfield1#<br>
 <br>
 Prise en charge des champs de texte libre: le chiffre derrière le paramètre générique correspond à la position du texte.<br>
 <br>
@@ -168,3 +162,5 @@ Pour les commandes sur eBay qui ont été payées, vous pouvez créer un Etat de
 <br><br>
 Dans le cas où vous utilisez un système de Gestion des marchandises/Facturation rattaché à votre boutique en ligne, il est recommandé d’adapter les Etats de commande de façon à ce que ce service de Gestion des marchandises/Facturation puisse en faire le traitement en adéquation avec votre concept. 
 ';
+MLI18n::gi()->set('ebay_config_producttemplate__field__template.content__hint', MLI18n::gi()->{'ebay_prepare_apply_form__field__description__hint'}, true);
+MLI18n::gi()->set('ebay_prepare_apply_form_field_description_hint_customfield', '<dt>Champs supplémentaires :</dt><dt>#LABEL_{Nom technique}# #VALUE_{Nom technique}#</dt><dt>ex</dt>', true);

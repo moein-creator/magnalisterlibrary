@@ -27,6 +27,6 @@ class ML_MercadoLivre_Controller_MercadoLivre_Listings extends ML_Tabs_Controlle
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

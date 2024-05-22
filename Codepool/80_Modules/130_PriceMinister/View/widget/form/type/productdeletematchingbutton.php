@@ -17,28 +17,30 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
-$marketplaceName = MLModul::gi()->getMarketPlaceName();
+if (!class_exists('ML', false))
+    throw new Exception();
+$marketplaceName = MLModule::gi()->getMarketPlaceName();
 $sName = str_replace('field', '', $aField['name']);
 
 // Getting type of tab (is it variation tab or apply form)
 $selectorArray = explode('_button', $aField['id']);
 $selector = $selectorArray[0];
 $selector = $this->aFields[strtolower($selector)]['id'];
-$sChangedSelector = ' ' . $selector;
-$id = $marketplaceName . '_prepare_match_manual_form_field_prepareaction';
+$sChangedSelector = ' '.$selector;
+$id = $marketplaceName.'_prepare_match_manual_form_field_prepareaction';
 ?>
 
 <button type="button" value="0" class="mlbtn action"
-    <?php echo isset($aField['id']) ? 'id="' . $aField['id'] . '"' : '' ?>
-    name="<?php echo MLHTTP::gi()->parseFormFieldName($aField['name']); ?>"
->-</button>
+    <?php echo isset($aField['id']) ? 'id="'.$aField['id'].'"' : '' ?>
+        name="<?php echo MLHTTP::gi()->parseFormFieldName($aField['name']); ?>"
+>-
+</button>
 
-<?php echo isset($aField['i18n']['info']) ? '<span>' . $aField['i18n']['info'] . '</span>' : '' ?>
+<?php echo isset($aField['i18n']['info']) ? '<span>'.$aField['i18n']['info'].'</span>' : '' ?>
 <script>
     (function ($) {
         $('button[name="<?php echo MLHTTP::gi()->parseFormFieldName($aField['name']);?>"]').click(function () {
-            var d = '<?php echo addslashes(MLI18n::gi()->get($marketplaceName . '_prepare_variations_reset_info')) ?>';
+            var d = '<?php echo addslashes(MLI18n::gi()->get($marketplaceName.'_prepare_variations_reset_info')) ?>';
             $('<div class="ml-modal dialog2" title="<?php echo addslashes(MLI18n::gi()->get('ML_LABEL_INFO')) ?>"></div>').html(d).jDialog({
                 width: (d.length > 1000) ? '700px' : '500px',
                 buttons: {

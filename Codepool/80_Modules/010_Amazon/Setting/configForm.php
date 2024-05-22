@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -19,7 +19,7 @@
 MLSetting::gi()->add('amazon_config_account', array(
     'tabident' => array(
         'legend' => array(
-            'classes' => array('mlhidden'),
+            'classes' => array(''),
         ),
         'fields' => array(
             array(
@@ -35,17 +35,13 @@ MLSetting::gi()->add('amazon_config_account', array(
                 'type' => 'selectsite'
             ),
             array(
-                'name' => 'mwstoken',
-                'type' => 'password',
-                'savevalue' => '__saved__'
+                'name' => 'spapitoken',
+                'type' => 'amazon_token',
             ),
             array(
                 'name' => 'merchantid',
-                'type' => 'string',
-            ),
-            array(
-                'name' => 'marketplaceid',
-                'type' => 'string',
+                'type' => 'readonly',
+                'placeholder' => MLI18n::gi()->get('form_type_matching_select_autofill')
             ),
         ),
     )
@@ -106,6 +102,11 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                 )
             ),
             array(
+                'name' => 'maxquantity',
+                'type' => 'string',
+                'expert' => true,
+            ),
+            array(
                 'name' => 'checkin.skuasmfrpartno',
                 'type' => 'bool',
             ),
@@ -122,18 +123,10 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                 'name' => 'leadtimetoship',
                 'type' => 'select'
             ),
-            array(
-                'name' => 'internationalShipping',
-                'type' => 'select',
-            ),
         )
     ),
     'shippingtemplate' => array(
         'fields' => array(
-            array(
-                'name' => 'shipping.template.active',
-                'type' => 'bool'
-            ),
             array(
                 'name' => 'shipping.template',
                 'type' => 'duplicate',
@@ -144,6 +137,34 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                 'subfields' => array(
                     array('name' => 'shipping.template.name', 'type' => 'string'),
                 )
+            ),
+        )
+    ),
+), false);
+
+MLSetting::gi()->add('amazon_config_price', array(
+    'price' => array(
+        'fields' => array(
+            array(
+                'name' => 'price',
+                'type' => 'subFieldsContainer',
+                'subfields' => array(
+                    'addkind' => array('name' => 'price.addkind', 'type' => 'select'),
+                    'factor' => array('name' => 'price.factor', 'type' => 'string'),
+                    'signal' => array('name' => 'price.signal', 'type' => 'string')
+                )
+            ),
+            array(
+                'name' => 'priceoptions',
+                'type' => 'subFieldsContainer',
+                'subfields' => array(
+                    'group' => array('name' => 'price.group', 'type' => 'select'),
+                    'usespecialoffer' => array('name' => 'price.usespecialoffer', 'type' => 'bool'),
+                ),
+            ),
+            array(
+                'name' => 'exchangerate_update',
+                'type' => 'bool',
             ),
         )
     ),
@@ -172,6 +193,7 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                         'type' => 'select',
                         'cssclass' => 'js-b2b',
                         'breakbefore' => true,
+                        'padding-right' => 0,
                     ),
                     'ajax' => array(
                         'name' => 'b2b.tax_code_specific',
@@ -179,6 +201,7 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                         'cssclass' => 'js-b2b',
                         'cascading' => true,
                         'breakbefore' => true,
+                        'padding-right' => 0,
                     ),
                 ),
             ),
@@ -216,13 +239,15 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                     'quantity' => array(
                         'name' => 'b2bdiscounttier1quantity',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '2',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                     'discount' => array(
                         'name' => 'b2bdiscounttier1discount',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '2',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                 ),
@@ -234,13 +259,15 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                     'quantity' => array(
                         'name' => 'b2bdiscounttier2quantity',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '5',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                     'discount' => array(
                         'name' => 'b2bdiscounttier2discount',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '5',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                 ),
@@ -252,13 +279,15 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                     'quantity' => array(
                         'name' => 'b2bdiscounttier3quantity',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '10',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                     'discount' => array(
                         'name' => 'b2bdiscounttier3discount',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '10',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                 ),
@@ -270,13 +299,15 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                     'quantity' => array(
                         'name' => 'b2bdiscounttier4quantity',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '20',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                     'discount' => array(
                         'name' => 'b2bdiscounttier4discount',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '15',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                 ),
@@ -288,47 +319,21 @@ MLSetting::gi()->add('amazon_config_prepare', array(
                     'quantity' => array(
                         'name' => 'b2bdiscounttier5quantity',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '50',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                     'discount' => array(
                         'name' => 'b2bdiscounttier5discount',
                         'type' => 'string',
-                        'default' => '0',
+                        'default' => '',
+                        'placeholder' => '20',
                         'cssclasses' => array('autoWidth', 'rightSpacer', 'js-b2b', 'js-b2b-tier'),
                     ),
                 ),
             ),
         ),
     ),
-), false);
-
-MLSetting::gi()->add('amazon_config_price', array(
-    'price' => array(
-        'fields' => array(
-            array(
-                'name' => 'price',
-                'type' => 'subFieldsContainer',
-                'subfields' => array(
-                    'addkind' => array('name' => 'price.addkind', 'type' => 'select'),
-                    'factor' => array('name' => 'price.factor', 'type' => 'string'),
-                    'signal' => array('name' => 'price.signal', 'type' => 'string')
-                )
-            ),
-            array(
-                'name' => 'priceoptions',
-                'type' => 'subFieldsContainer',
-                'subfields' => array(
-                    'group' => array('name' => 'price.group', 'type' => 'select'),
-                    'usespecialoffer' => array('name' => 'price.usespecialoffer', 'type' => 'bool'),
-                ),
-            ),
-            array(
-                'name' => 'exchangerate_update',
-                'type' => 'bool',
-            ),
-        )
-    )
 ), false);
 
 MLSetting::gi()->add('amazon_config_sync', array(
@@ -362,11 +367,6 @@ MLSetting::gi()->add('amazon_config_orderimport', array(
                     'import' => array('name' => 'import', 'type' => 'radio', ),
                     'preimport.start' => array('name' => 'preimport.start', 'type' => 'datepicker'),
                 ),
-            ),
-            'orderimport.amazoncommunicationrules.blacklisting' => array(
-                'name' => 'orderimport.amazoncommunicationrules.blacklisting',
-                'type' => 'bool',
-                'default' => true,
             ),
             array(
                 'name' => 'customergroup',
@@ -441,7 +441,6 @@ MLSetting::gi()->add('amazon_config_orderimport', array(
                         'default' => '__AMAZON_SHIPPING_DISCOUNT__',
                     ),
                 ),
-                'expert' => true,
             ),
         ),
     ),
@@ -566,8 +565,9 @@ MLSetting::gi()->add('amazon_config_orderimport', array(
                 ),
             ),
             'orderstatus.shippedaddress' => array(
-                'name' => 'orderstatus.shippedaddress',
-                'type' => 'duplicate',
+                'name'      => 'orderstatus.shippedaddress',
+                'type'      => 'duplicate',
+                'cssclass'  => array('ml-form-type-duplicated-norepeat'),
                 'duplicate' => array(
                     'field' => array('type' => 'orderstatus_shipped')
                 ),
@@ -610,21 +610,6 @@ MLSetting::gi()->add('amazon_config_orderimport', array(
                     ),
                 ),
             ),
-
-            /* OLD
-            array(
-                'name' => 'orderstatus.shipped',
-                'type' => 'select'
-            ),
-            array(
-                'name' => 'orderstatus.carrier.default',
-                'type' => 'ajax'
-            ),
-            array(
-                'name' => 'orderstatus.carrier.additional',
-                'type' => 'string'
-            ),
-            */
             array(
                 'name' => 'orderstatus.cancelled',
                 'type' => 'select'
@@ -634,6 +619,15 @@ MLSetting::gi()->add('amazon_config_orderimport', array(
 ), false);
 
 MLSetting::gi()->add('amazon_config_emailtemplate', array(
+    'guidelines' => array(
+        'fields' => array(
+            'orderimport.amazoncommunicationrules.blacklisting' => array(
+                'name' => 'orderimport.amazoncommunicationrules.blacklisting',
+                'type' => 'bool',
+                'default' => true,
+            ),
+        )
+    ),
     'mail' => array(
         'fields' => array(
             array(
@@ -760,17 +754,26 @@ MLSetting::gi()->add('amazon_config_vcs', array(
     'amazonvcsinvoice' => array(
         'fields' => array(
             array(
-                'name' => 'amazonvcsinvoice.invoicedir',
-                'type' => 'button',
+                'name'   => 'amazonvcsinvoice.invoicedir',
+                'type'   => 'button',
                 'target' => 'blank',
             ),
             array(
-                'name' => 'amazonvcsinvoice.mailcopy',
-                'type' => 'string',
-                'default' => '',
+                'name'   => 'amazonvcsinvoice.language',
+                'type'   => 'select',
+                'values' => array(
+                    ''   => '{#i18n:form_select_option_firstoption#}',
+                    'de' => 'German',
+                    'en' => 'English'
+                )
+            ),
+            array(
+                'name'        => 'amazonvcsinvoice.mailcopy',
+                'type'        => 'string',
+                'default'     => '',
                 'placeholder' => 'your@mail.com'
             ),
-            'amazonvcsinvoice.invoiceprefix' => array(
+            'amazonvcsinvoice.invoiceprefix'         => array(
                 'name' => 'amazonvcsinvoice.invoiceprefix',
                 'type' => 'string',
             ),
@@ -840,4 +843,116 @@ MLSetting::gi()->add('amazon_config_vcs', array(
         'cssclasses' => array('ml-magnalisterInvoiceGenerator')
     ),
     'erpInvoice' => '{#setting:formgroups__config_erpInvoice#}',
+), false);
+
+MLSetting::gi()->add('amazon_config_bopis', array(
+    'stores' => array(
+        'fields' => array(
+            array(
+                'name' => 'bopis.stores',
+                'type' => 'amazon_bopis_store_dropdown',
+                'incolumn' => true,
+                'cssclasses' => array('ml-bopisStoreForm'),
+            ),
+            array(
+                'name' => 'bopis.array.status',
+                'type' => 'bool',
+
+            ),
+            array(
+                'name' => 'bopis.array.alias',
+                'type' => 'string',
+            ),
+            array(
+                'name' => 'bopis.array.supplysourcecode',
+                'type' => 'string',
+                'placeholder' => 'example_store_0001'
+            ),
+            array(
+                'name' => 'bopis.array.address',
+                'type' => 'amazon_bopis_address',
+                'ismaster' => true,
+            ),
+            array(
+                'name' => 'bopis.array.configuration.timezone',
+                'type' => 'select',
+                'default' => '(+01:00) Europe/Berlin',
+            ),
+            array(
+                'name' => 'bopis.array.configuration.handlingtime',
+                'type' => 'amazon_bopis_handling_time',
+                'incolumn' => true,
+            ),
+            array(
+                'name' => 'bopis.array.configuration.operationalconfiguration',
+                'type' => 'amazon_bopis_operational_configuration',
+                'ismaster' => true,
+            ),
+            /*array(
+                'name' => 'bopis.array.capabilities',
+                'type' => 'amazon_bopis_capabilities',
+                'incolumn' => true,
+            ),*/
+            array(
+                'name' => 'bopis.array.capabilities.pickupchannel.inventoryholdperiod',
+                'type' => 'amazon_bopis_handling_time',
+                'incolumn' => true,
+            ),
+        ),
+    ),
+    'products' => array(
+        'fields' => array(
+            array(
+                'name' => 'bopis.stockmanagement',
+                'type' => 'duplicate',
+                'duplicate' => array(
+                    //'radiogroup' => 'default',
+                    'field' => array('type' => 'subFieldsContainer')
+                ),
+                'incolumn' => true,
+                'subfields' => array(
+                    array(
+                        'name' => 'bopis.stockmanagement.store',
+                        'type' => 'select',
+                    ),
+                    array(
+                        'name' => 'bopis.stockmanagement.quantity',
+                        'type' => 'selectwithtextoption',
+                        'subfields' => array(
+                            'select' => array('name' => 'bopis.stockmanagement.quantity.type', 'type' => 'select'),
+                            'string' => array('name' => 'bopis.stockmanagement.quantity.value', 'type' => 'string')
+                        )
+                    ),
+                ),
+            ),
+        ),
+    ),
+    'orderimport' => array(
+        'fields' => array(
+            array(
+                'name' => 'bopis.orderstatus.open',
+                'type' => 'select'
+            ),
+        ),
+    ),
+    'orders' => array(
+        'fields' => array(
+            array(
+                'name' => 'bopis.orderstatus.readyForPickup',
+                'type' => 'select'
+            ),
+            array(
+                'name' => 'bopis.orderstatus.pickedUp',
+                'type' => 'select'
+            ),
+            array(
+                'name' => 'bopis.orderstatus.refund',
+                'type' => 'select'
+            ),
+            array(
+                'name' => 'bopis.refund.reason',
+                'type' => 'select'
+            ),
+        ),
+    ),
 ), false);

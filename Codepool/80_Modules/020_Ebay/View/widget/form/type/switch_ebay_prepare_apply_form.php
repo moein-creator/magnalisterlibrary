@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,15 +11,14 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 /** @var ML_Hitmeister_Controller_Hitmeister_Prepare_Variations $this */
-class_exists('ML', false) or die();
-$marketplaceName = MLModul::gi()->getMarketPlaceName();
+if (!class_exists('ML', false))
+    throw new Exception();
+$marketplaceName = MLModule::gi()->getMarketPlaceName();
 $aRequestData = MLRequest::gi()->data();
 if (isset($aRequestData['action']['deleteaction'])) {
     return;
@@ -31,6 +30,8 @@ if (is_array($mParentValue)) {
     $mParentValue = key($mParentValue);
 }
 
+// Helper for php8 compatibility - can't pass null to strip_tags 
+$mParentValue = MLHelper::gi('php8compatibility')->checkNull($mParentValue);
 $blCustom = $mParentValue === 'new' || strpos($mParentValue, ':');
 
 if (!empty($mParentValue) && $mParentValue !== 'none' && !$blCustom) {

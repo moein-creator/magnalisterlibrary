@@ -29,6 +29,6 @@ class ML_MercadoLivre_Controller_MercadoLivre_Listings_Deleted extends ML_Listin
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

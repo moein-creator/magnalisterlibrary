@@ -15,7 +15,8 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 MLSetting::gi()->add('aCss', array('magnalister.otto.prepare.css'), true);
 ?>
 
@@ -70,7 +71,7 @@ MLSetting::gi()->add('aCss', array('magnalister.otto.prepare.css'), true);
                 <div id="attributeDropDown_<?php echo $aField['subFieldsContainer']['id'] ?>"
                      style="overflow: hidden;
                 <?php if (isset($aField['subFieldsContainer']['subfields']['select']['value']) && !empty($aField['subFieldsContainer']['subfields']['select']['value'])) { ?>
-                    background-color: #e9e9e9;
+
                 <?php } ?>">
                     <?php
                     if (array_key_exists('debug', $aField['subFieldsContainer']) && $aField['subFieldsContainer']['debug']) {
@@ -109,5 +110,5 @@ MLSetting::gi()->add('aCss', array('magnalister.otto.prepare.css'), true);
     }
 }
 ?>
-<tr class="spacer"><td colspan="4"></td></tr>
+<tr class="spacer"></tr>
 </tbody>

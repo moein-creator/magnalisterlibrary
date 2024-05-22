@@ -17,5 +17,6 @@
  */
 
 /** @var ML_Hitmeister_Controller_Hitmeister_Prepare_Variations $this */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 $this->getFormWidget();

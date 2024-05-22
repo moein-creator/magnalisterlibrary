@@ -45,11 +45,11 @@ MLI18n::gi()->{'check24_config_account_emailtemplate_content'} = '  <style>
     <p>Best Regards,</p>
     <p>Your Online-Shop-Team</p>';
 MLI18n::gi()->{'check24_config_account__legend__account'} = 'Login Details';
-MLI18n::gi()->{'check24_config_account__legend__tabident'} = '';
+MLI18n::gi()->{'check24_config_account__legend__tabident'} = 'Tab';
 MLI18n::gi()->{'check24_config_account__field__tabident__label'} = '{#i18n:ML_LABEL_TAB_IDENT#}';
 MLI18n::gi()->{'check24_config_account__field__tabident__help'} = '{#i18n:ML_TEXT_TAB_IDENT#}';
 MLI18n::gi()->{'check24_config_account__field__mpusername__label'} = 'Username';
-MLI18n::gi()->{'check24_config_account__field__mpusername__help'} = 'The access data for the Check24 interface can be found after logging on to Check24 under "Settings" -> "Order transmission" -> Configuration and there in the section "Your interface access data".';
+MLI18n::gi()->{'check24_config_account__field__mpusername__help'} = 'The access data for the CHECK24 interface can be found after logging on to CHECK24 under "Settings" -> "Order transmission" -> Configuration and there in the section "Your interface access data".';
 MLI18n::gi()->{'check24_config_account__field__mppassword__label'} = 'FTP Password';
 MLI18n::gi()->{'check24_config_account__field__port__label'} = 'FTP Port';
 MLI18n::gi()->{'check24_config_account__field__ftpserver__label'} = 'FTP Server';
@@ -58,6 +58,10 @@ MLI18n::gi()->{'check24_config_prepare__legend__upload'} = 'Prepare Items';
 MLI18n::gi()->{'check24_config_prepare__field__checkin.status__label'} = 'Status Filter';
 MLI18n::gi()->{'check24_config_prepare__field__checkin.status__hint'} = 'Show only active products';
 MLI18n::gi()->{'check24_config_prepare__field__lang__label'} = 'Item Description';
+MLI18n::gi()->{'check24_config_prepare__field__imagesize__label'} = 'Image Size';
+MLI18n::gi()->{'check24_config_prepare__field__imagesize__help'} = '<p>Please enter the pixel width for the image as should appear on the Marketplace. The height will be automatically matched based on the original aspect ratio.</p>
+<p>The source files will be processed from the image folder <i>{#setting:sSourceImagePath#}</i>, and will be stored in the folder <i>{#setting:sImagePath#}</i> with the selected pixel width for use on the Marketplace.</p>';
+MLI18n::gi()->{'check24_config_prepare__field__imagesize__hint'} = 'Saved under: {#setting:sImagePath#}';
 MLI18n::gi()->{'check24_config_prepare__field__quantity__label'} = 'Inventory Item Count';
 MLI18n::gi()->{'check24_config_prepare__field__quantity__hint'} = '';
 MLI18n::gi()->{'check24_config_prepare__field__quantity__help'} = 'Please enter how much of the inventory should be available on the marketplace.<br/>
@@ -128,7 +132,7 @@ MLI18n::gi()->{'check24_config_price__field__price.factor__label'} = '';
 MLI18n::gi()->{'check24_config_price__field__price.factor__hint'} = '';
 MLI18n::gi()->{'check24_config_price__field__price.signal__label'} = 'Decimal Amount';
 MLI18n::gi()->{'check24_config_price__field__price.signal__hint'} = 'Decimal Amount';
-MLI18n::gi()->{'check24_config_price__field__price.signal__help'} = 'This textfield shows the decimal value that will appear in the item price on Check24.<br/><br/>
+MLI18n::gi()->{'check24_config_price__field__price.signal__help'} = 'This textfield shows the decimal value that will appear in the item price on CHECK24.<br/><br/>
                 <strong>Example:</strong> <br />
 Value in textfeld: 99 <br />
                 Original price: 5.58 <br />
@@ -152,7 +156,7 @@ MLI18n::gi()->{'check24_config_sync__field__stocksync.tomarketplace__label'} = '
 MLI18n::gi()->{'check24_config_sync__field__stocksync.tomarketplace__hint'} = '';
 MLI18n::gi()->{'check24_config_sync__field__stocksync.tomarketplace__help'} = '<dl>
             <dt>Automatic Synchronization via CronJob (recommended)</dt>
-                    <dd>Current Check24 stock will be synchronized with shop stock every 4 hours, beginning at 0.00am (with ***, depending on configuration).<br>Values will be transferred from the database, including the changes that occur through an ERP or similar.<br><br>
+                    <dd>Current CHECK24 stock will be synchronized with shop stock every 4 hours, beginning at 0.00am (with ***, depending on configuration).<br>Values will be transferred from the database, including the changes that occur through an ERP or similar.<br><br>
 Manual comparison can be activated by clicking the corresponding button in the magnalister header (left of the shopping cart).<br><br>
 Additionally, you can activate the stock comparison through CronJon (flat tariff*** - maximum every 4 hours) with the link:<br>
             <i>{#setting:sSyncInventoryUrl#}</i><br>
@@ -162,25 +166,25 @@ Some CronJob requests may be blocked, if they are made through customers not on 
                         
                     </dl>
                     <b>Note:</b> The settings in \'Configuration\' ,&rarr; ‘Article upload:preset’  &rarr; ‘Stock quantity’ will the taken into account.';
-MLI18n::gi()->{'check24_config_sync__field__stocksync.frommarketplace__label'} = 'Stock change Check24';
+MLI18n::gi()->{'check24_config_sync__field__stocksync.frommarketplace__label'} = 'Stock change CHECK24';
 MLI18n::gi()->{'check24_config_sync__field__stocksync.frommarketplace__hint'} = '';
-MLI18n::gi()->{'check24_config_sync__field__stocksync.frommarketplace__help'} = 'If, for example, an item is purchased 3 times on Check24, the Shop inventory will be reduced by 3.<br /><br />
+MLI18n::gi()->{'check24_config_sync__field__stocksync.frommarketplace__help'} = 'If, for example, an item is purchased 3 times on CHECK24, the Shop inventory will be reduced by 3.<br /><br />
 <strong>Important:</strong>This function will only work if you have Order Imports activated!';
 MLI18n::gi()->{'check24_config_sync__field__inventorysync.price__label'} = 'Item Price';
 MLI18n::gi()->{'check24_config_sync__field__inventorysync.price__hint'} = '';
-MLI18n::gi()->{'check24_config_sync__field__inventorysync.price__help'} = '<p> Current Check24 price  will be synchronized with shop stock every 4 hours, beginning at 0.00am (with ***, depending on configuration)<br>
+MLI18n::gi()->{'check24_config_sync__field__inventorysync.price__help'} = '<p> Current CHECK24 price  will be synchronized with shop stock every 4 hours, beginning at 0.00am (with ***, depending on configuration)<br>
 Values will be transferred from the database, including the changes that occur through an ERP or similar.<br><br>
 <b>Hint:</b> The settings in \'Configuration\', \'price calculation\' will be taken into account.
 ';
 MLI18n::gi()->{'check24_config_orderimport__legend__importactive'} = 'Order Import';
 MLI18n::gi()->{'check24_config_orderimport__legend__mwst'} = 'VAT';
-MLI18n::gi()->{'check24_config_orderimport__legend__orderstatus'} = 'Synchronization of the order status from shop to Check24';
+MLI18n::gi()->{'check24_config_orderimport__legend__orderstatus'} = 'Synchronization of the order status from shop to CHECK24';
 MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.shipped__label'} = 'Confirm shipping with';
 MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.shipped__hint'} = '';
-MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.shipped__help'} = 'Select the shop status that will automatically set the Check24 status to "confirm shipment".';
+MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.shipped__help'} = 'Select the shop status that will automatically set the CHECK24 status to "confirm shipment".';
 MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.canceled__label'} = 'Cancel Order With';
 MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.canceled__hint'} = '';
-MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.canceled__help'} = 'Here you set the shop status which will set the Check24 order status to „cancel order“. <br/><br/>
+MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.canceled__help'} = 'Here you set the shop status which will set the CHECK24 order status to „cancel order“. <br/><br/>
 Note: partial cancellation is not possible in this setting. The whole order will be cancelled with this function und credited tot he customer
 ';
 MLI18n::gi()->{'check24_config_orderimport__field__orderimport.shop__label'} = '{#i18n:form_config_orderimport_shop_lable#}';
@@ -206,17 +210,17 @@ MLI18n::gi()->{'check24_config_orderimport__field__import__label'} = '';
 MLI18n::gi()->{'check24_config_orderimport__field__import__hint'} = '';
 MLI18n::gi()->{'check24_config_orderimport__field__preimport.start__label'} = 'First from Date';
 MLI18n::gi()->{'check24_config_orderimport__field__preimport.start__hint'} = 'Start Date';
-MLI18n::gi()->{'check24_config_orderimport__field__preimport.start__help'} = 'The date from which orders will start being imported. Please note that it is not possible to set this too far in the past, as the data only remains available on Check24 for a few weeks.***';
+MLI18n::gi()->{'check24_config_orderimport__field__preimport.start__help'} = 'The date from which orders will start being imported. Please note that it is not possible to set this too far in the past, as the data only remains available on CHECK24 for a few weeks.***';
 MLI18n::gi()->{'check24_config_orderimport__field__customergroup__label'} = 'Customer Group';
 MLI18n::gi()->{'check24_config_orderimport__field__customergroup__hint'} = '';
 MLI18n::gi()->{'check24_config_orderimport__field__customergroup__help'} = 'The customer group that customers from new orders should be sorted into. ';
 MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.open__label'} = 'Order Status in Shop';
 MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.open__hint'} = '';
-MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.open__help'} = 'The status that should be transferred automatically to the Shop after a new order on Check24. <br />
+MLI18n::gi()->{'check24_config_orderimport__field__orderstatus.open__help'} = 'The status that should be transferred automatically to the Shop after a new order on CHECK24. <br />
 If you are using a connected dunning process***, it is recommended to set the Order Status to ‘Paid’ (‘Configuration’ > ‘Order Status’).
 ';
 MLI18n::gi()->{'check24_config_orderimport__field__orderimport.shippingmethod__label'} = 'Shipping Service of the Orders';
-MLI18n::gi()->{'check24_config_orderimport__field__orderimport.shippingmethod__help'} = 'Shipping methods that will be assigned to all Check24 orders. Standard: "Check24"<br><br>
+MLI18n::gi()->{'check24_config_orderimport__field__orderimport.shippingmethod__help'} = 'Shipping methods that will be assigned to all CHECK24 orders. Standard: "CHECK24"<br><br>
 This setting is necessary for the invoice and shipping notice, and for editing orders later in the Shop or via ERP.';
 MLI18n::gi()->{'check24_config_emailtemplate__legend__mail'} = '{#i18n:configform_emailtemplate_legend#}';
 MLI18n::gi()->{'check24_config_emailtemplate__field__mail.send__label'} = '{#i18n:configform_emailtemplate_field_send_label#}';

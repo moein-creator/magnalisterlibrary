@@ -54,7 +54,7 @@ if (empty($this->aData)) {
                 $oddEven = false;
                 foreach ($this->aData as $i => $item) {
                     ?>
-                    <tr class="<?php echo (($oddEven = !$oddEven) ? 'odd' : 'even') ?>" <?php echo isset($addStyle) ? $addStyle : '' ?> <?php echo empty($item['PublicText']) ? '' : 'data-ml-modal="#changelogInfo_' . $i . '"'; ?>>
+                    <tr <?php echo isset($addStyle) ? $addStyle : '' ?> <?php echo empty($item['PublicText']) ? '' : 'data-ml-modal="#changelogInfo_' . $i . '"'; ?>>
                             <?php
                             foreach ($this->getFields() as $aField) {
                                 if ($aField['Field'] != null) {

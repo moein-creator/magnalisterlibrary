@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -231,8 +231,8 @@ class DeletedView extends ML_Core_Controller_Abstract {
                 $item['ShopQuantity'] = $oProduct->getStock();
                 $item['ShopPrice'] = $oProduct->getShopPrice();
                 $item['ShopTitle'] = $oProduct->getName();
-                $item['ShopVarText'] = $oProduct->getName();               
-                $item['Currency'] =  MLModul::gi()->getConfig('currency');
+                $item['ShopVarText'] = $oProduct->getName();
+                $item['Currency'] = MLModule::gi()->getConfig('currency');
             } catch (Exception $oEx) {
                 $item['ShopQuantity'] = $item['ShopPrice'] = $item['ShopTitle'] = '&mdash;';
                 $item['ShopVarText'] = '&nbsp;';
@@ -276,7 +276,7 @@ class DeletedView extends ML_Core_Controller_Abstract {
             $details = htmlspecialchars(str_replace('"', '\\"', serialize(array(
                 'SKU' => $item['SKU'],
                 'Price' => $item['Price'],
-                'Currency' =>  MLModul::gi()->getConfig('currency'),
+                'Currency' => MLModule::gi()->getConfig('currency'),
             ))));
 
 
@@ -296,7 +296,7 @@ class DeletedView extends ML_Core_Controller_Abstract {
                 $deletedBy="";
             }
             $html .= '
-				<tr class="' . (($oddEven = !$oddEven) ? 'odd' : 'even') . '">
+				<tr>
 					<td>' . $item['SKU'] . '</td>
 					<td title="' . fixHTMLUTF8Entities($item['ShopTitle'], ENT_COMPAT) . '">' . $item['ShopTitle'] . '<br /><span class="small">' . $item['ShopVarText'] . '</span></td>
 					<td title="' . fixHTMLUTF8Entities($item['Title'], ENT_COMPAT) . '">' . $item['ItemTitleShort'] . '<br /><span class="small">' . $item['VariationAttributesText'] . '</span></td>
@@ -359,7 +359,7 @@ class DeletedView extends ML_Core_Controller_Abstract {
     public function renderActionBox() {
         global $_modules;
         $left = (!empty($this->renderableData) ?
-                '<input type="button" class="button" value="' . $this->__('ML_BUTTON_LABEL_DELETE') . '" id="listingDelete" name="' . MLHttp::gi()->parseFormFieldName('listing[delete]') . '"/>' :
+                '<input type="button" class="mlbtn" value="' . $this->__('ML_BUTTON_LABEL_DELETE') . '" id="listingDelete" name="' . MLHttp::gi()->parseFormFieldName('listing[delete]') . '"/>' :
                 ''
         );
 
@@ -390,22 +390,26 @@ class DeletedView extends ML_Core_Controller_Abstract {
         return '
 			<input type="hidden" id="action" name="' . MLHttp::gi()->parseFormFieldName('action') . '" value="">
 			<input type="hidden" name="' . MLHttp::gi()->parseFormFieldName('timestamp') . '" value="' . time() . '">
-			<table class="actions">
-				<tbody><tr><td>
-					<table><tbody><tr>
-						<td class="firstChild">' . $left . '</td>
-						<td><label for="tfSearch">' . $this->__('ML_LABEL_SEARCH') . ':</label>
-							<input id="tfSearch" name="' . MLHttp::gi()->parseFormFieldName('tfSearch') . '" type="text" value="' . fixHTMLUTF8Entities($this->search, ENT_COMPAT) . '"/>
-							<input type="submit" class="button" value="' . $this->__('ML_BUTTON_LABEL_GO') . '" name="' . MLHttp::gi()->parseFormFieldName('search_go') . '" /></td>
-						<td class="lastChild">' . $right . '</td>
-					</tr></tbody></table>
-				</td></tr></tbody>
-			</table>
-			' . $js;
+		    <div class="ml-container-action">
+		        <div class="ml-container-inner ml-container-sm">
+		            ' . $left . '
+                </div>
+		         <div class="ml-container-inner ml-container-sm">
+		            <div class="newSearch">
+                        <input id="tfSearch" name="' . MLHttp::gi()->parseFormFieldName('tfSearch') . '" type="text" value="' . fixHTMLUTF8Entities($this->search, ENT_COMPAT) . '"/>
+                        <button type="submit" class="mlbtn action" name="' . MLHttp::gi()->parseFormFieldName('search_go') . '" />  <span></span>
+                    </div>
+		            
+                </div>
+                <div class="ml-container-inner ml-container-sm">
+		            ' . $right . '
+                </div>
+            </div>
+	    ' . $js;
     }
 
     public function renderView() {
-        $html = '<form action="' . $this->getCurrentUrl() . '" id="hoodDeletedView" method="post">';
+        $html = '<form action="' . $this->getCurrentUrl() . '" id="hoodDeletedView" method="post" class="ml-plist ml-js-plist">';
         foreach (MLHttp::gi()->getNeededFormFields() as $sName => $sValue) {
             $html .= "<input type='hidden' name='$sName' value='$sValue' />";
         }

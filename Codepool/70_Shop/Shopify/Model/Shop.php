@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,7 +12,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -122,5 +122,20 @@ class ML_Shopify_Model_Shop extends ML_Shop_Model_Shop_Abstract
 
     public function getShopCronActions() {
         return ['ShopifyProductCache', 'ShopifyDeleteProductCache', 'ShopifyProductCollectionCache'];
+    }
+
+    public function addShopMessages() {
+        /** @var ML_Shopify_Controller_Frontend_Do_ShopifyProductCache $oController */
+        $oController = ML::gi()->instance('Shopify_Controller_Frontend_Do_ShopifyProductCache');
+        $iImportedProductPercent = round($oController->getDoneProgress(), 2);
+        $sFirstProductImport = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyStartingFirstProductImport')->get('value');
+        if ($iImportedProductPercent < 100) {
+            if ($sFirstProductImport === '1') {
+                MLMessage::gi()->addWarn(MLI18n::gi()->get('installation_product_import_progress_message', ['iImportedProductPercent' => $iImportedProductPercent]));
+            } else {
+                MLMessage::gi()->addDebug(MLI18n::gi()->get('installation_product_import_progress_message', ['iImportedProductPercent' => $iImportedProductPercent]));
+            }
+
+        }
     }
 }

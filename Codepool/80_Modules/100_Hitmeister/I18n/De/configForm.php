@@ -11,14 +11,18 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
+MLI18n::gi()->{'hitmeister_config_carrier_option_group_shopfreetextfield_option_carrier'} = 'Transportunternehmen aus einem Webshop-Freitextfeld (Bestellungen) wählen';
+MLI18n::gi()->{'hitmeister_config_carrier_option_group_marketplace_carrier'} = 'Von Kaufland vorgeschlagene Transportunternehmen';
+MLI18n::gi()->{'hitmeister_config_carrier_option_group_additional_option'} = 'Zusätzliche Option';
 MLI18n::gi()->hitmeister_config_account_title = 'Zugangsdaten';
+MLI18n::gi()->hitmeister_config_country_title = 'Länder';
 MLI18n::gi()->hitmeister_config_account_prepare = 'Artikelvorbereitung';
-MLI18n::gi()->hitmeister_config_account_price = 'Preisberechnung';
+MLI18n::gi()->hitmeister_config_account_priceandstock = 'Preis und Lager';
 MLI18n::gi()->hitmeister_config_account_sync = 'Synchronisation';
 MLI18n::gi()->hitmeister_config_account_orderimport = 'Bestellimport';
 MLI18n::gi()->hitmeister_config_invoice = 'Rechnungen';
@@ -29,7 +33,7 @@ MLI18n::gi()->hitmeister_config_checkin_manufacturerfilter = 'Das Hersteller Fil
 MLI18n::gi()->add('hitmeister_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
@@ -37,20 +41,41 @@ MLI18n::gi()->add('hitmeister_config_account', array(
             'help' => '{#i18n:ML_TEXT_TAB_IDENT#}'
         ),
         'clientkey' => array(
-            'label' => 'ClientKey',
-            'help' => 'Die API-Zugangsdaten bekommen Sie in Ihrem Kaufland.de Account. Dazu loggen Sie sich bitte bei Kaufland.de ein und klicken auf <b>Kaufland.de API<\/b>, im Men&uuml; links ganz unten, bei <b>Zusatzfunktionen<\/b>.'
+            'label' => 'API: Client Key',
+            'help' => 'Die API-Zugangsdaten bekommen Sie in Ihrem Kaufland Account. Dazu loggen Sie sich bitte bei Kaufland ein und klicken auf <b>Kaufland API</b>, im Men&uuml; links ganz unten, bei <b>Zusatzfunktionen</b>.'
         ),
         'secretkey' => array(
-            'label' => 'SecretKey',
-        ),
-        'mpusername' => array(
-            'label' => 'Mitgliedsname',
-        ),
-        'mppassword' => array(
-            'label' => 'Passwort',
+            'label' => 'API: Secret Key',
         ),
     ),
 ), false);
+
+MLI18n::gi()->add('hitmeister_config_country', [
+    'legend' => [
+        'country' => 'Länder',
+    ],
+    'field' => [
+        'site' => [
+            'label' => 'Kaufland Länderseite',
+            'help' => '
+                <p>Hier können Sie auswählen, mit welcher Kaufland Länderseite sich magnalister verbindet. Dabei greifen wir auf die in Ihrem Kaufland Konto hinterlegten Informationen zurück.</p>
+                <p><strong>Ausgegraute Einträge bedeuten</strong>, dass die entsprechende Kaufland Länderseite im Kaufland-Account nicht aktiviert ist. Erst wenn Sie die jeweilige Länderseite in Ihrem Kaufland-Account vollständig eingerichtet haben, können Sie sie hier auswählen und für magnalister konfigurieren.</p>',
+            'alert' => [
+                '*' => [
+                    'title' => 'Neue Länderseite ausgewählt',
+                    'content' => '
+                        <p>Sie haben eine andere Kaufland-Site ausgewählt. Das wirkt sich auf weitere Optionen aus, da die Kaufland-Länderseiten ggf. unterschiedliche Währungen sowie Zahlung- und Versandarten anbieten. Artikel werden dann auf die neue Länder-Site eingestellt und nur dort synchronisiert, Bestellungen ebenfalls nur von dort importiert.</p>
+                        <p><strong>Soll die neue Einstellung &uuml;bernommen werden?</strong></p>
+                    ',
+                ],
+            ],
+        ],
+        'currency' => [
+            'label' => 'Währung',
+            'help' => '<p>Die Währung, in der Artikel auf Kaufland eingestellt werden, wird durch die Einstellung "Kaufland Länderseite" bestimmt.</p>',
+        ],
+    ]
+], false);
 
 MLI18n::gi()->add('hitmeister_config_prepare', array(
     'legend' => array(
@@ -75,13 +100,17 @@ MLI18n::gi()->add('hitmeister_config_prepare', array(
         'itemcondition' => array(
             'label' => 'Zustand',
         ),
-        'shippingtime' => array(
-            'label' => 'Lieferzeit',
-            'help' => 'Voreinstellung f&uuml;r die Lieferzeit. Diese kann bei Artikel-Vorbereitung noch angepa&szlig;t werden.'
+        'handlingtime' => array(
+            'label' => 'Bearbeitungszeit',
+            'help' => 'Voreinstellung f&uuml;r die Bearbeitungszeit (Zeit bis Versand). Diese kann bei Artikel-Vorbereitung noch angepa&szlig;t werden.'
         ),
         'itemcountry' => array(
             'label' => 'Artikel wird versandt aus',
-            'help' => 'Bitte w&auml;hlen Sie aus welchem Land Sie versenden. Im Normalfall ist es das Land in dem Ihr Shop liegt.'
+            'help' => 'Bitte wählen Sie aus welchem Land Sie versenden. Im Normalfall ist es das Land in dem Ihr Shop liegt.'
+        ),
+        'shippinggroup' => array(
+            'label' => 'Verkäufer-Versandgruppe',
+            'help' => 'Die Kaufland Verkäufer-Versandgruppen enthalten Angaben zum Versand.',
         ),
         'itemsperpage' => array(
             'label' => 'Ergebnisse',
@@ -90,31 +119,33 @@ MLI18n::gi()->add('hitmeister_config_prepare', array(
         ),
         'checkin.variationtitle' => array(
             'label' => 'Varianten-Infos im Produkttitel',
-            'help' => 'Aktivieren Sie diese Einstellung, wenn im Titel Ihrer Produktvarianten auf dem Kaufland.de Markplatz Detailinformationen wie z.B. Gr&ouml;&szlig;e, Farbe oder Ausf&uuml;hrung &uuml;bernommen werden sollen.<br /><br />Somit ist eine Unterscheidung f&uuml;r den K&auml;ufer einfacher.<br /><br /><strong>Beispiel:</strong> <br />Titel: Nike T-Shirt<br />Variante: Gr&ouml;&szlig;e S<br /><br />Ergebnis Titel: &ldquo;Nike T-Shirt - Gr&ouml;&szlig;e S&rdquo;',
+            'help' => 'Aktivieren Sie diese Einstellung, wenn im Titel Ihrer Produktvarianten auf dem Kaufland Markplatz Detailinformationen wie z.B. Gr&ouml;&szlig;e, Farbe oder Ausf&uuml;hrung &uuml;bernommen werden sollen.<br /><br />Somit ist eine Unterscheidung f&uuml;r den Käufer einfacher.<br /><br /><strong>Beispiel:</strong> <br />Titel: Nike T-Shirt<br />Variante: Gr&ouml;&szlig;e S<br /><br />Ergebnis Titel: &ldquo;Nike T-Shirt - Gr&ouml;&szlig;e S&rdquo;',
             'valuehint' => 'Produkttitel um Varianteninformation erweitern',
         ),
         'checkin.quantity' => array(
             'label' => 'St&uuml;ckzahl Lagerbestand',
             'help' => 'Geben Sie hier an, wie viel Lagermenge eines Artikels auf dem Marktplatz verf&uuml;gbar sein soll.<br>
                 <br>
-                Um &Uuml;berverk&auml;ufe zu vermeiden, k&ouml;nnen Sie den Wert<br>
+                Um &Uuml;berverkäufe zu vermeiden, k&ouml;nnen Sie den Wert<br>
                 "<i>Shop-Lagerbestand &uuml;bernehmen abzgl. Wert aus rechtem Feld</i>" aktivieren.<br>
                 <br>
-                <strong>Beispiel:</strong> Wert auf "<i>2</i>" setzen. Ergibt &#8594; Shoplager: 10 &#8594; Kaufland.de-Lager: 8<br>
+                <strong>Beispiel:</strong> Wert auf "<i>2</i>" setzen. Ergibt &#8594; Shoplager: 10 &#8594; Kaufland-Lager: 8<br>
                 <br>
-                <strong>Hinweis:</strong>Wenn Sie Artikel, die im Shop inaktiv gesetzt werden, unabh&auml;ngig der verwendeten Lagermengen<br>
+                <strong>Hinweis:</strong>Wenn Sie Artikel, die im Shop inaktiv gesetzt werden, unabhängig der verwendeten Lagermengen<br>
                 auch auf dem Marktplatz als Lager "<i>0</i>" behandeln wollen, gehen Sie bitte wie folgt vor:<br>
                 <ul>
-                <li>"<i>Synchronisation des Inventars</i>" > "<i>Lagerver&auml;nderung Shop</i>" auf "<i>automatische Synchronisation per CronJob" einstellen</i></li>
+                <li>"<i>Synchronisation des Inventars</i>" > "<i>Lagerveränderung Shop</i>" auf "<i>automatische Synchronisation per CronJob" einstellen</i></li>
                 <li>"<i>Globale Konfiguration" > "<i>Produktstatus</i>" > "<i>Wenn Produktstatus inaktiv ist, wird der Lagerbestand wie 0 behandelt" aktivieren</i></li>
                 </ul>',
         ),
     ),
 ), false);
 
-MLI18n::gi()->add('hitmeister_config_price', array(
+MLI18n::gi()->add('hitmeister_config_priceandstock', array(
     'legend' => array(
         'price' => 'Preisberechnung',
+        'price.lowest' => 'Tiefstpreisberechnung',
+        'sync' => 'Synchronisation des Inventars',
     ),
     'field' => array(
         'price' => array(
@@ -131,20 +162,20 @@ MLI18n::gi()->add('hitmeister_config_price', array(
             'label' => 'Nachkommastelle',
             'hint' => 'Nachkommastelle',
             'help' => '
-                Dieses Textfeld wird beim &Uuml;bermitteln der Daten zu Kaufland.de als Nachkommastelle an
+                Dieses Textfeld wird beim &Uuml;bermitteln der Daten zu Kaufland als Nachkommastelle an
                 Ihrem Preis &uuml;bernommen.<br><br>
                 <strong>Beispiel:</strong><br>
                 Wert im Textfeld: 99<br>
                 Preis-Ursprung: 5.58<br>
                 Finales Ergebnis: 5.99<br><br>
-                Die Funktion hilft insbesondere bei prozentualen Preis-Auf-/Abschl&auml;gen.<br>
+                Die Funktion hilft insbesondere bei prozentualen Preis-Auf-/Abschlägen.<br>
                 Lassen Sie das Feld leer, wenn Sie keine Nachkommastelle &uuml;bermitteln wollen.<br>
                 Das Eingabe-Format ist eine ganzstellige Zahl mit max. 2 Ziffern.
             ',
         ),
         'priceoptions' => array(
             'label' => 'Preisoptionen',
-            'help' => '{#i18n:configform_price_field_priceoptions_help#}',
+            'help' => '{#i18n:configform_priceandstock_field_priceoptions_help#}',
         ),
         'price.group' => array(
             'label' => '',
@@ -160,17 +191,49 @@ MLI18n::gi()->add('hitmeister_config_price', array(
         ),
         'minimumpriceautomatic' => array(
             'label' => 'Tiefstpreis-Automatik',
-            'valuehint' => 'Tiefstpreis von Kaufland.de übernehmen',
-            'help' => 'Wenn dieser Haken abgewählt wird, übermittelt magnalister den Shoppreis als Tiefstpreis an Kaufland.de',
+            'valuehint' => 'Tiefstpreis verwenden',
+            'help' => 'Wählen Sie, ob sie die Kaufland Tiefstpreise hier konfigurieren wollen.',
+            'values' => array (
+                '0' => 'Keine Tiefstpreise (Tiefstpreis = Normaler Preis)',
+                '1' => 'Tiefstpreise wie bei Kaufland eingestellt',
+                '2' => 'Tiefstpreise konfigurieren'
+            ),
         ),
-    ),
-), false);
-
-MLI18n::gi()->add('hitmeister_config_sync', array(
-    'legend' => array(
-        'sync' => 'Synchronisation des Inventars',
-    ),
-    'field' => array(
+        'price.lowest' => array(
+            'label' => 'Tiefstpreis',
+            'help' => 'Geben Sie einen prozentualen oder fest definierten Preis Auf- oder Abschlag an. Abschlag mit vorgesetztem Minus-Zeichen.'
+        ),
+        'price.lowest.addkind' => array(
+            'label' => '',
+        ),
+        'price.lowest.factor' => array(
+            'label' => '',
+        ),
+        'price.lowest.signal' => array(
+            'label' => 'Nachkommastelle',
+            'hint' => 'Nachkommastelle',
+            'help' => '
+                Dieses Textfeld wird beim &Uuml;bermitteln der Daten zu Kaufland als Nachkommastelle an
+                Ihrem Preis &uuml;bernommen.<br><br>
+                <strong>Beispiel:</strong><br>
+                Wert im Textfeld: 99<br>
+                Preis-Ursprung: 5.58<br>
+                Finales Ergebnis: 5.99<br><br>
+                Die Funktion hilft insbesondere bei prozentualen Preis-Auf-/Abschl&auml;gen.<br>
+                Lassen Sie das Feld leer, wenn Sie keine Nachkommastelle &uuml;bermitteln wollen.<br>
+                Das Eingabe-Format ist eine ganzstellige Zahl mit max. 2 Ziffern.
+            ',
+        ),
+        'priceoptions.lowest' => array(
+            'label' => 'Preisoptionen',
+            'help' => '{#i18n:configform_priceandstock_field_priceoptions_help#}',
+        ),
+        'price.lowest.group' => array(
+            'label' => '',
+        ),
+        'price.lowest.usespecialoffer' => array(
+            'label' => 'auch Sonderpreise verwenden',
+        ),
         'stocksync.tomarketplace' => array(
             'label' => 'Lagerver&auml;nderung Shop',
             'help' => '
@@ -192,9 +255,9 @@ MLI18n::gi()->add('hitmeister_config_sync', array(
             ',
         ),
         'stocksync.frommarketplace' => array(
-            'label' => 'Lagerver&auml;nderung Kaufland.de',
+            'label' => 'Lagerver&auml;nderung Kaufland',
             'help' => '
-                Wenn z. B. bei Kaufland.de ein Artikel 3 mal gekauft wurde, wird der Lagerbestand im Shop um 3 reduziert.<br><br>
+                Wenn z. B. bei Kaufland ein Artikel 3 mal gekauft wurde, wird der Lagerbestand im Shop um 3 reduziert.<br><br>
                 <strong>Wichtig:</strong> Diese Funktion l&auml;uft nur, wenn Sie den Bestellimport aktiviert haben!
             ',
         ),
@@ -218,14 +281,14 @@ MLI18n::gi()->add('hitmeister_config_sync', array(
                 <strong>Hinweis:</strong> Die Einstellungen unter "Konfiguration" → "Preisberechnung" werden berücksichtigt.
             ',
         ),
-    ),
+    )
 ), false);
 
 MLI18n::gi()->add('hitmeister_config_orderimport', array(
     'legend' => array(
         'importactive' => 'Bestellimport',
         'mwst' => 'Mehrwertsteuer',
-        'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu Kaufland.de',
+        'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu Kaufland',
     ),
     'field' => array(
         'orderimport.shop' => array(
@@ -235,17 +298,17 @@ MLI18n::gi()->add('hitmeister_config_orderimport', array(
         ),
         'orderstatus.shipped' => array(
             'label' => 'Versand best&auml;tigen mit',
-            'help' => 'Setzen Sie hier den Shop-Status, der auf Kaufland.de automatisch den Status "Versand best&auml;tigen" setzen soll.',
+            'help' => 'Setzen Sie hier den Shop-Status, der auf Kaufland automatisch den Status "Versand best&auml;tigen" setzen soll.',
         ),
         'orderstatus.cancelled' => array(
             'label' => 'Bestellung stornieren mit',
-            'help' => ' Setzen Sie hier den Shop-Status, der auf  Kaufland.de automatisch den Status "Bestellung stornieren" setzen soll. <br/><br/>
+            'help' => ' Setzen Sie hier den Shop-Status, der auf  Kaufland automatisch den Status "Bestellung stornieren" setzen soll. <br/><br/>
                 Hinweis: Teilstorno ist hier&uuml;ber nicht m&ouml;glich. Die gesamte Bestellung wird &uuml;ber diese Funktion storniert
                 und dem K&auml;ufer gutgeschrieben.',
         ),
         'orderstatus.carrier' => array(
             'label' => 'Spediteur',
-            'help' => 'Vorausgew&auml;hlter Spediteur beim Best&auml;tigen des Versandes nach Kaufland.de.',
+            'help' => 'Vorausgew&auml;hlter Spediteur beim Best&auml;tigen des Versandes nach Kaufland.',
         ),
         'orderstatus.cancelreason' => array(
             'label' => 'Bestellung stornieren Grund',
@@ -286,16 +349,24 @@ MLI18n::gi()->add('hitmeister_config_orderimport', array(
             'label' => 'erstmalig ab Zeitpunkt',
             'hint' => 'Startzeitpunkt',
             'help' => 'Startzeitpunkt, ab dem die Bestellungen erstmalig importiert werden sollen. Bitte beachten Sie, '
-                . 'dass dies nicht beliebig weit in die Vergangenheit m&ouml;glich ist, da die Daten bei Kaufland.de '
+                . 'dass dies nicht beliebig weit in die Vergangenheit m&ouml;glich ist, da die Daten bei Kaufland '
                 . 'h&ouml;chstens einige Wochen lang vorliegen.',
         ),
 		'orderstatus.open' => array(
             'label' => 'Bestellstatus im Shop',
             'hint' => '',
             'help' => '
-                Der Status, den eine von Kaufland.de neu eingegangene Bestellung im Shop automatisch bekommen soll.<br />
+                Der Status, den eine von Kaufland neu eingegangene Bestellung im Shop automatisch bekommen soll.<br />
                 Sollten Sie ein angeschlossenes Mahnwesen verwenden, ist es empfehlenswert, den Bestellstatus auf "Bezahlt" zu setzen (Konfiguration → Bestellstatus).
             ',
+        ),
+        'orderstatus.fbk' => array(
+            'label' => 'Status für FBK-Bestellungen',
+            'hint' => '',
+            'help' => 'Funktion nur f&uuml;r H&auml;ndler, die am Programm "Fulfillment by Kaufland" teilnehmen: <br/>Definiert wird der Bestellstatus, 
+                den eine von Kaufland importierte FBK-Bestellung im Shop automatisch bekommen soll. <br/><br/>
+                Sollten Sie ein angeschlossenes Mahnwesen verwenden, ist es empfehlenswert, den Bestellstatus auf "Bezahlt" zu setzen (Konfiguration &rarr; 
+                Bestellstatus).',
         ),
         'customergroup' => array(
             'label' => 'Kundengruppe',
@@ -303,9 +374,17 @@ MLI18n::gi()->add('hitmeister_config_orderimport', array(
         ),
         'orderimport.shippingmethod' => array(
             'label' => 'Versandart der Bestellungen',
-            'help' => 'Versandart, die allen Kaufland.de-Bestellungen zugeordnet wird. Standard: "Kaufland.de".<br><br>'
-                . 'Diese Einstellung ist wichtig f&uuml;r den Rechnungs- und Lieferscheindruck und f&uuml;r '
-                . 'die nachtr&amul;gliche Bearbeitung der Bestellung im Shop sowie einige Warenwirtschaften.',
+            'help'  => 'Versandart, die allen Kaufland-Bestellungen zugeordnet wird. Standard: "Kaufland".<br><br>'
+                .'Diese Einstellung ist wichtig f&uuml;r den Rechnungs- und Lieferscheindruck und f&uuml;r '
+                .'die nachtr&auml;gliche Bearbeitung der Bestellung im Shop sowie einige Warenwirtschaften.',
         ),
     ),
 ), false);
+
+MLI18n::gi()->ML_HITMEISTER_NOT_CONFIGURED_IN_KAUFLAND_DE_ACCOUNT = 'nicht konfiguriert in Ihrem Kaufland Konto';
+
+MLI18n::gi()->ML_HITMEISTER_SYNC_FROM_MARKETPLACE_VALUES = [
+    'rel' => 'Bestellung (keine FBK-Bestellung) reduziert Shop-Lagerbestand (empfohlen)',
+    'fbk' => 'Bestellung (auch FBK-Bestellung) reduziert Shop-Lagerbestand',
+    'no' => 'keine Synchronisierung',
+];

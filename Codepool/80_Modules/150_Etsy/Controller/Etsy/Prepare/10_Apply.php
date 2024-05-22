@@ -42,18 +42,27 @@ class ML_Etsy_Controller_Etsy_Prepare_Apply extends ML_Productlist_Controller_Wi
         parent::__construct();
         try {
             $sExecute = $this->oRequest->get('view');
-            if (in_array($sExecute, array('unprepare', 'resetdescription'))) {
+            if ($mExecute == 'unprepare') {
+                $oModel = MLDatabase::factory('etsy_prepare');
+                $oList = MLDatabase::factory('selection')->set('selectionname', 'apply')->getList();
+                foreach ($oList->get('pid') as $iPid) {
+                    $oModel->init()->set('products_id', $iPid)->delete();
+                }
+            } elseif (
+                is_array($mExecute)
+                && !empty($mExecute)
+                && (
+                    in_array('reset_whenmade', $mExecute)
+                )
+            ) {
                 $oModel = MLDatabase::factory('etsy_prepare');
                 $oList = MLDatabase::factory('selection')->set('selectionname', 'apply')->getList();
                 foreach ($oList->get('pid') as $iPid) {
                     $oModel->init()->set('products_id', $iPid);
-                    switch ($sExecute) {
-                        case 'unprepare':
-                            {//delete from etsy_prepare
-                                $oModel->delete();
-                                break;
-                            }
+                    if (in_array('reset_whenmade', $mExecute)) {
+                        $oModel->set('whenmade', MLDatabase::factory('preparedefaults')->getValue('whenmade'));
                     }
+                    $oModel->save();
                 }
             }
         } catch (Exception $oEx) {

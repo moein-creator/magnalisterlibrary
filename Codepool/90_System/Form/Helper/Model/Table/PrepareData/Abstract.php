@@ -11,13 +11,15 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 abstract class ML_Form_Helper_Model_Table_PrepareData_Abstract{
-    
+
+    public $bIsSinglePrepare;
+    public $aErrors;
     /**
      * Only set when we are in single preparation, in multi preparation its NULL
      *  During saving of preparation and upload its always set
@@ -48,13 +50,18 @@ abstract class ML_Form_Helper_Model_Table_PrepareData_Abstract{
      * @var array calculated fields
      */
     protected $aFields = array();
+
+    /**
+     * @var array of stored database models during runtime
+     */
+    protected $databaseModel = array();
     
     /**
      * field names, for save in config which are optional
      * @return array
      */
     protected function getOptionalPrepareDefaultsFields() {
-        $aConfigData = MLSetting::gi()->get(strtolower(MLModul::gi()->getMarketPlaceName()).'_prepareDefaultsOptionalFields');
+        $aConfigData = MLSetting::gi()->get(strtolower(MLModule::gi()->getMarketPlaceName()) . '_prepareDefaultsOptionalFields');
         return is_array($aConfigData) ? $aConfigData : array();
     }
     
@@ -63,7 +70,7 @@ abstract class ML_Form_Helper_Model_Table_PrepareData_Abstract{
      * @return array
      */
     protected function getPrepareDefaultsFields() {
-        $aConfigData = MLSetting::gi()->get(strtolower(MLModul::gi()->getMarketPlaceName()).'_prepareDefaultsFields');
+        $aConfigData = MLSetting::gi()->get(strtolower(MLModule::gi()->getMarketPlaceName()) . '_prepareDefaultsFields');
         return is_array($aConfigData) ? $aConfigData : array();
     }
     
@@ -89,6 +96,8 @@ abstract class ML_Form_Helper_Model_Table_PrepareData_Abstract{
             ->set('active', $aConfigOptional)
             ->save()
         ;
+        unset($this->databaseModel['preparedefaults']);
+
         return $this;
     }
     
@@ -118,7 +127,7 @@ abstract class ML_Form_Helper_Model_Table_PrepareData_Abstract{
     
     public function getPrepareList() {
         if ($this->oPrepareList === null) {
-            $oPrepareList = MLDatabase::factory(MLModul::gi()->getMarketPlaceName().'_prepare')->getList();
+            $oPrepareList = MLDatabase::factory(MLModule::gi()->getMarketPlaceName() . '_prepare')->getList();
             if ($this->oProduct === null) {
                 $oPrepareList->getQueryObject()->where("false");
             }else{
@@ -134,11 +143,12 @@ abstract class ML_Form_Helper_Model_Table_PrepareData_Abstract{
      * @param null $oProduct
      */
     public function setProduct($oProduct) {
-        $this->aFields = array();//init new product= new fields
+        $this->resetFields();//init new product= new fields
         $this->oProduct = $oProduct;
         return $this;
     }
-    
+
+
     protected function getRequestField($sName = null, $blOptional = false){
         $sName = strtolower($sName);
         if ($blOptional) {
@@ -208,8 +218,11 @@ abstract class ML_Form_Helper_Model_Table_PrepareData_Abstract{
     }  
     
     public function getFromConfig($sField, $blOptional = false) {
-        $oModel = MLDatabase::factory('preparedefaults');
-        return $blOptional ? $oModel->getActive($sField) : $oModel->getValue($sField);
+        if (!array_key_exists('preparedefaults', $this->databaseModel)) {
+            $this->databaseModel['preparedefaults'] = MLDatabase::factory('preparedefaults');
+        }
+
+        return $blOptional ? $this->databaseModel['preparedefaults']->getActive($sField) : $this->databaseModel['preparedefaults']->getValue($sField);
     }
     
     public function getField ($aField, $sVector = null){
@@ -376,8 +389,8 @@ MLMessage::gi()->addInfo(basename(__FILE__), get_defined_vars());</pre>
         if (($sHook = MLFilesystem::gi()->findhook('preparefield', 1)) !== false) {
             $iMagnalisterProductsId = $this->oProduct === null ? null : $this->oProduct->get('id');
             $aProductData = $this->oProduct === null ? null : $this->oProduct->data();
-            $iMarketplaceId = MLModul::gi()->getMarketPlaceId();
-            $sMarketplaceName = MLModul::gi()->getMarketPlaceName();
+            $iMarketplaceId = MLModule::gi()->getMarketPlaceId();
+            $sMarketplaceName = MLModule::gi()->getMarketPlaceName();
             require $sHook;
         }
     }
@@ -489,5 +502,10 @@ MLMessage::gi()->addInfo(basename(__FILE__), get_defined_vars());</pre>
         }
 
         return $truncate;
+    }
+
+    public function resetFields() {
+        $this->aFields = array();
+        return $this;
     }
 }

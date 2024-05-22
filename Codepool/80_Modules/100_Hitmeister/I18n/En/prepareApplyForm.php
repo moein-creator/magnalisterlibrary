@@ -11,21 +11,21 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__details'} = 'Product Details';
-MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__categories'} = 'Kaufland.de Categories';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__categories'} = 'Kaufland Categories';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__unit'} = 'Article\'s Attributes';
 
-MLI18n::gi()->{'hitmeister_prepare_apply_form__field__variationgroups__label'} = 'Kaufland.de category';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__field__variationgroups__label'} = 'Kaufland category';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__variationgroups__hint'} = '';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__variationgroups.value__label'} = '1. Marketplace Category.value__label';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__webshopattribute__label'} = 'Web-Shop Attribute';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__attributematching__matching__titlesrc'} = 'Shop Value';
-MLI18n::gi()->{'hitmeister_prepare_apply_form__field__attributematching__matching__titledst'} = 'Kaufland.de Value';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__field__attributematching__matching__titledst'} = 'Kaufland Value';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__title__label'} = 'Title';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__title__optional__checkbox__labelNegativ'} = 'Always use product title from web-shop';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__subtitle__label'} = 'Short Description / Keywords';
@@ -37,12 +37,13 @@ MLI18n::gi()->{'hitmeister_prepare_apply_form__field__images__label'} = 'Product
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__images__optional__checkbox__labelNegativ'} = 'Always use product images from web-shop';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__price__label'} = 'Price';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__itemcondition__label'} = 'Condition';
-MLI18n::gi()->{'hitmeister_prepare_apply_form__field__shippingtime__label'} = 'Shippingtime';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__field__handlingtime__label'} = 'Handling Time';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__itemcountry__label'} = 'Country';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__field__shippinggroup__label'} = 'Shipping Group';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__comment__label'} = 'Comment';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__ean__label'} = 'EAN';
-MLI18n::gi()->{'hitmeister_prepare_variations__legend__variations'} = 'Select Kaufland.de Category';
-MLI18n::gi()->{'hitmeister_prepare_variations__legend__attributes'} = 'Select Kaufland.de Attribute name';
+MLI18n::gi()->{'hitmeister_prepare_variations__legend__variations'} = 'Select Kaufland Category';
+MLI18n::gi()->{'hitmeister_prepare_variations__legend__attributes'} = 'Select Kaufland Attribute name';
 MLI18n::gi()->{'hitmeister_prepare_variations__legend__variationmatching__0'} = '{#i18n:attributes_matching_required_attributes#}';
 MLI18n::gi()->{'hitmeister_prepare_variations__legend__variationmatching__1'} = '{#i18n:attributes_matching_title#}';
 MLI18n::gi()->{'hitmeister_prepare_variations__legend__variationmatchingoptional__0'} = '{#i18n:attributes_matching_optional_attributes#}';
@@ -63,7 +64,7 @@ MLI18n::gi()->{'hitmeister_prepare_variations__field__saveaction__label'} = '{#i
 MLI18n::gi()->{'hitmeister_prepare_variations__field__resetaction__label'} = '{#i18n:hitmeister_varmatch_reset_matching#}';
 MLI18n::gi()->{'hitmeister_prepare_variations__field__resetaction__confirmtext'} = '{#i18n:attributes_matching_reset_matching_message#}';
 MLI18n::gi()->{'hitmeister_prepare_variations__field__attributematching__matching__titlesrc'} = 'Shop Value';
-MLI18n::gi()->{'hitmeister_prepare_variations__field__attributematching__matching__titledst'} = 'Kaufland.de Value';
+MLI18n::gi()->{'hitmeister_prepare_variations__field__attributematching__matching__titledst'} = 'Kaufland Value';
 MLI18n::gi()->{'hitmeister_prepareform_max_length_part1'} = 'Max length of';
 MLI18n::gi()->{'hitmeister_prepareform_max_length_part2'} = 'attribute is';
 MLI18n::gi()->{'hitmeister_prepareform_category'} = 'Category attribute is mandatory.';
@@ -72,14 +73,14 @@ MLI18n::gi()->{'hitmeister_prepareform_description'} = 'Please specify an articl
 MLI18n::gi()->{'hitmeister_prepareform_category_attribute'} = 'Category Attributes are mandantory and must be filled.';
 MLI18n::gi()->{'hitmeister_category_no_attributes'} = 'No available attributes for this category.';
 MLI18n::gi()->{'hitmeister_prepare_variations_title'} = '{#i18n:attributes_matching_tab_title#}';
-MLI18n::gi()->{'hitmeister_prepare_variations_groups'} = 'Kaufland.de Group';
+MLI18n::gi()->{'hitmeister_prepare_variations_groups'} = 'Kaufland Group';
 MLI18n::gi()->{'hitmeister_prepare_variations_groups_custom'} = 'Custom Group';
 MLI18n::gi()->{'hitmeister_prepare_variations_groups_new'} = 'New Custom Group';
 MLI18n::gi()->{'hitmeister_prepare_match_variations_no_selection'} = '{#i18n:attributes_matching_matching_variations_no_category_selection#}';
 MLI18n::gi()->{'hitmeister_prepare_match_variations_custom_ident_missing'} = 'Please choose an indicator';
 MLI18n::gi()->{'hitmeister_prepare_match_variations_attribute_missing'} = 'Please choose an attribute';
 MLI18n::gi()->{'hitmeister_prepare_match_variations_category_missing'} = 'Please choose a category';
-MLI18n::gi()->{'hitmeister_prepare_match_variations_not_all_matched'} = 'Please match all Kaufland.de attributes to shop attributes.';
+MLI18n::gi()->{'hitmeister_prepare_match_variations_not_all_matched'} = 'Please match all Kaufland attributes to shop attributes.';
 MLI18n::gi()->{'hitmeister_prepare_match_notice_not_all_auto_matched'} = 'Not all selected values could be matched. Non-matched values are still being displayed within the DropDown-fields. Already matched attributes are being considered in the Product-Preparation.';
 MLI18n::gi()->{'hitmeister_prepare_match_variations_saved'} = '{#i18n:attributes_matching_prepare_variations_saved#}';
 MLI18n::gi()->{'hitmeister_prepare_variations_saved'} = '{#i18n:attributes_matching_matching_variations_saved#}';
@@ -87,7 +88,7 @@ MLI18n::gi()->{'hitmeister_prepare_variations_reset_success'} = 'The matching ha
 MLI18n::gi()->{'hitmeister_prepare_match_variations_delete'} = 'Do you really want to delete the group?<br /> All corresponding variation matchings will be deleted as well.';
 MLI18n::gi()->{'hitmeister_error_checkin_variation_config_empty'} = 'Variations are not configured.';
 MLI18n::gi()->{'hitmeister_error_checkin_variation_config_cannot_calc_variations'} = 'Could not calculate any variations.';
-MLI18n::gi()->{'hitmeister_error_checkin_variation_config_missing_nameid'} = 'Allocation for the shop attribute "{#Attribute#}"could not be found in the Kaufland.de variant-group "{#MpIdentifier#}" for the variant article with the sku"{#SKU#}.';
+MLI18n::gi()->{'hitmeister_error_checkin_variation_config_missing_nameid'} = 'Allocation for the shop attribute "{#Attribute#}"could not be found in the Kaufland variant-group "{#MpIdentifier#}" for the variant article with the sku"{#SKU#}.';
 MLI18n::gi()->{'hitmeister_prepare_variations_free_text'} = '{#i18n:attributes_matching_option_free_text#}';
 MLI18n::gi()->{'hitmeister_prepare_variations_additional_category'} = '{#i18n:attributes_matching_additional_category#}';
 MLI18n::gi()->{'hitmeister_prepare_variations_error_text'} = '{#i18n:attributes_matching_attribute_required_error#}';
@@ -129,18 +130,18 @@ MLI18n::gi()->{'hitmeister_prepare_apply'} = 'Create New Products';
 MLI18n::gi()->{'hitmeister_prepare_form__field__categories__hint'} = '';
 MLI18n::gi()->{'hitmeister_prepare_form__field__primarycategory__hint'} = '';
 MLI18n::gi()->{'hitmeister_prepare_variations__legend__details'} = 'Product Details';
-MLI18n::gi()->{'hitmeister_prepare_variations__legend__categories'} = 'Kaufland.de Categories';
+MLI18n::gi()->{'hitmeister_prepare_variations__legend__categories'} = 'Kaufland Categories';
 
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__details'} = 'Product Details';
-MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__categories'} = 'Kaufland.de Categories';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__categories'} = 'Kaufland Categories';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__variationmatching__0'} = '{#i18n:attributes_matching_required_attributes#}';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__variationmatching__1'} = '{#i18n:attributes_matching_title#}';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__variationmatchingoptional__0'} = '{#i18n:attributes_matching_optional_attributes#}';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__variationmatchingoptional__1'} = '{#i18n:attributes_matching_title#}';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__variationmatchingcustom__0'} = '{#i18n:attributes_matching_custom_attributes#}';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__variationmatchingcustom__1'} = '{#i18n:attributes_matching_title#}';
-MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__subcategories'} = 'Kaufland.de subcategories';
-MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__advert'} = 'Kaufland.de advert';
-MLI18n::gi()->{'hitmeister_prepare_apply_form__field__variationgroups__label'} = 'Kaufland.de category';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__subcategories'} = 'Kaufland subcategories';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__legend__advert'} = 'Kaufland advert';
+MLI18n::gi()->{'hitmeister_prepare_apply_form__field__variationgroups__label'} = 'Kaufland category';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__variationgroups.value__label'} = 'Variantengruppe';
 MLI18n::gi()->{'hitmeister_prepare_apply_form__field__webshopattribute__label'} = 'Web-Shop Attribute';

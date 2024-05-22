@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,9 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -25,8 +23,10 @@ class ML_Shopify_Update_SetDefaultConfig extends ML_Core_Update_Abstract
 {
     public function execute()
     {
+        $blFirstInstallation = false;
         $oConfig = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.ean'); 
         if ($oConfig->get('value') === null) {
+            $blFirstInstallation = true;
             $oConfig->set('value', 'barcode')->save();
         }
         $oConfig = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.manufacturer');
@@ -36,6 +36,9 @@ class ML_Shopify_Update_SetDefaultConfig extends ML_Core_Update_Abstract
         $oConfig = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.manufacturerpartnumber');
         if ($oConfig->get('value') === null) {
             $oConfig->set('value', 'sku')->save();
+        }
+        if ($blFirstInstallation) {
+            MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'shopifyStartingFirstProductImport')->set('value', '1')->save();
         }
         return parent::execute();
     }

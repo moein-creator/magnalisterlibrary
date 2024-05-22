@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -36,23 +36,58 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
         'orderFreeTextField',
         'freeText',
     );
-    
+
+    protected $timeUnits = array(
+        'Days',
+        'Hours',
+        'Minutes',
+    );
+    protected $refundReasons = array(
+        'NoInventory',
+        'CustomerReturn',
+        'GeneralAdjustment',
+        'CouldNotShip',
+        'DifferentItem',
+        'Abandoned',
+        'CustomerCancel',
+        'PriceError',
+    );
+
+    protected $countryCodes = array(
+        'JP' => 'JP',
+        'US' => 'US',
+        'TR' => 'TR',
+        'AU' => 'AU',
+        'SP' => 'SP',
+        'ES' => 'ES',
+        'GB' => 'UK',
+        'FR' => 'FR',
+        'DE' => 'DE',
+        'IT' => 'IT',
+        'CA' => 'CA',
+        'NL' => 'NL',
+        'SE' => 'SE',
+        'PL' => 'PL',
+        'SG' => 'SG',
+    );
+
     /**
      * Gets Site list of amazon for config form.
      * 
      * @param array $aField
      */
     public function siteField(&$aField) {
-        foreach (MLModul::gi()->getMarketPlaces() as $aMarketplace) {
+        foreach (MLModule::gi()->getMarketPlaces() as $aMarketplace) {
             $aField['values'][$aMarketplace['Key']] = fixHTMLUTF8Entities($aMarketplace['Label']);
         }
+        array_unshift($aField['values'],MLI18n::gi()->get('form_type_matching_select_optional'));
     }   
     
     /**
      * Gets Currency list of amazon for config form.
      */
     public function currencyField(&$aField) {
-        foreach (MLModul::gi()->getMarketPlaces() as $aMarketplace) {
+        foreach (MLModule::gi()->getMarketPlaces() as $aMarketplace) {
             $aField['values'][$aMarketplace['Key']] = fixHTMLUTF8Entities($aMarketplace['Currency']);
         }
     }
@@ -68,9 +103,10 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
     }
     
     public function leadtimetoshipField(&$aField) {
-        $aField['values'][0] = '&mdash;';
+        $aField['values']['-'] = MLI18n::gi()->get('ML_AMAZON_SHIPPING_TIME_DEFAULT_VALUE');
+        $aField['values']['0'] = MLI18n::gi()->get('ML_AMAZON_SHIPPING_TIME_SAMEDAY_VALUE');
         for ($i = 1; $i < 31; $i++) {
-             $aField['values'][$i] = $i;
+             $aField['values'][$i.''] = $i;
         }
         
     }
@@ -135,25 +171,25 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
     }
     
     public function shippingservice_carrierwillpickupField(&$aField) {
-        $aService = MLModul::gi()->MfsGetConfigurationValues('ServiceOptions');
+        $aService = MLModule::gi()->MfsGetConfigurationValues('ServiceOptions');
         $aField['values'] = array_key_exists('CarrierWillPickUp', $aService) ? $aService['CarrierWillPickUp'] : array();
     }
     
     public function shippingservice_deliveryexperienceField(&$aField) {
-        $aService = MLModul::gi()->MfsGetConfigurationValues('ServiceOptions');
+        $aService = MLModule::gi()->MfsGetConfigurationValues('ServiceOptions');
         $aField['values'] = array_key_exists('DeliveryExperience', $aService) ? $aService['DeliveryExperience'] : array();
     }
      
     public function shippinglabel_size_unitField(&$aField) {
-        $aField['values'] = MLModul::gi()->MfsGetConfigurationValues('SizeUnits');
+        $aField['values'] = MLModule::gi()->MfsGetConfigurationValues('SizeUnits');
     }
      
     public function shippinglabel_weight_unitField(&$aField) {
-        $aField['values'] = MLModul::gi()->MfsGetConfigurationValues('WeightUnits');
+        $aField['values'] = MLModule::gi()->MfsGetConfigurationValues('WeightUnits');
     }
     
     public function shippinglabel_address_countryField(&$aField) {
-        $aField['values'] = MLModul::gi()->MfsGetConfigurationValues('Countries');
+        $aField['values'] = MLModule::gi()->MfsGetConfigurationValues('Countries');
     }
 
     public function b2b_price_addKindField (&$aField) {
@@ -183,7 +219,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
     public function b2b_tax_code_categoryField(&$aField)
     {
         $aField['values'] = array('' => MLI18n::gi()->get('form_type_matching_select_optional'))
-            + MLModul::gi()->getMainCategories();
+            + MLModule::gi()->getMainCategories();
     }
 
     public function b2bselltoField(&$aField) {
@@ -226,7 +262,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
                 }
             }
         } else {
-            $category = MLModul::gi()->getConfig($catSelector);
+            $category = MLModule::gi()->getConfig($catSelector);
             $category = $category ? reset($category) : '';
         }
 
@@ -305,7 +341,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
 
         // Marketplace carriers
         if (in_array('marketplaceCarrier', $options)) {
-            $apiMarketplaceCarriers = MLModul::gi()->getCarrierCodes();
+            $apiMarketplaceCarriers = MLModule::gi()->getCarrierCodes();
             foreach ($apiMarketplaceCarriers as $key => $marketplaceCarrier) {
                 if ($marketplaceCarrier === 'Other') {
                     continue;
@@ -390,7 +426,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
         if ($carrierMatching) {
             $field['i18n']['matching']['titlesrc'] = MLI18n::gi()->get('amazon_config_carrier_matching_title_marketplace_carrier');
             $aMarketplaceCarriers = array();
-            foreach (MLModul::gi()->getCarrierCodes() as $key => $marketplaceCarrier) {
+            foreach (MLModule::gi()->getCarrierCodes() as $key => $marketplaceCarrier) {
                 $aMarketplaceCarriers[$marketplaceCarrier] = $marketplaceCarrier;
             }
             $aMarketplaceCarriers['Other'] = MLI18n::gi()->amazon_config_carrier_other;
@@ -411,7 +447,7 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
     }
 
     public function orderstatus_shippedaddress_countrycodeField(&$aField) {
-        $aField['values'] = MLModul::gi()->MfsGetConfigurationValues('Countries');
+        $aField['values'] = MLModule::gi()->MfsGetConfigurationValues('Countries');
     }
 
     public function imagesizeField(&$aField) {
@@ -452,4 +488,238 @@ class ML_Amazon_Helper_Model_Table_Amazon_ConfigData extends ML_Form_Helper_Mode
             3900 => '3900px',
         );
     }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_address_countrycodeField(&$aField) {
+        $values = array();
+        foreach ($this->countryCodes as $code => $countryCode) {
+            $values[$code] = $countryCode;
+        }
+        $aField['values'] = $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_capabilities_returnlocation_address_countrycodeField(&$aField) {
+        // same logic
+        $this->bopis_array_address_countrycodeField($aField);
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_configuration_timezoneField(&$aField) {
+        $values = array();
+        foreach (MLModule::gi()->GetAmazonTimezones() as $timezone) {
+            $values[$timezone] = $timezone;
+        }
+        $aField['values'] = $values;
+    }
+
+    public function bopis_storesField(&$aField) {
+        $values = array();
+        $aStoreAliases = MLModule::gi()->getConfig('bopis.array.alias');
+        $values[''] = MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT');
+        if (!is_array($aStoreAliases)) {
+            $aStoreAliases = array();
+        }
+        foreach ($aStoreAliases as $key => $sStoreAlias) {
+            $values[$key] = $sStoreAlias;
+        }
+        $iStoreIndex = MLRequest::gi()->data('storeindex');
+        $aField['value'] = $iStoreIndex;
+        $aField['values'] = $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_capabilities_pickupchannel_inventoryholdperiod_timeUnitField(&$aField) {
+        foreach ($this->timeUnits as $timeUnit) {
+            $values[$timeUnit] = MLI18n::gi()->get('amazon_bopis.handling_time_'.$timeUnit);
+        }
+        $aField['values'] = $values;
+    }
+
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_configuration_handlingtime_timeUnitField(&$aField) {
+        foreach ($this->timeUnits as $timeUnit) {
+            $values[$timeUnit] = MLI18n::gi()->get('amazon_bopis.handling_time_'.$timeUnit);
+        }
+        $aField['values'] = $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_capabilities_pickupchannel_handlingtime_timeUnitField(&$aField) {
+        foreach ($this->timeUnits as $timeUnit) {
+            $values[$timeUnit] = MLI18n::gi()->get('amazon_bopis.handling_time_'.$timeUnit);
+        }
+        $aField['values'] = $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_configuration_operationalconfiguration_throughputConfig_timeUnitField(&$aField) {
+        foreach ($this->timeUnits as $timeUnit) {
+            $values[$timeUnit] = MLI18n::gi()->get('amazon_bopis.handling_time_'.$timeUnit);
+        }
+        $aField['values'] = $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_capabilities_operationalconfiguration_throughputConfig_timeUnitField(&$aField) {
+        foreach ($this->timeUnits as $timeUnit) {
+            $values[$timeUnit] = MLI18n::gi()->get('amazon_bopis.handling_time_'.$timeUnit);
+        }
+        $aField['values'] = $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_capabilities_deliverychannel_operationalconfiguration_throughputConfig_timeUnitField(&$aField) {
+        foreach ($this->timeUnits as $timeUnit) {
+            $values[$timeUnit] = MLI18n::gi()->get('amazon_bopis.handling_time_'.$timeUnit);
+        }
+        $aField['values'] = $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_array_capabilities_pickupchannel_operationalconfiguration_throughputConfig_timeUnitField(&$aField) {
+        $aField['values'] = $this->getTimeUnitValues();
+    }
+
+    private function getTimeUnitValues() {
+        $values = array();
+        foreach ($this->timeUnits as $timeUnit) {
+            $values[$timeUnit] = MLI18n::gi()->get('amazon_bopis.handling_time_'.$timeUnit);
+        }
+        return $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_orderstatus_updatesField(&$aField) {
+        $aField['values'] = array('Sync with Shop', 'Allocate manually');
+
+    }
+
+    public function bopis_orderstatus_readyForPickupField(&$field) {
+        $field['values'] = MLFormHelper::getShopInstance()->getOrderStatusValues();
+        $field['values'] = array('' => MLI18n::gi()->get('ML_LABEL_DONT_USE')) + $field['values'];
+    }
+
+    public function bopis_orderstatus_pickedUpField(&$field) {
+        $field['values'] = MLFormHelper::getShopInstance()->getOrderStatusValues();
+        $field['values'] = array('' => MLI18n::gi()->get('ML_LABEL_DONT_USE')) + $field['values'];
+    }
+
+    public function bopis_orderstatus_refundField(&$field) {
+        $field['values'] = MLFormHelper::getShopInstance()->getOrderStatusValues();
+        $field['values'] = array('' => MLI18n::gi()->get('ML_LABEL_DONT_USE')) + $field['values'];
+    }
+
+    public function bopis_orderstatus_openField(&$field) {
+        $field['values'] = MLFormHelper::getShopInstance()->getOrderStatusValues();
+    }
+
+    public function bopis_refund_reasonField(&$field) {
+        $field['values'] = array();
+        $values[''] =MLI18n::gi()->get('ML_LABEL_DONT_USE');
+        foreach ($this->refundReasons as $refundReason) {
+            $values[$refundReason] = MLI18n::gi()->get('amazon_bopis.refund.reason_'.$refundReason);
+        }
+        $field['values'] = $values;
+    }
+
+    /**
+     * Fetch currently active BOPIS-Stores from Amazon
+     * @param $aField
+     */
+    public function bopis_stockmanagement_storeField(&$aField) {
+        $aField['values'] = MLModule::gi()->GetBopisStores();
+    }
+
+    /**
+     * "bopis.stockmanagement.quantity.type" set values and translation
+     *
+     * @param $aField
+     * @return void
+     */
+    public function bopis_stockmanagement_quantity_typeField(&$aField) {
+        $pleaseSelect = array('' => MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT'));
+        $defaultStockSettings = MLSetting::gi()->getGlobal('configform_quantity_values');
+
+        foreach ($defaultStockSettings as &$setting) {
+            $setting['optGroupClass'] = 'defaultShopSettings';
+        }
+
+        //@ToDo
+        $shopExclusiveSettings = array();
+        if (false) {
+            $shopExclusiveSettings = array(
+                'warehouse1' => array(
+                    'title' => 'Use Stock of "Warehouse1"',
+                    'textoption' => 0,
+                ),
+                'warehouse2' => array(
+                    'title' => 'Use Stock of "Warehouse2"',
+                    'textoption' => 0,
+                )
+            );
+        }
+
+        $aField['values'] = $pleaseSelect + $defaultStockSettings + $shopExclusiveSettings;
+        if (MLI18n::gi()->isTranslationActive()) {
+            foreach ($aField['values'] as $key => &$value) {
+                $value['translationData'] = MLI18n::gi()->getTranslationData("configform_quantity_values_{$key}_title");
+            }
+        }
+    }
+
+    /**
+     * "bopis.stockmanagement.quantity.value" set value and validation
+     *
+     * @param $aField
+     * @return void
+     * @throws MLAbstract_Exception
+     */
+    public function bopis_stockmanagement_quantity_valueField(&$aField) {
+        $aField['value'] = isset($aField['value']) ? $aField['value'] : array(0);
+
+        if (is_array($aField['value'])) {
+            $configQuantityType = MLModule::gi()->getConfig('bopis.stockmanagement.quantity.type');
+            foreach ($aField['value'] as $key => $value) {
+                if ($configQuantityType != 'stock' && (string)((int)$value) != $value) {
+                    $this->addError($aField, MLI18n::gi()->get('configform_quantity_value_error'));
+                }
+            }
+        }
+    }
+
 }

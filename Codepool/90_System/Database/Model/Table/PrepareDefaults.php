@@ -11,10 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 class ML_Database_Model_Table_PrepareDefaults extends ML_Database_Model_Table_Abstract {
 
     protected $sTableName = 'magnalister_preparedefaults';
@@ -40,7 +41,7 @@ class ML_Database_Model_Table_PrepareDefaults extends ML_Database_Model_Table_Ab
 
     protected function setDefaultValues() {
         try {
-            $this->set('mpid',  MLModul::gi()->getMarketPlaceId());
+            $this->set('mpid', MLModule::gi()->getMarketPlaceId());
         } catch(Exception $oEx) {//global
             $this->set('mpid',0);
         }

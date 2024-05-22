@@ -63,7 +63,7 @@ class ML_Amazon_Model_ProductListDependency_AmazonPrepareTypeFilter extends ML_P
         return MLDatabase::getDbInstance()->fetchOne("
             SELECT COUNT(*)
               FROM ".MLDatabase::getPrepareTableInstance()->getTableName()." prepare
-             WHERE     ".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()." = '".MLModul::gi()->getMarketPlaceId()."'
+             WHERE     " . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . " = '" . MLModule::gi()->getMarketPlaceId() . "'
                    AND PrepareType in (".$sCompare.")
                    AND ".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = '".(int)$oProduct->get('id')."'
         ") > 0 ? false : true;
@@ -76,22 +76,33 @@ class ML_Amazon_Model_ProductListDependency_AmazonPrepareTypeFilter extends ML_P
     public function getMasterIdents() {
         $sValue = $this->getConfig('PrepareType');
         $sCompare = $sValue === 'match' ? "'apply'" : "'manual' , 'auto'";
-        $sProductTable = MLDatabase::getTableInstance('product')->getTableName();
+        $sProductTable = MLProduct::factory()->getTableName();
         // get masterarticles which have no/missing prepared variant
+
+        $selectField = "master.".(
+            MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.keytype')->get('value') == 'pID'
+                ? 'productsid'
+                : 'productssku'
+            );
+
         $sSql = "
-                SELECT master.".(
-                    MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.keytype')->get('value') == 'pID' ? 'productsid' : 'productssku'
-                )."
+                SELECT ".$selectField."
                   FROM ".MLDatabase::getPrepareTableInstance()->getTableName()." prepare
             INNER JOIN ".$sProductTable." variant ON prepare.".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = variant.id
             INNER JOIN ".$sProductTable." master ON variant.parentid = master.id
                  WHERE     prepare.PrepareType IN(".$sCompare.")
-                       AND prepare.".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()." = '".MLModul::gi()->getMarketPlaceId()."'
-              GROUP BY master.id
+                       AND prepare." . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . " = '" . MLModule::gi()->getMarketPlaceId() . "'
+              GROUP BY master.id, ".$selectField."
         ";
+
+        $returnData = MLDatabase::getDbInstance()->fetchArray($sSql, true);
+        if ($returnData === false) {
+            $returnData = null;
+        }
+
         return array(
             'in' => null,
-            'notIn' => MLDatabase::getDbInstance()->fetchArray($sSql, true),
+            'notIn' => $returnData,
         );
     }
 

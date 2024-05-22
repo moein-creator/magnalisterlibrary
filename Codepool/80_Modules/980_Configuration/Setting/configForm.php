@@ -68,14 +68,6 @@ MLSetting::gi()->add('configuration', array(
                 'separator'      => '<br/>',
                 'default'        => 'tinyMCE',
             ),
-            'stocksyncbyorder' => array(
-                'name'    => 'general.trigger.checkoutprocess.inventoryupdate',
-                'type'    => 'bool',
-                'expert'  => true,
-                'default' => array(
-                    'val' => true,
-                ),
-            ),
             'cronfronturl '    => array(
                 'name'   => 'general.cronfronturl',
                 'type'   => 'string',

@@ -24,7 +24,7 @@ class ML_GoogleShopping_Controller_GoogleShopping_Prepare extends ML_Tabs_Contro
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured() && MLModul::gi()->isAuthed(true);
+        return MLModule::gi()->isConfigured() && MLModule::gi()->isAuthed(true);
     }
 
     public static function getTabDefault() {

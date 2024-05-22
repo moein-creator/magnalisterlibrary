@@ -32,6 +32,6 @@ class ML_Hood_Controller_Hood_Listings_Deleted extends ML_Core_Controller_Abstra
 
     public function execute() {
         include MLFilesystem::getOldLibPath('php/modules/hood/listings.php');
-        MLSetting::gi()->add('aCss', array('magnalister.productlist.css'), true);
+        MLSetting::gi()->add('aCss', array('magnalister.productlist.css?%s'), true);
     }
 }

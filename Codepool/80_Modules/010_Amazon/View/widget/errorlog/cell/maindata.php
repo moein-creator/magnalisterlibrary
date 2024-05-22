@@ -1,7 +1,8 @@
 <?php
 /* @var $oErrorlog ML_ErrorLog_Model_Table_ErrorLog */
 /* @var $oProduct ML_Shop_Model_Product_Abstract */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <?php if(isset($oProduct)) { ?>
     <table>

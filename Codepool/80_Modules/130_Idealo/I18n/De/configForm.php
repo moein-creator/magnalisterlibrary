@@ -15,6 +15,7 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+MLI18n::gi()->{'idealo_config_carrier_option_group_shopfreetextfield_option_carrier'} = 'Transportunternehmen aus einem Webshop-Freitextfeld (Bestellungen) wählen';
 
 MLI18n::gi()->idealo_config_account_title = 'Zugangsdaten';
 MLI18n::gi()->idealo_config_account_prepare = 'Artikelvorbereitung';

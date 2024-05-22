@@ -17,17 +17,18 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 ?>
 <?php if (
     isset($aField['hiddenifdisabled']) && $aField['hiddenifdisabled']
     && isset($aField['disabled']) && $aField['disabled']
-) { 
+) {
     $aField['type'] = 'hidden';
-    $this->includeType($aField);   
+    $this->includeType($aField);
 }
 if (isset($aField['realname']) && in_array($aField['realname'], array('prepareaction', 'saveaction'))) {
-    $sCssClassAdd = ' action';
+    $sCssClassAdd = ' action text';
 } else {
     $sCssClassAdd = '';
 }

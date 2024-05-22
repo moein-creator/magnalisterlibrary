@@ -18,3 +18,4 @@
 
 MLI18n::gi()->{'woocommerce_missing_taxclasses_error_message'} = 'Warnung! Es muss mindestens einen Steuersatz in Ihrem Webshop eingerichtet sein. Bitte fügen Sie mindestens einen unter WooCommerce -> Einstellungen -> Steuer -> Standardsätze hinzu.';
 MLI18n::gi()->{'FreeTextAttributesOptGroup'} = 'Zusatzfelder';
+MLI18n::gi()->{'formfields_uploadInvoiceOption_values__germanmarket'} = 'Von German Market erstellte Rechnungen werden zu {#setting:currentMarketplaceName#} übermittelt';

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -25,6 +25,7 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
     protected $aParameters = array('controller');
     protected $shopAttributes;
     protected $numberOfMaxAdditionalAttributes = 0;
+    private $variationCache = array();
 
     public function __construct() {
         MLSettingRegistry::gi()->addJs('select2/select2.min.js');
@@ -39,14 +40,19 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isAuthed();
+        return MLModule::gi()->isAuthed();
     }
 
     public function getModificationDate($sIdentifier, $sCustomIdentifier = '') {
-        return $this->getVariationDb()
-            ->set('Identifier', $sIdentifier)
-            ->set('CustomIdentifier', $sCustomIdentifier)
-            ->get('ModificationDate');
+        $hashParams = md5($sIdentifier.$sCustomIdentifier.'ModificationDate');
+        if (!array_key_exists($hashParams, $this->variationCache)) {
+            $this->variationCache[$hashParams] = $this->getVariationDb()
+                ->set('Identifier', $sIdentifier)
+                ->set('CustomIdentifier', $sCustomIdentifier)
+                ->get('ModificationDate');
+        }
+
+        return $this->variationCache[$hashParams];
     }
 
     /**
@@ -133,7 +139,7 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
                             '_prepare_variations_error_duplicated_custom_attribute_name',
                             array(
                                 'attributeName' => $value['AttributeName'],
-                                'marketplace' => MLModul::gi()->getMarketPlaceName(false),
+                                'marketplace' => MLModule::gi()->getMarketPlaceName(false),
                             )
                         );
                     }
@@ -449,7 +455,7 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
     }
 
     protected function variationGroupsField(&$aField) {
-        $sMarketplaceName = MLModul::gi()->getMarketPlaceName();
+        $sMarketplaceName = MLModule::gi()->getMarketPlaceName();
         $aField['subfields']['variationgroups.value']['values'] = array('' => '..') +
             ML::gi()->instance('controller_'.$sMarketplaceName.'_config_prepare')
                 ->getField('primarycategory', 'values');
@@ -577,6 +583,7 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
                     'values' => !empty($value['values']) ? $value['values'] : array(),
                     'dataType' => !empty($value['type']) ? $value['type'] : 'text',
                     'categoryId' => !empty($value['categoryId']) ? $value['categoryId'] : null,
+                    'attributeId' => !empty($value['id']) ? $value['id'] : null,
                 );
             }
         }
@@ -735,7 +742,8 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
         } else if (    $sAttributeCode
                     && (    $sType == 'text'
                          || $sType == 'selectAndText'
-                         || $sType == 'multiSelectAndText')) {
+                         || $sType == 'multiSelectAndText')
+        ) {
                 // predefined values exist, but free text is allowed => add shop's values to selection
                 // at the end, and sorted, so that it's visible that it's added
                 $shopValues = $this->getShopAttributeValues($sAttributeCode);
@@ -768,7 +776,7 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
 
         $oPrepareTable = MLDatabase::getPrepareTableInstance();
         $sShopVariationField = $oPrepareTable->getShopVariationFieldName();
-        $marketplaceID = MLModul::gi()->getMarketPlaceId();
+        $marketplaceID = MLModule::gi()->getMarketPlaceId();
 
         // SELECT DISTINCT because we don't need to load similar matching's
         $aPreparedDataQuery = $this->oDB->query("
@@ -794,13 +802,17 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
         if ($sCustomIdentifier === null) {
             $sCustomIdentifier = '';
         }
-        $aValue = $this->getVariationDb()
-            ->set('Identifier', $sIdentifier)
-            ->set('CustomIdentifier', $sCustomIdentifier)
-            ->get('ShopVariation');
+        
+        $hashParams = md5($sIdentifier.$sCustomIdentifier.'ShopVariation');
+        if (!array_key_exists($hashParams, $this->variationCache)) {
+            $this->variationCache[$hashParams] = $this->getVariationDb()
+                ->set('Identifier', $sIdentifier)
+                ->set('CustomIdentifier', $sCustomIdentifier)
+                ->get('ShopVariation');
+        }
 
-        if ($aValue && $aValue !== 'null') {
-            return $aValue;
+        if ($this->variationCache[$hashParams] && $this->variationCache[$hashParams] !== 'null') {
+            return $this->variationCache[$hashParams];
         }
 
         return array();
@@ -911,7 +923,7 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
     }
 
     protected static function getMessage($sIdentifier, $aReplace = array()) {
-        return MLI18n::gi()->get(MLModul::gi()->getMarketPlaceName().$sIdentifier, $aReplace);
+        return MLI18n::gi()->get(MLModule::gi()->getMarketPlaceName() . $sIdentifier, $aReplace);
     }
 
     /**
@@ -926,5 +938,14 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
 
     protected function isNeededPackingAttrinuteName(){
         return false;
+    }
+
+    /**
+     * @param $values array
+     * @return array
+     */
+    public function getManipulateMarketplaceAttributeValues($values) {
+        return MLFormHelper::getPrepareAMCommonInstance()->getManipulateMarketplaceAttributeValues($values);
+
     }
 }

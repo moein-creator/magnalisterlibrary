@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -57,3 +57,18 @@ MLI18n::gi()->{'ebay_config_orderimport__field__orderimport.paymentstatus__label
 MLI18n::gi()->{'ebay_config_orderimport__field__orderimport.paymentstatus__help'} = 'Sélectionnez ici le statut de paiement qui sera automatiquement attribué aux commandes lors de l’importation des commandes depuis la place de marché.';
 MLI18n::gi()->{'ebay_config_orderimport__field__orderimport.paymentstatus__hint'} = '';
 MLI18n::gi()->{'ebay_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__description__hint'} = 'Liste des champs disponibles pour la description du produit : <dl><dt>#TITLE#</dt><dd>Nom du produit(titre)</dd><dt>#ARTNR#</dt><dd>Référence de l\'article</dd><dt>#PID#</dt><dd>ID de produit</dd><dt>#SHORTDESCRIPTION#</dt><dd>Courte description</dd><dt>#DESCRIPTION#</dt><dd>Description</dd><dt>#MOBILEDESCRIPTION#</dt><dd>Courte description pour les mobiles, si nécessaire</dd><dt> #PICTURE1#</dt><dd>première photo de l\'article</dd><dt>#PICTURE2# etc.</dt><dd>deuxième photo de l\'article, avec #PICTURE3#, #PICTURE4# etc. vous pouvez envoyer d\'autres photos, autant que disponible en magasin.</dd><dt>#TAGS#</dt><dd>TAGS</dd></dl>';
+
+MLI18n::gi()->set('ebay_config_producttemplate__field__template.content__hint', MLI18n::gi()->{'ebay_prepare_apply_form__field__description__hint'}, true);
+MLI18n::gi()->set('ebay_prepare_apply_form_field_description_hint_metafield', '<dt>#Espace de nom et clé#</dt><dd>p.ex.</dd>', true);
+
+MLI18n::gi()->{'orderstatus_carrier_default_send_order_carrier'} = 'Pass order shipping carrier';
+
+MLI18n::gi()->{'ebay_config_producttemplate__field__template.name__help'} = '<b>Nom du produit sur eBay </b><br>
+Saisissez dans ce champ le nom de l’article, tel que vous voulez qu’il apparaisse sur votre page eBay. <br>
+paramètre générique possible : <br>
+#TITLE# : sera automatiquement remplacé par le nom de l’article.';
+MLI18n::gi()->{'ebay_config_producttemplate__field__template.name__hint'} = 'Liste des champs disponibles pour la rubrique
+<BLOCKQUOTE>
+  <p>#TITLE# - nom du produit</p>
+</BLOCKQUOTE>';

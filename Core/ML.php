@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -38,12 +38,12 @@ foreach(
 /**
  * Main class. Implements the factory pattern.
  * Routes requests and manages the syncronization processes.
- * 
+ *
  * Can not be inherited.
  */
 final class ML {
     const MAX_RECURSION_DEPTH = 10;
-    
+
     protected static $blAdmin = false;
     protected static $blEvent = false;
     protected static $blInstalled = null;
@@ -55,43 +55,43 @@ final class ML {
     protected $aInstances = array();
     protected $aLoadedClasses = array();
     protected $aChildIdents = array();
-    
+
     /**
      * @var ML $oInstance
      */
     protected static $oInstance = null;
     protected static $aAllInstances = array();
-    
+
     /**
      * if we don't need to get currecnt version
-     * @var bool 
+     * @var bool
      */
     protected static $blFastLoad = false;
-    
+
     /**
-     * singleton protected constructor 
+     * singleton protected constructor
      */
     protected function __construct(){
-        
+
     }
-    
+
     /**
-     * 
+     *
      * @param type $blFastLoad
      */
     public static function setFastLoad($blFastLoad) {
-            self::$blFastLoad = $blFastLoad;
+        self::$blFastLoad = $blFastLoad;
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @return bool
      */
     public static function getFastLoad() {
         return self::$blFastLoad ;
     }
-    
+
     /**
      * Strips objects and resources from stack traces to minify the output to only the relevant informations.
      *
@@ -125,7 +125,7 @@ final class ML {
             } else if (is_array($value)) {
                 $value = self::stripObjectsAndResources($value, $lv + 1);
             } else if (is_string($value)) {
-                
+
             }
             if ($k == 'args') {
                 if (is_string($value) && (strlen($value) > 5000)) {
@@ -136,7 +136,7 @@ final class ML {
         }
         return $aa;
     }
-    
+
     /**
      * Checks if the plugin is installed completely. Otherwise the missing files will be pulled
      * from the magnalister server.
@@ -149,7 +149,7 @@ final class ML {
         }
         return self::$blInstalled;
     }
-    
+
     /**
      * Checks if the plugin was anytime clomplete. Needs to decide wording in updater.
      *
@@ -241,7 +241,7 @@ final class ML {
         }
         return self::$oInstance;
     }
-    
+
     /**
      * Executes part of the bootstrap based on the current request.
      * This also calls the init() methods of several required classes.
@@ -267,7 +267,7 @@ final class ML {
         foreach ($aRequestParams as $sKey => $mValue) {
             $oRequest->set($sKey, $mValue,true);
         }
-        
+
         MLFilesystem::gi()->init();
         $sInstanceName = md5(json_encode(MLRequest::gi()->data()));
         if (isset(self::$aAllInstances[$sInstanceName])) {
@@ -286,6 +286,11 @@ final class ML {
             foreach (MLFilesystem::gi()->getInitFiles() as $sFile) {
                 include($sFile);
             }
+        }
+        try {
+            MLShop::gi()->getShopInfo();
+        } catch (\MagnaException $ex) {
+            //passphrase is wrong
         }
         return self::$oInstance;
     }
@@ -320,16 +325,16 @@ final class ML {
 
     /**
      * Process the request. The generated response will be buffered and returned.
-     * 
-     * @return string 
+     *
+     * @return string
      */
-    public function run(){ 
-        self::$blAdmin=true;        
-        MLMessage::gi(); 
+    public function run() {
+        self::$blAdmin = true;
+        MLMessage::gi();
         try {
-            MLModul::gi(); //activate modul
+            MLModule::gi(); //activate modul
         } catch (Exception $oEx) {
-            
+
         }
         return $this->render();
     }
@@ -343,7 +348,7 @@ final class ML {
         MLRequest::gi();
         return $this->render($sType);
     }
-    
+
     /**
      * renders complete plugin
      * @param string $sType only needed for frontend
@@ -375,7 +380,7 @@ final class ML {
             return $sOut;
         }
     }
-    
+
     /**
      * Runs the bootstrap, which currently uses parts of OldLib.
      * @parm bool $blDoBootstrap if false set bootstrapped to true (eg. for resources)
@@ -386,7 +391,7 @@ final class ML {
             $this->blBootstrapped = true;
         }
         if(!$this->blBootstrapped && ML::isInstalled()){
-             $this->blBootstrapped=true;
+            $this->blBootstrapped = true;
             try{
                 define('_ML_INSTALLED', true);
                 MLI18n::gi()->setDefinesForOldMl();
@@ -401,6 +406,7 @@ final class ML {
 
                 ob_start();
                 include(MLFilesystem::getOldLibPath('minBoot.php'));
+                MLShop::gi()->getShopInfo();
                 $sContent=  ob_get_clean();
                 if(strlen($sContent)){
                     MLMessage::gi()->addDebug('minBoot.php generates output', htmlentities($sContent));
@@ -421,15 +427,15 @@ final class ML {
         }
         return $this;
     }
-    
+
     /**
      * Creates an instance of a class. The instance will be saved and returned if the class
      * is requested a second time (Registry).
-     * 
+     *
      * @param string $sClassName
      *    Name of the class that will be created
      * @param array $aClassesToLoad
-     *    List of dependencies that have to be created before the instance of 
+     *    List of dependencies that have to be created before the instance of
      *    $sClassName can be instanciated.
      *
      * @return object
@@ -441,14 +447,14 @@ final class ML {
         }
         return $this->aInstances[$sClassName];
     }
-    
+
     /**
      * Creates an instance of a class.
-     * 
+     *
      * @param string $sClassName
      *    Name of the class that will be created
      * @param array $aClassesToLoad
-     *    List of dependencies that have to be created before the instance of 
+     *    List of dependencies that have to be created before the instance of
      *    $sClassName can be instanciated.
      *
      * @return object
@@ -470,7 +476,7 @@ final class ML {
                         $aDevBar = array();
                     }
                     if (!array_key_exists($sClassName, $aDevBar)) {
-                            
+
                         $aClassTree = class_parents($sCurrentClassName);
                         $aClassTree = is_array($aClassTree)?$aClassTree:array();
                         $aInterfaces = class_implements($sCurrentClassName);
@@ -486,7 +492,7 @@ final class ML {
             }
         } catch (Exception $oEx) {//to early in bootstrap or not setted
         }
-        
+
         $oRef= new ReflectionClass($sCurrentClassName);
         if ($oRef->isAbstract()) {
             throw new Exception('cannont initiate class');
@@ -501,7 +507,7 @@ final class ML {
             }
         }
     }
-    
+
     /**
      * Returns a list of child class names for a class name.
      * @param string $sIdent

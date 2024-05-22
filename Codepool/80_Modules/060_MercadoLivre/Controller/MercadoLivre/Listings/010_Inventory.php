@@ -27,7 +27,7 @@ class ML_MercadoLivre_Controller_MercadoLivre_Listings_Inventory extends ML_List
         return MLI18n::gi()->get('ML_GENERIC_INVENTORY');
     }
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     protected function getFields() {
@@ -46,7 +46,7 @@ class ML_MercadoLivre_Controller_MercadoLivre_Listings_Inventory extends ML_List
 				'Field' => null,
 			),
 			'Price' => array (
-				'Label' => $oI18n->ML_GENERIC_PRICE,
+                'Label' => $oI18n->ML_LABEL_SHOP_PRICE.' / '.MLModule::gi()->getMarketPlaceName(false).' '.$oI18n->ML_GENERIC_PRICE,
 				'Sorter' => 'price',
 				'Getter' => 'getItemPrice',
 				'Field' => null

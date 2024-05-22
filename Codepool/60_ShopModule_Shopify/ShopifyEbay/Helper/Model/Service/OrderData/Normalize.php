@@ -23,9 +23,9 @@ class ML_ShopifyEbay_Helper_Model_Service_OrderData_Normalize extends ML_Ebay_He
     protected function normalizeOrder() {
         parent::normalizeOrder();
         if (isset($this->aOrder['Order']['Payed']) && $this->aOrder['Order']['Payed']) {
-            $this->aOrder['Order']['PaymentStatus'] = MLModul::gi()->getConfig('paymentstatus.paid');
-        } elseif (MLModul::gi()->getConfig('orderimport.paymentstatus') !== null) {
-            $this->aOrder['Order']['PaymentStatus'] = MLModul::gi()->getConfig('orderimport.paymentstatus');
+            $this->aOrder['Order']['PaymentStatus'] = MLModule::gi()->getConfig('paymentstatus.paid');
+        } elseif (MLModule::gi()->getConfig('orderimport.paymentstatus') !== null) {
+            $this->aOrder['Order']['PaymentStatus'] = MLModule::gi()->getConfig('orderimport.paymentstatus');
         } else {
             $this->aOrder['Order']['PaymentStatus'] = 17;//deprecated code , just use for user who configured ebay before
         }
@@ -41,6 +41,41 @@ class ML_ShopifyEbay_Helper_Model_Service_OrderData_Normalize extends ML_Ebay_He
             $this->aOrder['AddressSets']['Shipping']['Housenumber'] = '0';
         }
         parent::normalizeAddressSets();
+        return $this;
+    }
+
+    // Check if it's a variation of an existing product
+    // with [variation specs] at the end of product's name (like [XXL - red])
+    // If so, remove the variation specs to omit having them twice
+    // (Shopify also adds them)
+    protected function normalizeProduct (&$aProduct, $fDefaultProductTax) {
+        parent::normalizeProduct($aProduct, $fDefaultProductTax);
+
+        // what we got from eBay
+        if ((isset($aProduct['MasterSKU']) && $aProduct['SKU'] == $aProduct['MasterSKU']) // not a variation
+            || (!strpos($aProduct['ItemTitle'], '['))       // or no specs in the name
+        ) {
+            return $this;
+        }
+        // check if we have it in the shop, and if it's a variation
+        $oProduct = MLProduct::factory();
+        $iVariantId = 0;
+        if (MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.keytype')->get('value') === 'pID' && strpos($aProduct['SKU'], '_') === false) {
+            $oProduct->getByMarketplaceSKU($aProduct['SKU'], true);
+        } else {
+            $oProduct->getByMarketplaceSKU($aProduct['SKU']);
+        }
+        if (isset($aProduct['SKU']) && $oProduct->exists()) {
+            $aRealProduct = $oProduct->getRealProduct();
+            if (!empty($aRealProduct)) {
+                $iVariantId = $aRealProduct['id'];
+            }
+        }
+        if ($iVariantId == 0) { // not a variation
+            return $this;
+        } 
+        // remove the variation specs from product's name
+        $aProduct['ItemTitle'] = trim(substr($aProduct['ItemTitle'], 0, strpos($aProduct['ItemTitle'], '[')));
         return $this;
     }
 

@@ -133,7 +133,7 @@ class ML_PriceMinister_Helper_Model_Service_Product
 
     protected function getItemTitle()
     {
-        $iLang = MLModul::gi()->getConfig('lang');
+        $iLang = MLModule::gi()->getConfig('lang');
 
         $sTitle = $this->oPrepare->get('ItemTitle');
         if (empty($sTitle) === false && $sTitle !== ''){
@@ -141,7 +141,7 @@ class ML_PriceMinister_Helper_Model_Service_Product
         } else{
             $this->oVariant->setLang($iLang);
 
-            $sValue = MLModul::gi()->getConfig('template.name');
+            $sValue = MLModule::gi()->getConfig('template.name');
             if (!isset($sValue) || $sValue === ''){
                 $sValue = '#TITLE#';
             }
@@ -173,7 +173,7 @@ class ML_PriceMinister_Helper_Model_Service_Product
     }
 
     protected function getVariantTitle() {
-        $iLang = MLModul::gi()->getConfig('lang');
+        $iLang = MLModule::gi()->getConfig('lang');
         $this->oVariant->setLang($iLang);
         $sTitle = $this->oVariant->getName();
         $sTitle = html_entity_decode(fixHTMLUTF8Entities($sTitle), ENT_COMPAT, 'UTF-8');
@@ -190,11 +190,11 @@ class ML_PriceMinister_Helper_Model_Service_Product
         if (empty($sDescription) === false && $sDescription !== ''){
             $sDescription = html_entity_decode(fixHTMLUTF8Entities($sDescription), ENT_COMPAT, 'UTF-8');
         } else{
-            $iLang = MLModul::gi()->getConfig('lang');
+            $iLang = MLModule::gi()->getConfig('lang');
             $this->oVariant->setLang($iLang);
             $oProduct = $this->oVariant;
 
-            $sValue = MLModul::gi()->getConfig('template.content');
+            $sValue = MLModule::gi()->getConfig('template.content');
             if (!isset($sValue) || $sValue === ''){
                 $sValue = '<p>#TITLE#</p>
                             <p>#ARTNR#</p>
@@ -270,8 +270,8 @@ class ML_PriceMinister_Helper_Model_Service_Product
     protected function getQuantity()
     {
         $iQty = $this->oVariant->getSuggestedMarketplaceStock(
-            MLModul::gi()->getConfig('quantity.type'),
-            MLModul::gi()->getConfig('quantity.value')
+            MLModule::gi()->getConfig('quantity.type'),
+            MLModule::gi()->getConfig('quantity.value')
         );
         return $iQty < 0 ? 0 : $iQty;
     }
@@ -281,7 +281,7 @@ class ML_PriceMinister_Helper_Model_Service_Product
         if (isset($this->aSelectionData['price'])){
             $fPrice = $this->aSelectionData['price'];
         } else{
-            $fPrice = $this->oVariant->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
+            $fPrice = $this->oVariant->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
         }
 
         return $fPrice;
@@ -296,7 +296,7 @@ class ML_PriceMinister_Helper_Model_Service_Product
     {
         $sItemCondition = $this->oPrepare->get('ItemCondition');
         if ($sItemCondition === ''){
-            $sItemCondition = MLModul::gi()->getConfig('itemcondition');
+            $sItemCondition = MLModule::gi()->getConfig('itemcondition');
         }
 
         return $sItemCondition;

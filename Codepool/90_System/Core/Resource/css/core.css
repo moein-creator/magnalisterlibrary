@@ -61,7 +61,7 @@
 	font-size: 13px;
 	font-weight: bold;
 	margin: 0 0 1em;
-	padding: 5px 50px 5px 25px;
+	padding: 10px 50px 10px 25px;
 	text-align: left;
 }
 
@@ -74,15 +74,13 @@
 
 #ml-js-pushMessages .successBox,
 #ml-js-pushMessages .successBoxBlue,
-#ml-js-pushMessages .noticeBox,
-#ml-js-pushMessages .errorBox {
+#ml-js-pushMessages .noticeBox {
 	margin-bottom: 1px;
-	padding: 5px 50px 5px 25px;
+	padding: 15px 50px 15px 15px;
 }
 #recursiveAjaxDialog .successBox, #ml-modal_updatePlugin .successBox,
 #recursiveAjaxDialog .successBoxBlue, #ml-modal_updatePlugin .successBoxBlue,
-#recursiveAjaxDialog .noticeBox, #ml-modal_updatePlugin .noticeBox,
-#recursiveAjaxDialog .errorBox, #ml-modal_updatePlugin .errorBox {
+#recursiveAjaxDialog .noticeBox, #ml-modal_updatePlugin .noticeBox {
 	padding: 0;
 	background: transparent;
 	margin-top: 0
@@ -133,7 +131,7 @@
 .hideChild>.childToHide{
     display: none;
 }
-.hideChild:hover>.childToHide{
+.cell-product:hover .childToHide{
     display: block
 }
 .console{font-size: .75em;line-height: 1.25em;}
@@ -158,7 +156,8 @@
 #ml-js-pushMessages .errorBox th {
 	position: relative;
 	letter-spacing: 0.05px;
-	font-size: 13px;
+	font-size: 14px;
+	line-height: 21px;
 }
 #ml-js-pushMessages .close-message {
 	position: absolute;
@@ -183,9 +182,7 @@
 .ml-js-modalPushMessages .successBoxBlue,
 .ml-js-modalPushMessages .successBoxBlue th,
 .ml-js-modalPushMessages .noticeBox,
-.ml-js-modalPushMessages .noticeBox th,
-.ml-js-modalPushMessages .errorBox,
-.ml-js-modalPushMessages .errorBox th {
+.ml-js-modalPushMessages .noticeBox th {
 	color: #333334;
 	background: none;
 }

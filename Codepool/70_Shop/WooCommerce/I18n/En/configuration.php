@@ -19,3 +19,4 @@
 MLI18n::gi()->{'woocommerce_missing_taxclasses_error_message'} = 'Warning! You have not set up at least one tax rate in your webshop. Please add at least one under WooCommerce -> Settings -> Tax -> Standard rates.';
 MLI18n::gi()->{'FreeTextAttributesOptGroup'} = 'Additional fields';
 MLI18n::gi()->Keywords = 'Product Tags';
+MLI18n::gi()->{'formfields_uploadInvoiceOption_values__germanmarket'} = 'Invoices created in the German Market are uploaded to {#setting:currentMarketplaceName#}';

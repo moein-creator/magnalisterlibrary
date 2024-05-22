@@ -82,9 +82,10 @@ class ML_Otto_Helper_Model_Table_Otto_PrepareData extends ML_Form_Helper_Model_T
         }
         foreach ($aImages as $sImage) {
             try {
-                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 60, 60);
+                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 80, 80);
             } catch (Exception $oEx) {
-                $this->aErrors[] = 'otto_prepare_images_not_exist';
+                MLMessage::gi()->addDebug($oEx);
+                //$this->aErrors[] = 'otto_prepare_images_not_exist';
             }
         }
 
@@ -141,7 +142,7 @@ class ML_Otto_Helper_Model_Table_Otto_PrepareData extends ML_Form_Helper_Model_T
         $sDescription = $this->getFirstValue($aField, $this->oProduct->getDescription());
         $aField['value'] = sanitizeProductDescription(
             $sDescription,
-            '<p><ul><ol><li><span><br><b>)',
+            '<p><ul><ol><li><span><br><b><div><h1><h2><h3><h4><h5><h6><blockquote><i><font><s><u><o><sup><sub><ins><del><strong><strike><tt><code><big><small><br><span><em>)',
             '_keep_all_'
         );
 
@@ -183,9 +184,10 @@ class ML_Otto_Helper_Model_Table_Otto_PrepareData extends ML_Form_Helper_Model_T
 
     protected function MarketplaceAttributesField(&$aField) {
         $attributesMatchingService = MLHelper::gi('Model_Service_AttributesMatching');
-
+        $storedAttributes = $this->getField('ShopVariation', 'value');
+        /** @var ML_Modul_Helper_Model_Service_AttributesMatching $attributesMatchingService */
         $aCatAttributes = $attributesMatchingService->mergeConvertedMatchingToNameValue(
-            $this->getField('ShopVariation', 'value'),
+            $storedAttributes,
             $this->oProduct,
             $this->oMasterProduct//If a value is matched only for main variant, this matching will be used for not matched variant in the product as default
         );
@@ -193,16 +195,47 @@ class ML_Otto_Helper_Model_Table_Otto_PrepareData extends ML_Form_Helper_Model_T
         $aKeys = array_keys($aCatAttributes);
 
         foreach ($aKeys as $sKey){
-            $aCatAttributes[pack('H*',$sKey)] =  $aCatAttributes[$sKey];
+            $aCatAttributes[pack('H*',$sKey)] = $this->checkAndConvertAttributeByType($aCatAttributes[$sKey]);
             unset($aCatAttributes[$sKey]);
         }
 
         $aField['value'] = $aCatAttributes;
     }
 
+    /**
+     * Casts the variable to boolean if it has 'true' or 'false' as string
+     * TODO Otto returns data type but this is not imported in v3 maybe later we can
+     * TODO import data type and validate and cast attributes based on data given from otto
+     *
+     * @param $variable
+     * @param $marketplaceDataType
+     * @return mixed
+     */
+    private function checkAndConvertAttributeByType($variable, $marketplaceDataType = null) {
+        // check for boolean
+        if (    is_string($variable)
+            && (strtolower($variable) === 'false' || strtolower($variable) === 'true')
+        ) {
+            $variable = filter_var($variable, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        // check if variable is a string with a float value (dot for decimals)
+        if (is_string($variable) && preg_match('/^-?\d+\.\d*$/', $variable)) {
+            $variable = (float)$variable; // cast to float
+        }
+
+        // check if variable is a string with a float value (comma for decimals)
+        if (is_string($variable) && preg_match('/^-?\d+\,\d*$/', $variable)) {
+            $variable = (float)str_replace(',', '.', $variable);
+        }
+
+        //converts float values from string with comma to real floats
+        return $variable;
+    }
+
     protected function CategoryIndependentAttributesField(&$aField) {
         $attributesMatchingService = MLHelper::gi('Model_Service_AttributesMatching');
-
+        /** @var ML_Modul_Helper_Model_Service_AttributesMatching $attributesMatchingService */
         $aCatAttributes = $attributesMatchingService->mergeConvertedMatchingToNameValue(
             $this->getField('CategoryIndependentShopVariation', 'value'),
             $this->oProduct,
@@ -211,7 +244,7 @@ class ML_Otto_Helper_Model_Table_Otto_PrepareData extends ML_Form_Helper_Model_T
 
         $aKeys = array_keys($aCatAttributes);
         foreach ($aKeys as $sKey){
-            $aCatAttributes[pack('H*',$sKey)] =  $aCatAttributes[$sKey];
+            $aCatAttributes[pack('H*',$sKey)] = $this->checkAndConvertAttributeByType($aCatAttributes[$sKey]);
             unset($aCatAttributes[$sKey]);
         }
 
@@ -275,6 +308,8 @@ class ML_Otto_Helper_Model_Table_Otto_PrepareData extends ML_Form_Helper_Model_T
     }
 
     protected function stringToArray($sString, $iCount, $iMaxChars) {
+        // Helper for php8 compatibility - can't pass null to explode 
+        $sString = MLHelper::gi('php8compatibility')->checkNull($sString);
         $aArray = explode(',', $sString);
         foreach ($aArray as $key => $value) {
             $aArray[$key] = trim($value);

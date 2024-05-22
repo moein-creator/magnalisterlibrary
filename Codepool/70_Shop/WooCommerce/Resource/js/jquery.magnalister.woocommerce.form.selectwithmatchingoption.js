@@ -19,7 +19,7 @@
     jqml(document).ready(function () {
 
         jqml('.magnalisterForm').on('change', 'select.ml-woocommerce-tracking-number-matching', function () {
-            jqml(this).closest('form').submit();
+            jqml(this).closest('form').find("button[name='ml[action][saveaction]']").click();
         });
 
     });

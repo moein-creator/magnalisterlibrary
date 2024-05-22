@@ -74,7 +74,7 @@ abstract class ML_Productlist_Controller_Widget_ProductList_Selection extends ML
      * @return bool
      */
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     /**
@@ -97,7 +97,7 @@ abstract class ML_Productlist_Controller_Widget_ProductList_Selection extends ML
      * @return ML_Shop_Model_Price_Interface
      */
     public function getPriceObject(\ML_Shop_Model_Product_Abstract $oProduct) {
-        return MLModul::gi()->getPriceObject();
+        return MLModule::gi()->getPriceObject();
     }
 
     /**

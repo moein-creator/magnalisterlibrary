@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -42,6 +42,9 @@ class ML_Database_Model_Query_TableSchema{
                 'Extra'=>$aValue['Extra'],
                 'Comment'=>$aValue['Comment']
             );
+            if (isset($aValue['Collation'])) {
+                $this->aColumns[$sKey]['Collation'] = $aValue['Collation'];
+            }
         }
         return $this;
     }
@@ -79,8 +82,12 @@ class ML_Database_Model_Query_TableSchema{
                 'Null' => $aColumn['Null'],
                 'Default' => $aColumn['Default'],
                 'Extra' => $aColumn['Extra'],
-                'Comment' => $aColumn['Comment']
+                'Comment' => $aColumn['Comment'],
+                'Collation' => $aColumn['Collation']
             );
+            if (isset($this->aColumns['Collation'])) {
+                $aCurrentColumns[$aColumn['Field']]['Collation'] = $aColumn['Collation'];
+            }
         }
         // 1.1 drop column
         foreach(array_keys($aCurrentColumns) as $sCurrent){
@@ -117,7 +124,14 @@ class ML_Database_Model_Query_TableSchema{
                 !isset($aCurrentColumns[$sColumn])
                 || count($diffArray) > 0
             ) {
-                //MLMessage::gi()->addDebug(__LINE__.':'.microtime(true), array($aColumn, $aCurrentColumns[$sColumn], array_diff_assoc($aColumn, $aCurrentColumns[$sColumn])));
+                MLMessage::gi()->addDebug(
+                    ' Different of Columns between code and database ',
+                    array(
+                        'Column Name' => $sColumn,
+                        'Model Class' => $aColumn,
+                        'Database' => isset($aCurrentColumns[$sColumn]) ? $aCurrentColumns[$sColumn] : $aCurrentColumns,
+                        'Diff' => $diffArray)
+                );
                 if (!isset($aCurrentColumns[$sColumn])) {
                     $sSql = "   ADD COLUMN";
                 } else {
@@ -140,17 +154,35 @@ class ML_Database_Model_Query_TableSchema{
         // 2.1 drop key
         foreach(array_keys($aCurrentKeys) as $sCurrent){
             if(!isset($this->aKeys[$sCurrent])){
+                MLMessage::gi()->addDebug(
+                    ' Different of keys between code and database ',
+                    array(
+                        'Key Name' => $sCurrent,
+                        'Model Class' => $this->aKeys,
+                        'Database' => $aCurrentKeys,
+                    )
+                );
                 $aSql[] = "    DROP KEY `".$sCurrent."`,\n";
             }
         }
         
         // 1.2 drop changed key and add new or changed Key
         foreach($this->aKeys as $sKey=>$aKey){
+            $aKey = $this->normalizeKeys($aKey);
+            $aCurrentKey = $this->normalizeKeys($aCurrentKeys[$sKey]);
             if(
                 !isset($aCurrentKeys[$sKey])
-                ||count(array_diff_assoc($aKey, $aCurrentKeys[$sKey]))>0
+                || count(array_diff_assoc($aKey, $aCurrentKey)) > 0
             ) {
                 if (isset($aCurrentKeys[$sKey])) {
+                    MLMessage::gi()->addDebug(
+                        ' Different of primary keys between code and database ',
+                        array(
+                            'Key Name' => $sKey,
+                            'Model Class' => $this->aKeys,
+                            'Database' => $aCurrentKeys,
+                        )
+                    );
                     if ($sKey == 'PRIMARY') {
                         $aSql[] = "    DROP PRIMARY KEY,\n";
                     } else {
@@ -186,18 +218,19 @@ class ML_Database_Model_Query_TableSchema{
             $aConnectionInfo = MLShop::gi()->getDbConnection();
             $sDBName = $aConnectionInfo['database'];
             $aCollationTableInfo = MLShop::gi()->getDBCollationTableInfo();
-
-            $collation = MLDatabase::getDbInstance()->fetchRow('
-                SELECT `CHARACTER_SET_NAME`, `COLLATION_NAME`
-                  FROM `information_schema`.`COLUMNS`
-                 WHERE TABLE_SCHEMA=\''.$sDBName.'\' 
-                       AND TABLE_NAME=\''.$aCollationTableInfo['table'].'\'
-                       AND COLUMN_NAME=\''.$aCollationTableInfo['field'].'\'
-            ');
-            if (!empty($collation) && is_array($collation)) {
-                $sSql .= "\n".'CHARACTER SET '.$collation['CHARACTER_SET_NAME'].' COLLATE '.$collation['COLLATION_NAME'].' ';
+            if (!empty($aCollationTableInfo)) {// for shopify and shopware cloud we don't need that
+                $collation = MLDatabase::getDbInstance()->fetchRow('
+                            SELECT `CHARACTER_SET_NAME`, `COLLATION_NAME`
+                              FROM `information_schema`.`COLUMNS`
+                             WHERE TABLE_SCHEMA=\'' . $sDBName . '\' 
+                                   AND TABLE_NAME=\'' . $aCollationTableInfo['table'] . '\'
+                                   AND COLUMN_NAME=\'' . $aCollationTableInfo['field'] . '\'
+                        ');
+                if (!empty($collation) && is_array($collation)) {
+                    $sSql .= "\n" . 'CHARACTER SET ' . $collation['CHARACTER_SET_NAME'] . ' COLLATE ' . $collation['COLLATION_NAME'] . ' ';
+                }
             }
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             MLMessage::gi()->addDebug($ex);
         }
         $sSql .= ";";
@@ -217,7 +250,8 @@ class ML_Database_Model_Query_TableSchema{
             ($aColumn['Null'] == 'NO' ? "NOT" : "")." Null".
             $this->getDefaultOfColumn($aColumn).
             ($aColumn['Extra'] != '' ? " ".$aColumn['Extra'] : "").
-            ' COMMENT '.($aColumn['Comment'] != '' ? " '".$aColumn['Comment']."' " : "''");
+            ' COMMENT ' . ($aColumn['Comment'] != '' ? " '" . $aColumn['Comment'] . "' " : "''") .
+            (empty($aColumn['Collation']) ? "" : " COLLATE " . $aColumn['Collation']);
     }
 
     protected function getDefaultOfColumn($aColumn) {
@@ -239,5 +273,19 @@ class ML_Database_Model_Query_TableSchema{
         }
         $sSql .= $aKey['Column_name'].")";
         return $sSql;
+    }
+
+    /**
+     * @param $aKey array
+     * @return array
+     */
+    protected function normalizeKeys($aKey) {
+        $aKey['Column_name'] = strtolower($aKey['Column_name']);
+        $aColumns = explode(',', $aKey['Column_name']);
+        if (isset($aKey['Column_name']) && strpos($aKey['Column_name'], ',') !== false) {
+            $aColumns = array_map('trim', $aColumns);
+            $aKey['Column_name'] = implode(', ', $aColumns);
+        }
+        return $aKey;
     }
 }

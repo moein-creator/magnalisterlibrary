@@ -39,7 +39,7 @@ class ML_Amazon_Controller_Amazon_Listings_Inventory extends ML_Listings_Control
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public static function getTabDefault() {
@@ -107,9 +107,11 @@ class ML_Amazon_Controller_Amazon_Listings_Inventory extends ML_Listings_Control
         $item['ShopQuantity'] = '&mdash;';
         $item['ShopProductTitle'] = '&mdash;';
         $item['editUrl'] = '';
+        $item['exits'] = false;
 
         $oProduct = MLProduct::factory()->getByMarketplaceSKU($item['SKU']);
         if ($oProduct->exists()) {
+            $item['exits'] = true;
             $sTitle = $oProduct->getName();
             $item['ShopProductTitleShort'] = (strlen($sTitle) > $this->aSetting['maxTitleChars'] + 2) ?
                 (fixHTMLUTF8Entities(substr($sTitle, 0, $this->aSetting['maxTitleChars'])).'&hellip;') :
@@ -226,9 +228,10 @@ class ML_Amazon_Controller_Amazon_Listings_Inventory extends ML_Listings_Control
     }
 
     protected function getSKU($item) {
+        $addStyle = (empty($item['ItemTitle']) || $item['ItemTitle'] === '&mdash;' && $item['SKU'] !== '&mdash;') ? 'color:#e31e1c;' : '';
         $html = '<td>'.$item['SKU'].'</td>';
         if (!empty($item['editUrl'])) {
-            $html = '<td><div class="product-link" ><a class="ml-js-noBlockUi" href="'.$item['editUrl'].'" target="_blank" title="'.MLI18n::gi()->ML_LABEL_EDIT.'">'.$item['SKU'].'</a></div></td>';
+            $html = '<td><div class="product-link" ><a style="'. $addStyle .'" class="ml-js-noBlockUi" href="'.$item['editUrl'].'" target="_blank" title="'.MLI18n::gi()->ML_LABEL_EDIT.'">'.$item['SKU'].'</a></div></td>';
         }
 
         return $html;
@@ -239,19 +242,63 @@ class ML_Amazon_Controller_Amazon_Listings_Inventory extends ML_Listings_Control
             return '<td>&mdash;</td>';
         }
 
-        $aItem = MLModul::gi()->amazonLookUp($item['ASIN']);
-        if (empty($aItem) || !isset($aItem[0]['URL']) || empty($aItem[0]['URL']) || strpos($aItem[0]['URL'], $aItem[0]['ASIN']) === false) {
-            $sUrl = "http://www.amazon.de/gp/offer-listing/".$item['ASIN'];
+        $countryCodeToDomain = array(
+            'JP' => 'co.jp',
+            'US' => 'com',
+            'TR' => 'com.tr',
+            'AU' => 'com.au',
+            'ES' => 'es',
+            'UK' => 'co.uk',
+            'FR' => 'fr',
+            'DE' => 'de',
+            'IT' => 'it',
+            'CA' => 'ca',
+            'NL' => 'nl',
+            'SE' => 'se',
+            'PL' => 'pl',
+            'SG' => 'sg',
+        );
+        $country = MLModule::gi()->getConfig('site');
+        if(isset($countryCodeToDomain[$country])) {
+            $sUrl = "https://www.amazon.".$countryCodeToDomain[$country]."/dp/".$item['ASIN'];
         } else {
-            $sUrl = $aItem[0]['URL'];
+            $sUrl = "https://www.amazon.de/dp/".$item['ASIN'];
         }
-
         return
             '<td>
                 <a href="'.$sUrl.'" '.'title="'.$this->__('ML_AMAZON_LABEL_PRODUCT_IN_AMAZON').'"
                  class="ml-js-noBlockUi" '.
             'target="_blank">'.$item['ASIN'].'</a>
             </td>';
+    }
+
+    /**
+     * If for whatever reason we need to retrieve the ASIN Link from the API again, this can be used to batch process
+     *
+     * @param $asins
+     * @return array
+     */
+    protected function getASINLinks($asins) {
+        $asinLinks = array();
+        $aItems = MLModule::gi()->amazonLookUp($asins);
+        foreach ($aItems as $item) {
+
+            if (!isset($item['ASIN'])) {
+                continue;
+            }
+            if (empty($item) || !isset($item['URL']) || empty($item['URL']) || strpos($item['URL'], $item['ASIN']) === false) {
+                $sUrl = "http://www.amazon.de/gp/offer-listing/".$item['ASIN'];
+            } else {
+
+                $sUrl = $item['URL'];
+            }
+            $asinLinks[$item['ASIN']] = '<td>
+                <a href="'.$sUrl.'" '.'title="'.$this->__('ML_AMAZON_LABEL_PRODUCT_IN_AMAZON').'"
+                 class="ml-js-noBlockUi" '.
+                'target="_blank">'.$item['ASIN'].'</a>
+            </td>';
+        }
+        return $asinLinks;
     }
 
     protected function getQuantities($item) {
@@ -393,7 +440,7 @@ class ML_Amazon_Controller_Amazon_Listings_Inventory extends ML_Listings_Control
                 MagnaConnector::gi()->submitRequest(array(
                     'ACTION' => 'ImportInventory'
                 ));
-                MLModul::gi()->setConfig('inventory.import', time());
+                MLModule::gi()->setConfig('inventory.import', time());
             } catch (MagnaException $e) {
             }
         } else if (isset($this->aPostGet['listing']['refresh'])) {
@@ -404,7 +451,7 @@ class ML_Amazon_Controller_Amazon_Listings_Inventory extends ML_Listings_Control
                 }
                 $oService->execute();
             } catch (MLAbstract_Exception $oEx) { // not implemented
-                $this->out("\n{#".base64_encode(json_encode(array_merge(array('Marketplace' => MLModul::gi()->getMarketPlaceName(), 'MPID' => MLModul::gi()->getMarketPlaceId(),), array('Complete' => 'true',))))."#}\n\n");
+                $this->out("\n{#" . base64_encode(json_encode(array_merge(array('Marketplace' => MLModule::gi()->getMarketPlaceName(), 'MPID' => MLModule::gi()->getMarketPlaceId(),), array('Complete' => 'true',)))) . "#}\n\n");
             } catch (Exception $oEx) {
                 $this->out($oEx->getMessage());
             }
@@ -452,15 +499,15 @@ class ML_Amazon_Controller_Amazon_Listings_Inventory extends ML_Listings_Control
             $result = MagnaConnector::gi()->submitRequest($request);
             if ($result['LATESTCHANGE']) {
                 $latestReport = strtotime($result['LATESTCHANGE'].' +0000');
-                MLModul::gi()->setConfig('inventory.import', $latestReport);
+                MLModule::gi()->setConfig('inventory.import', $latestReport);
             }
             if ($result['LATESTREPORT']) {
                 $latestReport = strtotime($result['LATESTREPORT'].' +0000');
-                if (MLModul::gi()->getConfig('inventory.import') != $latestReport) {
+                if (MLModule::gi()->getConfig('inventory.import') != $latestReport) {
                     $this->getPendingItems();
                 }
 
-                MLModul::gi()->setConfig('inventory.import', $latestReport);
+                MLModule::gi()->setConfig('inventory.import', $latestReport);
             }
             $this->iNumberofitems = (int)$result['NUMBEROFLISTINGS'];
             return $result;

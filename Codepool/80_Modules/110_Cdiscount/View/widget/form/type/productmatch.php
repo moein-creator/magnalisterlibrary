@@ -1,1 +1,2 @@
-<?php class_exists('ML', false) or die(); ?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>

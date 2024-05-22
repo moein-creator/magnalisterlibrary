@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -25,81 +25,81 @@ class ML_Otto_Model_Table_Otto_Prepare extends ML_Database_Model_Table_Prepare_A
     protected $aFields = array(
         'products_id' => array(
             'isKey' => true,
-            'Type' => 'int(11)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_NO, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'PreparedTS' => array(
             'isInsertCurrentTime' => true,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => '0000-00-00 00:00:00', 'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'StartTime' => array(
-            'Type' => 'datetime', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'mpID' => array(
             'isKey' => true,
-            'Type' => 'int(11) unsigned', 'Null' => 'NO', 'Default' => '0', 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11) unsigned', 'Null' => self::IS_NULLABLE_NO, 'Default' => '0', 'Extra' => '', 'Comment' => ''
         ),
         'Title' => array(
-            'Type' => 'varchar(256)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(256)', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'Manufacturer' => array(
-            'Type' => 'varchar(55)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(55)', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'ManufacturerPartNumber' => array(
-            'Type' => 'varchar(55)', 'Null' => 'YES', 'Default' => '', 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(55)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShortDescription' => array(
-            'Type' => 'longtext', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'Brand' => array(
-            'Type' => 'varchar(256)', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(256)', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'Feature' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'Description' => array(
-            'Type' => 'longtext', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'Images' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'PrimaryCategory' => array(
-            'Type' => 'varchar(50)', 'Null' => 'NO', 'Default' => '', 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(50)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'PrimaryCategoryName' => array(
-            'Type' => 'varchar(128)', 'Null' => 'NO', 'Default' => '', 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(128)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'Features' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'DeliveryType' => array(
-            'Type' => 'enum(\'PARCEL\',\'FORWARDER_PREFERREDLOCATION\', \'FORWARDER_CURBSIDE\')', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => "enum('PARCEL','FORWARDER_PREFERREDLOCATION','FORWARDER_CURBSIDE')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'PARCEL', 'Extra' => '', 'Comment' => ''
         ),
         'DeliveryTime' => array(
-            'Type' => 'tinyint(4)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'tinyint(4)', 'Null' => self::IS_NULLABLE_NO, 'Default' => 0, 'Extra' => '', 'Comment' => ''
         ),
         'noidentifierflag' => array(
-            'Type' => 'varchar(10)', 'Null' => 'NO', 'Default' => '0', 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(10)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '0', 'Extra' => '', 'Comment' => ''
         ),
         'Verified' => array(
-            'Type' => 'enum(\'OK\',\'ERROR\',\'OPEN\')', 'Null' => 'NO', 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
+            'Type' => "enum('OK','ERROR','OPEN')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
         ),
         'Transferred' => array(
-            'Type' => 'tinyint(1)', 'Null' => 'NO', 'Default' => '0', 'Extra' => '', 'Comment' => ''
+            'Type' => 'tinyint(1)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '0', 'Extra' => '', 'Comment' => ''
         ),
         'ShopVariation' => array(
-            'Type' => 'longtext', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'CategoryIndependentShopVariation' => array(
-            'Type' => 'longtext', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'VariationThemeBlacklist' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'deletedBy' => array(
-            'Type' => 'enum(\'\',\'empty\',\'Sync\',\'Button\',\'expired\',\'notML\')', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => "enum('','empty','Sync','Button','expired','notML')", 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'topPrimaryCategory' => array(
-            'Type' => 'varchar(64)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(64)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
     );
 
@@ -128,7 +128,7 @@ class ML_Otto_Model_Table_Otto_Prepare extends ML_Database_Model_Table_Prepare_A
             $mValue = (float)str_replace(',', '.', $mValue);
         }
         if (
-            $mValue !== NULL
+            $mValue !== null
             && in_array($sName, array('primarycategory'))
         ) {
             $this->set('top'.$sName, $mValue);

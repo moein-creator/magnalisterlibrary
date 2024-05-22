@@ -20,3 +20,9 @@ MLI18n::gi()->{'hood_config_orderimport__field__orderimport.paymentstatus__label
 MLI18n::gi()->{'hood_config_orderimport__field__orderimport.paymentstatus__help'} = 'Please select which shop system payment status should be set in the order details during the magnalister order import.';
 MLI18n::gi()->{'hood_config_orderimport__field__orderimport.paymentstatus__hint'} = '';
 MLI18n::gi()->{'hood_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+
+MLI18n::gi()->{'hood_config_producttemplate__field__template.name__help'} = '<dl>
+    <dt>Name of the product on Hood.de</dt>
+    <dd>Decide how to name the product on Hood.de.
+        The placeholder <b>#TITLE#</b> will be replaced by the shop\'s product name.</dd></dl>';
+MLI18n::gi()->{'hood_config_producttemplate__field__template.name__hint'} = 'Placeholder: #TITLE# - Product name';

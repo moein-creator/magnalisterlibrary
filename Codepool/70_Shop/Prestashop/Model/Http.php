@@ -183,7 +183,7 @@ class ML_Prestashop_Model_Http extends ML_Shop_Model_Http_Abstract {
      * @return string
      */
     public function getFrontendDoUrl($aParams = array()) {
-        $sConfig = $this->getConfigFrontCornURL($aParams);
+        $sConfig = $this->getConfigFrontCronURL($aParams);
         if ($sConfig !== '') {
             return $sConfig;
         }
@@ -208,18 +208,22 @@ class ML_Prestashop_Model_Http extends ML_Shop_Model_Http_Abstract {
     public function getResourceUrl($sFile = '', $blAbsolute = true) {
         $sExt = pathinfo($sFile, PATHINFO_EXTENSION);
         $aExt = explode('?', $sExt);//separate extention of file from url query that most of the time is current version of magnalister
-        try{
-            $aResource = empty($sFile) ? array('path' => '') : MLFilesystem::gi()->findResource('resource_' . $sFile);  
-        }  catch (Exception $oExc){//if file was not found , try to find resource by its type
-            try{
-                $aResource = MLFilesystem::gi()->findResource('resource_'.$aExt[0].'_' . $sFile); 
-            }  catch (Exception $oExc){
+        try {
+            $aResource = empty($sFile) ? array('path' => '') : MLFilesystem::gi()->findResource('resource_'.$sFile);
+        } catch (Exception $oExc) {//if file was not found , try to find resource by its type
+            try {
+                $aResource = MLFilesystem::gi()->findResource('resource_'.$aExt[0].'_'.$sFile);
+            } catch (Exception $oExc) {
                 return '';//no file is found
             }
         }
-       
-        $sUrl = ($blAbsolute ?  substr($this->getBackendBaseUrl(), 0, -1) :''). '/modules/magnalister/lib/' . substr($aResource['path'], strlen(MLFilesystem::getLibPath()));
-        if(count($aExt)>1){//add url query part if exist 
+
+        $sUrl = ($blAbsolute ? substr($this->getBackendBaseUrl(), 0, -1) :
+                (__PS_BASE_URI__ !== '/' ? '/'.trim(__PS_BASE_URI__, '/') : '')
+            ).//Check if the domain url is not configured on prestashop,
+            // and it is configured with local folder configured for example: http://localhost:8787/prestashop
+            '/modules/magnalister/lib/'.substr($aResource['path'], strlen(MLFilesystem::getLibPath()));
+        if (count($aExt) > 1) {//add url query part if exist
             $sUrl .= '?'.$aExt[1];
         }
         $sUrl = str_replace('\\', '/', $sUrl);//replace backslashes in windows 

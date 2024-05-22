@@ -12,7 +12,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -29,7 +29,17 @@
  */
 class ML_Base_Model_Image {
 
+    protected $processingTimePerImage = array();
     protected static $cache = array();
+    protected static $imageSizeCache = array();
+    protected static $aImageType = array();
+
+    protected function getImageType($sSrc) {
+        if (!isset(self::$aImageType[$sSrc])) {
+            $this->checkImageFormat($sSrc);
+        }
+        return self::$aImageType[$sSrc];
+    }
 
     public function __construct() {
 
@@ -45,6 +55,7 @@ class ML_Base_Model_Image {
      * @throws Exception
      */
     public function resizeImage($sSrc, $sType, $iMaxWidth, $iMaxHeight, $blUrlOnly = false) {
+        $startTime = microtime(true);
         if (empty($sSrc)) {
             throw new Exception('Image path is empty', 1652878573);
         }
@@ -105,13 +116,14 @@ class ML_Base_Model_Image {
                 }
             }
 
-        } catch (\Throwable $ex) {
+        } catch (Throwable $ex) {
             $this->handleExceptions($ex);
             $mResult = false;
         }
         if ($mResult === false) {
             $mResult = $this->resizeImageFallback($sSrc, $sType, $iMaxWidth, $iMaxHeight, $blUrlOnly, $imgHash, $originalSrc);
         }
+        $this->processingTimePerImage[$sSrc] = microtime2human(microtime(true) - $startTime);
         return $mResult;
     }
 
@@ -149,7 +161,7 @@ class ML_Base_Model_Image {
             $dst['h'] = ($thiso > $thisp) ? round($src['h'] / $thiso) : $iMaxHeight; // height
             if ($src['w'] < $dst['w'] || $src['h'] < $dst['h']) {
                 //we don't increase size of image, that will damage resolution
-                $iImageType = function_exists('exif_imagetype') && @exif_imagetype($sSrc) !== false ? @exif_imagetype($sSrc) : $src[2]; //that could be possible, that exif_imagetype is not existed in PHP or was not configured
+                $iImageType = $this->getImageType($sSrc);
                 if ($iImageType == IMAGETYPE_PNG) {
                     $dst['w'] = $src['w'];
                     $dst['h'] = $src['h'];
@@ -159,7 +171,9 @@ class ML_Base_Model_Image {
             }
         }
         list($warning, $sImageContent) = $this->getImageContent($sSrc);
-        $src['image'] = @imagecreatefromstring($sImageContent);
+        ob_start();
+        $src['image'] = imagecreatefromstring($sImageContent);
+        MLMessage::gi()->addDebug(__LINE__ . ':' . microtime(true), array(ob_get_clean()));
         if (
             !is_resource($src['image'])
             && (!class_exists('GdImage') || !($src['image'] instanceof GdImage))//PHP 8
@@ -189,6 +203,7 @@ class ML_Base_Model_Image {
 
         unset($src);
         unset($dst);
+
         return $success;
     }
 
@@ -199,6 +214,7 @@ class ML_Base_Model_Image {
     public function getDestinationPath($sSrc, $sType, $iMaxWidth, $iMaxHeight) {
         if (MLHelper::getRemote()->isUrl($sSrc)) {
             $sSrc = parse_url($sSrc, PHP_URL_PATH);
+            $sSrc = rawurldecode($sSrc);
         }
         $sFileName = str_replace(array(' ', "<", ">", ":", '"', "/", "\\", "|", "?", "*"), '', pathinfo($sSrc, PATHINFO_BASENAME));
         $sDst = $sType.'/'.$iMaxWidth.($iMaxWidth === $iMaxHeight ? '' : 'x'.$iMaxHeight).'px/'.$sFileName;
@@ -245,22 +261,33 @@ class ML_Base_Model_Image {
             return false;
         }
 
+        ob_start();
         // Process image
         $image = imagecreatefromstring($data);
+        MLMessage::gi()->addDebug(__LINE__ . ':' . microtime(true), array(ob_get_clean()));
         if (empty($image)) {//a case that happened for a customer, even if the http_status is 200
             MLMessage::gi()->addDebug('Problem by getting image url:'.$url);
             //echo 'HTTP Status[' . $http_status . '] Errno [' . $curl_errno . ']';
             return false;
         }
+        ob_start();
         $dims = [imagesx($image), imagesy($image)];
         imagedestroy($image);
-
+        MLMessage::gi()->addDebug(__LINE__ . ':' . microtime(true), array(ob_get_clean()));
         return $dims;
     }
 
     public function getimagesize($sSrc) {
         $blReturn = false;
         $sSrc = trim($sSrc);
+
+        // check cache
+        $imgSourceHash = md5($sSrc);
+        if (array_key_exists($imgSourceHash, self::$imageSizeCache)) {
+            return self::$imageSizeCache[$imgSourceHash];
+        }
+
+        // get image size
         if (
             stripos($sSrc, 'http') !== 0 || //if the image source is file-system path
             ini_get('allow_url_fopen')//if accessing URL object like files is enabled.
@@ -270,6 +297,11 @@ class ML_Base_Model_Image {
         if ($blReturn === false) {
             $blReturn = $this->getimagesize_curl($sSrc);
         }
+
+        //set cache
+        self::$imageSizeCache[$imgSourceHash] = $blReturn;
+
+
         return $blReturn;
     }
 
@@ -278,11 +310,10 @@ class ML_Base_Model_Image {
      * @return mixed|string
      */
     protected function normalizeURL($sSrc) {
-        if (stripos(trim($sSrc), 'http') === 0 && !($this->getimagesize($sSrc))) {
-            //            $sSrc = dirname($sSrc).'/'.rawurlencode(basename($sSrc));
+        if (stripos(trim($sSrc), 'http') === 0) {
             $base = basename($sSrc);
             $base = substr($base, 0, strrpos($base, '.'));
-            $sSrc = str_replace($base, rawurlencode($base), $sSrc);
+            $sSrc = str_replace($base, rawurlencode(rawurldecode($base)), $sSrc);
         }
 
         //Note: HTTPS is only supported when the openssl extension is enabled otherwise magnalister replace https with http to prevent error in @getimagesize function.
@@ -318,14 +349,15 @@ class ML_Base_Model_Image {
             ) {
                 throw new Exception('"'.$iImageType.'" format not supported.', 1652878471);
             }
+            self::$aImageType[$sSrc] = $iImageType;
         } else {
             // check if format is supported
             $supportedFormats = array(
-                'png',
-                'jpg',
-                'jpeg',
-                'gif',
-                'webp'
+                'png' => IMAGETYPE_PNG,
+                'jpg' => IMAGETYPE_JPEG,
+                'jpeg' => IMAGETYPE_JPEG,
+                'gif' => IMAGETYPE_GIF,
+                'webp' => IMAGETYPE_WEBP,
             );
 
             if (MLHelper::getRemote()->isUrl($sSrc)) {
@@ -346,11 +378,12 @@ class ML_Base_Model_Image {
                 }
             }
             if (
-                !isset($extension) || !in_array($pathInfo['extension'], $supportedFormats) ||
+                !isset($extension) || !isset($supportedFormats[$pathInfo['extension']]) ||
                 ($pathInfo['extension'] === 'webp' && $this->isWebpAnimated($sSrc))
             ) {
                 throw new Exception((isset($pathInfo['extension']) ? $pathInfo['extension'].' format not supported.' : ''), 1652878471);
             }
+            self::$aImageType[$sSrc] = $supportedFormats[$pathInfo['extension']];
         }
     }
 
@@ -413,5 +446,8 @@ class ML_Base_Model_Image {
         return $success;
     }
 
+    public function getProcessingTimePerImage() {
+        return $this->processingTimePerImage;
+    }
 
 }

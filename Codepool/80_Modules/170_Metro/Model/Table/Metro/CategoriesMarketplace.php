@@ -38,7 +38,7 @@ class ML_Metro_Model_Table_Metro_CategoriesMarketplace extends ML_Modul_Model_Ta
         ),
         'Expires' => array(
             'isExpirable' => true,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
     );
 

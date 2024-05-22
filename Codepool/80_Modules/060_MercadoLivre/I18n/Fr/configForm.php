@@ -218,7 +218,7 @@ MLI18n::gi()->{'mercadolivre_config_sync__field__stocksync.frommarketplace__labe
 MLI18n::gi()->{'mercadolivre_config_sync__field__stocksync.frommarketplace__help'} = 'Si cette fonction est activée, le nombre de commandes effectués et payés sur MercadoLivre, sera soustrait de votre stock boutique.<br>
 <br>
 <b>Important :</b> Cette fonction n’est opérante que lors de l’importation des commandes.';
-MLI18n::gi()->{'mercadolivre_config_sync__field__inventorysync.price__label'} = 'Prix de l\'article';
+MLI18n::gi()->{'mercadolivre_config_sync__field__inventorysync.price__label'} = 'Prix de l&apos;article';
 MLI18n::gi()->{'mercadolivre_config_sync__field__inventorysync.price__help'} = '                <p>
                     La fonction "synchronisation automatique" compare toutes les 4 heures (à partir de 0:00 dans la nuit) l\'état actuel des prix sur MercadoLivre et les prix de votre boutique.<br>
                     Ainsi les valeurs venant de la base de données sont vérifiées et appliquées même si des changements, par exemple, dans la gestion des marchandises, sont seulement réalisés dans la base de données.<br><br> 

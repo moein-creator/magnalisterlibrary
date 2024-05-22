@@ -1,10 +1,11 @@
 
-                        <div style="display: flex; justify-content: space-between;">
+                        <div style="display: flex; justify-content: space-between; width: 100%">
                             <div style="width: 100%">
                                 <?php
                                 $aSelect = array(
                                     'name' => $aField['name'].'[0][Marketplace][Key]',
                                     'type' => 'otto_select2',
+                                    'isbrand' => $aField['isbrand'],
                                     'i18n' => array(),
                                     'values' => $aField['valuesdst']['values'],
                                     'value' => 'noselection',
@@ -52,7 +53,7 @@
                             </div>
 
                             <!-- RefreshBrands -->
-                            <div style="background: #fff; padding: 2px; border: 1px solid #aaa; margin-left: 3px;">
+                            <div style="background: #fff; padding: 2px; padding-top: 3px; border: 1px solid #dadada; margin-left: 12px; margin-bottom: 5px; height: 36px;">
                                 <a id="refreshBrands" href="javascript:void(0);">
                                     <span class="ui-icon ui-icon-arrowrefresh-1-n ui-icon ui-icon-arrowrefresh-1-n refresh-btn">reload</span>
                                 </a>

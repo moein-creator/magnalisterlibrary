@@ -20,17 +20,19 @@
 /* @var $sProcess  string */
 /* @var $sError  string */
 /* @var $sSuccess  string */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 ?>
 <div style="display:none;" id="js-ml-modal-uploadConfirmPurge" title="<?php echo MLI18n::gi()->get('ML_HINT_HEADLINE_CONFIRM_PURGE'); ?>">
     <?php echo MLI18n::gi()->get('ML_TEXT_CONFIRM_PURGE'); ?>
 </div>
 <?php
 $mConfig = MLModul::gi()->getConfig('checkin.showlimitationwarning');
-if($mConfig === '1' || $mConfig === null){?>
-<div id="js-ml-modal-uploadWarning"  style="display:none;" title="<?php echo MLI18n::gi()->get('ML_LABEL_INFORMATION') ?>">
-    <p><?php echo MLI18n::gi()->get('ricardo_productlist_upload_shippingfee_notice_content') ?></p>
-</div>
+if ($mConfig === '1' || $mConfig === null) {
+    ?>
+    <div id="js-ml-modal-uploadWarning" style="display:none;" title="<?php echo MLI18n::gi()->get('ML_LABEL_INFORMATION') ?>">
+        <p><?php echo MLI18n::gi()->get('ricardo_productlist_upload_shippingfee_notice_content') ?></p>
+    </div>
 <?php }?>
 <script type="text/javascript">/*<![CDATA[*/
     (function ($) {

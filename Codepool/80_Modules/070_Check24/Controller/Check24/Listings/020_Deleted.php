@@ -7,7 +7,7 @@ class ML_Check24_Controller_Check24_Listings_Deleted extends ML_Listings_Control
         return MLI18n::gi()->get('ML_GENERIC_DELETED');
     }
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
     
 }

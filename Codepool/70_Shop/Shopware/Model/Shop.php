@@ -11,12 +11,19 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 class ML_Shopware_Model_Shop extends ML_Shop_Model_Shop_Abstract {
+    /**
+     * Already fetched shops for language IDs.
+     *
+     * @var array<int,Shopware\Models\Shop\Shop>
+     */
+    protected $aLanguageShops = [];
+
     protected $sSessionID = null;
     /** @var Shopware\Models\Shop\Shop */
     protected $oDefaultShop = null;
@@ -202,12 +209,96 @@ class ML_Shopware_Model_Shop extends ML_Shop_Model_Shop_Abstract {
     }
 
 
-    public function getPluginVersion(){
-        if(defined('MAGNALISTER_PLUGIN_VERSION')){
+    public function getPluginVersion() {
+        if (defined('MAGNALISTER_PLUGIN_VERSION')) {
             return MAGNALISTER_PLUGIN_VERSION;
-        }else{
+        } else {
             return parent::getPluginVersion();
         }
     }
 
+    /**
+     * @param $sCustomerGroupConfigurationKey
+     * @param $sControllerPostfix
+     * @return bool
+     */
+    public function checkCustomerGroup($sCustomerGroupConfigurationKey, $sControllerPostfix) {
+        $sCustomerGroupId = MLModule::gi()->getConfig($sCustomerGroupConfigurationKey);
+        try {
+            $oCustomerGroup = Shopware()->Models()->getRepository('\Shopware\Models\Customer\Group')->find($sCustomerGroupId);
+        } catch (\Exception $ex) {
+            MLMessage::gi()->addDebug($ex->getMessage() . ':' . $ex->getFile() . ':' . $ex->getLine(), array($sCustomerGroupId, $ex->getTraceAsString()));
+            MLMessage::gi()->addDebug($ex);
+            $oCustomerGroup = null;
+        }
+        return is_object($oCustomerGroup);
+    }
+
+    /**
+     * Sets the shop according to the language setting, otherwise the default one.
+     *
+     * Only fetches a language shop once, they're cached in {@see self::$aLanguageShops}.
+     *
+     * Only sets a shop when the language id changed.
+     *
+     * @return void
+     */
+    public function setShop() {
+        $aConfig = MLModule::gi()->getConfig();
+
+        try {
+            if (!array_key_exists('lang', $aConfig)) {
+                throw new Exception('no language, use default shop');
+            }
+
+            $iLangId = $aConfig['lang'];
+
+            if (version_compare(MLSHOPWAREVERSION, '5.7', '>=')) {
+                if (Shopware()->Container()->has('shop') && $iLangId == Shopware()->Container()->get('shop')->getId()) {
+                    return;
+                }
+            } else {
+                if (Shopware()->Bootstrap()->hasResource('Shop') &&
+                    $iLangId == Shopware()->Bootstrap()->getResource('Shop')->getId()
+                ) {
+                    return;
+                }
+            }
+
+            if (array_key_exists($iLangId, $this->aLanguageShops)) {
+                $oShop = $this->aLanguageShops[$iLangId];
+            } else {
+                $oShop = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop')->find($iLangId);
+                $this->aLanguageShops[$iLangId] = $oShop;
+            }
+            // Shopware 5.7 compatibility
+            if (version_compare(MLSHOPWAREVERSION, '5.7', '>=')) {
+                Shopware()->Container()->set('shop', $oShop);
+            } else {
+                Shopware()->Bootstrap()->registerResource('Shop', $oShop);
+            }
+        } catch (Exception $e) {
+            // default shop if no language is set
+            if (version_compare(MLSHOPWAREVERSION, '5.7', '>=')) {
+                if (Shopware()->Container()->has('shop')) {
+                    return;
+                }
+            } else {
+                if (Shopware()->Bootstrap()->hasResource('Shop')) {
+                    return;
+                }
+            }
+
+            $oShop = MLShop::gi()->getDefaultShop();
+            if (version_compare(MLSHOPWAREVERSION, '5.7', '>=')) {
+                Shopware()->Container()->set('shop', $oShop);
+            } else {
+                Shopware()->Bootstrap()->registerResource('Shop', $oShop);
+            }
+        }
+    }
+
+    public function getShopVersion() {
+        return MLSHOPWAREVERSION;
+    }
 }

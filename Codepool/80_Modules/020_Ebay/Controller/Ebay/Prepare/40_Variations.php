@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,7 +12,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -96,7 +96,8 @@ class ML_Ebay_Controller_Ebay_Prepare_Variations extends ML_Form_Controller_Widg
 
     protected function variationGroupsField(&$aField)
     {
-        $sMarketplaceName = MLModul::gi()->getMarketPlaceName();
+        $sMarketplaceName = MLModule::gi()->getMarketPlaceName();
+        $aField['subfields']['variationgroups.value']['select2'] = true;
         $aField['subfields']['variationgroups.value']['values'] = array('' => '..') +
             ML::gi()->instance('controller_' . $sMarketplaceName . '_config_prepare')->getField('primarycategory', 'values');
 
@@ -136,14 +137,14 @@ class ML_Ebay_Controller_Ebay_Prepare_Variations extends ML_Form_Controller_Widg
                             }
                             if ($sConfigCode !== null) {
                                 $aValues = array();
-                                foreach ($this->getShopAttributeValues(MLModul::gi()->getConfig($sConfigCode)) as $sId => $sName) {
+                                foreach ($this->getShopAttributeValues(MLModule::gi()->getConfig($sConfigCode)) as $sId => $sName) {
                                     $aValues[] = array(
                                         'Shop' => array('Key' => $sId, 'Value' => $sName), 
                                         'Marketplace' => array('Key' => 'manual', 'Value' => $sName, 'Info' => $sName.self::getMessage('_prepare_variations_free_text_add'))
                                     );
                                 }
                                 $aParent[$aCategoryDetail['name']] = array(
-                                    'Code' => MLModul::gi()->getConfig($sConfigCode),
+                                    'Code' => MLModule::gi()->getConfig($sConfigCode),
                                     'Kind' => 'Matching',
                                     'Required' => true,
                                     'DataType' => 'selectAndText',
@@ -251,7 +252,10 @@ class ML_Ebay_Controller_Ebay_Prepare_Variations extends ML_Form_Controller_Widg
         if (!isset($aField['value']) && $sName !== 'variationgroups.value') {
             // check whether we're getting value for standard group or for custom variation matching group
             $sCustomGroupName = $this->getField('variationgroups.value', 'value');
-            $aCustomIdentifier = explode(':', $sCustomGroupName);
+            $aCustomIdentifier = array();
+            if (isset($sCustomGroupName)) {
+                $aCustomIdentifier = explode(':', $sCustomGroupName);
+            }
 
             if (count($aCustomIdentifier) == 2 && ($sName === 'attributename' || $sName === 'customidentifier')) {
                 $aField['value'] = $aCustomIdentifier[$sName === 'attributename' ? 0 : 1];
@@ -301,7 +305,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Variations extends ML_Form_Controller_Widg
             ->select('DISTINCT '.$sShopVariationField)
             ->from($oPrepareTable->getTableName())
             ->where(array($oPrepareTable->getPrimaryCategoryFieldName() => $sIdentifier))
-            ->where(array('mpID' => MLModul::gi()->getMarketPlaceId()))
+            ->where(array('mpID' => MLModule::gi()->getMarketPlaceId()))
             ->limit(2) // 2 is enough for find out if there are prepred data !== default-data
             ->getResult()
         ;
@@ -336,7 +340,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Variations extends ML_Form_Controller_Widg
             ->select('DISTINCT '.$sShopVariationField)
             ->from($oPrepareTable->getTableName())
             ->where(array('SecondaryCategory' => $sIdentifier))
-            ->where(array('mpID' => MLModul::gi()->getMarketPlaceId()))
+            ->where(array('mpID' => MLModule::gi()->getMarketPlaceId()))
             ->limit(2) // 2 is enough for find out if there are prepred data !== default-data
             ->getResult()
         ;

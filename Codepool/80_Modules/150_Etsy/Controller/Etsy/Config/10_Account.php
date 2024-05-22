@@ -19,28 +19,33 @@
  */
 MLFilesystem::gi()->loadClass('Form_Controller_Widget_Form_ConfigAbstract');
 class ML_Etsy_Controller_Etsy_Config_Account extends ML_Form_Controller_Widget_Form_ConfigAbstract {
-    public static function getTabTitle () {
+    public static function getTabTitle() {
         return MLI18n::gi()->get('etsy_config_account_title');
     }
-    
-    public static function getTabActive () {
+
+    public static function getTabActive() {
         return self::calcConfigTabActive(__class__, true);
     }
 
-    public function renderAjax() {
-        if ($this->getRequest('what') === 'GetTokenCreationLink') {
-            try {
-                $result = MagnaConnector::gi()->submitRequest(array(
-                    'ACTION' => 'GetTokenCreationLink',
-                ));
-                $iframeURL = $result['DATA']['tokenCreationLink'];
-            } catch (MagnaException $e) {
-                $iframeURL = 'error';
-            }
-            echo $iframeURL;
-            die();
-        } else {
-            parent::renderAjax();
+    protected function callAjaxGetTokenCreationLink() {
+        try {
+            $result = MagnaConnector::gi()->submitRequest(array(
+                'ACTION' => 'GetTokenCreationLink'
+            ));
+            $iframeURL = $result['DATA']['tokenCreationLink'];
+            MLSetting::gi()->add(
+                'aAjax', array(
+                    'iframeUrl' => $iframeURL,
+                    'error'     => '',
+                )
+            );
+        } catch (MagnaException $e) {
+            MLSetting::gi()->add(
+                'aAjax', array(
+                    'iframeUrl' => '',
+                    'error'     => $e->getMessage(),
+                )
+            );
         }
     }
 }

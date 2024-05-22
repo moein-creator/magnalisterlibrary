@@ -29,7 +29,7 @@ class ML_ZzzzDummyDawanda_Model_ProductList_Dawanda_Prepare extends ML_ZzzzDummy
         } else {
             $aMyConfig = array(
                 'priceMarketplace' => array(
-                    'title' =>  sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModul::gi()->getMarketPlaceName(false)),
+                    'title' => sprintf(MLI18n::gi()->get('Productlist_Header_sPriceMarketplace'), MLModule::gi()->getMarketPlaceName(false)),
                     'order' => false,
                     'type' => 'priceMarketplace'
                 ),

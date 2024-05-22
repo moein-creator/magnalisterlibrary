@@ -28,6 +28,8 @@ abstract class ML_Shop_Model_Product_Abstract extends ML_Database_Model_Table_Pr
     protected static $aParent = array();
     protected $blProductListMode = false;
 
+    protected $deleteVariationsProcessed = array();
+
     /**
      * @var bool $blMessage
      *    Indicates if messages have to be shown in case the product could not be loaded.
@@ -143,10 +145,22 @@ abstract class ML_Shop_Model_Product_Abstract extends ML_Database_Model_Table_Pr
      * @param array $aIds ids of current variation that will be excluded from delete
      */
     protected function deleteVariants($aIds = array()) {
-        $sSql = "select id from magnalister_products where parentid='".$this->get('id')."' ".(count($aIds) > 0 ? "and id not in ('".implode("' ,'", $aIds)."')" : '');
-        foreach (MLDatabase::getDbInstance()->fetchArray($sSql) as $aRow) { //delete not existing ids (copy to backup)
+        $sSql = "
+            SELECT id 
+              FROM magnalister_products 
+             WHERE parentid = '".$this->get('id')."' 
+                    ".(count($aIds) > 0 ? "AND id NOT IN ('".implode("' ,'", $aIds)."')" : '');
+
+        $queryHash = md5($sSql);
+
+        if (in_array($queryHash, $this->deleteVariationsProcessed)) {
+            return;
+        }
+
+        foreach (MLDatabase::getDbInstance()->fetchArray($sSql) as $aRow) { //delete not existing ids
             MLProduct::factory()->set('id', $aRow['id'])->delete();
         }
+        $this->deleteVariationsProcessed[] = $queryHash;
     }
 
     /**
@@ -367,10 +381,13 @@ abstract class ML_Shop_Model_Product_Abstract extends ML_Database_Model_Table_Pr
 
     /**
      * Get an element of this item. Used for matching's defined in modul config.
+     * @param $sFieldName
+     * @param bool $blGeneral
+     * @param bool $blMultiValue
      * @return ?mixed
      *    value of product-attribute or null if the value does not exist.
      */
-    abstract public function getModulField($sFieldName, $blGeneral = false);
+    abstract public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false);
 
     /**
      * Gets the title of the product.

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -151,7 +151,7 @@ class ML_Prestashop_Helper_Model_ShopOrder {
         //set Payment method
         foreach ($aData['Totals'] as $aTotal) {
             if ($aTotal['Type'] == 'Payment') {
-                $sPaymentMethod = (!isset($aTotal['Code']) || empty($aTotal['Code'])) ? 'magnalister - '.MLModul::gi()->getMarketPlaceName() : $aTotal['Code'];
+                $sPaymentMethod = (!isset($aTotal['Code']) || empty($aTotal['Code'])) ? 'magnalister - ' . MLModule::gi()->getMarketPlaceName() : $aTotal['Code'];
                 $oOrder->payment = $sPaymentMethod;
                 $oOrder->save();
 
@@ -239,9 +239,9 @@ class ML_Prestashop_Helper_Model_ShopOrder {
                 MLMessage::gi()->addDebug("There is an error in adding cutomer<pre>".print_r($oCustomer, true)."</pre>");
             } else {
                 $iCustomerId = $oCustomer->id;
-                $sConfigCustomerGroup = MLModul::gi()->getConfig('CustomerGroup');
+                $sConfigCustomerGroup = MLModule::gi()->getConfig('CustomerGroup');
                 if ($sConfigCustomerGroup === null) {
-                    $sConfigCustomerGroup = MLModul::gi()->getConfig('customergroup');
+                    $sConfigCustomerGroup = MLModule::gi()->getConfig('customergroup');
                 }
                 $oCustomer->updateGroup(array($sConfigCustomerGroup));
             }
@@ -264,7 +264,7 @@ class ML_Prestashop_Helper_Model_ShopOrder {
         if (!isset($iCustomerId)) {
             MLMessage::gi()->addDebug("empty customer");
         }
-        $sAlias = MLModul::gi()->getMarketPlaceName(false).'_'.$aAddress['type'];
+        $sAlias = MLModule::gi()->getMarketPlaceName(false) . '_' . $aAddress['type'];
         if ($aAddress['type'] === 'Main') { // always find and update main address of customer if it exists
             $iAddressId = (int)Db::getInstance()->getValue('SELECT `id_address` FROM `'._DB_PREFIX_.'address` WHERE `id_customer` = '.(int)$iCustomerId.' AND `alias` = \''.pSQL($sAlias).'\'');
         } else if (is_object($this->oExistingShopOrder)) {// find and update shipping and billing address only for specific order
@@ -298,14 +298,20 @@ class ML_Prestashop_Helper_Model_ShopOrder {
 
         // Process AddressAddition field if provided from API and is not empty
         if (array_key_exists('AddressAddition', $aAddress) && !empty($aAddress['AddressAddition'])) {
-            $sAddressField2 = $aAddress['AddressAddition'];
+            $sAddressField2 = $aAddress['AddressAddition'].' ';
         }
 
         /**
          * Add suburb see above to address2 field
          * Check if phone number is valid (by prestashop validator), if not then add it to address2 field
          */
-        $sAddressField2 .= (trim($aAddress['Suburb']) != '' ? 'Region: '.$aAddress['Suburb'] : '').($oAddress->phone == '0100000000' ? (trim($aAddress['Phone']) != '' ? ' - Phone number: '.$aAddress['Phone'] : '') : '');
+        $sAddressField2 .= (trim($aAddress['Suburb']) != '' ? '- Region: '.$aAddress['Suburb'].' ' : '')
+            .(($oAddress->phone == '0100000000' || empty($oAddress->phone)) // see \ML_Prestashop_Helper_Model_ShopOrder::validate -> type phone
+                ? (trim($aAddress['Phone']) != '' ? '- Phone number: '.$aAddress['Phone'] : '')
+                : ''
+            );
+        $sAddressField2 = rtrim($sAddressField2, ' ');
+        $sAddressField2 = ltrim($sAddressField2, '- ');
 
         $oAddress->address2 = $this->validate($sAddressField2, 'address', 128, '', false);
         $oAddress->alias = $sAlias;
@@ -354,9 +360,9 @@ class ML_Prestashop_Helper_Model_ShopOrder {
         } else {
             $blUpdate = $this->blUpdate = false;
         }
-        $iLangId = MLModul::gi()->getConfig('lang');
+        $iLangId = MLModule::gi()->getConfig('lang');
         Context::getContext()->language = new Language($iLangId);
-        $iShopId = MLModul::gi()->getConfig('orderimport.shop');
+        $iShopId = MLModule::gi()->getConfig('orderimport.shop');
         if ($iShopId !== null) {
             Context::getContext()->shop = new Shop($iShopId);
         }
@@ -572,7 +578,7 @@ class ML_Prestashop_Helper_Model_ShopOrder {
                 $this->addVoucher($sVoucherName, $iDiscount);
             }
             $fTotalTaxIncl = round($fTotalTaxIncl, 5);
-            $sTrackingId = MLModul::gi()->getMarketPlaceName().time().rand().'';
+            $sTrackingId = MLModule::gi()->getMarketPlaceName() . time() . rand() . '';
             if ($blUpdate) {
                 foreach ($oOrder->getOrderPayments() as $oPayment) {
                     if (is_object($oPayment)) {
@@ -633,7 +639,7 @@ class ML_Prestashop_Helper_Model_ShopOrder {
             }
             if (!empty($oOrder->id) && !empty($aData['MPSpecific']['InternalComment'])) {
                 $this->addMessageToOrder($aData['MPSpecific']['InternalComment']);
-                if (MLModul::gi()->getConfig('order.information')) {
+                if (MLModule::gi()->getConfig('order.information')) {
                     //add message to invoice
                     foreach ($oOrder->getInvoicesCollection() as $oInvoice) {
                         /* @var $oInvoice OrderInvoiceCore */
@@ -700,13 +706,13 @@ class ML_Prestashop_Helper_Model_ShopOrder {
         $sTotalPayment = '';
         foreach ($this->aNewData['Totals'] as $aTotal) {
             if ($aTotal['Type'] == 'Payment') {
-                $sTotalPayment = (!isset($aTotal['Code']) || empty($aTotal['Code'])) ? 'magnalister - '.MLModul::gi()->getMarketPlaceName() : $aTotal['Code'];
+                $sTotalPayment = (!isset($aTotal['Code']) || empty($aTotal['Code'])) ? 'magnalister - ' . MLModule::gi()->getMarketPlaceName() : $aTotal['Code'];
                 break;
             }
         }
 
         if (empty($sTotalPayment)) {//some marketplace don't send any information about payment
-            $sTotalPayment = 'magnalister - '.MLModul::gi()->getMarketPlaceName();
+            $sTotalPayment = 'magnalister - ' . MLModule::gi()->getMarketPlaceName();
         }
 
         return $sTotalPayment;
@@ -749,6 +755,30 @@ class ML_Prestashop_Helper_Model_ShopOrder {
      * @param float $fValue
      */
     protected function addVoucher($sName, $fValue) {
+        // limit $sName to 254 chars (see CartRuleSettings::NAME_MAX_LENGTH)
+        $limitChar = function($string) {
+            $length = 254;
+            $pos = strrpos($string, "SKU:");
+            if ($pos !== false) {
+                $result = substr($string, $pos);
+                $maxLength = $length - strlen($result) - 4;
+                if (strlen($string) > $length) {
+                    $mainPart = substr($string, 0, $maxLength);
+                    $newString = rtrim($mainPart, ' ')."...".' '.$result;
+                } else {
+                    $newString = $string;
+                }
+                return $newString;
+            } elseif (strlen($string) > 254) {
+                return substr($string, 0, $length-3). "...";
+            }
+
+            return $string;
+        };
+
+        $sName = $limitChar($sName);
+
+
         $oOrder = $this->oCurrentShopOrder;
         //check if vouncher exist, just for update order
         $aRules = $oOrder->getCartRules();
@@ -913,7 +943,7 @@ class ML_Prestashop_Helper_Model_ShopOrder {
         }
         $oTax = $this->getTax($fTaxPercent);
         $oOrderDetail->tax_rate = $fTaxPercent;
-        $oOrderDetail->tax_name = $oTax->name[Context::getContext()->language->id];
+        $oOrderDetail->tax_name = is_array($oTax->name) ? $this->validate($oTax->name[Context::getContext()->language->id], 'taxName', 16, 'Order item tax name') : '';
         $oOrderDetail->id_shop = Context::getContext()->shop->id;
         $oOrderDetail->product_quantity = (int)$aProduct['Quantity'];
         //price
@@ -942,14 +972,17 @@ class ML_Prestashop_Helper_Model_ShopOrder {
                 }
             }
         }
+        $return = $oOrderDetail->add();
         // Add new entry to the table
-        if ($oOrderDetail->add()) {
+        if ($return) {
             $fUnitTax = $fGros - $fNet;
             $fTotalTax = $fUnitTax * $aProduct['Quantity'];
             $sql = 'INSERT INTO `'._DB_PREFIX_."order_detail_tax` (id_order_detail, id_tax, unit_amount, total_amount)
                             VALUES ({$oOrderDetail->id},'{$oTax->id}',{$fUnitTax},{$fTotalTax})";
 
             Db::getInstance()->execute($sql);
+        } else if (Db::getInstance()->getMsgError() != '') {
+            throw new Exception(Db::getInstance()->getMsgError());
         }
         if (
             isset($aProduct['SKU']) &&
@@ -957,8 +990,8 @@ class ML_Prestashop_Helper_Model_ShopOrder {
             isset($aProduct['StockSync']) && $aProduct['StockSync']
         ) {
             MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
-                'MOrderId' => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
-                'PHP' => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
+                'MOrderId'       => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
+                'PHP'            => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
                 'StockReduction' => array(
                     'SKU' => $aProduct['SKU'],
                     'Reduced quantity' => $aProduct['Quantity'],
@@ -980,12 +1013,19 @@ class ML_Prestashop_Helper_Model_ShopOrder {
      */
     protected function getTax($fTaxPercent) {
         $fTaxPercent = (float)$fTaxPercent;
-        $tax_id = Db::getInstance()->getValue('SELECT `id_tax` FROM `'._DB_PREFIX_."tax` WHERE rate = ".(float)$fTaxPercent)." ORDER BY active DESC limit 1";
+
+        $tax_id = Db::getInstance()->getValue("
+            SELECT `id_tax` 
+              FROM `"._DB_PREFIX_."tax`
+             WHERE rate = ".(float)$fTaxPercent."
+             ORDER BY active DESC
+        ");
+
         if (!empty($tax_id)) {
             $oTax = new Tax($tax_id);
         } else {
             $oTax = new Tax();
-            $sName = MLModul::gi()->getMarketPlaceName().' - Tax - '.$fTaxPercent;
+            $sName = MLModule::gi()->getMarketPlaceName() . ' - Tax - ' . $fTaxPercent;
             $oTax->name[Configuration::get('PS_LANG_DEFAULT')] = $sName;
             $oTax->name[Context::getContext()->language->id] = $sName;
             $oTax->rate = $fTaxPercent;
@@ -1037,7 +1077,7 @@ class ML_Prestashop_Helper_Model_ShopOrder {
      * @throws Exception
      */
     protected function validate($sName, $sType, $iLength = 0, $sRelatedField = '', $blRequired = true) {
-        $sValidated = trim($sName);
+        $sValidated = trim((string)$sName);
         $blCheckUnicode = false;
         if (in_array($sType, array('customerName', 'name', 'genericname', 'address', 'cityname', 'postcode'))) {
             $blCheckUnicode = method_exists('Tools', 'cleanNonUnicodeSupport');
@@ -1141,12 +1181,23 @@ class ML_Prestashop_Helper_Model_ShopOrder {
             {
                 if (!empty($sValidated)) {
                     if (!Validate::isPhoneNumber($sValidated)) {
-                        $sValidated = '0100000000';
-                        $this->setMessage("'$sName' for $sType number is invalid , replaced by '$sValidated'");
+                        // since prestashop 1.7 phone number is not required anymore
+                        if (defined('_PS_VERSION_') && version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+                            $sValidated = '';
+                            $this->setMessage("'$sName' for $sType number is invalid , set empty");
+                        } else {
+                            $sValidated = '0100000000';
+                            $this->setMessage("'$sName' for $sType number is invalid , replaced by '$sValidated'");
+                        }
                     }
                 } else {
-                    $sValidated = '0100000000';
-                    $this->setMessage("$sRelatedField is empty");
+                    // since prestashop 1.7 phone number is not required anymore
+                    if (defined('_PS_VERSION_') && version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+                        $sValidated = '';
+                    } else {
+                        $sValidated = '0100000000';
+                        $this->setMessage("$sRelatedField is empty, replaced by '$sValidated'");
+                    }
                 }
                 break;
             }
@@ -1197,10 +1248,12 @@ class ML_Prestashop_Helper_Model_ShopOrder {
             if (is_numeric($aTotalShipping['Code'])) {
                 $iCarrier = $aTotalShipping['Code'];
             } else {
-                $sql = '
-                    SELECT id_carrier
-                    FROM `'._DB_PREFIX_.'carrier` c'
-                    .' WHERE name = \''.pSQL($aTotalShipping['Code']).'\'';
+                $sql = "
+                    SELECT `id_carrier`
+                      FROM `"._DB_PREFIX_."carrier` c
+                     WHERE     name = '".Db::getInstance()->escape($aTotalShipping['Code'])."'
+                           AND `deleted` = 0
+                ";
                 $aCarriers = Db::getInstance()->executeS($sql);
                 if (!empty($aCarriers) && is_array($aCarriers)) {
                     $aCarrier = current($aCarriers);

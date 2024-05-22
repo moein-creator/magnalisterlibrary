@@ -29,7 +29,7 @@ MLSetting::gi()->add('etsy_config_account', array(
 MLSetting::gi()->add('etsy_config_prepare', array(
     'prepare' => '{#setting:formgroups_etsy__prepare#}',
     'shipping' => '{#setting:formgroups_etsy__shipping#}',
-    'shippingtemplate' => '{#setting:formgroups_etsy__shippingtemplate#}',
+    'shippingprofile' => '{#setting:formgroups_etsy__shippingprofile#}',
     'upload' => '{#setting:formgroups_etsy__upload#}',
 ), false);
 

@@ -18,38 +18,31 @@
  * -----------------------------------------------------------------------------
  */
 
-MLI18n::gi()->add('ebay_prepare_form', array(
+MLI18n::gi()->add('ebay_prepare_apply_form', array(
     'field' => array(
         'description' => array(
-            'label' => 'Beschreibung',
-            'hint' =>
-            'Liste verf&uuml;gbarer Platzhalter f&uuml;r die Produktbeschreibung:'.
-            '<dl>' .
-            '<dt>#TITLE#</dt>'.
-            '<dd>Produktname (Titel)</dd>'.
-            '<dt>#ARTNR#</dt>'.
-            '<dd>Artikelnummer im Shop</dd>'.
-            '<dt>#PID#</dt>'.
-            '<dd>Produkt ID im Shop</dd>'.
-            '<dt>#SHORTDESCRIPTION#</dt>'.
-            '<dd>Kurzbeschreibung aus dem Shop</dd>'.
-            '<dt>#DESCRIPTION#</dt>'.
-            '<dt>#MOBILEDESCRIPTION#</dt>'.
-            '<dd>Beschreibung aus dem Shop</dd>'.
-            '<dt>#PICTURE1#</dt>'.
-            '<dd>erstes Produktbild</dd>'.
-            '<dt>#PICTURE2# usw.</dt>'.
-            '<dd>zweites Produktbild; mit #PICTURE3#, #PICTURE4# usw. k&ouml;nnen weitere Bilder &uuml;bermittelt werden, so viele wie im Shop vorhanden.</dd>'.
-            '<br><dt>Artikel-Freitextfelder:</dt><br>'.
-            '<dt>#Bezeichnung1#&nbsp;#Freitextfeld1#</dt>'.
-            '<dt>#Bezeichnung2#&nbsp;#Freitextfeld2#</dt>'.
-            '<dt>#Bezeichnung..#&nbsp;#Freitextfeld..#</dt><br>'.
-            '<dd>&Uuml;bernahme der Artikel-Freitextfelder:&nbsp;'.
-            '   Die Ziffer hinter dem Platzhalter (z.B. #Freitextfeld1#) entspricht der Position des Freitextfelds.'.
-            '   <br> Siehe Einstellungen > Grundeinstellungen > Artikel > Artikel-Freitextfelder</dd>'.
-            '<dt>#PROPERTIES#</dt>'.
-            '<dd>Eine Liste aller Produkteigenschaften des Produktes. Aussehen kann &uuml;ber CSS gesteuert werden (siehe Code vom Standard Template)</dd>'.
-            '</dl>',
+            'label'    => 'Beschreibung',
+            'hint'     =>
+                'Liste verf&uuml;gbarer Platzhalter f&uuml;r die Produktbeschreibung:'.
+                '<dl>'.
+                '<dt>#TITLE#</dt>'.
+                '<dd>Produktname (Titel)</dd><br>'.
+                '<dt>#ARTNR#</dt>'.
+                '<dd>Artikelnummer im Shop</dd><br>'.
+                '<dt>#PID#</dt>'.
+                '<dd>Produkt ID im Shop</dd><br>'.
+                '<dt>#SHORTDESCRIPTION#</dt>'.
+                '<dd>Kurzbeschreibung aus dem Shop</dd><br>'.
+                '<dt>#DESCRIPTION#</dt>'.
+                '<dt>#MOBILEDESCRIPTION#</dt>'.
+                '<dd>Beschreibung aus dem Shop</dd><br>'.
+                '<dt>#PICTURE1#</dt>'.
+                '<dd>erstes Produktbild</dd><br>'.
+                '<dt>#PICTURE2# usw.</dt>'.
+                '<dd>zweites Produktbild; mit #PICTURE3#, #PICTURE4# usw. k&ouml;nnen weitere Bilder &uuml;bermittelt werden, so viele wie im Shop vorhanden.</dd><br>'.
+                '<dt>#PROPERTIES#</dt>'.
+                '<dd>Eine Liste aller Produkteigenschaften des Produktes. Aussehen kann &uuml;ber CSS gesteuert werden (siehe Code vom Standard Template)</dd>'.
+                '</dl>',
             'optional' => array(
                 'checkbox' => array(
                     'labelNegativ' => 'Artikelbeschreibung immer aktuell aus Web-Shop verwenden',
@@ -57,4 +50,4 @@ MLI18n::gi()->add('ebay_prepare_form', array(
             )
         ),
     )
-), false);
+));

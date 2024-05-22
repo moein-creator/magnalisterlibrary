@@ -28,6 +28,6 @@ class ML_Amazon_Controller_Amazon_ShippingLabel extends ML_Tabs_Controller_Widge
     }
     
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 }

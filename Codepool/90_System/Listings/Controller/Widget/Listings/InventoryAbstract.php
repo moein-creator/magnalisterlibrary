@@ -18,7 +18,7 @@
 
 MLFilesystem::gi()->loadClass('Listings_Controller_Widget_Listings_ListingAbstract');
 
-class ML_Listings_Controller_Widget_Listings_InventoryAbstract extends ML_Listings_Controller_Widget_Listings_ListingAbstract {
+abstract class ML_Listings_Controller_Widget_Listings_InventoryAbstract extends ML_Listings_Controller_Widget_Listings_ListingAbstract {
     
     protected $sSynchMessages = '';
     protected $blHasDeleteTable = true;
@@ -43,9 +43,9 @@ class ML_Listings_Controller_Widget_Listings_InventoryAbstract extends ML_Listin
         parent::__construct();
         $this->setCurrentState();
         $this->aPostGet = $this->getRequest();
-        $this->marketplace = MLModul::gi()->getMarketPlaceName();
-        $this->iMpId = MLModul::gi()->getMarketPlaceId();
-        $aConfig = MLModul::gi()->getConfig();
+        $this->marketplace = MLModule::gi()->getMarketPlaceName();
+        $this->iMpId = MLModule::gi()->getMarketPlaceId();
+        $aConfig = MLModule::gi()->getConfig();
         $this->aSetting['maxTitleChars'] = 40;
         if(MLSetting::gi()->iInventoryViewProductLimit !== null){
             $this->aSetting['itemLimit'] = MLSetting::gi()->iInventoryViewProductLimit;
@@ -236,6 +236,8 @@ class ML_Listings_Controller_Widget_Listings_InventoryAbstract extends ML_Listin
         return true;
     }
 
+    abstract public static function getTabTitle();
+
     protected function getFields() {
         return array(
             'SKU' => array(
@@ -251,7 +253,7 @@ class ML_Listings_Controller_Widget_Listings_InventoryAbstract extends ML_Listin
                 'Field' => 'ItemID',
             ),
             'Title' => array(
-                'Label' => MLModul::gi()->getMarketPlaceName(false).'&nbsp;'.MLI18n::gi()->ML_LABEL_TITLE,
+                'Label' => MLModule::gi()->getMarketPlaceName(false) . '&nbsp;' . MLI18n::gi()->ML_LABEL_TITLE,
                 'Sorter' => null,
                 'Getter' => 'getTitle',
                 'Field' => null,
@@ -269,7 +271,7 @@ class ML_Listings_Controller_Widget_Listings_InventoryAbstract extends ML_Listin
                 'Field' => null
             ),
             'Quantity' => array(
-                'Label' => 'Shop-'.MLI18n::gi()->ML_LABEL_QUANTITY. ' / ' . MLModul::gi()->getMarketPlaceName(false),
+                'Label' => 'Shop-' . MLI18n::gi()->ML_LABEL_QUANTITY . ' / ' . MLModule::gi()->getMarketPlaceName(false),
                 'Sorter' => 'quantity',
                 'Getter' => 'getQuantities',
                 'Field' => null,
@@ -379,9 +381,10 @@ class ML_Listings_Controller_Widget_Listings_InventoryAbstract extends ML_Listin
     }
     
     protected function getSKU($item) {
+        $addStyle = (empty($item['TitleShort']) || $item['TitleShort'] === '&mdash;') ? 'color:#e31e1c;' : '';
         $html = '<td>' . $item['SKU'] . '</td>';
         if (!empty($item['editUrl'])) {
-            $html = '<td><div class="product-link" ><a class="ml-js-noBlockUi" href="' . $item['editUrl'] . '" target="_blank" title="' . MLI18n::gi()->ML_LABEL_EDIT . '">' . $item['SKU'] . '</a></div></td>';
+            $html = '<td><div class="product-link" ><a style="'. $addStyle .'" class="ml-js-noBlockUi" href="' . $item['editUrl'] . '" target="_blank" title="' . MLI18n::gi()->ML_LABEL_EDIT . '">' . $item['SKU'] . '</a></div></td>';
         }
 
         return $html;

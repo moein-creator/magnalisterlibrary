@@ -7,6 +7,8 @@ abstract class ML_Magento2_Model_ProductList_UploadAbstract extends ML_Magento2_
     protected $iCount=5;
     protected $aList = null;
     protected $blAdditemMode = false;
+    protected $iCountTotal;
+
     public function setAdditemMode($blMode){
         $this->blAdditemMode = $blMode;
         return $this;

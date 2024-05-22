@@ -93,7 +93,9 @@
                     var iInterval=window.setInterval(function(){
                         if(iTriggered===0){
                             window.clearInterval(iInterval);
-                            window.setTimeout(eForm.trigger('submit'),3000);
+                            window.setTimeout(function () {
+                                mlSubmitAmazonManualMatchingForm(eForm)
+                            }, 3000);
                         }
                     },400);
                 return false;

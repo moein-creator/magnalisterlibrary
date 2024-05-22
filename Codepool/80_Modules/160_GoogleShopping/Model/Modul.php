@@ -63,7 +63,7 @@ class ML_GoogleShopping_Model_Modul extends ML_Modul_Model_Modul_Abstract {
                 'ACTION' => 'GetItemSpecifics',
                 'DATA' => array(
                     'CategoryID' => $sCategory,
-                    'Langugage' => MLModul::gi()->getConfig('lang'),
+                    'Langugage' => MLModule::gi()->getConfig('lang'),
                 ),
                 'CATEGORYID' => $sCategory
             ));

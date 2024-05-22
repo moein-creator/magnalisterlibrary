@@ -17,7 +17,8 @@
  *     Released under the GNU General Public License v2 or later
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 
 $localClientBuild = MLSetting::gi()->get('sClientBuild');
 $localClientBuild = empty($localClientBuild) ? $this->__('ML_LABEL_UNKNOWN') : $localClientBuild;

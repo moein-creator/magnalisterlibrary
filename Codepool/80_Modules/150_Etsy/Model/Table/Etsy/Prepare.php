@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,10 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2018 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Database_Model_Table_Prepare_Abstract');
 
 class ML_Etsy_Model_Table_Etsy_Prepare extends ML_Database_Model_Table_Prepare_Abstract {
@@ -24,45 +25,48 @@ class ML_Etsy_Model_Table_Etsy_Prepare extends ML_Database_Model_Table_Prepare_A
     protected $aFields = array(
         'mpID' => array(
             'isKey' => true,
-            'Type' => 'int(11) unsigned', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11) unsigned', 'Null' => self::IS_NULLABLE_NO, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'products_id' => array(
             'isKey' => true,
-            'Type' => 'int(11)', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'int(11)', 'Null' => self::IS_NULLABLE_NO, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'PreparedTS' => array(
             'isInsertCurrentTime' => true,
-            'Type' => 'datetime', 'Null' => 'NO', 'Default' => '0000-00-00 00:00:00', 'Extra' => '', 'Comment' => ''
+            'Type' => 'datetime', 'Null' => self::IS_NULLABLE_YES, 'Default' => null, 'Extra' => '', 'Comment' => ''
         ),
         'Verified' => array(
-            'Type' => "enum('OK','ERROR','OPEN','EMPTY')", 'Null' => 'NO', 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
+            'Type' => "enum('OK','ERROR','OPEN','EMPTY')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'OPEN', 'Extra' => '', 'Comment' => ''
         ),
         'Title' => array(
-            'Type' => 'varchar(255)', 'Null' => 'YES', 'Default' => '', 'Extra' => '', 'Comment' => ''
+            'Type' => 'varchar(255)', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'Description' => array(
-            'Type' => 'text', 'Null' => 'YES', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'Primarycategory' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShopVariation' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShippingTemplate' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => '', 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => NULL, 'Extra' => '', 'Comment' => 'Old column for Etsy V2 API'
+        ),
+        'ShippingProfile' => array(
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => 'New column for Etsy V3 API'
         ),
         'Whomade' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'Whenmade' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'IsSupply' => array(
-            'Type' => "enum('false', 'true')", 'Null' => 'NO', 'Default' => 'false', 'Extra' => '', 'Comment' => ''
+            'Type' => "enum('false','true')", 'Null' => self::IS_NULLABLE_NO, 'Default' => 'false', 'Extra' => '', 'Comment' => ''
         ),
         'Image' => array(
-            'Type' => 'text', 'Null' => 'NO', 'Default' => NULL, 'Extra' => '', 'Comment' => ''
+            'Type' => 'text', 'Null' => self::IS_NULLABLE_YES, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
     );
 
@@ -90,7 +94,7 @@ class ML_Etsy_Model_Table_Etsy_Prepare extends ML_Database_Model_Table_Prepare_A
                   FROM ".$this->sTableName." prepare
             INNER JOIN ".MLDatabase::factory('product')->getTableName()." product on product.id = prepare.products_id
             INNER JOIN ".$oCat->getTableName()." cat on cat.categoryid = ".$sField."
-                 WHERE prepare.mpid = ".MLModul::gi()->getMarketPlaceId()."
+                 WHERE prepare.mpid = " . MLModule::gi()->getMarketPlaceId() . "
               GROUP BY $sField
               ORDER BY count($sField)/count(product.parentid)+count(distinct product.parentid)-1 desc
                  LIMIT 10

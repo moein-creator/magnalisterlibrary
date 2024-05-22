@@ -90,21 +90,47 @@ class ML_Database_Model_Db_Mysqli extends ML_Database_Model_Db_Abstract {
 
     public function connect() {
         ob_start();
+
+        $this->oInstance = mysqli_init();
+        $client_flags = 0;
+
+        if (!empty($this->access['encrypt']) && $this->access['encrypt']['ssl']) {
+            if ($this->access['encrypt']['ssl_verify']) {
+                $client_flags |= MYSQLI_CLIENT_SSL;
+
+                $this->oInstance->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
+            }
+
+            if (!empty($this->access['encrypt']['key'])) {
+                $client_flags |= MYSQLI_CLIENT_SSL;
+
+                $this->oInstance->ssl_set(
+                    isset($this->access['encrypt']['key']) ? $this->access['encrypt']['key'] : null,
+                    isset($this->access['encrypt']['cert']) ? $this->access['encrypt']['cert'] : null,
+                    isset($this->access['encrypt']['ca']) ? $this->access['encrypt']['ca'] : null,
+                    isset($this->access['encrypt']['capath']) ? $this->access['encrypt']['capath'] : null,
+                    isset($this->access['encrypt']['cipher']) ? $this->access['encrypt']['cipher'] : null
+                );
+            }
+        }
+
+
         switch ($this->access['type']) {
             case 'socket':
             case 'pipe': {
-                $this->oInstance = new mysqli(
+                $this->oInstance->real_connect(
                     ($this->access['persistent'] ? 'p:' : '').$this->access['host'],
                     $this->access['user'], $this->access['pass'], '', (int)$this->access['port'],
-                    $this->access['sock']
+                    $this->access['sock'], $client_flags
                 );
                 break;
             }
             case 'tcpip':
             default: {
-                $this->oInstance = new mysqli(
+                $this->oInstance->real_connect(
                     ($this->access['persistent'] ? 'p:' : '').$this->access['host'],
-                    $this->access['user'], $this->access['pass'], '', (int)$this->access['port']
+                    $this->access['user'], $this->access['pass'], '', (int)$this->access['port'],
+                    null, $client_flags
                 );
                 break;
             }

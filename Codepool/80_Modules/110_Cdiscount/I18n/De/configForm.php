@@ -16,7 +16,7 @@
  * -----------------------------------------------------------------------------
  */
 
-MLI18n::gi()->cdiscount_config_carrier_other = 'Andere';
+MLI18n::gi()->cdiscount_config_use_shop_value = 'Vom Shop übernehmen';
 MLI18n::gi()->cdiscount_config_account_title = 'Zugangsdaten';
 MLI18n::gi()->cdiscount_config_account_prepare = 'Artikelvorbereitung';
 MLI18n::gi()->cdiscount_config_account_price = 'Preisberechnung';
@@ -77,7 +77,7 @@ MLI18n::gi()->cdiscount_configform_orderimport_shipping_values = array(
 MLI18n::gi()->add('cdiscount_config_account', array(
     'legend' => array(
         'account' => 'Zugangsdaten',
-        'tabident' => ''
+        'tabident' => 'Tab'
     ),
     'field' => array(
         'tabident' => array(
@@ -332,13 +332,51 @@ MLI18n::gi()->add('cdiscount_config_orderimport', array(
             'label' => 'Versandmethode',
             'help' => 'Wählen Sie die Versandart, die allen Cdiscount-Bestellungen standardmäßig zugewiesen wird.'
         ),
-        'orderstatus.shipmethod.freetext' => array(
-            'label' => 'Versandmethode:',
+        'orderstatus.carrier.freetext' => array(
+            'label' => 'Transportunternehmen:',
             'placeholder' => 'Geben Sie hier Ihre Versandmethode ein'
         ),
-        'orderstatus.carrier.default' => array(
-            'label' => 'Spediteur',
-            'help' => 'Vorausgew&auml;hlter Spediteur beim Best&auml;tigen des Versandes nach Cdiscount',
+        'orderstatus.carrier' => array(
+            'label' => 'Transportunternehmen',
+            'help' => '
+                Wählen Sie hier das Transportunternehmen, das den Cdiscount Bestellungen standardmäßig zugeordnet wird.<br>
+                <br>
+                Sie haben folgende Optionen:<br>
+                <ul>
+                    <li>
+                        <span class="bold underline">Von Cdiscount vorgeschlagene Transportunternehmen</span>
+                        <p>Wählen Sie ein Transportunternehmen aus der Dropdown-Liste. Es werden die Unternehmen angezeigt, die von Cdiscount empfohlen werden.<br>
+                            <br>
+                            Diese Option bietet sich an, wenn Sie für Cdiscount Bestellungen <strong>immer das gleiche Transportunternehmen nutzen</strong> möchten.
+                        </p>
+                    </li>
+                    <li>
+                        <span class="bold underline">Von Cdiscount vorgeschlagene Transportunternehmen mit Versanddienstleistern aus Webshop Versandkosten-Modul matchen</span>
+                        <p>Sie können die von Cdiscount empfohlenen Transportunternehmen mit den im Shopware 5 Versandkosten-Modul angelegten Dienstleistern matchen. Über das “+” Symbol können Sie mehrere Matchings vornehmen.<br>
+                            <br>
+                            Infos, welcher Eintrag aus dem Shopware Versandkosten-Modul beim Cdiscount Bestellimport verwendet wird, entnehmen Sie bitte dem Info Icon unter “Bestellimport” -> “Versandart der Bestellungen”.<br>
+                            <br>
+                            Diese Option bietet sich an, wenn Sie auf <strong>bestehende Versandkosten-Einstellungen</strong> aus dem <strong>Shopware 5</strong> Versandkosten-Modul zurückgreifen möchten.<br>
+                        </p>
+                    </li>
+                    <li>
+                        <span class="bold underline">magnalister fügt ein Freitextfeld in den Bestelldetails hinzu</span>
+                        <p>Wenn Sie diese Option wählen, fügt magnalister beim Bestellimport ein Feld in den Bestelldetails bei der PrestaShop Bestellung hinzu. In dieses Feld können Sie das Transportunternehmen eintragen.<br>
+                            <br>
+                            Diese Option bietet sich an, wenn Sie für Amazon Bestellungen <strong>unterschiedliche Transportunternehmen</strong> nutzen möchten.<br>
+                        </p>
+                    </li>
+                    <li>
+                        <span class="bold underline">Transportunternehmen pauschal aus Textfeld übernehmen</span><br>
+                        <p>Diese Option bietet sich an, wenn Sie <strong>für alle Cdiscount Bestellungen ein und dasselbe Transportunternehmen manuell hinterlegen</strong> möchten.<br></p>
+                    </li>
+                </ul>
+                <span class="bold underline">Wichtige Hinweise:</span>
+                <ul>
+                    <li>Die Angabe eines Transportunternehmens ist für Versandbestätigungen bei Cdiscount verpflichtend.<br><br></li>
+                    <li>Die Nicht-Übermittlung des Transportunternehmens kann zu einem vorübergehenden Entzug der Verkaufsberechtigung führen.</li>
+                </ul>
+            ',
         ),
         'orderstatus.cancelled' => array(
             'label' => 'Bestellung stornieren mit',

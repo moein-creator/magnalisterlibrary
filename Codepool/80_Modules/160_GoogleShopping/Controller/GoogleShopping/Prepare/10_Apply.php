@@ -27,7 +27,7 @@ class ML_GoogleShopping_Controller_GoogleShopping_Prepare_Apply extends ML_Produ
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public static function getTabDefault() {
@@ -57,7 +57,7 @@ class ML_GoogleShopping_Controller_GoogleShopping_Prepare_Apply extends ML_Produ
     }
 
     public function getPriceObject(ML_Shop_Model_Product_Abstract $oProduct) {
-        return MLModul::gi()->getPriceObject();
+        return MLModule::gi()->getPriceObject();
     }
 
     public function __construct() {

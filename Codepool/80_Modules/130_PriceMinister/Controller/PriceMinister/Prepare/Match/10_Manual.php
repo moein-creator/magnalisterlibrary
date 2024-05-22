@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -520,6 +520,9 @@ class ML_PriceMinister_Controller_PriceMinister_Prepare_Match_Manual extends ML_
             <?php endif ?>
             <?php if (empty($aProduct['Description']) === false) : ?>
                 <tr>
+                    <td style="border: 2px solid transparent;"></td>
+                </tr>
+                <tr>
                     <th colspan="2"><?= ML_GENERIC_MY_PRODUCTDESCRIPTION ?></th>
                 </tr>
                 <tr class="desc">
@@ -644,10 +647,8 @@ class ML_PriceMinister_Controller_PriceMinister_Prepare_Match_Manual extends ML_
                     ->setRequestOptional($this->aRequestOptional)
                     ->setPrepareList($this->oPrepareList)
                     ->setProduct($this->oProduct);
-                throw new Exception('werwe');
                 if ($blRedirect) {
                     MLHttp::gi()->redirect($this->getParentUrl());
-                    exit();
                 }
             } catch (Exception $oEx) {
                 MLMessage::gi()->addError($oEx);

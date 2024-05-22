@@ -22,12 +22,15 @@
     foreach ($aField['subfields'] as $aCurrentField) {
         ?>
         <tr>
-            <td style="border:none;width: 250px;"><?php if (empty($aCurrentField['i18n']['label'])) {
+            <td>
+            <div><?php if (empty($aCurrentField['i18n']['label'])) {
                     $this->includeType($aCurrentField);
                 } else {
                     echo $aCurrentField['i18n']['label'];
-                } ?></td>
-            <td style="border:none;"><?php !empty($aCurrentField['i18n']['label']) ? $this->includeType($aCurrentField) : null; ?></td>
+                } ?></div>
+            <div><?php !empty($aCurrentField['i18n']['label']) ? $this->includeType($aCurrentField) : null; ?></div>
+            </td>
+
         </tr>
         <?php
     }

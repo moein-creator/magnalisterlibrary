@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -19,7 +19,7 @@
 MLSetting::gi()->add('cdiscount_config_account', array(
     'tabident' => array(
         'legend' => array(
-            'classes' => array('mlhidden'),
+            'classes' => array(''),
         ),
         'fields' => array(
             array(
@@ -56,13 +56,13 @@ MLSetting::gi()->add('cdiscount_config_prepare', array(
                 'type' => 'select',
             ),
             array(
-                'name' => 'standarddescription',
-                'type' => 'select',
+                'name'   => 'standarddescription',
+                'type'   => 'am_attributesselect',
                 'expert' => true,
             ),
             array(
-                'name' => 'marketingdescription',
-                'type' => 'select',
+                'name'   => 'marketingdescription',
+                'type'   => 'am_attributesselect',
                 'expert' => true,
             ),
             array(
@@ -227,24 +227,20 @@ MLSetting::gi()->add('cdiscount_config_orderimport', array(
                 'name' => 'orderstatus.sync',
                 'type' => 'select',
             ),
-            array(
-                'name' => 'orderstatus.carrier.default',
-                'type' => 'select'
-            ),
-            'orderstatus.shipmethod' => array(
-                'name' => 'orderstatus.shipmethod',
+            'orderstatus.carrier' => array(
+                'name' => 'orderstatus.carrier',
                 'type' => 'selectwithtmatchingoption',
                 'subfields' => array(
                     'select' => array(
                         'i18n' => array('label' => '',),
-                        'name' => 'orderstatus.shipmethod.select',
+                        'name' => 'orderstatus.carrier.select',
                         'required' => true,
                         'matching' => 'matchShopShippingOptions', //must be the same as value defined in ConfigData key value for matching
                         'type' => 'am_attributesselect'
                     ),
                     'matching' => array(
                         'i18n' => array('label' => '', ),
-                        'name' => 'orderstatus.shipmethod.duplicate',
+                        'name' => 'orderstatus.carrier.duplicate',
                         'norepeat_included' => true,
                         'type' => 'duplicate',
                         'duplicate' => array(
@@ -255,7 +251,7 @@ MLSetting::gi()->add('cdiscount_config_orderimport', array(
                         'subfields' => array(
                             array(
                                 'i18n' => array('label' => ''),
-                                'name' => 'orderstatus.shipmethod.matching',
+                                'name' => 'orderstatus.carrier.matching',
                                 'breakbefore' => true,
                                 'type' => 'matchingcarrier',
                                 'cssclasses' => array('tableHeadCarrierMatching')
@@ -264,7 +260,7 @@ MLSetting::gi()->add('cdiscount_config_orderimport', array(
                         ),
                     ),
                     'freetext' => array(
-                        'name' => 'orderstatus.shipmethod.freetext',
+                        'name' => 'orderstatus.carrier.freetext',
                         'type' => 'string'
                     ),
                 ),

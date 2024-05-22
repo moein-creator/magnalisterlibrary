@@ -11,9 +11,9 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
-return class_exists('Shopware\Storefront\Framework\Routing\StorefrontResponse');
+return class_exists('Shopware\Storefront\Framework\Routing\StorefrontRouteScope');

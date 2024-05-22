@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,12 +11,16 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 MLI18n::gi()->sModuleNameMetro = 'METRO';
+MLI18n::gi()->ML_LABEL_METRO_ITEM_ID = 'METRO Offer no.';
+MLI18n::gi()->ML_STOCK_SHOP_STOCK_METRO = 'Stock Shop / METRO';
+MLI18n::gi()->ML_LABEL_METRO_TITLE = 'METRO Title';
+
 MLI18n::gi()->sMetroNoInternationalShipping = 'Kein Versand ins Ausland';
 MLI18n::gi()->sMetroSyncButtonDisableIfno = 'Diese Funktion steht Ihnen derzeit nicht zur Verfügung.';
 MLI18n::gi()->sMetroDefaultValueText = 'Standard';
@@ -34,10 +38,7 @@ MLI18n::gi()->ML_METRO_LABEL_ATTRIBUTES_FOR = 'Attribute f&uuml;r';
 MLI18n::gi()->ML_LABEL_METRO_PRIMARY_CATEGORY = 'Prim&auml;r-Kategorie';
 MLI18n::gi()->ML_LABEL_METRO_SECONDARY_CATEGORY = 'Sekund&auml;r-Kategorie';
 MLI18n::gi()->ML_LABEL_METRO_STORE_CATEGORY = 'METRO Store Kategorie';
-MLI18n::gi()->ML_LABEL_METRO_ITEM_ID = 'METRO Angebots-Nr.';
-MLI18n::gi()->ML_LABEL_METRO_TITLE = 'METRO Titel';
 MLI18n::gi()->ML_PRICE_SHOP_PRICE_METRO = 'Preis Shop / METRO';
-MLI18n::gi()->ML_STOCK_SHOP_STOCK_METRO = 'Bestand Shop / METRO';
 MLI18n::gi()->ML_LAST_SYNC = 'Letzte Synchronisation';
 MLI18n::gi()->ML_METRO_N_PENDING_UPDATES_ESTIMATED_TIME_M = '%s Artikel werden derzeit synchronisiert. Restdauer ca. %s Minuten.';
 MLI18n::gi()->ML_LABEL_METRO_DELETION_REASON = 'Gel&ouml;scht durch';
@@ -113,13 +114,22 @@ MLI18n::gi()->ML_METRO_MANDATORY_FIELDS_INFO = '{#i18n:attributes_matching_manda
 /*
  * Error Messages of prepare
  */
-MLI18n::gi()->ML_METRO_ERROR_MISSING_GTIN = 'Das Feld GTIN ist ein Pflichtfeld und darf nicht leer sein.';
+MLI18n::gi()->ML_METRO_ERROR_MISSING_GTIN_MPN_MANUFACTURER = 'METRO requires either a GTIN or the manufacturer + manufacturer part number. Since you have left the "Manufacturer" and "Manufacturer Part Number" fields blank, you must enter a value in the GTIN field to complete the product preparation.';
 MLI18n::gi()->ML_METRO_ERROR_MISSING_CATEGORY = 'Die Marktplatz-Kategorie ist ein Pflichtfeld und darf nicht leer sein.';
 MLI18n::gi()->ML_METRO_ERROR_MISSING_TITLE = 'Der Produkttitel für METRO ist ein Pflichtfeld und darf nicht leer sein.';
 MLI18n::gi()->ML_METRO_ERROR_MISSING_DESCRIPTION = 'Die Produktbeschreibung für METRO ist ein Pflichtfeld und darf nicht leer sein.';
 MLI18n::gi()->ML_METRO_ERROR_MISSING_IMAGES = 'Es muss mindestens ein Bild ausgewählt und an METRO übertragen werden.';
+MLI18n::gi()->ML_METRO_ERROR_WRONG_MANUFACTURERSSUGGESTEDRETAILPRICE = 'Die unverbindliche Preisempfehlung des Herstellers ist ung&uuml;ltig';
+MLI18n::gi()->ML_METRO_ERROR_SHORT_DESCRIPTION_LENGTH = 'Kurze Beschreibung des Produkts mit einer Zusammenfassung der wichtigsten Produkteigenschaften. Maximal 150 Zeichen';
 
+MLI18n::gi()->ML_METRO_STATUS_PRODUCT_IS_PENDING_DELETE = 'Angebot wird gel&ouml;scht';
+MLI18n::gi()->ML_METRO_DELETED_OFFER_PURGE_INFO = 'Gel&ouml;schte Artikel werden nach 30 Tagen final aus der Datenbank und &Uuml;bersicht gel&ouml;scht.';
 
 MLI18n::gi()->metro_upload_explanation = 'Bitte beachten Sie, dass es bis zu einer Stunde dauern kann bis Ihre Artikel im Inventar von magnalister sichtbar sind.<br>Sollte es ein Problem mit einem Produkt geben, finden Sie weitere Informationen dann im Fehlerlog.<br><br>In der Regel dauert die Verarbeitung für neue Produkte auf METRO ca. 2 - 3 Werktage.';
 
-MLI18n::gi()->{'metro_prepare_apply'} = "Neue Produkte erstellen";
+MLI18n::gi()->{'metro_prepare_apply'} = "Create new products";
+
+/** Volume Prices */
+MLI18n::gi()->ML_METRO_VOLUMEPRICES_START_AT_PLACEHOLDER = 'z.B.: 10';
+MLI18n::gi()->ML_METRO_PRICE_PLACEHOLDER = 'z.B.: 0.00';
+MLI18n::gi()->ML_METRO_PRICE_SIGNAL_PLACEHOLDER = 'z.B.: 99';

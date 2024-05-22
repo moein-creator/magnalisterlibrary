@@ -1,5 +1,4 @@
 <?php
-
 /*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
@@ -12,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -72,7 +71,7 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
 
     /**
      * @param type $blNotLoggedIn
-     * @return type
+     * @return array
      * @todo : the user.repository should be checked
      */
     public function getCustomerGroupValues($blNotLoggedIn = false) {
@@ -90,6 +89,7 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
                 $aGroupsName[$aRow->getId()] = MagnalisterController::getShopwareMyContainer()->get('customer_group.repository')->search(new Criteria(['id' => $aRow->getId()]), Context::createDefaultContext())->first()->getName();
             }
         }
+        $aGroupsName['-'] = MLI18n::gi()->Shopware_Orderimport_CustomerGroup_Notloggedin;
 
         return $aGroupsName;
     }
@@ -196,6 +196,9 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
     protected function getCustomFields($blAttributeMatching = false): array {
         $iLangId = $this->getLanguage();
         $Language = MLShopware6Alias::getRepository('language.repository')->search((new Criteria())->addFilter(new EqualsFilter('id', $iLangId)), Context::createDefaultContext())->first();
+        if ($Language === null) {
+            $Language = MLShopware6Alias::getRepository('language.repository')->search((new Criteria()), Context::createDefaultContext())->first();
+        }
         $locale = MLShopware6Alias::getRepository('locale.repository')->search((new Criteria())->addFilter(new EqualsFilter('locale.id', $Language->getLocaleId())), Context::createDefaultContext())->first();
         $LangCode = $locale->getCode();
 
@@ -266,73 +269,40 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
      *
      * @return array
      */
-    public function getOrderFreeTextFieldsAttributes($blAttributeMatching = false) {
+    public function getOrderFreeTextFieldsAttributes() {
         $aConfig = MLModule::gi()->getConfig();
         if (isset($aConfig['lang']) && $aConfig['lang'] != NULL) {
             $sLangId = $aConfig['lang'];
-            $LanguageCriteria = new Criteria();
-            $Language = MagnalisterController::getShopwareMyContainer()->get('language.repository')->search($LanguageCriteria->addFilter(new EqualsFilter('id', $sLangId)), Context::createDefaultContext())->first();
-            $localeCriteria = new Criteria();
-            $locale = MagnalisterController::getShopwareMyContainer()->get('locale.repository')->search($localeCriteria->addFilter(new EqualsFilter('locale.id', $Language->getLocaleId())), Context::createDefaultContext())->first();
-            $LangCode = $locale->getCode();
-            $iLangId = $aConfig['lang'];
         } else {
             $sLangId = Defaults::LANGUAGE_SYSTEM;
-            $LanguageCriteria = new Criteria();
-            $Language = MagnalisterController::getShopwareMyContainer()->get('language.repository')->search($LanguageCriteria->addFilter(new EqualsFilter('id', $sLangId)), Context::createDefaultContext())->first();
-            $localeCriteria = new Criteria();
-            $locale = MagnalisterController::getShopwareMyContainer()->get('locale.repository')->search($localeCriteria->addFilter(new EqualsFilter('locale.id', $Language->getLocaleId())), Context::createDefaultContext())->first();
-
-            $LangCode = $locale->getCode();
-            $iLangId = NULL;
         }
-        $CustomeFildSetEntites = MagnalisterController::getShopwareMyContainer()
-            ->get('custom_field.repository')
-            ->search(new Criteria(), MLShopware6Alias::getContextByLanguageId($iLangId))
+        $LanguageCriteria = new Criteria();
+        $LanguageCriteria->addAssociations(['locale'])->addFilter(new EqualsFilter('id', $sLangId));
+        $oLanguage = MLShopware6Alias::getRepository('language')->search($LanguageCriteria, MLShopware6Alias::getContext($sLangId))->first();
+        $LangCode = $oLanguage->getLocale()->getId();
+        $oCustomFieldCriteria = new Criteria();
+        $oCustomFieldCriteria->addAssociations(['customFieldSet.relation'])->addFilter(new EqualsFilter('customFieldSet.relations.entityName', 'order'));
+        $oCustomFieldEntities = MLShopware6Alias::getRepository('custom_field')
+            ->search($oCustomFieldCriteria, MLShopware6Alias::getContextByLanguageId($sLangId))
             ->getEntities();
 
-        $CustomeFildSetItems = array();
-        if ($blAttributeMatching) {
-            foreach ($CustomeFildSetEntites as $value) {
-                if (!empty($value->getConfig())) {
-                    $Label = '';
-                    foreach ($value->getConfig()['label'] as $index => $value2) {
-                        if ($LangCode === $index) {
-                            $Label = $value2;
-                        } elseif (!isset($value->getConfig()['label'][$LangCode])) {
-                            $Label = $value2;
-                        }
-                    }
-                    if ($value->getType() == 'select') {
-                        $CustomeFildSetItems['c_'.$value->getName()] = array(
-                            'name' => $Label,
-                            'type' => 'select',
-                        );
-                    } else {
-                        $CustomeFildSetItems['c_'.$value->getName()] = array(
-                            'name' => $Label,
-                            'type' => 'text',
-                        );
+        $aCustomFields = array();
+        foreach ($oCustomFieldEntities as $oCustomField) {
+            /* @var $oCustomField \Shopware\Core\System\CustomField\CustomFieldEntity */
+            if (!empty($oCustomField->getConfig())) {
+                $Label = '';
+                foreach ($oCustomField->getConfig()['label'] as $index => $value2) {
+                    if ($LangCode === $index) {
+                        $Label = $value2;
+                    } elseif (!isset($oCustomField->getConfig()['label'][$LangCode])) {
+                        $Label = $value2;
                     }
                 }
-            }
-        } else {
-            foreach ($CustomeFildSetEntites as $value) {
-                if (!empty($value->getConfig())) {
-                    $Label = '';
-                    foreach ($value->getConfig()['label'] as $index => $value2) {
-                        if ($LangCode === $index) {
-                            $Label = $value2;
-                        } elseif (!isset($value->getConfig()['label'][$LangCode])) {
-                            $Label = $value2;
-                        }
-                    }
-                    $CustomeFildSetItems['c_'.$value->getName()] = $Label.' ('.MLI18n::gi()->get('FreeTextAttributesOptGroup').')';
-                }
+                $aCustomFields['a_'.$oCustomField->getName()] = $Label;
             }
         }
 
-        return $CustomeFildSetItems;
+        return $aCustomFields;
     }
 
     /**
@@ -340,42 +310,86 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
      * @return array
      */
     public function getProductFreeTextFieldsAttributes($blAttributeMatching = false) {
-        $this->getOrderFreeTextFieldsAttributes($blAttributeMatching);
+
+        $aConfig = MLModule::gi()->getConfig();
+        if (isset($aConfig['lang']) && $aConfig['lang'] != NULL) {
+            $sLangId = $aConfig['lang'];
+        } else {
+            $sLangId = Defaults::LANGUAGE_SYSTEM;
+        }
+        $LanguageCriteria = new Criteria();
+        $LanguageCriteria->addAssociations(['locale'])->addFilter(new EqualsFilter('id', $sLangId));
+        $oLanguage = MLShopware6Alias::getRepository('language')->search($LanguageCriteria, MLShopware6Alias::getContext($sLangId))->first();
+        $LangCode = $oLanguage->getLocale()->getId();
+        $oCustomFieldCriteria = new Criteria();
+        $oCustomFieldCriteria->addAssociations(['customFieldSet.relation'])->addFilter(new EqualsFilter('customFieldSet.relations.entityName', 'product'));
+        $oCustomFieldEntities = MLShopware6Alias::getRepository('custom_field')
+            ->search($oCustomFieldCriteria, MLShopware6Alias::getContextByLanguageId($sLangId))
+            ->getEntities();
+
+        $aCustomFields = array();
+        foreach ($oCustomFieldEntities as $oCustomField) {
+            /* @var $oCustomField \Shopware\Core\System\CustomField\CustomFieldEntity */
+            if (!empty($oCustomField->getConfig())) {
+                $Label = '';
+                foreach ($oCustomField->getConfig()['label'] as $index => $value2) {
+                    if ($LangCode === $index) {
+                        $Label = $value2;
+                    } elseif (!isset($oCustomField->getConfig()['label'][$LangCode])) {
+                        $Label = $value2;
+                    }
+                }
+                $aCustomFields['a_'.$oCustomField->getName()] = $Label;
+            }
+        }
+
+        return $aCustomFields;
     }
 
     /**
-     * @return type
-     * @todo Done
+     * If $blAttributeMatching is false, the value is the variation name, otherwise it will return an array with the
+     * name and the type 'select'.
+     *
+     * @param bool $blAttributeMatching
+     * @return array
      */
     protected function getProductPropertiesGroupVariations($blAttributeMatching = false) {
         $iLangId = $this->getLanguage();
-        $VariationsGroupEntites = MagnalisterController::getShopwareMyContainer()->get('property_group.repository')->search(new Criteria(), MLShopware6Alias::getContextByLanguageId($iLangId))->getEntities();
+        $propertyGroupRepo = MagnalisterController::getShopwareMyContainer()->get('property_group.repository');
+        $VariationsGroupEntities = $propertyGroupRepo
+            ->search(new Criteria(), MLShopware6Alias::getContextByLanguageId($iLangId))->getEntities();
+
         $VariationsGroupItems = array();
-        if ($blAttributeMatching) {
-            foreach ($VariationsGroupEntites as $value) {
-                if ($value->getName() !== null) {
-                    $VariationsGroupItems['a_'.$value->getId()] = array(
-                        'name' => $value->getName(),
-                        'type' => 'select',
-                    );
-                } else {
-                    $DefaultLangCriteria = new Criteria();
-                    $VariationsGroupItems['a_'.$value->getId()] = array(
-                        'name' => MagnalisterController::getShopwareMyContainer()->get('property_group.repository')->search($DefaultLangCriteria->addFilter(new EqualsFilter('id', $value->getId())), MLShopware6Alias::getContextByLanguageId())->first()->getName(),
-                        'type' => 'select',
-                    );
-                }
-            }
-        } else {
-            foreach ($VariationsGroupEntites as $value) {
-                $VariationsGroupItems['a_'.$value->getId()] = $value->getName().' ('.MLI18n::gi()->get('VariationsOptGroup').')';
+        foreach ($VariationsGroupEntities as $value) {
+            if ($value->getName() !== null) {
+                $VariationsGroupItems['a_'.$value->getId()] = $value->getName();
+            } else {
+                $DefaultLangCriteria = new Criteria();
+                $VariationsGroupItems['a_'.$value->getId()] = $propertyGroupRepo
+                    ->search($DefaultLangCriteria->addFilter(new EqualsFilter('id', $value->getId())), MLShopware6Alias::getContextByLanguageId())
+                    ->first()->getName();
             }
         }
+
+        if ($blAttributeMatching) {
+            // expand the value for attribute matching
+            foreach ($VariationsGroupItems as $idx => $item) {
+                $VariationsGroupItems[$idx] = [
+                    'name' => $item,
+                    'type' => 'select'
+                ];
+            }
+        }
+
         return $VariationsGroupItems;
     }
 
-    protected function getLanguage() {
-        $aConfig = MLModule::gi()->getConfig();
+    public function getLanguage() {
+        try {
+            $aConfig = MLModule::gi()->getConfig();
+        } catch (\Exception $ex) {
+
+        }
         if (isset($aConfig['lang']) && $aConfig['lang'] != NULL && Uuid::isValid($aConfig['lang'])) {
             $iLangId = $aConfig['lang'];
         } else {
@@ -424,45 +438,85 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
 
         if ($blAttributeMatching) {
             $productProperty = array(
-                'Name'           => array(
+                'Name'                 => array(
                     'name' => MLI18n::gi()->get('ProductName'),
                     'type' => 'text',
                 ),
-                'ProductNumber'  => array(
+                'ProductNumber'        => array(
                     'name' => MLI18n::gi()->get('ProductNumber'),
                     'type' => 'text',
                 ),
-                'Description'    => array(
+                'Description'          => array(
                     'name' => MLI18n::gi()->get('Description'),
                     'type' => 'text',
                 ),
-                'Ean'            => array(
+                'Ean'                  => array(
                     'name' => MLI18n::gi()->get('EAN'),
                     'type' => 'text',
                 ),
-                'Weight'         => array(
-                    'name' => MLI18n::gi()->get('Weight'),
+                'PurchaseUnit'               => array(
+                    'name' => MLI18n::gi()->get('PurchaseUnit'),
                     'type' => 'text',
                 ),
-                'Width'          => array(
-                    'name' => MLI18n::gi()->get('Width'),
+                'UnitId'               => array(
+                    'name' => MLI18n::gi()->get('UnitId'),
+                    'type' => 'select',
+                ),
+                'Weight'               => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightValue'),
                     'type' => 'text',
                 ),
-                'Height'         => array(
-                    'name' => MLI18n::gi()->get('Height'),
+                'Weight_ValueWithUnit' => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightWithUnit'),
                     'type' => 'text',
                 ),
-                'Length'         => array(
-                    'name' => MLI18n::gi()->get('Length'),
+                'Weight_Unit'          => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightUnit'),
                     'type' => 'text',
                 ),
-                'ManufacturerNumber' => array(
+                'ManufacturerNumber'   => array(
                     'name' => MLI18n::gi()->get('ManufacturerNumber'),
                     'type' => 'select',
                 ),
-                'ManufacturerId' => array(
+                'ManufacturerId'       => array(
                     'name' => MLI18n::gi()->get('ManufacturerId'),
                     'type' => 'select',
+                ),
+                'Width'                => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthValue'),
+                    'type' => 'text',
+                ),
+                'Width_ValueWithUnit'  => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthWithUnit'),
+                    'type' => 'text',
+                ),
+                'Width_Unit'           => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthUnit'),
+                    'type' => 'text',
+                ),
+                'Height'             => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightValue'),
+                    'type' => 'text',
+                ),
+                'Height_ValueWithUnit' => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightWithUnit'),
+                    'type' => 'text',
+                ),
+                'Height_Unit'          => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightUnit'),
+                    'type' => 'text',
+                ),
+                'Length'             => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthValue'),
+                    'type' => 'text',
+                ),
+                'Length_ValueWithUnit' => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthWithUnit'),
+                    'type' => 'text',
+                ),
+                'Length_Unit'          => array(
+                    'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthUnit'),
+                    'type' => 'text',
                 ),
             );
         } else {
@@ -475,14 +529,30 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
                     MLI18n::gi()->get('Description'),
                 'Ean'                =>
                     MLI18n::gi()->get('EAN'),
+                'PurchaseUnit'                =>
+                    MLI18n::gi()->get('PurchaseUnit'),
+                'UnitId'                =>
+                    MLI18n::gi()->get('UnitId'),
                 'Weight'             =>
-                    MLI18n::gi()->get('Weight'),
+                    MLI18n::gi()->get('Product_DefaultAttribute_Weight'),
                 'Width'              =>
-                    MLI18n::gi()->get('Width'),
+                    MLI18n::gi()->get('Product_DefaultAttribute_WidthValue'),
+                'WidthWithUnit'      =>
+                    MLI18n::gi()->get('Product_DefaultAttribute_WidthWithUnit'),
+                'WidthUnit'          =>
+                    MLI18n::gi()->get('Product_DefaultAttribute_WidthUnit'),
                 'Height'             =>
-                    MLI18n::gi()->get('Height'),
+                    MLI18n::gi()->get('Product_DefaultAttribute_HeightValue'),
+                'HeightWithUnit'     =>
+                    MLI18n::gi()->get('Product_DefaultAttribute_HeightWithUnit'),
+                'HeightUnit'         =>
+                    MLI18n::gi()->get('Product_DefaultAttribute_HeightUnit'),
                 'Length'             =>
-                    MLI18n::gi()->get('Length'),
+                    MLI18n::gi()->get('Product_DefaultAttribute_LengthValue'),
+                'LengthUnitName'     =>
+                    MLI18n::gi()->get('Product_DefaultAttribute_LengthWithUnit'),
+                'LengthUnit'         =>
+                    MLI18n::gi()->get('Product_DefaultAttribute_LengthUnit'),
                 'ManufacturerNumber' =>
                     MLI18n::gi()->get('ManufacturerNumber'),
                 'ManufacturerId'     =>
@@ -500,6 +570,7 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
         $aFields = array_merge(
             array('' => MLI18n::gi()->get('ConfigFormPleaseSelect')), $this->getProductFields(), $this->getCustomFields(), $this->getProductPropertiesGroupVariations(), $this->getProductPropertiesGroup()
         );
+
         return $aFields;
     }
 
@@ -512,6 +583,10 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
     }
 
     public function getBrand() {
+        return $this->getListOfArticleFields();
+    }
+
+    public function getShopSystemAttributeList() {
         return $this->getListOfArticleFields();
     }
 
@@ -539,60 +614,61 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
     public function getPrefixedAttributeList($getProperties = false) {
         return $this->getListOfArticleFields();
     }
-
-    /**
-     * @return array
-     */
-    public function getAttributeListWithOptions() {
-        $aAttributes = $this->getPossibleVariationGroupNames();
-        foreach ($aAttributes as $sKey => $sAttribute) {
-            $aAttributes[$sKey] = mb_convert_encoding($sAttribute, 'HTML-ENTITIES');
-        }
-        return $aAttributes;
-    }
+    //
+    //    /**
+    //     * @return array
+    //     */
+    //    public function getAttributeListWithOptions() {
+    //        $aAttributes = $this->getPossibleVariationGroupNames();
+    //        foreach ($aAttributes as $sKey => $sAttribute) {
+    //            $aAttributes[$sKey] = mb_convert_encoding($sAttribute, 'HTML-ENTITIES');
+    //        }
+    //        return $aAttributes;
+    //    }
 
     public function getAttributeOptions($sAttributeCode, $iLangId = null) {
         $aAttributeCode = explode('_', $sAttributeCode, 2);
         $attributes = array();
-
-        // Getting values for Variation attributes
-        if ($aAttributeCode[0] === 'a') {
+        $iLangId = $this->getLanguage();
+        $oContext = MLShopware6Alias::getContext($iLangId);
+        // Getting values for Variation and properties attributes
+        if (in_array($aAttributeCode[0],  ['a', 'p'], true)) {
             $VariationGroupCriteria = new Criteria();
             $VariationGroupCriteria->addFilter(new EqualsFilter('groupId', $aAttributeCode[1]));
             // Sorting variation attributes in attribute matching by name and position
             $VariationGroupCriteria->addSorting(new FieldSorting('position', FieldSorting::ASCENDING));
             $VariationGroupCriteria->addSorting(new FieldSorting('name', FieldSorting::ASCENDING));
-            $VariationconfiguratorOptions = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($VariationGroupCriteria, Context::createDefaultContext())->getEntities();
-
-            foreach ($VariationconfiguratorOptions as $VariationconfiguratorOption) {
-                $attributes[$VariationconfiguratorOption->getId()] = $VariationconfiguratorOption->getName();
+            $VariationConfiguratorOptions = MLShopware6Alias::getRepository('property_group_option')->search($VariationGroupCriteria, $oContext)->getEntities();
+            foreach ($VariationConfiguratorOptions as $VariationConfiguratorOption) {
+                /** @var $VariationConfiguratorOption Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionEntity */
+                $attributes[$VariationConfiguratorOption->getId()] = $VariationConfiguratorOption->getName();
             }
+            $attributes = $this->fillMissingTranslationForPropertyGroupOption($attributes);
         }
-
-        // Getting values for product properties attributes
-        if ($aAttributeCode[0] === 'p') {
-            $PropertyGroupCriteria = new Criteria();
-            $configuratorOptions = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($PropertyGroupCriteria->addFilter(new EqualsFilter('groupId', $aAttributeCode[1])), Context::createDefaultContext())->getEntities();
-
-            foreach ($configuratorOptions as $configuratorOption) {
-                $attributes[$configuratorOption->getId()] = $configuratorOption->getName();
-            }
-        }
-
         // Getting values for custom field (there is combobox type in Shopware 5 which acts like single selection)
-        // Getting supplier field values
         if ($aAttributeCode[0] === 'c') {
             $CustomFieldsCriteria = new Criteria();
-            $CustomFields = MagnalisterController::getShopwareMyContainer()
-                ->get('custom_field.repository')
-                ->search($CustomFieldsCriteria
-                    ->addFilter(new EqualsFilter('name', $aAttributeCode[1])), Context::createDefaultContext())
-                ->getEntities();
-
+            $tableName = MLShopware6Alias::getRepository('custom_field')->getDefinition()->getEntityName();
+            $CustomFields = MLDatabase::getDbInstance()->fetchArray("SELECT * FROM `$tableName` WHERE name='{$aAttributeCode[1]}'");
             foreach ($CustomFields as $CustomField) {
-                if (isset($CustomField->getConfig()['options'])) {
-                    foreach ($CustomField->getConfig()['options'] as $value) {
-                        $attributes[$value['label']['en-GB']] = $value['label']['en-GB'];
+                if (!empty($CustomField['config'])) {
+                    $config = json_decode($CustomField['config'], true);
+                    if(isset($config['options']) && is_array($config['options'])) {
+                        foreach ($config['options'] as $option) {
+                            $attributeLabel = '';
+                            if(isset($option['label']['en-GB'])){
+                                $attributeLabel = $option['label']['en-GB'];
+                            }
+                            if (empty($attributeLabel)) {
+                                if (is_array($option['label'])) {
+                                    $attributeLabel = current($option['label']);
+                                }
+                            }
+                            if (empty($attributeLabel) && isset($option['value'])) {
+                                $attributeLabel = $option['value'];
+                            }
+                            $attributes[$attributeLabel] = $attributeLabel;
+                        }
                     }
                 }
             }
@@ -601,10 +677,20 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
             $ManufacturerCriteria = new Criteria();
             $Manufacturer = MagnalisterController::getShopwareMyContainer()
                 ->get('product_manufacturer.repository')
-                ->search($ManufacturerCriteria, Context::createDefaultContext())
+                ->search($ManufacturerCriteria, $oContext)
                 ->getEntities();
             foreach ($Manufacturer as $ManufacturValue) {
                 $attributes[$ManufacturValue->getId()] = $ManufacturValue->getName();
+            }
+        }
+        if ($sAttributeCode == 'UnitId') {
+            $UnitsCriteria = new Criteria();
+            $Units = MagnalisterController::getShopwareMyContainer()
+                ->get('unit.repository')
+                ->search($UnitsCriteria, $oContext)
+                ->getEntities();
+            foreach ($Units as $UnitsValue) {
+                $attributes[$UnitsValue->getId()] = $UnitsValue->getName();
             }
         }
 
@@ -764,7 +850,7 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
             parent::manipulateFormAfterNormalize($aForm);
             $sController = MLRequest::gi()->data('controller');
             MLModule::gi();
-
+            $aForm = $this->manipulateFormAfterNormalizeEbayProductTemplate($sController, $aForm);
             if (isset($aForm['importactive']['fields']['orderimport.shop'])) {
                 $aForm['importactive']['fields']['orderimport.shop']['i18n']['label'] = MLI18n::gi()->get('Shopware6_Marketplace_Configuration_SalesChannel_Label');
                 $aForm['importactive']['fields']['orderimport.shop']['i18n']['help'] = MLI18n::gi()->get('Shopware6_Marketplace_Configuration_SalesChannel_Info');
@@ -776,34 +862,39 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
             if (strpos($sController, '_config_price') !== false || strpos($sController, '_config_prepare') !== false) {
                 foreach ($aForm as $sKey => $aGroups) {
                     foreach ($aForm[$sKey]['fields'] as $sInnerKey => $aField) {
-
                         //Change customer group selection to price rules selection
-                        if (isset($aForm[$sKey]['fields'][$sInnerKey]) && isset($aForm[$sKey]['fields'][$sInnerKey]['realname']) && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'fixed.priceoptions') !== false) {
-                            $aForm[$sKey]['fields'][$sInnerKey]['i18n']['help'] = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_fixedPriceoptions_help');
-                            $aForm[$sKey]['fields'][$sInnerKey]['i18n']['label'] = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_fixedPriceoptions_label');
-                            $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['values'] = $this->getAdvancedPriceRules();
-                        } else if (
-                            (
-                                isset($aForm[$sKey]['fields'][$sInnerKey]) && isset($aForm[$sKey]['fields'][$sInnerKey]['realname'])
-                                && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'strikepriceoptions') !== false
-                            )
-                            ||
-                            (
-                                isset($aForm[$sKey]['fields'][$sInnerKey]) && isset($aForm[$sKey]['fields'][$sInnerKey]['realname'])
-                                && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'b2b.priceoptions') !== false
-                            )
-                        ) {
-                            $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['values'] = $this->getAdvancedPriceRules();
-                        } else if (isset($aForm[$sKey]['fields'][$sInnerKey]) && isset($aForm[$sKey]['fields'][$sInnerKey]['realname']) && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'chinese.priceoptions') !== false) {
-                            $aForm[$sKey]['fields'][$sInnerKey]['i18n']['help'] = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_fixedPriceoptions_help');
-                            $aForm[$sKey]['fields'][$sInnerKey]['i18n']['label'] = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_chinesePriceoptions_label');
-                            $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['values'] = $this->getAdvancedPriceRules();
-                        } else if (isset($aForm[$sKey]['fields'][$sInnerKey]) && isset($aForm[$sKey]['fields'][$sInnerKey]['realname']) && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'priceoptions') !== false) {
-                            $aForm[$sKey]['fields'][$sInnerKey]['i18n']['help'] = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_fixedPriceoptions_help');
-                            $aForm[$sKey]['fields'][$sInnerKey]['i18n']['label'] = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_fixedPriceoptions_label');
-                            $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['values'] = $this->getAdvancedPriceRules();
+                        if (isset($aForm[$sKey]['fields'][$sInnerKey]['realname'])) {
+                            $sRealName = $aForm[$sKey]['fields'][$sInnerKey]['realname'];
+                            $sHelpText = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_fixedPriceoptions_help');
+                            $sLabelText = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_fixedPriceoptions_label');
+                            if (in_array($sRealName, ['fixed.priceoptions']) !== false) {
+                                $aForm[$sKey]['fields'][$sInnerKey]['i18n']['help'] = $sHelpText;
+                                $aForm[$sKey]['fields'][$sInnerKey]['i18n']['label'] = $sLabelText;
+                                $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['values'] = $this->getAdvancedPriceRules();
+                            } else if (
+                                (strpos($sRealName, 'strikepriceoptions') !== false)
+                                ||
+                                (strpos($sRealName, 'b2b.priceoptions') !== false)
+                            ) {
+                                $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['values'] = $this->getAdvancedPriceRules();
+                            } else if (strpos($sRealName, 'chinese.priceoptions') !== false) {
+                                $aForm[$sKey]['fields'][$sInnerKey]['i18n']['help'] = $sHelpText;
+                                $aForm[$sKey]['fields'][$sInnerKey]['i18n']['label'] = MLI18n::gi()->get('Shopware6_eBay_Marketplace_Configuration_chinesePriceoptions_label');
+                                $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['values'] = $this->getAdvancedPriceRules();
+                            } else if (strpos($sRealName, 'priceoptions') !== false) {
+                                $aForm[$sKey]['fields'][$sInnerKey]['i18n']['help'] = $sHelpText;
+                                $aForm[$sKey]['fields'][$sInnerKey]['i18n']['label'] = $sLabelText;
+                                $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['values'] = $this->getAdvancedPriceRules();
+                            } else if (strpos($sRealName, 'volumepriceswebshopcustomergroup') !== false) {
+                                $aForm[$sKey]['fields'][$sInnerKey]['i18n']['help'] = $sHelpText;
+                                $aForm[$sKey]['fields'][$sInnerKey]['i18n']['label'] = $sLabelText;
+                                $aForm[$sKey]['fields'][$sInnerKey]['values'] = $this->getAdvancedPriceRules();
+                            } else if (in_array($sRealName,
+                                    ['volumepriceprice2', 'volumepriceprice3', 'volumepriceprice4', 'volumepriceprice5', 'volumepricepricea', 'volumepricepriceb']//METRO volume price
+                                ) !== false) {
+                                $aForm[$sKey]['fields'][$sInnerKey]['subfields']['CustomerGroup']['values'] = $this->getAdvancedPriceRules();
+                            }
                         }
-
                         //Removing special price check box from "Marketplaces->Price calculation"
                         if (isset($aForm[$sKey]['fields'][$sInnerKey]['subfields'])) {
                             foreach ($aForm[$sKey]['fields'][$sInnerKey]['subfields'] as $sInnerKey2 => $aField2) {
@@ -827,7 +918,78 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
         }
     }
 
+   public function getCustomFieldsList(){
+       $CustomeFildSetEntites = MagnalisterController::getShopwareMyContainer()
+           ->get('custom_field.repository')
+           ->search((new Criteria())->addSorting(new FieldSorting('name', FieldSorting::ASCENDING)), Context::createDefaultContext())
+           ->getEntities();
+       return $CustomeFildSetEntites;
+   }
+    protected function manipulateFormAfterNormalizeEbayProductTemplate($sController, array $aForm): array {
+        if (MLModule::gi()->getMarketPlaceName() === 'ebay' && strpos($sController, '_config_producttemplate') !== false) {
+           $aForm['product']['fields']['template.tabs']['subfields']['template.content']['i18n']['hint'] =
+           $this->addCustomFieldsToDescriptionHint($aForm['product']['fields']['template.tabs']['subfields']['template.content']['i18n']['hint']);
+        }
+        return $aForm;
+    }
+
+    public function addCustomFieldsToDescriptionHint(string $aField): string {
+        $sHint = str_replace('</dl></dl>', '', $aField);
+        $sCustomFieldInfo = MLI18n::gi()->ebay_prepare_apply_form_field_description_hint_customfield;
+        $i = 5;
+        foreach ($this->getCustomFieldsList() as $oCustomField) {
+            if ($i === 0) {
+                break;
+            }
+            $aCustomFieldsKeys = $oCustomField->getName();
+            $sCustomFieldInfo .= '<dd>#LABEL_' . $aCustomFieldsKeys .'# #VALUE_'.$aCustomFieldsKeys. '#</dd><br />';
+            $i--;
+        }
+        return $sHint . $sCustomFieldInfo . '</dl></dl>';
+    }
+
     public function getDefaultCancelStatus() {
         return 'cancelled';
+    }
+
+    protected function fillMissingTranslationForPropertyGroupOption(array $attributes) {
+        $attributeWithEmptyNames = array();
+        foreach ($attributes as $attributeKey => &$attribute) {
+            if(in_array($attribute, ['', null], true)){
+                $attributeWithEmptyNames[$attributeKey] = $attribute;
+            }
+        }
+        if(count($attributeWithEmptyNames) > 0){
+            foreach ($attributeWithEmptyNames as $attributeKey => $attributeWithEmptyName) {
+                if (!isset(self::$aPropertyGroupOptionTranslations[$attributeKey])) {
+                    $this->populatePropertyGroupTranslationCache(array_keys($attributes));
+                }
+                if (isset(self::$aPropertyGroupOptionTranslations[$attributeKey])) {
+                    if(isset(self::$aPropertyGroupOptionTranslations[$attributeKey][$this->getLanguage()])){
+                        $attributes[$attributeKey] = self::$aPropertyGroupOptionTranslations[$attributeKey][$this->getLanguage()];
+                    } else if(isset(self::$aPropertyGroupOptionTranslations[$attributeKey][Defaults::LANGUAGE_SYSTEM])) {
+                        $attributes[$attributeKey] = self::$aPropertyGroupOptionTranslations[$attributeKey][Defaults::LANGUAGE_SYSTEM];
+                    }else if(isset(self::$aPropertyGroupOptionTranslations[$attributeKey][MagnalisterController::getShopwareLanguageId()])) {
+                        $attributes[$attributeKey] = self::$aPropertyGroupOptionTranslations[$attributeKey][MagnalisterController::getShopwareLanguageId()];
+                    }else {
+                        $attributes[$attributeKey] = current(self::$aPropertyGroupOptionTranslations[$attributeKey]);
+                    }
+                }
+            }
+        }
+
+        return $attributes;
+    }
+    static protected $aPropertyGroupOptionTranslations = array();
+    protected function populatePropertyGroupTranslationCache(array $keys) {
+        foreach ($keys as $key){//initialize all searching attribute keys with empty to prevent to search them again in database
+            self::$aPropertyGroupOptionTranslations[$key] = [];
+        }
+        $sWhere = "'".implode("', '", $keys)."'";
+        $tableName = MLShopware6Alias::getRepository('property_group_option_translation')->getDefinition()->getEntityName();
+        $aTranslationsData = MLDatabase::getDbInstance()->fetchArray("SELECT HEX(`property_group_option_id`) as id, HEX(`language_id`) as laguageID, name FROM `$tableName` WHERE HEX(`property_group_option_id`) IN ($sWhere)");
+        foreach ($aTranslationsData as $aTranslation) {
+            self::$aPropertyGroupOptionTranslations[strtolower($aTranslation['id'])][strtolower($aTranslation['laguageID'])] = $aTranslation['name'];
+        }
     }
 }

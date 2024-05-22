@@ -21,14 +21,14 @@ MLFilesystem::gi()->loadClass('Cdiscount_Helper_Model_Service_OrderData_Normaliz
 class ML_Shopware6Cdiscount_Helper_Model_Service_OrderData_Normalize extends ML_Cdiscount_Helper_Model_Service_OrderData_Normalize {
 
     protected function getShippingCode($aTotal) {
-        $sShippingMethod = MLModul::gi()->getConfig('orderimport.shippingmethod');
+        $sShippingMethod = MLModule::gi()->getConfig('orderimport.shippingmethod');
         if (!empty($sShippingMethod)) {
             if ('textfield' == $sShippingMethod) {
-                $sShipping = MLModul::gi()->getConfig('orderimport.shippingmethod.name');
+                $sShipping = MLModule::gi()->getConfig('orderimport.shippingmethod.name');
                 return $sShipping == '' ? $aTotal['Code'] : $sShipping;
             } else if ('matching' == $sShippingMethod) {
                 if (in_array($aTotal['Code'], array('', 'none', 'None'))) {
-                    return MLModul::gi()->getMarketPlaceName();
+                    return MLModule::gi()->getMarketPlaceName();
                 } else {
                     return $aTotal['Code'];
                 }
@@ -37,7 +37,7 @@ class ML_Shopware6Cdiscount_Helper_Model_Service_OrderData_Normalize extends ML_
             return $sShippingMethod;
         }
 
-        return MLModul::gi()->getMarketPlaceName();
+        return MLModule::gi()->getMarketPlaceName();
     }
 
 }

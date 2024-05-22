@@ -27,7 +27,7 @@ class ML_Amazon_Controller_Amazon_Prepare extends ML_Tabs_Controller_Widget_Tabs
     }
 
     public static function getTabActive() {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
     
     public static function getTabDefault() {

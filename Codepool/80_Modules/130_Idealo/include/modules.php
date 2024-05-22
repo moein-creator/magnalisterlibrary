@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -24,7 +24,6 @@ MLSetting::gi()->add('aModules', array(
         'displayAlways' => false,
         'requiredConfigKeys' => array(
             'lang',
-            'orderimport.shop',
             'exchangerate_update',//price.group is removed from Shopify, to be sure that price tab is save magnalister should check exchange rate
             'stocksync.tomarketplace',
         ),

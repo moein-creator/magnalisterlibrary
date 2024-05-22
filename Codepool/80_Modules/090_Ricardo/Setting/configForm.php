@@ -19,7 +19,7 @@
 MLSetting::gi()->add('ricardo_config_account', array(
     'tabident' => array(
         'legend' => array(
-            'classes' => array('mlhidden'),
+            'classes' => array(''),
         ),
         'fields' => array(
             array(
@@ -84,10 +84,12 @@ MLSetting::gi()->add('ricardo_config_prepare', array(
             array(
                 'name' => 'priceforauction',
                 'type' => 'string',
+                'default' => 1.00
             ),
             array(
                 'name' => 'priceincrement',
                 'type' => 'string',
+                'default' => 0.05
             ),
             array(
                 'name' => 'duration',
@@ -130,6 +132,16 @@ MLSetting::gi()->add('ricardo_config_prepare', array(
                         'type' => 'ajax'
                     ),
                 )
+            ),
+            array(
+                'name' => 'imagesize',
+                'type' => 'select',
+                'default' => '500',
+                'i18n' => array(
+                    'label' => '{#i18n:form_config_orderimport_imagesize_lable#}',
+                    'help' => '{#i18n:form_config_orderimport_imagesize_help#}',
+                    'hint' => '{#i18n:form_config_orderimport_imagesize_hint#}'
+                ),
             ),
             array(
                 'name' => 'delivery',

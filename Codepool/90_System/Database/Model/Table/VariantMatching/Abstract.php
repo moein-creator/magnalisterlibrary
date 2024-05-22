@@ -34,7 +34,7 @@ class ML_Database_Model_Table_VariantMatching_Abstract extends ML_Database_Model
             'Type' => 'varchar(50)', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
         ),
         'ShopVariation' => array(
-            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => '', 'Extra' => '', 'Comment' => ''
+            'Type' => 'longtext', 'Null' => self::IS_NULLABLE_NO, 'Default' => NULL, 'Extra' => '', 'Comment' => ''
         ),
         'ModificationDate' => array(
             'Type' => 'datetime', 'Null' => self::IS_NULLABLE_NO, 'Default' => '2000-01-01 00:00:00', 'Extra' => '', 'Comment' => ''
@@ -171,7 +171,7 @@ class ML_Database_Model_Table_VariantMatching_Abstract extends ML_Database_Model
             SELECT ".$sField."
             FROM ".$this->sTableName." prepare
             INNER JOIN ".$oCat->getTableName()." cat on cat.categoryid = ".$sField."
-            WHERE prepare.mpid = ".MLModul::gi()->getMarketPlaceId()."
+            WHERE prepare.mpid = " . MLModule::gi()->getMarketPlaceId() . "
             GROUP BY ".$sField."
             ORDER BY ".$orderBy." desc
             LIMIT 10
@@ -191,6 +191,6 @@ class ML_Database_Model_Table_VariantMatching_Abstract extends ML_Database_Model
     }
 
     public function getTopPrimaryCategories() {
-        return $this->getLastModifiedCategories(MLModul::gi()->getMarketPlaceName().'_categoriesmarketplace', 'Identifier', 'ModificationDate');
+        return $this->getLastModifiedCategories(MLModule::gi()->getMarketPlaceName() . '_categoriesmarketplace', 'Identifier', 'ModificationDate');
     }
 }

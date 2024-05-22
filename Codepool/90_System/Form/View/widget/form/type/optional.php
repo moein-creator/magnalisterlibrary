@@ -50,7 +50,12 @@ if (!class_exists('ML', false))
             ? $aField['i18n']['optional']['select']
             : MLI18n::gi()->get('form_type_optional_select')
     ;
-    $blActive=$this->optionalIsActive($aField);
+if ($this->valueIsSaved() !== null) {
+    //Kint::dump($this->getSavedValue($aField));
+    $blActive = $this->valueIsSaved() && $this->getSavedValue($aField) !== null;
+} else {
+    $blActive = $this->optionalIsActive($aField);
+}
 ?>
 <?php if (MLHttp::gi()->isAjax() && (!isset($aField['checkajax']) || (isset($aField['checkajax']) && $aField['checkajax'] === true))) {
     try {

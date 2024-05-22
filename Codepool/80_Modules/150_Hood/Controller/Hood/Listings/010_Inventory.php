@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2018 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -28,8 +28,12 @@ class ML_Hood_Controller_Hood_Listings_Inventory extends ML_Listings_Controller_
 
     public function __construct() {
         parent::__construct();
-        $this->aSetting['maxTitleChars'] = 80;
+        $this->aSetting['maxTitleChars'] = 85;
         $this->priceBrutto = !(defined('PRICE_IS_BRUTTO') && (PRICE_IS_BRUTTO == 'false'));
+    }
+
+    public static function getTabTitle() {
+        return MLI18n::gi()->get('ML_GENERIC_INVENTORY');
     }
 
     protected function getFields() {
@@ -88,7 +92,6 @@ class ML_Hood_Controller_Hood_Listings_Inventory extends ML_Listings_Controller_
     }
 
     protected function getAuctionId($item) {
-
         $html = '<td>'.$item['AuctionId'].'</td>';
         if (!empty($item['editUrl'])) {
             $html = '<td><div class="product-link" ><a class="ml-js-noBlockUi" href="'.$item['editUrl'].'" target="_blank" title="'.MLI18n::gi()->ML_LABEL_EDIT.'">'.$item['AuctionId'].'</a></div></td>';
@@ -180,7 +183,8 @@ class ML_Hood_Controller_Hood_Listings_Inventory extends ML_Listings_Controller_
     }
 
     protected function getHoodLink($item) {
-        return '<td><a class="ml-js-noBlockUi" href="http://www.hood.de/00'.$item['AuctionId'].'.htm" target="_blank">'.$item['AuctionId'].'</a></td>';
+        $addStyle = (empty($item['ShopTitle']) || $item['ShopTitle'] === '&mdash;') ? 'style="color:#e31e1c;"' : '';
+        return '<td><a '. $addStyle .' class="ml-js-noBlockUi" href="http://www.hood.de/'.sprintf('%010d', $item['AuctionId']).'.htm" target="_blank">'.$item['AuctionId'].'</a></td>';
     }
 
     protected function getItemDateAdded($item) {
@@ -206,7 +210,9 @@ class ML_Hood_Controller_Hood_Listings_Inventory extends ML_Listings_Controller_
                 $oProduct = MLProduct::factory();
                 try {
                     /* @var $oProduct ML_Shop_Model_Product_Abstract */
-                    if (!$oProduct->getByMarketplaceSKU($item['SKU'])->exists() && !$oProduct->getByMarketplaceSKU($item['SKU'], true)->exists()) {
+                    if (!$oProduct->getByMarketplaceSKU($item['SKU'])->exists()
+                        && !$oProduct->getByMarketplaceSKU($item['SKU'], true)->exists()
+                    ) {
                         throw new Exception;
                     }
 

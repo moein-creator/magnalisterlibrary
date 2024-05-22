@@ -16,7 +16,8 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 $latestReport = MLModul::gi()->getConfig('inventory.import');
 ?>
 

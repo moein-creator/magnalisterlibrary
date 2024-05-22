@@ -1,6 +1,5 @@
 <?php
-
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,12 +11,11 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2014 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
 MLFilesystem::gi()->loadClass('Form_Controller_Widget_Form_PrepareAbstract');
 
 class ML_Hitmeister_Controller_Hitmeister_Prepare_Match_Auto extends ML_Form_Controller_Widget_Form_PrepareAbstract {
@@ -49,35 +47,47 @@ class ML_Hitmeister_Controller_Hitmeister_Prepare_Match_Auto extends ML_Form_Con
         return true;
     }
 
-    protected function callAjaxGetProgress() {
-        $data = json_encode(array('x' => (int)$this->oSelectList->getCountTotal()));
-        MLSetting::gi()->add('aAjax', $data);
-    }
-
-    protected function callAjaxStartAutomatching() {
-        $autoMatchingStats = $this->insertAutoMatchProduct();
-        $re = trim(sprintf(
-            MLI18n::gi()->get('Hitmeister_Productlist_Match_Auto_Summary'),
-            $autoMatchingStats['success'],
-            $autoMatchingStats['nosuccess'],
-            $autoMatchingStats['almost']
-        ));
-
+    /**
+     * @return void
+     */
+    protected function callAjaxAutoMatching() {
+        $stats = $this->insertAutoMatchedProduct();
         MLSetting::gi()->add('aAjax', array(
-            'Data' => $re
+            'Data' => $stats,
+            'message' => trim(sprintf(
+                MLI18n::gi()->get('Hitmeister_Productlist_Match_Auto_Summary'),
+                $stats['success'],
+                $stats['nosuccess'],
+                $stats['almost']
+            )),
         ));
     }
 
-    protected function insertAutoMatchProduct() {
-        $autoMatchingStats = array(
-            'success' => 0,
-            'almost' => 0,
-            'nosuccess' => 0,
+    /**
+     * @return array
+     * @throws MLAbstract_Exception
+     */
+    protected function insertAutoMatchedProduct() {
+        $itemsPerCall = MLRequest::gi()->get('itemsPerCall');
+
+        if (is_int(MLRequest::gi()->get('total'))) {
+            $total = MLRequest::gi()->get('total');
+        } else {
+            $total = $this->oSelectList->getCountTotal();
+        }
+        $stats = array(
+            'success' => MLRequest::gi()->get('success') ?: 0,
+            'almost' => MLRequest::gi()->get('almost') ?: 0,
+            'offset' => (int)MLRequest::gi()->get('offset') ?: 0,
+            'total' => (int)$total,
+            'nosuccess' => MLRequest::gi()->get('nosuccess') ?: 0,
             '_timer' => microtime(true)
         );
 
-        foreach ($this->oSelectList->getList() as $product) {
-            $product = $this->oPrepareHelper->getProductInfoById($product->pID);
+        $chunks = array_chunk($this->oSelectList->getList(), $itemsPerCall);
+
+        foreach ($chunks[0] as $selectedProduct) {
+            $product = $this->oPrepareHelper->getProductInfoById($selectedProduct->pID);
             $searchResults = $this->oPrepareHelper->searchOnHitmeister($product['EAN'], 'EAN');
 
             $iMatchedArrayKey = null;
@@ -96,27 +106,27 @@ class ML_Hitmeister_Controller_Hitmeister_Prepare_Match_Auto extends ML_Form_Con
                 && count($searchResults) != 1
             ) {
                 if (count($searchResults) > 0) {
-                    $autoMatchingStats['almost']++;
+                    $stats['almost']++;
                 }
-                $autoMatchingStats['nosuccess']++;
+                $stats['nosuccess']++;
                 MLDatabase::getDbInstance()->delete(TABLE_MAGNA_SELECTION, array(
                     'pID' => $product['Id'],
-                    'mpID' => MLModul::gi()->getMarketPlaceId(),
+                    'mpID' => MLModule::gi()->getMarketPlaceId(),
                     'selectionname' => 'match',
-                    'session_id' => session_id()
+                    'session_id' => MLShop::gi()->getSessionId()
                 ));
                 continue;
             } elseif ($iMatchedArrayKey === null) {
                 $iMatchedArrayKey = 0;
             }
-            $oModul = MLModul::gi();
+            $oModul = MLModule::gi();
             $matchedProduct = array(
                 'mpID' => $oModul->getMarketPlaceId(),
                 'products_id' => $product['Id'],
                 'Title' => $searchResults[$iMatchedArrayKey]['title'],
                 'EAN' => reset($searchResults[$iMatchedArrayKey]['eans']),
                 'ItemCondition' => $oModul->getPrepareDefaultConfig('itemcondition'),
-                'ShippingTime' => $oModul->getPrepareDefaultConfig('shippingtime'),
+                'HandlingTime' => $oModul->getPrepareDefaultConfig('handlingtime'),
                 'ItemCountry' => $oModul->getPrepareDefaultConfig('itemcountry'),
                 'Comment' => '',
                 'PrepareType' => 'auto',
@@ -128,15 +138,15 @@ class ML_Hitmeister_Controller_Hitmeister_Prepare_Match_Auto extends ML_Form_Con
 
             MLDatabase::getDbInstance()->delete(TABLE_MAGNA_SELECTION, array(
                 'pID' => $product['Id'],
-                'mpID' => MLModul::gi()->getMarketPlaceId(),
+                'mpID' => MLModule::gi()->getMarketPlaceId(),
                 'selectionname' => 'match',
-                'session_id' => session_id()
+                'session_id' => MLShop::gi()->getSessionId()
             ));
 
-            $autoMatchingStats['success']++;
+            $stats['success']++;
         }
 
-        return $autoMatchingStats;
+        return $stats;
     }
 
 }

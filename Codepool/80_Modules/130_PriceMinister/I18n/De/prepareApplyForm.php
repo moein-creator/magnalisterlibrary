@@ -101,7 +101,7 @@ MLI18n::gi()->add('priceminister_prepare_variations', array(
             'label' => '{#i18n:attributes_matching_web_shop_attribute#}',
         ),
         'saveaction' => array(
-            'label' => 'SPEICHERN UND SCHLIESSEN',
+            'label' => 'Speichern und schliessen',
         ),
         'resetaction' => array(
             'label' => '{#i18n:priceminister_varmatch_reset_matching#}',

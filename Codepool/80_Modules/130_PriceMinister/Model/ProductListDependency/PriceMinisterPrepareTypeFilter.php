@@ -63,7 +63,7 @@ class ML_PriceMinister_Model_ProductListDependency_PriceMinisterPrepareTypeFilte
         return MLDatabase::getDbInstance()->fetchOne("
             SELECT COUNT(*)
               FROM ".MLDatabase::getPrepareTableInstance()->getTableName()." prepare
-             WHERE     prepare.".MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName()." = '".MLModul::gi()->getMarketPlaceId()."'
+             WHERE     prepare." . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . " = '" . MLModule::gi()->getMarketPlaceId() . "'
                    AND prepare.PrepareType in (".$sCompare.")
                    AND prepare.".MLDatabase::getPrepareTableInstance()->getProductIdFieldName()." = '".(int)$oProduct->get('id')."'
         ") > 0 ? false : true;
@@ -78,7 +78,7 @@ class ML_PriceMinister_Model_ProductListDependency_PriceMinisterPrepareTypeFilte
     public function getMasterIdents() {
         $sValue = $this->getConfig('PrepareType');
         $sCompare = $sValue === 'match' ? "'apply'" : "'manual' , 'auto'";
-        $sProductTable = MLDatabase::getTableInstance('product')->getTableName();
+        $sProductTable = MLProduct::factory()->getTableName();
         // get masterarticles which have no/missing prepared variant
         $sSql = "
                 SELECT master." . (
@@ -88,7 +88,7 @@ class ML_PriceMinister_Model_ProductListDependency_PriceMinisterPrepareTypeFilte
                 INNER JOIN " . $sProductTable . " variant ON prepare." . MLDatabase::getPrepareTableInstance()->getProductIdFieldName() . " = variant.id
                 INNER JOIN " . $sProductTable . " master ON variant.parentid = master.id
                 WHERE prepare.PrepareType in( " . $sCompare . ")
-                AND prepare." . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . "='" . MLModul::gi()->getMarketPlaceId() . "'
+                AND prepare." . MLDatabase::getPrepareTableInstance()->getMarketplaceIdFieldName() . "='" . MLModule::gi()->getMarketPlaceId() . "'
                 GROUP BY master.id
             ";
         return array(

@@ -18,7 +18,6 @@
 
 MLI18n::gi()->add('formgroups_idealo', array(
     'account' => 'idealo Account',
-    'directbuycredential' => 'idealo Checkout',
     'prepare' => 'Article preparation',
     'shipping' => array(
         'title' => 'Shipping Methods',
@@ -28,5 +27,4 @@ MLI18n::gi()->add('formgroups_idealo', array(
     'orderstatus' => 'Synchronization of Order Status from Shop to {#setting:currentMarketplaceName#}',
     'prepare_details' => 'Offer configurations',
     'prepare_general' => 'General configurations',
-    'directbuy' => 'idealo Checkout',
 ));

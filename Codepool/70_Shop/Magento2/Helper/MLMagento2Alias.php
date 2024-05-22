@@ -92,7 +92,9 @@ class MLMagento2Alias {
     }
 
     /**
+     * @param string $class
      * @return mixed
+     * @throws MLAbstract_Exception
      */
     public static function CreateObjectManagerProvider($class) {
         try {
@@ -100,7 +102,7 @@ class MLMagento2Alias {
             return $objectManager->create($class);
         } catch (Exception $exception) {
             MLMessage::gi()->addWarn(MLI18n::gi()->get('magento2_generated_directory_issue'));
-            throw new Exception();
+            throw new Exception($exception->getMessage(), $exception->getCode());
         }
     }
 

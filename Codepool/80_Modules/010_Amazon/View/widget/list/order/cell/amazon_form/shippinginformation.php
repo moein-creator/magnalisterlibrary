@@ -19,7 +19,8 @@
 /* @var $this  ML_Amazon_Controller_Amazon_ShippingLabel_Orderlist */
 /* @var $oList ML_Amazon_Model_List_Amazon_Order */
 /* @var $aOrder array */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 <tbody class="even ml-shippinglabel-form ml-shippinglabel-form-upload" id="orderlist-<?php echo $aOrder['MPSpecific']['MOrderID'] ?>">
     <tr>
@@ -38,18 +39,18 @@ class_exists('ML', false) or die();
                                         <?php
                                         $sIdent = MLHttp::gi()->parseFormFieldName($aOrder['MPSpecific']['MOrderID']);
                                         $sHtmlId = str_replace(array('[', ']'), '_', $sIdent);
-                                        $aDefault = MLModul::gi()->getConfig('shippinglabel.default.dimension');
-                                        $aText = MLModul::gi()->getConfig('shippinglabel.default.dimension.text');
-                                        $aLength = MLModul::gi()->getConfig('shippinglabel.default.dimension.length');
-                                        $aWidth = MLModul::gi()->getConfig('shippinglabel.default.dimension.width');
-                                        $aHeight = MLModul::gi()->getConfig('shippinglabel.default.dimension.height');
+                                        $aDefault = MLModule::gi()->getConfig('shippinglabel.default.dimension');
+                                        $aText = MLModule::gi()->getConfig('shippinglabel.default.dimension.text');
+                                        $aLength = MLModule::gi()->getConfig('shippinglabel.default.dimension.length');
+                                        $aWidth = MLModule::gi()->getConfig('shippinglabel.default.dimension.width');
+                                        $aHeight = MLModule::gi()->getConfig('shippinglabel.default.dimension.height');
                                         $fLength = 0;
                                         $fWidth = 0;
                                         $fHeight = 0;
                                         ?>
                                         <select class="ml-shippinglabel-configshipping" id="<?php echo $sHtmlId ?>">
                                             <?php
-                                            $sSizeUnit = MLModul::gi()->getConfig('shippinglabel.size.unit');
+                                            $sSizeUnit = MLModule::gi()->getConfig('shippinglabel.size.unit');
                                             $sSizeUnit = ($sSizeUnit == 'centimeters' ? 'cm' : ($sSizeUnit == 'inches' ? 'in' : ''));
                                             foreach ($aDefault as $iKey => $sValue) {
                                                 if ($aDefault[$iKey]['default'] == '1' ? 'selected=selected' : '') {
@@ -78,19 +79,23 @@ class_exists('ML', false) or die();
                                 <tr>
                                     <td><?php echo $this->__('ML_Amazon_Shippinglabel_Form_Package_Dimension_Label') ?>:</td>
                                     <td>
-                                        <table>
-                                            <tr>
-                                                <td class="normal"><label for="<?php echo $sHtmlId . 'length' ?>"><?php echo $this->__('ML_Amazon_Shippinglabel_Package_Length') ?></label></td><td>:</td><td><input class="ml-shippinglabel-size" id="<?php echo $sHtmlId . 'length' ?>" type="text" name="<?php echo MLHttp::gi()->parseFormFieldName('length[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" value="<?php echo $fLength ?>"/></td><td><?php echo $sSizeUnit ?></td><td>&nbsp;&nbsp;</td>
-                                                <td class="normal"><label for="<?php echo $sHtmlId . 'width' ?>"><?php echo $this->__('ML_Amazon_Shippinglabel_Package_Width') ?></label></td><td>:</td><td><input class="ml-shippinglabel-size" type="text" id="<?php echo $sHtmlId . 'width' ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('width[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" value="<?php echo $fWidth ?>"/></td><td><?php echo $sSizeUnit ?></td><td>&nbsp;&nbsp;</td>
-                                                <td class="normal"><label for="<?php echo $sHtmlId . 'height' ?>"><?php echo $this->__('ML_Amazon_Shippinglabel_Package_Height') ?></label></td><td>:</td><td><input class="ml-shippinglabel-size" type="text" id="<?php echo $sHtmlId . 'height' ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('height[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" value="<?php echo $fHeight ?>"/></td><td><?php echo $sSizeUnit ?></td><td>&nbsp;&nbsp;</td>
-                                            </tr>
-                                        </table>
+
+                                                <div class="ml-amazon-shipping-size">
+                                                    <div class="normal size"><label for="<?php echo $sHtmlId . 'length' ?>"><?php echo $this->__('ML_Amazon_Shippinglabel_Package_Length') ?>:</label><input class="ml-shippinglabel-size" id="<?php echo $sHtmlId . 'length' ?>" type="text" name="<?php echo MLHttp::gi()->parseFormFieldName('length[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" value="<?php echo $fLength ?>"/><?php echo $sSizeUnit ?>&nbsp;&nbsp;</div>
+                                                    <div class="normal size"><label for="<?php echo $sHtmlId . 'width' ?>"><?php echo $this->__('ML_Amazon_Shippinglabel_Package_Width') ?>:</label><input class="ml-shippinglabel-size" type="text" id="<?php echo $sHtmlId . 'width' ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('width[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" value="<?php echo $fWidth ?>"/><?php echo $sSizeUnit ?>&nbsp;</div>
+                                                    <div class="normal size"><label for="<?php echo $sHtmlId . 'height' ?>"><?php echo $this->__('ML_Amazon_Shippinglabel_Package_Height') ?>:</label><input class="ml-shippinglabel-size" type="text" id="<?php echo $sHtmlId . 'height' ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('height[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" value="<?php echo $fHeight ?>"/><?php echo $sSizeUnit ?>&nbsp;&nbsp;</div>
+                                                </div>
+
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><?php echo $this->__('ML_GENERIC_WEIGHT') ?>:</td>
                                     <td>
-                                        <input type="text" class="ml-shippinglabel-size ml-shippinglabel-weight-<?php echo $aOrder['MPSpecific']['MOrderID'] ?>" name="<?php echo MLHttp::gi()->parseFormFieldName('weight[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" value="<?php echo  $aOrder['TotalWeight'] ?>"/> <span class="normal"><?php echo MLModul::gi()->getConfig('shippinglabel.weight.unit') ?></span>
+                                        <input type="text"
+                                               class="ml-shippinglabel-size ml-shippinglabel-weight-<?php echo $aOrder['MPSpecific']['MOrderID'] ?>"
+                                               name="<?php echo MLHttp::gi()->parseFormFieldName('weight[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>"
+                                               value="<?php echo $aOrder['TotalWeight'] ?>"/> <span
+                                                class="normal"><?php echo MLModule::gi()->getConfig('shippinglabel.weight.unit') ?></span>
                                         <span class="infoTextGray"><?php echo $this->__('ML_Amazon_Shippinglabel_Form_Weight_Notice') ?></span>
                                     </td>
                                 </tr>
@@ -120,9 +125,9 @@ class_exists('ML', false) or die();
                                 </td>
                                 <td class="normal">
                                     <?php
-                                    $aService = MLModul::gi()->MfsGetConfigurationValues('ServiceOptions');
+                                    $aService = MLModule::gi()->MfsGetConfigurationValues('ServiceOptions');
                                     $aOptions = array_key_exists('CarrierWillPickUp', $aService) ? $aService['CarrierWillPickUp'] : array();
-                                    $sSelected = MLModul::gi()->getConfig('shippingservice.carrierwillpickup');
+                                    $sSelected = MLModule::gi()->getConfig('shippingservice.carrierwillpickup');
                                     foreach ($aOptions as $sKey => $sValue) {
                                         ?>
                                         <input type="radio" <?php echo $sSelected == $sKey ? 'checked=checked' : '' ?> name="<?php echo MLHttp::gi()->parseFormFieldName('carrierwillpickup[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" value="<?php echo $sKey ?>" id="amazon_config_shippinglabel_<?php echo $sKey ?>">
@@ -139,9 +144,9 @@ class_exists('ML', false) or die();
                                 <td>
                                     <select name="<?php echo MLHttp::gi()->parseFormFieldName('deliveryexperience[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" >
                                         <?php
-                                        $aService = MLModul::gi()->MfsGetConfigurationValues('ServiceOptions');
+                                        $aService = MLModule::gi()->MfsGetConfigurationValues('ServiceOptions');
                                         $aOptions = array_key_exists('DeliveryExperience', $aService) ? $aService['DeliveryExperience'] : array();
-                                        $sSelected = MLModul::gi()->getConfig('shippingservice.deliveryexperience');
+                                        $sSelected = MLModule::gi()->getConfig('shippingservice.deliveryexperience');
                                         foreach ($aOptions as $sKey => $sValue) {
                                             ?>
                                             <option <?php echo $sSelected == $sKey ? 'selected=selected' : '' ?> value="<?php echo $sKey ?>"> <?php echo $sValue ?></option>
@@ -155,10 +160,10 @@ class_exists('ML', false) or die();
                                 <td><?php echo $this->__('ML_Amazon_Shippinglabel_Form_Package_SenderAddress_Label') ?>:</td>
                                 <td>
                                     <?php
-                                    $aDefaultAddress = MLModul::gi()->getConfig('shippinglabel.address');
-                                    $aStreet = MLModul::gi()->getConfig('shippinglabel.address.streetandnr');
-                                    $aZip = MLModul::gi()->getConfig('shippinglabel.address.zip');
-                                    $aCity = MLModul::gi()->getConfig('shippinglabel.address.city');
+                                    $aDefaultAddress = MLModule::gi()->getConfig('shippinglabel.address');
+                                    $aStreet = MLModule::gi()->getConfig('shippinglabel.address.streetandnr');
+                                    $aZip = MLModule::gi()->getConfig('shippinglabel.address.zip');
+                                    $aCity = MLModule::gi()->getConfig('shippinglabel.address.city');
                                     ?>
                                     <select name="<?php echo MLHttp::gi()->parseFormFieldName('addressfrom[' . $aOrder['MPSpecific']['MOrderID'] . ']') ?>" >
                                         <?php

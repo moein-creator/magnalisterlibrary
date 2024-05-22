@@ -86,7 +86,7 @@ abstract class ML_Modul_Model_Service_SyncInventory_Abstract extends ML_Modul_Mo
     protected function getPrice(ML_Shop_Model_Product_Abstract $oProduct, $aResponse) {
         $aPrice = array();
         if (isset($aResponse['Price'])) {
-            $aPrice['Price'] = $oProduct->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject(), true);
+            $aPrice['Price'] = $oProduct->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject(), true);
         }
         return $aPrice;
     }
@@ -302,10 +302,10 @@ abstract class ML_Modul_Model_Service_SyncInventory_Abstract extends ML_Modul_Mo
 
     protected function out($mValue) {
         if (!MLHttp::gi()->isAjax()) {
-            echo is_array($mValue) ? "\n{#".base64_encode(json_encode(array_merge(array('Marketplace' => MLModul::gi()->getMarketPlaceName(), 'MPID' => MLModul::gi()->getMarketPlaceId(),), $mValue)))."#}\n\n" : $mValue."\n";
+            echo is_array($mValue) ? "\n{#" . base64_encode(json_encode(array_merge(array('Marketplace' => MLModule::gi()->getMarketPlaceName(), 'MPID' => MLModule::gi()->getMarketPlaceId(),), $mValue))) . "#}\n\n" : $mValue . "\n";
             flush();
         } else {//in ajax call in pluin we break maxitems and steps of each request ,so we don't have lang request ,so we don't need echo any output
-            //            MLLog::gi()->add('SyncInventory_'.MLModul::gi()->getMarketPlaceId(), $mValue);
+            //            MLLog::gi()->add('SyncInventory_'.MLModule::gi()->getMarketPlaceId(), $mValue);
         }
         return $this;
     }

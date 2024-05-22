@@ -26,11 +26,15 @@ MLSetting::gi()->hitmeister_prepare_match_manual = array(
                 'type' => 'select',
             ),
             array(
-                'name' => 'shippingtime',
-                'type' => 'select',
+                'name' => 'handlingtime',
+                'type' => 'string',
             ),
             array(
                 'name' => 'itemcountry',
+                'type' => 'select',
+            ),
+            array(
+                'name' => 'shippinggroup',
                 'type' => 'select',
             ),
             array(

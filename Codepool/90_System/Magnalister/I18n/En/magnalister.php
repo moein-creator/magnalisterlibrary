@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -155,9 +155,9 @@ MLI18n::gi()->{'ML_LABEL_WEBSHOP_ORDERSTATUS'} = 'Webshop-Order Status';
 MLI18n::gi()->{'ML_LABEL_LISTINGSBASED'} = 'Listings based';
 MLI18n::gi()->{'ML_LABEL_PARENT'} = 'Parent article';
 MLI18n::gi()->{'ML_LABEL_MARKETPLACE_ORDER_ID'} = 'Marketplace Order Number';
-MLI18n::gi()->{'ML_LABEL_MARKETPLACE_PAYMENT_METHOD'} = 'Payment type';
-MLI18n::gi()->{'ML_LABEL_MARKETPLACE_SHIPPING_METHOD'} = 'Shipping type';
-MLI18n::gi()->{'ML_LABEL_MARKETPLACE_SHIPPING_TIME'} = 'Shipping time';
+MLI18n::gi()->{'ML_LABEL_MARKETPLACE_PAYMENT_METHOD'} = 'Payment Type';
+MLI18n::gi()->{'ML_LABEL_MARKETPLACE_SHIPPING_METHOD'} = 'Shipping Type';
+MLI18n::gi()->{'ML_LABEL_MARKETPLACE_SHIPPING_TIME'} = 'Shipping Time';
 MLI18n::gi()->{'ML_LABEL_MARKETPLACE_SHIPPING_TIME_VALUE'} = 'Within the next %s days';
 MLI18n::gi()->{'ML_LABEL_SKU_NOT_IN_SHOP'} = 'A product with this SKU can\'t be found in the Shop\'s database';
 MLI18n::gi()->{'ML_LABEL_GENERIC_SETTINGS'} = 'General Settings';
@@ -180,7 +180,7 @@ MLI18n::gi()->{'ML_LABEL_STATS_ORDERS_PER_MARKETPLACE'} = 'Orders per Marketplac
 MLI18n::gi()->{'ML_LABEL_STATS_ORDERS'} = 'Orders';
 MLI18n::gi()->{'ML_LABEL_DELIVERY_METHOD'} = 'Shipping method';
 MLI18n::gi()->{'ML_BUTTON_LABEL_OK'} = 'OK';
-MLI18n::gi()->{'ML_BUTTON_LABEL_CLOSE'} = 'close';
+MLI18n::gi()->{'ML_BUTTON_LABEL_CLOSE'} = 'Close';
 MLI18n::gi()->{'ML_BUTTON_LABEL_ACCEPT'} = 'Accept';
 MLI18n::gi()->{'ML_BUTTON_LABEL_ACCEPT_COSTS'} = 'Accept';
 MLI18n::gi()->{'ML_BUTTON_LABEL_CANCEL'} = 'Cancel';
@@ -342,7 +342,7 @@ MLI18n::gi()->{'ML_GENERIC_PRODUCTDETAILS'} = 'Product details';
 MLI18n::gi()->{'ML_GENERIC_IMAGES'} = 'Pictures';
 MLI18n::gi()->{'ML_GENERIC_CONDITION'} = 'Condition';
 MLI18n::gi()->{'ML_GENERIC_CONDITION_NOTE'} = 'Description of condition';
-MLI18n::gi()->{'ML_GENERIC_SHIPPING'} = 'Shipping details';
+MLI18n::gi()->{'ML_GENERIC_SHIPPING'} = 'Shipping Details';
 MLI18n::gi()->{'ML_GENERIC_PRICE'} = 'Price';
 MLI18n::gi()->{'ML_GENERIC_NO_IMAGE'} = 'No picture';
 MLI18n::gi()->{'ML_GENERIC_PRODUCTDESCRIPTION'} = 'Item description';
@@ -360,7 +360,7 @@ MLI18n::gi()->{'ML_GENERIC_BOOKED'} = 'Reserved';
 MLI18n::gi()->{'ML_GENERIC_COULD_NOT_DELETE'} = 'Couldn\'t be deleted';
 MLI18n::gi()->{'ML_GENERIC_NO_DELETED_ITEMS_IN_TIMEFRAME'} = 'No items have been deleted in this date range.';
 MLI18n::gi()->{'ML_GENERIC_NO_DELETED_ITEMS_YET'} = 'No items deleted yet.';
-MLI18n::gi()->{'ML_GENERIC_LISTINGS'} = 'Current Inventory';
+MLI18n::gi()->{'ML_GENERIC_LISTINGS'} = 'Inventory';
 MLI18n::gi()->{'ML_GENERIC_LOWEST_PRICE'} = 'Price Hit';
 MLI18n::gi()->{'ML_GENERIC_OLD_PRICE'} = 'Old Price';
 MLI18n::gi()->{'ML_GENERIC_REASON'} = 'Reason';
@@ -372,7 +372,7 @@ MLI18n::gi()->{'ML_GENERIC_MANUFACTURER_NAME'} = 'Manufacturer';
 MLI18n::gi()->{'ML_GENERIC_MANUFACTURER_PARTNO'} = 'Model number';
 MLI18n::gi()->{'ML_GENERIC_MODEL_NUMBER'} = 'Item Number';
 MLI18n::gi()->{'ML_GENERIC_WEIGHT'} = 'Weight';
-MLI18n::gi()->{'ML_GENERIC_SHIPPING_COST'} = 'Shipping costs';
+MLI18n::gi()->{'ML_GENERIC_SHIPPING_COST'} = 'Shipping Costs';
 MLI18n::gi()->{'ML_GENERIC_SHIPPING_COST_ADDITIONAL'} = 'Extra Charge for Shipping costs';
 MLI18n::gi()->{'ML_GENERIC_SHIPPING_COST_IN_CURRENCY'} = '{#i18n:ML_GENERIC_SHIPPING_COST#} in %s';
 MLI18n::gi()->{'ML_GENERIC_SHIPPING_TIME'} = 'Dispatch Time';
@@ -415,7 +415,7 @@ MLI18n::gi()->{'ML_AMAZON_LABEL_MATCHED'} = 'Matched';
 MLI18n::gi()->{'ML_AMAZON_LABEL_MATCH'} = 'Match';
 MLI18n::gi()->{'ML_AMAZON_LABEL_MANUAL_MATCHING'} = 'Manual Matching';
 MLI18n::gi()->{'ML_AMAZON_LABEL_AUTOMATIC_MATCHING'} = 'Automatic Matching';
-MLI18n::gi()->{'ML_AMAZON_BUTTON_MATCHING_DELETE'} = 'Delete matching';
+MLI18n::gi()->{'ML_AMAZON_BUTTON_MATCHING_DELETE'} = 'Delete Matching';
 MLI18n::gi()->{'ML_AMAZON_LABEL_BATCHID'} = 'BatchID';
 MLI18n::gi()->{'ML_AMAZON_LABEL_PRODUCT_IN_AMAZON'} = 'Your Offer at Amazon';
 MLI18n::gi()->{'ML_AMAZON_LABEL_ADD_WAIT'} = 'In Queue';
@@ -486,9 +486,8 @@ MLI18n::gi()->{'ML_AMAZON_TEXT_AUTOMATIC_MATCHING_CONFIRM'} = 'Please note: The 
 RedGecko accepts no liability for properness of matched items.';
 MLI18n::gi()->{'ML_AMAZON_TEXT_MATCHING_NO_ITEMS_SELECTED'} = 'You did not select any items yet.';
 MLI18n::gi()->{'ML_AMAZON_TEXT_AUTOMATIC_MATCHING_SUMMARY'} = '%d items matched successfully. <br/ ><br/ >
-	%d items could not be matched.<br />
-	%d items could not be matched, due to more than one matching result (EAN).
-	<div style="display: none">The process lasted %s.</div>';
+	%d items could not be matched.<br/ >
+	%d items could not be matched, due to more than one matching result (EAN).';
 MLI18n::gi()->{'ML_AMAZON_TEXT_APPLY_REQUIERD_FIELDS'} = '<b>Hint:</b> The <span class="bull">&bull;</span> marked fields are required fields and must be filled.';
 MLI18n::gi()->{'ML_AMAZON_TEXT_APPLY_MANUFACTURER_NAME'} = 'Manufacturer of the product';
 MLI18n::gi()->{'ML_AMAZON_TEXT_APPLY_BRAND'} = 'Brand oder manufacturer of the product';
@@ -623,7 +622,7 @@ MLI18n::gi()->{'ML_EBAY_LABEL_PREPARE'} = 'Prepare Selected';
 MLI18n::gi()->{'ML_EBAY_LABEL_PREPARED'} = 'Prepared';
 MLI18n::gi()->{'ML_EBAY_BUTTON_PREPARE'} = 'Prepare Items';
 MLI18n::gi()->{'ML_EBAY_BUTTON_UNPREPARE'} = 'Undo Prepare Items';
-MLI18n::gi()->{'ML_EBAY_BUTTON_RESET_DESCRIPTION'} = 'Reset item description';
+MLI18n::gi()->{'ML_EBAY_BUTTON_RESET_DESCRIPTION'} = 'Reset Item Description';
 MLI18n::gi()->{'ML_EBAY_LABEL_ONLY_NOT_PREPARED'} = 'Only unprepared Items';
 MLI18n::gi()->{'ML_EBAY_CATEGORY_PREPARED_NONE'} = 'No prepared Items in this category';
 MLI18n::gi()->{'ML_EBAY_CATEGORY_PREPARED_FAULTY'} = 'This category contains some items which could not be successfully prepared';
@@ -755,6 +754,7 @@ MLI18n::gi()->{'ML_COUNTRY_SWITZERLAND'} = 'Switzerland';
 MLI18n::gi()->{'ML_COUNTRY_TAIWAN'} = 'Taiwan';
 MLI18n::gi()->{'ML_COUNTRY_UK'} = 'United Kingdom';
 MLI18n::gi()->{'ML_COUNTRY_USA'} = 'USA';
+MLI18n::gi()->{'ML_COUNTRY_PORTUGAL'} = 'Portugal';
 MLI18n::gi()->{'ML_EBAY_SITE_MOTORS'} = 'eBay Motors';
 MLI18n::gi()->{'ML_HITMEISTER_SAME_PRODUCT_THERE'} = 'This item on Kaufland.de';
 MLI18n::gi()->{'ML_HITMEISTER_LABEL_HITMEISTER_PRICE'} = 'My Kaufland.de Price';
@@ -784,6 +784,7 @@ MLI18n::gi()->{'ML_INTERNAL_INVALID_RESPONSE'} = 'Service layer response invalid
 MLI18n::gi()->{'ML_INTERNAL_API_CALL_UNSUCCESSFULL'} = 'API call failed.';
 MLI18n::gi()->{'ML_INTERNAL_API_TIMEOUT'} = 'Time out for API call.';
 MLI18n::gi()->{'ML_RATE_FREETRIAL'} = 'Trial period';
+MLI18n::gi()->{'ML_RATE_ENTERPRISE'} = 'Enterprise';
 MLI18n::gi()->{'ML_RATE_ROOKIE'} = 'Rookie';
 MLI18n::gi()->{'ML_RATE_BUSINESS2'} = 'Business 2';
 MLI18n::gi()->{'ML_RATE_BUSINESS12'} = 'Business 12';
@@ -795,7 +796,7 @@ MLI18n::gi()->{'ML_RATE_SWITCH'} = '%s &ndash; valid until %s. Then switch to ap
 MLI18n::gi()->{'ML_RATE_SWITCH_TRIAL'} = 'Test period up to %s. Tariff after test period: %s';
 MLI18n::gi()->{'ML_RATE_END'} = '%s. Contract terminated (%s).';
 MLI18n::gi()->{'ML_RATE_CONTINUE'} = '%s';
-MLI18n::gi()->{'ML_TOPTEN_MANAGE'} = 'Apply';
+MLI18n::gi()->{'ML_TOPTEN_MANAGE'} = 'Manage';
 MLI18n::gi()->{'ML_TOPTEN_MANAGE_HEAD'} = 'Manage Quick Select Category';
 MLI18n::gi()->{'ML_TOPTEN_INIT_HEAD'} = 'Initialize';
 MLI18n::gi()->{'ML_TOPTEN_INIT_DESC'} = 'To populate the Quick Select Category with already prepared items, click "Initialize". ';
@@ -873,8 +874,13 @@ Please agree to the automatic currency conversion in order to use it. You can al
 ';
 MLI18n::gi()->ML_CHECKCURRENCY_INFO = '1 %s corresponds to %.4f %s (last updated: %s)';
 
-MLI18n::gi()->ML_PRODUCTPREPARATION_ALWAYS_USE_FROM_WEBSHOP = 'Always use the latest from the web shop';
+MLI18n::gi()->ML_PRODUCTPREPARATION_ALWAYS_USE_FROM_WEBSHOP = 'Always use latest from web shop';
+MLI18n::gi()->ML_PRODUCTPREPARATION_ALWAYS_USE_FROM_CONFIGURATION = 'Always use latest from configuration';
 
 // hovertexts
 MLI18n::gi()->{'ML_DUPLICATE_INFO'} = "Please save the configuration / preparation 
                                    before adding or removing lines";
+
+MLI18n::gi()->ML_BUTTON_TOKEN_NEW = 'Request / Change token';
+MLI18n::gi()->ML_ERROR_CREATE_TOKEN_LINK_HEADLINE = 'Error creating the connection to {#setting:currentMarketplaceName#}';
+MLI18n::gi()->ML_ERROR_CREATE_TOKEN_LINK_TEXT = 'A connection to {#setting:currentMarketplaceName#} could not be established. Please try again at a later time.<br><br>If the error occurs repeatedly, please contact magnalister support.';

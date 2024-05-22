@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -159,7 +159,17 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
             '_length',
         ));
     }
-
+    public function getShopSystemAttributeList() {
+        return $this->getListOfArticleFields(array(
+            'name',
+            '_sku',
+            'content',
+            '_weight',
+            '_width',
+            '_height',
+            '_length',
+        ));
+    }
     public function getCurrency() {
         $aCurrency = array(
             1 => get_woocommerce_currency(),
@@ -184,19 +194,20 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
         $aAttributes['_height'] = 'Height';
         $aAttributes['_length'] = 'Length';
 
-        return $aAttributes;
-    }
-
-    /**
-     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
-     *
-     * @return array Collection of attributes with options
-     */
-    public function getAttributeListWithOptions() {
-        $aAttributes = $this->getPossibleVariationGroupNames();
 
         return $aAttributes;
     }
+    //
+    //    /**
+    //     * Gets the list of product attributes that have options (displayed as dropdown or multiselect fields).
+    //     *
+    //     * @return array Collection of attributes with options
+    //     */
+    //    public function getAttributeListWithOptions() {
+    //        $aAttributes = $this->getPossibleVariationGroupNames();
+    //
+    //        return $aAttributes;
+    //    }
 
     /**
      * Gets the list of product attribute values.
@@ -420,19 +431,51 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
                 'type' => 'text',
             ),
             '_weight'           => array(
-                'name' => MLI18n::gi()->get('WooCommerce_Product_Attributes_Weight'),
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightValue'),
+                'type' => 'text',
+            ),
+            'weight_unit_name'  => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightWithUnit'),
+                'type' => 'text',
+            ),
+            'weight_unit'       => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WeightUnit'),
                 'type' => 'text',
             ),
             '_width'            => array(
-                'name' => MLI18n::gi()->get('WooCommerce_Product_Attributes_Width'),
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthValue'),
+                'type' => 'text',
+            ),
+            'width_unit_name'   => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthWithUnit'),
+                'type' => 'text',
+            ),
+            'width_unit'        => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_WidthUnit'),
                 'type' => 'text',
             ),
             '_height'           => array(
-                'name' => MLI18n::gi()->get('WooCommerce_Product_Attributes_Height'),
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightValue'),
                 'type' => 'text',
             ),
-            '_length'           => array(
-                'name' => MLI18n::gi()->get('WooCommerce_Product_Attributes_Length'),
+            'height_unit_name'  => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightWithUnit'),
+                'type' => 'text',
+            ),
+            'height_unit'    => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_HeightUnit'),
+                'type' => 'text',
+            ),
+            '_length'    => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthValue'),
+                'type' => 'text',
+            ),
+            'length_unit_name' => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthWithUnit'),
+                'type' => 'text',
+            ),
+            'length_unit'     => array(
+                'name' => MLI18n::gi()->get('Product_DefaultAttribute_LengthUnit'),
                 'type' => 'text',
             ),
             'te_product_tag'    => array(
@@ -449,12 +492,20 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
          */
         if (is_plugin_active('woocommerce-germanized/woocommerce-germanized.php')) {
             $aGermanizedPluginFieldsAttributes = array(
-                '_ts_gtin' => array(
+                '_ts_gtin'            => array(
                     'name' => 'GTIN - [Germanized Plugin]',
                     'type' => 'text',
                 ),
-                '_ts_mpn'  => array(
+                '_ts_mpn'             => array(
                     'name' => 'MPN - [Germanized Plugin]',
+                    'type' => 'text',
+                ),
+                '_unit_product'       => array(
+                    'name' => 'Produkteinheiten - [Germanized Plugin]',
+                    'type' => 'text',
+                ),
+                '_unit_price_regular' => array(
+                    'name' => 'Regulärer Grundpreis (€) - [Germanized Plugin]',
                     'type' => 'text',
                 ),
             );
@@ -492,6 +543,17 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
                 ),
             );
             $aShopDefaultFieldsAttributes = array_merge($aShopDefaultFieldsAttributes, $aGermanMarketPluginFieldsAttributes);
+        }
+
+        //https://wordpress.org/plugins/ean-for-woocommerce
+        if (is_plugin_active('ean-for-woocommerce/ean-for-woocommerce.php')) {
+            $aEANForWooCommercePluginFieldsAttributes = array(
+                '_alg_ean' => array(
+                    'name' => 'EAN for WooCommerce - Plugin',
+                    'type' => 'text',
+                ),
+            );
+            $aShopDefaultFieldsAttributes = array_merge($aShopDefaultFieldsAttributes, $aEANForWooCommercePluginFieldsAttributes);
         }
 
         return $aShopDefaultFieldsAttributes;
@@ -542,9 +604,19 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
 
     public function manipulateForm(&$aForm) {
         parent::manipulateForm($aForm);
+        $sController = MLRequest::gi()->data('controller');
+        if (
+            strpos($sController, '_config_vcs') !== false &&//prove tab
+            isset($aForm['field']['amazonvcs.invoice']['values']['germanmarket']) &&//prove key
+            !is_plugin_active('woocommerce-german-market/WooCommerce-German-Market.php')//prove plugin
+        ) {
+            unset($aForm['field']['amazonvcs.invoice']['values']['germanmarket']);
+        }
 
-        $aForm = $this->addTrackingKeyFiled($aForm);
+        $aForm = $this->addTrackingKeyField($aForm);
     }
+
+    static $aTrackingKeyFieldFormCache = null;
 
     /**
      * Adds tracking key configuration to order import tab
@@ -552,20 +624,23 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
      * @param $aForm
      * @return array
      */
-    private function addTrackingKeyFiled($aForm) {
+    private function addTrackingKeyField($aForm) {
         $sController = MLRequest::gi()->data('controller');
         if (strpos($sController, '_config_order') !== false) {
+            if (self::$aTrackingKeyFieldFormCache !== null) {
+                $aForm['orderstatus']['fields']['orederstatus.trackingkey'] = self::$aTrackingKeyFieldFormCache;
+                return $aForm;
+            }
+
             global $wpdb;
-            $keys = $wpdb->get_col(
-                $wpdb->prepare(
-                    "SELECT DISTINCT meta_key
-            				FROM $wpdb->postmeta
-            				WHERE meta_key NOT BETWEEN '_' AND '_z'
-            				HAVING meta_key NOT LIKE %s
-            				ORDER BY meta_key",
-                    $wpdb->esc_like('_').'%'
-                )
-            );
+            $keys = MLDatabase::getDbInstance()->fetchArray("
+                SELECT DISTINCT meta_key
+                  FROM $wpdb->postmeta
+                 WHERE meta_key NOT BETWEEN '_' AND '_z'
+                HAVING meta_key NOT LIKE '\_%'
+              ORDER BY meta_key
+            ", true);
+
             $aDisabledItems = array();
             $blWooAdvancedShipmentTrackingActive = is_plugin_active('woo-advanced-shipment-tracking/woocommerce-advanced-shipment-tracking.php');
             if (!$blWooAdvancedShipmentTrackingActive) {
@@ -587,7 +662,7 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
                 MLI18n::gi()->set('amazon_config_carrier_option_matching_option_shipmethod', MLI18n::gi()->get('amazon_config_carrier_option_matching_option_shipmethod_plugin', ['pluginname' => $plugin_data['Name']]), true);
             }
             $values = array(
-                ''                                                                                 => MLI18n::gi()->get('ML_AMAZON_LABEL_APPLY_PLEASE_SELECT'),
+                '' => MLI18n::gi()->get('attributes_matching_option_please_select'),
                 MLI18n::gi()->get('woocommerce_config_trackingkey_option_group_customfields')      => array_combine($keys, $keys),
                 MLI18n::gi()->get('woocommerce_config_trackingkey_option_group_additional_option') => array(
                     'orderFreetextField'          => MLI18n::gi()->{'woocommerce_config_trackingkey_option_orderfreetextfield_option'},
@@ -595,25 +670,33 @@ class ML_WooCommerce_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop
                     'germanized'                  => MLI18n::gi()->{'woocommerce_config_trackingkey_option_plugin_germanized'}
                 )
             );
-            if (strpos($sController, '_config_order') !== false) {
-                $aForm['orderstatus']['fields']['orederstatus.trackingkey'] = array(
-                    'name'          => 'orederstatus.trackingkey',
-                    'type'          => 'select',
-                    'expert'        => false,
-                    'values'        => $values,
-                    'fieldposition' => array('after' => 'orderstatus.sync'),
-                    'i18n'          => MLI18n::gi()->get('orderimport_trackingkey'),
-                    'disableditems' => $aDisabledItems,
-                    'cssclasses'    => ['ml-woocommerce-tracking-number-matching']
-                );
 
-            }
+            $aForm['orderstatus']['fields']['orederstatus.trackingkey'] = array(
+                'name'          => 'orederstatus.trackingkey',
+                'type'          => 'select',
+                'expert'        => false,
+                'values'        => $values,
+                'fieldposition' => array('after' => 'orderstatus.sync'),
+                'i18n'          => MLI18n::gi()->get('orderimport_trackingkey'),
+                'disableditems' => $aDisabledItems,
+                'cssclasses'    => ['ml-woocommerce-tracking-number-matching']
+            );
+            self::$aTrackingKeyFieldFormCache = $aForm['orderstatus']['fields']['orederstatus.trackingkey'];
         }
-        return $aForm;
 
+        return $aForm;
     }
 
     public function manipulateFormAfterNormalize(&$aForm) {
+        $sController = MLRequest::gi()->data('controller');
+        if (
+            strpos($sController, '_config_invoice') !== false &&//prove tab
+            isset($aForm['invoice']['fields']['uploadInvoiceOption']['values']['germanmarket']) &&//prove key
+            !is_plugin_active('woocommerce-german-market/WooCommerce-German-Market.php')//prove plugin
+        ) {
+            unset($aForm['invoice']['fields']['uploadInvoiceOption']['values']['germanmarket']);
+        }
+        //MLMessage::gi()->addDebug(__LINE__.':'.microtime(true), $aForm  );
         try {
             parent::manipulateFormAfterNormalize($aForm);
             MLModule::gi();

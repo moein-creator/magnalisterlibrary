@@ -20,3 +20,12 @@ MLI18n::gi()->{'hood_config_orderimport__field__orderimport.paymentstatus__label
 MLI18n::gi()->{'hood_config_orderimport__field__orderimport.paymentstatus__help'} = 'Sélectionnez ici le statut de paiement qui sera automatiquement attribué aux commandes lors de l’importation des commandes depuis la place de marché.';
 MLI18n::gi()->{'hood_config_orderimport__field__orderimport.paymentstatus__hint'} = '';
 MLI18n::gi()->{'hood_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+
+MLI18n::gi()->{'hood_config_producttemplate__field__template.name__help'} = '<b>Nom du produit sur hood </b><br>
+Saisissez dans ce champ le nom de l’article, tel que vous voulez qu’il apparaisse sur votre page hood. <br>
+paramètre générique possible : <br>
+#TITLE# : sera automatiquement remplacé par le nom de l’article.';
+MLI18n::gi()->{'hood_config_producttemplate__field__template.name__hint'} = 'Liste des champs disponibles pour la rubrique
+<BLOCKQUOTE>
+  <p>#TITLE# - nom du produit</p>
+</BLOCKQUOTE>';

@@ -1,4 +1,5 @@
-<?php class_exists('ML', false) or die(); ?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
 <input class="mlbtn action" type="button" value="<?php echo $this->__('ML_GOOGLESHOPPING_BUTTON_SAVE_SHIPPING_TEMPLATE') ?>" id="saveTemplate"/>
 <script type="text/javascript">/*<![CDATA[*/
     jqml(document).ready(function () {
@@ -33,7 +34,7 @@
                         }
                 }
             ).done(function (data) {
-                alert("You successfully create shipping template.");
+                alert("You successfully create delivery profile.");
                 jqml.post('<?php echo MLHttp::gi()->getUrl(array('controller' => 'main_tools_filesystem_cache', 'deleteallcache' => true)); ?>')
                     .done(function () {
                         location.reload();

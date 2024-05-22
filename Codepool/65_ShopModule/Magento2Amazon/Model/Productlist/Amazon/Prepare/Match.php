@@ -31,7 +31,8 @@ class ML_Magento2Amazon_Model_ProductList_Amazon_Prepare_Match extends ML_Magent
             ->registerDependency('preparestatusfilter')
             ->registerDependency('amazonpreparetypefilter', array('PrepareType' => 'match'))
             ->registerDependency('productstatusfilter')
-            ->registerDependency('manufacturerfilter');
+            ->registerDependency('manufacturerfilter')
+            ->registerDependency('producttypefilter');
         return $this;
     }
 }

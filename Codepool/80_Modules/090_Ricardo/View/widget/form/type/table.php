@@ -18,36 +18,39 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 ?>
-<table style="width:100%" data-name="<?= $aField['name'] ?>" 
-	   <?php echo isset($aField['cssclass']) ? 'class="' . $aField['cssclass'] . '"' : '' ?> >
+<table style="width:100%" data-name="<?= $aField['name'] ?>"
+    <?php echo isset($aField['cssclass']) ? 'class="'.$aField['cssclass'].'"' : '' ?> >
     <tbody>
-        <tr>
-            <th><?= 'Language' ?></th>
-            <th><?= 'Description' ?></th>
-        </tr>
-        <?php
-        foreach($aField['values'] as $sKey => $sValue) {
+    <tr>
+        <th><?= 'Language' ?></th>
+        <th><?= 'Description' ?></th>
+    </tr>
+    <?php
+    foreach ($aField['values'] as $sKey => $sValue) {
         ?>
-		<tr class="lang<?php echo $sKey?>" <?= ($sValue === 'true') ? '' : 'style="display: none;"' ?>>
-			<td style="width:50%">
-				<?= $sKey ?>
-			</td>
-			<td style="width:50%">
-				<textarea class="fullwidth" name="<?php echo MLHTTP::gi()->parseFormFieldName($aField['name']) . '[' . $sKey . ']';?>"  type="text"
+        <tr class="lang<?php echo $sKey ?>" <?= ($sValue === 'true') ? '' : 'style="display: none;"' ?>>
+            <td style="width:50%">
+                <?= $sKey ?>
+            </td>
+            <td style="width:50%">
+				<textarea class="fullwidth" name="<?php echo MLHTTP::gi()->parseFormFieldName($aField['name']).'['.$sKey.']'; ?>" type="text"
 				<?php
 					if (!is_array($aField['value'])) {
+                        // Helper for php8 compatibility - can't pass null to json_decode 
+                        $aField['value'] = MLHelper::gi('php8compatibility')->checkNull($aField['value']);
 						$aField['value'] = json_decode($aField['value'], true);
 					}
 					
 					echo (isset($aField['value'][$sKey]) ? 'value="'. htmlspecialchars($aField['value'][$sKey], ENT_COMPAT) . '"' : '');
 				?>
 				><?= isset($aField['value'][$sKey]) ? $aField['value'][$sKey] : '' ?></textarea>
-			</td>
-		</tr>
+            </td>
+        </tr>
         <?php
-        }
+    }
 		?>
     </tbody>
 </table>

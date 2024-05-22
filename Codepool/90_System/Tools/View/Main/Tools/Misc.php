@@ -20,10 +20,10 @@
 ?>
 
 
-<table class="ml-result" id="ml-<?php echo $this->getIdent(); ?>">
+<table class="attributesTable ml-result" id="ml-<?php echo $this->getIdent(); ?>">
     <thead>
         <tr>
-            <th colspan="2">
+            <td colspan="2">
                 <form class="global-ajax ml-js-noBlockUi" method="GET" action="<?php echo $this->getCurrentUrl(); ?>">
                     <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName('method'); ?>" value="executeMethod" />
                     <select name="<?php echo MLHttp::gi()->parseFormFieldName('callAjaxMethod'); ?>">
@@ -33,7 +33,7 @@
                     </select>
                     <button type="sumit" class="mlbtn">callAjax</button>
                 </form>
-            </th>
+            </td>
             </tr></thead>
     <tbody><tr><th class="ml-result-head" style="background: gray;"></th><td class="ml-result-content" style="background: silver;"></td></tr></tbody>
 </table>

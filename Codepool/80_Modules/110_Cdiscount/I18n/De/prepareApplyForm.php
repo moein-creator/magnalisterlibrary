@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -79,7 +79,7 @@ MLI18n::gi()->add('cdiscount_prepare_apply_form',array(
         'marketingdescription' => array(
             'label' => 'Marketing Beschreibung',
             'hint'  => 'Maximal 5000 Zeichen.',
-            'help'  => 'The marketing description must describe the product. It appears in the tab "Présentation produit". It must not content offers data (guarantee, price, shipping, packaging ...). HTML code is allowed.',
+            'help'  => 'Die Marketingbeschreibung muss das Produkt beschreiben. Sie erscheint in der Registerkarte "Présentation produit". Sie darf keine Angebotsdaten enthalten (Garantie, Preis, Versand, Verpackung ...). HTML-Code ist erlaubt.',
             'optional' => array(
                 'checkbox' => array(
                     'labelNegativ' => 'Marketing Beschreibung immer aktuell aus Web-Shop verwenden',
@@ -89,7 +89,11 @@ MLI18n::gi()->add('cdiscount_prepare_apply_form',array(
         'images' => array(
             'label' => 'Produktbilder',
             'hint' => 'Seitens Cdiscount wird der Upload von maximal 4 Bildern pro Artikel zugelassen.<br/><br/>Dar&uuml;ber hinaus gilt: F&uuml;r jede hochgeladene Variante sind ebenfalls maximal vier Bilder erlaubt.',
-            'help' => 'Seitens Cdiscount wird der Upload von maximal 4 Bildern pro Artikel zugelassen.<br/><br/>Dar&uuml;ber hinaus gilt: F&uuml;r jede hochgeladene Variante sind ebenfalls maximal vier Bilder erlaubt.',
+            'optional' => array(
+                'checkbox' => array(
+                    'labelNegativ' => 'Bilder immer aktuell aus Web-Shop verwenden',
+                ),
+            )
         ),
         'price' => array(
             'label' => 'Preis',
@@ -163,7 +167,7 @@ MLI18n::gi()->add('cdiscount_prepare_variations', array(
             'label' => '{#i18n:attributes_matching_web_shop_attribute#}',
         ),
         'saveaction' => array(
-            'label' => 'SPEICHERN UND SCHLIESSEN',
+            'label' => 'Speichern und schliessen',
         ),
         'resetaction' => array(
             'label' => '{#i18n:cdiscount_varmatch_reset_matching#}',

@@ -9,7 +9,7 @@ class ML_ShopifyCheck24_Helper_Model_ShopOrder extends ML_Shopify_Helper_Model_S
      */
     protected function getPaymentStatus() {
         if (!isset($this->aNewData['Order']['PaymentStatus']) || empty($this->aNewData['Order']['PaymentStatus'])) {
-            return MLModul::gi()->getConfig('paymentstatus') ?: 17;
+            return MLModule::gi()->getConfig('paymentstatus') ?: 17;
         } else {
             return $this->aNewData['Order']['PaymentStatus'];
         }

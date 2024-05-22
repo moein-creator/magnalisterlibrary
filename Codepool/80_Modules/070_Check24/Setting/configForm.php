@@ -19,7 +19,7 @@
 MLSetting::gi()->add('check24_config_account', array(
     'tabident' => array(
         'legend' => array(
-            'classes' => array('mlhidden'),
+            'classes' => array(''),
         ),
         'fields' => array(
             array(
@@ -68,6 +68,11 @@ MLSetting::gi()->add('check24_config_prepare', array(
                 'type' => 'select',
             ),
             array(
+                'name' => 'imagesize',
+                'type' => 'select',
+                'default' => '1000'
+            ),
+            array(
                 'name' => 'quantity',
                 'type' => 'selectwithtextoption',
                 'subfields' => array(
@@ -79,7 +84,7 @@ MLSetting::gi()->add('check24_config_prepare', array(
                 'name' => 'shippingtime',
                 'type' => 'select'
             ),
-			array(
+            array(
                 'name' => 'shippingcost',
                 'type' => 'string'
             ),
@@ -95,16 +100,20 @@ MLSetting::gi()->add('check24_config_prepare', array(
                                 'title' => '-',
                                 'textoption' => false
                             ),
-                            'Spedition' => array(
-                                'title' => '{#i18n:check24_deliverymode_spedition#}',
-                                'textoption' => false
-                            ),
                             'Paket' => array(
                                 'title' => '{#i18n:check24_deliverymode_paket#}',
                                 'textoption' => false
                             ),
                             'Warensendung' => array(
                                 'title' => '{#i18n:check24_deliverymode_warensendung#}',
+                                'textoption' => false
+                            ),
+                            'Spedition' => array(
+                                'title' => '{#i18n:check24_deliverymode_spedition#}',
+                                'textoption' => false
+                            ),
+                            'Sperrgut' => array(
+                                'title' => '{#i18n:check24_deliverymode_sperrgut#}',
                                 'textoption' => false
                             ),
                             'EigeneAngaben' => array(

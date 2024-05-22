@@ -1,23 +1,45 @@
-<?php 
-    /* @var $this  ML_Productlist_Controller_Widget_ProductList_Abstract */
-    /* @var $oProduct ML_Shop_Model_Product_Abstract */
-    /* @var $aAdditional array */
-    class_exists('ML',false) or die();
+<?php
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
+
+/* @var $this  ML_Productlist_Controller_Widget_ProductList_Abstract */
+/* @var $oProduct ML_Shop_Model_Product_Abstract */
+/* @var $aAdditional array */
+if (!class_exists('ML', false))
+    throw new Exception();
 ?>
-<?php if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) {?>
-    <?php $oI18n=  MLI18n::gi();?>
-    <?php if (isset($aAdditional['aCdiscountResult']) &&  is_array($aAdditional['aCdiscountResult'])){ ?>
-        <?php foreach($aAdditional['aCdiscountResult'] as $iRow=>$aResult){?>
-            <?php $sInputId='cdiscountItemSearch_'.$oProduct->get('id').'_'.$iRow ?>
+<?php if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) { ?>
+    <?php $oI18n = MLI18n::gi(); ?>
+    <?php if (isset($aAdditional['aCdiscountResult']) && is_array($aAdditional['aCdiscountResult'])) { ?>
+        <?php foreach ($aAdditional['aCdiscountResult'] as $iRow => $aResult) { ?>
+            <?php $sInputId = 'cdiscountItemSearch_'.$oProduct->get('id').'_'.$iRow ?>
             <tr>
                 <td class="select">
-                    
-                    <input id="<?php echo $sInputId ?>"<?php echo($iRow==0)?' checked="checked"':''?> type="radio" name="<?php echo MLHttp::gi()->parseFormFieldName('data')?>" value="<?php echo str_replace('"',"'",str_replace("'","\'",json_encode($aResult)))?>" />
+
+                    <input id="<?php echo $sInputId ?>"<?php echo ($iRow == 0) ? ' checked="checked"' : '' ?> type="radio" name="<?php echo MLHttp::gi()->parseFormFieldName('data') ?>" value="<?php echo str_replace('"', "'", str_replace("'", "\'", json_encode($aResult))) ?>"/>
                 </td>
-                <td class="title"><label for="<?php echo $sInputId ?>"><?php echo $aResult['Title']?></label></td>
-                <td class="category"><label for="<?php echo $sInputId ?>"><?php echo $aResult['CategoryName']?></label></td>
-                <td class="price"><label for="<?php echo $sInputId ?>"><?php echo $aResult['LowestPriceFormated']?></label></td>
-                <td class="asin ml-js-noBlockUi"><label for="<?php echo $sInputId ?>"><a href="<?php echo $aResult['URL']?>" target="_blank"><?php echo $aResult['ASIN']?></a></label></td>
+                <td class="title"><label for="<?php echo $sInputId ?>"><?php echo $aResult['Title'] ?></label></td>
+                <td class="category"><label for="<?php echo $sInputId ?>"><?php echo $aResult['CategoryName'] ?></label>
+                </td>
+                <td class="price">
+                    <label for="<?php echo $sInputId ?>"><?php echo $aResult['LowestPriceFormated'] ?></label></td>
+                <td class="asin ml-js-noBlockUi">
+                    <label for="<?php echo $sInputId ?>"><a href="<?php echo $aResult['URL'] ?>" target="_blank"><?php echo $aResult['ASIN'] ?></a></label>
+                </td>
             </tr>
         <?php }?>
         <tr class="notMatch">
@@ -60,7 +82,7 @@
                                             'widget_productlist_list_variantarticleadditional_cdiscount_itemsearch', 
                                             array(
                                                 'oProduct'=>$oProduct,
-                                                'aAdditional'=>array('aCdiscountResult'=>  MLModul::gi()->performItemSearch(null, $oProduct->getModulField('general.ean',true), $oProduct->getName()))
+                                                'aAdditional' => array('aCdiscountResult' => MLModule::gi()->performItemSearch(null, $oProduct->getModulField('general.ean', true), $oProduct->getName()))
                                             )
                                         );
                                     }else{

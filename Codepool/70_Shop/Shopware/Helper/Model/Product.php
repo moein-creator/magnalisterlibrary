@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -22,12 +22,29 @@ class ML_Shopware_Helper_Model_Product {
     protected static $aTranslatedProperties = null;
 
     protected static function getMarketplaceLanguage(){
-        $iLanguage = Shopware()->Shop()->getId();
+        $sMessage = '';
         try {
-            $iMarketplaceId = MLModul::gi()->getMarketPlaceId();
+            $iLanguage = Shopware()->Shop()->getId();
+        } catch (\Exception $ex) {
+            $sMessage = $ex->getMessage() . ':' . $ex->getFile() . ':' . $ex->getLine();
+            MLMessage::gi()->addDebug($ex);
+            $iLanguage = null;
+        }
+        if ($iLanguage === null) {
+            $sMarketplace = MLModule::gi()->getModuleBaseUrl();
+            $sController = MLRequest::gi()->get('controller');
+            if (strpos($sController, $sMarketplace) !== false && !MLHttp::gi()->isAjax()) {
+                MLHttp::gi()->redirect(MLHttp::gi()->getUrl(array('controller' => $sMarketplace . '_config_prepare')), 302, $sMessage);
+            } else {
+                throw new Exception('Language for product description should be configured again:' . MLHttp::gi()->getUrl(array('controller' => $sMarketplace . '_config' . MLModule::gi()->getPriceConfigurationUrlPostfix())));
+            }
+        }
+
+        try {
+            $iMarketplaceId = MLModule::gi()->getMarketPlaceId();
             if(!isset(self::$aMarketplacesLanguage[$iMarketplaceId])) {
 
-                $aConf = MLModul::gi()->getConfig();
+                $aConf = MLModule::gi()->getConfig();
                 //set shopware default shop
                 self::$aMarketplacesLanguage[$iMarketplaceId] = (int)$aConf['lang'];
             }
@@ -139,15 +156,37 @@ class ML_Shopware_Helper_Model_Product {
         if (count($aPriceRows) > 0) {
             $aPrice = array_shift($aPriceRows);
             if ($aPrice['price'] == 0) {
-                $aPrice =  array('price' => $this->getDefaultPrices($detailId, 'EK'));
+                $aPrice = array('price' => $this->getDefaultPrices($detailId, 'EK'));
             }
         } else {
-            $aPrice =  array('price' => $this->getDefaultPrices($detailId, 'EK'));
+            $aPrice = array('price' => $this->getDefaultPrices($detailId, 'EK'));
         }
         if (empty($aPrice['price'])) {
             throw new Exception('The price of product could not be empty', 1548775463);
         }
         return $aPrice['price'];
+    }
+
+    /**
+     * use sConfigurator::getDefaultPrices
+     * @param int $detailId
+     * @return array
+     * @throws Exception
+     */
+    public function getVolumePrices($detailId, $sUserGroup = null) {
+        if ($sUserGroup === null) {
+            $sUserGroup = Shopware()->System()->sUSERGROUPDATA['key'];
+        }
+
+        $aPriceRows = MLDatabase::getDbInstance()->fetchArray("
+            SELECT * 
+              FROM `s_articles_prices` 
+             WHERE     `articledetailsID` = ".(int)$detailId." 
+                   AND `pricegroup` = '".MLDatabase::getDbInstance()->escape($sUserGroup)."' 
+          ORDER BY `from` ASC
+        ");
+
+        return $aPriceRows;
     }
 
     /**
@@ -357,11 +396,14 @@ class ML_Shopware_Helper_Model_Product {
                 }
             }
         }
-        if (trim($sValue) != '') {
+
+        // check for object since we can only handle strings - no datetime objects
+        if ((is_string($sValue) || is_numeric($sValue)) && trim((string)$sValue) != '') {
+            // try to translate
             if ($aField['translatable']) {
                 if (array_key_exists($aField['name'], $aTranslated)) {
                     $sValue = $aTranslated[$aField['name']];
-                }else if (array_key_exists('__attribute_'.$aField['name'], $aTranslated)) {//shopwarer 5
+                } else if (array_key_exists('__attribute_'.$aField['name'], $aTranslated)) {//shopware 5
                     $sValue = $aTranslated['__attribute_'.$aField['name']];
                 }
                 if (array_key_exists($aField['name'], $aLabelsTranslated)) {
@@ -454,8 +496,8 @@ class ML_Shopware_Helper_Model_Product {
     }
 
     /**
-     * if product has any variation it i will return sum of quantity of all variation, otherwise it will return quantiy of product
-     * @param type $oArticle
+     * if product has any variation it will return sum of quantity of all variation, otherwise it will return quantity of product
+     * @param object $oArticle
      * @return int
      */
     public function getTotalCount($oArticle) {
@@ -483,44 +525,114 @@ class ML_Shopware_Helper_Model_Product {
     }
 
     /**
-     * @param $shop ML_Shopware_Model_Product
+     * @param $oProduct ML_Shopware_Model_Product
      * @param string $attributeCode
      */
-    public function getProductDefaultFieldValue($shop, $attributeCode) {
+    public function getProductDefaultFieldValue($oProduct, $attributeCode) {
         switch ($attributeCode) {
             case 'WeightMultiplied1000':
             {
-                $calc = $shop->getAttributeValue('pd_Weight') * 1000;
+                $calc = $oProduct->getAttributeValue('pd_Weight') * 1000;
                 return number_format((float)$calc, 2, '.', '');
             }
             case 'BasePriceUnitName':
             {
-                $baseprice = $shop->getBasePrice();
+                $baseprice = $oProduct->getBasePrice();
                 return $baseprice['ShopwareDefaults']['$sUnitName'];
             }
             case 'BasePriceUnit':
             {
-                $baseprice = $shop->getBasePrice();
+                $baseprice = $oProduct->getBasePrice();
                 return $baseprice['Unit'];
             }
             case 'BasePriceValue':
             {
-                $baseprice = $shop->getBasePrice();
+                $baseprice = $oProduct->getBasePrice();
                 return $baseprice['ShopwareDefaults']['$fPurchaseUnit'];
+            }
+            case 'BasePriceUnitShort':
+            {
+                $baseprice = $oProduct->getBasePrice();
+                return $baseprice['ShopwareDefaults']['$sUnit'];
+            }
+            case 'BasePriceBasicUnit':
+            {
+                $baseprice = $oProduct->getBasePrice();
+                return $baseprice['ShopwareDefaults']['$fReferenceUnit'];
+            }
+            case 'WidthWithUnit':
+            {
+                $width = $oProduct->getDimension('width');
+                return $width['UnitShort'];
+            }
+            case 'WidthUnit':
+            {
+                $width = $oProduct->getDimension('width');
+                return $width['Unit'];
+            }
+            case 'Width':
+            {
+                $width = $oProduct->getDimension('width');
+                return $width['Value'];
+            }
+            case 'HeightWithUnit':
+            {
+                $height = $oProduct->getDimension('height');
+                return $height['UnitShort'];
+            }
+            case 'HeightUnit':
+            {
+                $height = $oProduct->getDimension('height');
+                return $height['Unit'];
+            }
+            case 'Height':
+            {
+                $height = $oProduct->getDimension('height');
+                return $height['Value'];
+            }
+            case 'LengthWithUnit':
+            {
+                $length = $oProduct->getDimension('length');
+                return $length['UnitShort'];
+            }
+            case 'LengthUnit':
+            {
+                $length = $oProduct->getDimension('length');
+                return $length['Unit'];
+            }
+            case 'Len':
+            {
+                $length = $oProduct->getDimension('length');
+                return $length['Value'];
+            }
+            case 'Weight':
+            {
+                $weight = $oProduct->getWeight();
+                return $weight['Value'];
+            }
+            case 'WeightUnit':
+            {
+                $weight = $oProduct->getWeight();
+                return $weight['Unit'];
+            }
+            case 'WeightWithUnit':
+            {
+                $weight = $oProduct->getWeight();
+                return $weight['Value'].' '.$weight['Unit'];
             }
             default:
                 break;
         }
 
         $mainDetailMethod = "get$attributeCode";
-        if (method_exists($shop->getArticleDetail(), $mainDetailMethod) && $shop->getArticleDetail()->$mainDetailMethod() != null) {
-            $attributeValue = $shop->getArticleDetail()->$mainDetailMethod();
+        if (method_exists($oProduct->getArticleDetail(), $mainDetailMethod) && $oProduct->getArticleDetail()->$mainDetailMethod() != null) {
+            $attributeValue = $oProduct->getArticleDetail()->$mainDetailMethod();
         } else {
-            $oMainDetail = $shop->getLoadedProduct()->getMainDetail();
+            $oMainDetail = $oProduct->getLoadedProduct()->getMainDetail();
             $attributeValue = $oMainDetail->$mainDetailMethod();
         }
         if (in_array(strtolower($attributeCode), array('width', 'height', 'len'))) {
-            $attributeValue = (float) $attributeValue;
+            $attributeValue = (float)$attributeValue;
         }
 
         return $attributeValue;

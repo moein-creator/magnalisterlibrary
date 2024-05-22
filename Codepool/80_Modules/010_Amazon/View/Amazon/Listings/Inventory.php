@@ -1,4 +1,5 @@
-<?php class_exists('ML', false) or die();
+<?php if (!class_exists('ML', false))
+    throw new Exception();
 /*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
@@ -82,30 +83,35 @@ ob_start();
             });
         })(jqml);
     /*]]>*/</script>
-    <br>
+
     <?php $this->includeView('widget_listings_misc_pagination'); ?>
     <table class="datagrid ml-plist-old-fix">
-        <thead >
+        <thead>
         <tr>
             <td class="nowrap" style="width: 5px;">
                 <input type="checkbox" id="selectAll"/><label for="selectAll"><?php echo $this->__('ML_LABEL_CHOICE') ?></label>
             </td>
             <?php foreach ($this->getFields() as $aFiled) { ?>
-                <td> <?php
-                    echo $aFiled['Label'];
-                    if ($aFiled['Sorter'] != null) {
-                        ?>
-                        <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
-                        <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
-                    <?php } ?>
+                <td>
+                    <div class="ml-inventory-th">
+                        <div> <?php
+                            echo $aFiled['Label'];
+                            if ($aFiled['Sorter'] != null) {
+                            ?>
+                        </div>
+                        <div style="min-width: 42px;">
+                            <input class="noButton ml-right arrowAsc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-asc" title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
+                            <input class="noButton ml-right arrowDesc" type="submit" value="<?php echo $aFiled['Sorter'] ?>-desc" title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"  name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>" />
+                        </div>
+                        <?php } ?>
+                    </div>
                 </td>
             <?php } ?>
         </tr>
         </thead>
         <tbody>
         <?php
-        if (empty($this->aData)) {
-            ?>
+        if (empty($this->aData)) { ?>
             <tr>
                 <td colspan="<?php echo count($this->getFields()) + 1; ?>">
                     <?php echo $this->__($this->getEmptyDataLabel()) ?>
@@ -114,20 +120,20 @@ ob_start();
             <?php
         } else {
             $oddEven = false;
+            // Not needed as Link to product can be build without calling the API
+            // $asins = implode(',', array_column($this->aData, 'ASIN'));
+            // $asinLinks = $this->getASINLinks($asins);
             foreach ($this->aData as $item) {
+
                 $sDetails = htmlspecialchars(str_replace('"', '\\"', serialize(array(
                     'SKU' => $item['SKU'],
                     'Price' => $item['Price'],
                     'Currency' => isset($item['Currency']) ? $item['Currency'] : '',
                 ))));
-
-                $addStyle = '';
-                if ($item['ShopProductTitle'] === '&mdash;' && $item['SKU'] !== '&mdash;') {
-                    $addStyle = 'style="color:#900;"';
-                }
+                $addStyle = $item['exits'] ? '' : 'style="color:#e31e1c;"';
 
                 ?>
-                <tr class="<?php echo (($oddEven = !$oddEven) ? 'odd' : 'even') ?>" <?php echo $addStyle ?>>
+                <tr <?php echo $addStyle ?>>
                     <td>
                         <input type="checkbox" name="<?php echo MLHttp::gi()->parseFormFieldName('SKUs[]') ?>" value="<?php echo $item['SKU'] ?>">
                         <input type="hidden" name="<?php echo MLHttp::gi()->parseFormFieldName("details[{$item['SKU']}]") ?>" value="<?php echo $sDetails ?>">

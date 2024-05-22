@@ -27,5 +27,4 @@ class ML_Hitmeister_Controller_Hitmeister_Config_Account extends ML_Form_Control
     public static function getTabActive() {
         return self::calcConfigTabActive(__class__, true);
     }
-
 }

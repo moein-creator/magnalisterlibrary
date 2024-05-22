@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -39,6 +39,8 @@ class ML_Otto_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                 $this->oCurrentProduct = $oMaster;
                 /* @var $oMaster ML_Shop_Model_Product_Abstract */
                 $aListOfVariant = $this->oList->getVariants($oMaster);
+                $aVariantProducts = array();
+                $aAllImage = null;
                 foreach ($aListOfVariant as $oVariant) {
                     /* @var $oVariant ML_Shop_Model_Product_Abstract */
                     if ($this->oList->isSelected($oVariant)) {
@@ -46,19 +48,40 @@ class ML_Otto_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abs
                             ->setPrepareList(null)
                             ->setProduct($oVariant)
                             ->setMasterProduct($oMaster);
-
+                        if ($aAllImage === null) {//prepared images for all variants in prepare table is same
+                            $aPreparedDataForImages = $oPrepareHelper
+                                ->getPrepareData(
+                                    array(
+                                        'Images' => array('optional' => array('active' => true))
+                                    )
+                                    , 'value');
+                            if (isset($aPreparedDataForImages['Images']) && is_array($aPreparedDataForImages['Images'])) {
+                                $aAllImage = $aPreparedDataForImages['Images'];
+                            }
+                            $oPrepareHelper->resetFields();
+                        }
                         // Catch Exception like price is not set in shop or tax
                         try {
-                            $aProductData = $oPrepareHelper->getPrepareData($aDefineMasterMaster, 'value');
-
-                            // $aProductData['Price'] = (float)$aProductData['ShippingCost'] + (float)$aProductData['ProductPrice'];
+                            $aProductData = $oPrepareHelper
+                                ->getPrepareData($aDefineMasterMaster, 'value');
+                            if (is_array($aAllImage)) {
+                                $aAllImage = array_diff($aAllImage, $aProductData['Images']);
+                            }
                             $aProductData['Images'] = $this->replaceImages($aProductData['Images']);
-                            $aOut[] = $aProductData;
+                            $aVariantProducts[] = $aProductData;
                         } catch (Exception $ex) {
                             MLMessage::gi()->addDebug($ex);
                         }
                     }
                 }
+                if (is_array($aAllImage)) {
+                    $aAllImage = $this->replaceImages($aAllImage);
+                    foreach ($aVariantProducts as &$aVariantProduct) {
+                        $aVariantProduct['Images'] = array_merge($aVariantProduct['Images'], $aAllImage);
+                    }
+                }
+                unset($aVariantProduct);
+                $aOut += $aVariantProducts;
             }
 
         } catch (Exception $oEx) {

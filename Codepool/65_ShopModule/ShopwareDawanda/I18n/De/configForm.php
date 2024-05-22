@@ -17,7 +17,7 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-MLI18n::gi()->set('dawanda_config_orderimport_automatic_method', '-- Automatisch zuordnen --');
+MLI18n::gi()->set('dawanda_config_orderimport_automatic_method', '-- Automatisch zuordnen --', true);
 MLI18n::gi()->add('dawanda_config_orderimport', array(
      'field' => array(
         'orderimport.paymentmethod' => array(

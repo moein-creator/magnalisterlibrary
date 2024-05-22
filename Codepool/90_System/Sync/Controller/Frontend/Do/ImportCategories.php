@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -57,15 +57,15 @@ class ML_Sync_Controller_Frontend_Do_ImportCategories extends ML_Core_Controller
                 '## '.(
                 defined('ML_LABEL_IMPORT_CATEGORIES_LOG')
                     ? ML_LABEL_IMPORT_CATEGORIES_LOG
-                    : 'Begin of protocoll: ImportInventory Marketplace > Shop'
+                    : 'Begin of protocoll: Import Categories - Marketplace > Shop'
                 ));
 
             $this->out("\n##\n".'#######################################'."\n");
             require_once MLFilesystem::getOldLibPath('php/callback/callbackFunctions.php');
             $sMessage = '';
             $iRequestMp = MLRequest::gi()->data('mpid');
-            foreach (magnaGetInvolvedMarketplaces() as $sMarketPlace) {
-                foreach (magnaGetInvolvedMPIDs($sMarketPlace) as $iMarketPlace) {
+            foreach (MLHelper::gi('Marketplace')->magnaGetInvolvedMarketplaces() as $sMarketPlace) {
+                foreach (MLHelper::gi('Marketplace')->magnaGetInvolvedMPIDs($sMarketPlace) as $iMarketPlace) {
                     if ($iRequestMp === null || $iRequestMp == $iMarketPlace) {
                         ML::gi()->init(array('mp' => $iMarketPlace));
                         try {
@@ -75,10 +75,17 @@ class ML_Sync_Controller_Frontend_Do_ImportCategories extends ML_Core_Controller
                             }
                             $oService->execute();
                             $sMessage .= $sMarketPlace.' ('.$iMarketPlace.'), ';
+                            $this->out($sMessage);
                         } catch (MLAbstract_Exception $oEx) { // not implemented
-                            $this->out("\n{#".base64_encode(json_encode(array_merge(array('Marketplace' => MLModul::gi()->getMarketPlaceName(), 'MPID' => MLModul::gi()->getMarketPlaceId(),), array('Complete' => 'true',))))."#}\n\n");
+                            $this->out("\n{#" . base64_encode(json_encode(array_merge(array('Marketplace' => MLModule::gi()->getMarketPlaceName(), 'MPID' => MLModule::gi()->getMarketPlaceId(),), array('Complete' => 'true',)))) . "#}\n\n");
                         } catch (Exception $oEx) {
                             $this->out($oEx->getMessage());
+                            if (MLSetting::gi()->blDebug) {
+                                $this->out($oEx->getLine());
+                                $this->out($oEx->getFile());
+                                $this->out($oEx->getTraceAsString());
+
+                            }
                         }
                     }
                 }

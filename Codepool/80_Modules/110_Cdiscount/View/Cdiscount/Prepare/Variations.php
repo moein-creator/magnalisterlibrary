@@ -19,5 +19,6 @@
  * -----------------------------------------------------------------------------
  */
 /** @var ML_Cdiscount_Controller_Cdiscount_Prepare_Variations $this */
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 $this->getFormWidget();

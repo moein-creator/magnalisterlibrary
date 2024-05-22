@@ -27,13 +27,26 @@ MLI18n::gi()->{'hood_prepare_apply_form__legend__primarycategory_attributes'} = 
 MLI18n::gi()->{'hood_prepare_apply_form__legend__secondarycategory_attributes'} = 'Attributs pour la catégorie secondaire';
 MLI18n::gi()->{'hood_prepare_apply_form__legend__shipping'} = 'Livraison';
 MLI18n::gi()->{'hood_prepare_apply_form__field__title__label'} = 'Nom du produit';
-MLI18n::gi()->{'hood_prepare_apply_form__field__title__hint'} = 'Titre max. 80 caractères<br />Rubriques disponibles:<br />#BASEPRICE# - Prix de base';
+MLI18n::gi()->{'hood_prepare_apply_form__field__title__hint'} = 'Titre max. 85 caractères<br />Rubriques disponibles:<br />#BASEPRICE# - Prix de base';
 MLI18n::gi()->{'hood_prepare_apply_form__field__title__optional__checkbox__labelNegativ'} = 'Reprendre toujours le nom de l\'article actuel du magasin';
 MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__label'} = 'Sous-titre';
-MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__hint'} = 'Sous-titre max. 55 caractères <span style="color:red">option payante</span>
+MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__hint'} = 'Sous-titre max. 55 caractères <span style="color:#e31a1c">option payante</span>
 ';
+
+MLI18n::gi()->{'hood_prepare_apply_form__field__noidentifierflag__label'} = 'Fabrication sur mesure';
+MLI18n::gi()->{'hood_prepare_apply_form__field__age__label'} = 'Restriction d\'âge';
+MLI18n::gi()->{'hood_prepare_apply_form__field__fsk__label'} = 'FSK (restriction)';
+MLI18n::gi()->{'hood_prepare_apply_form__field__usk__label'} = 'USK (restriction)';
 MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__optional__select__false'} = 'Ne pas transmettre';
 MLI18n::gi()->{'hood_prepare_apply_form__field__subtitle__optional__select__true'} = 'Transmettre';
+MLI18n::gi()->{'hood_prepare_apply_form__field__manufacturer__label'} = 'Fabricant';
+MLI18n::gi()->{'hood_prepare_apply_form__field__manufacturer__optional__checkbox__labelNegativ'} = 'Toujours utiliser le titre du produit sur le site web';
+MLI18n::gi()->{'hood_prepare_apply_form__field__manufacturerpartnumber__label'} = 'Numéro de modèle';
+MLI18n::gi()->{'hood_prepare_apply_form__field__manufacturerpartnumber__optional__checkbox__labelNegativ'} = 'Toujours utiliser le titre du produit sur le site web';
+MLI18n::gi()->{'hood_prepare_apply_form__field__shortdescription__label'} = 'Description courte';
+MLI18n::gi()->{'hood_prepare_apply_form__field__features__label'} = 'Option supplémentaires';
+MLI18n::gi()->{'hood_prepare_apply_form__field__features__hint'} = '<span style="color:#e31a1c">Payant sur hood.de</span>';
+MLI18n::gi()->{'hood_prepare_apply_form__field__shortdescription__optional__checkbox__labelNegativ'} = 'Utilisez toujours la description courte du produit dans le magasin en ligne';
 MLI18n::gi()->{'hood_prepare_apply_form__field__images__label'} = 'Photo sur hood';
 MLI18n::gi()->{'hood_prepare_apply_form__field__images__hint'} = 'Image principale (URL complète)';
 MLI18n::gi()->{'hood_prepare_apply_form__field__images__optional__checkbox__labelNegativ'} = 'Toujours utiliser les images de la boutique';
@@ -46,7 +59,7 @@ MLI18n::gi()->{'hood_prepare_apply_form__field__variationpictures__label'} = 'Im
 MLI18n::gi()->{'hood_prepare_apply_form__field__variationpictures__hint'} = '';
 MLI18n::gi()->{'hood_prepare_apply_form__field__variationpictures__optional__checkbox__labelNegativ'} = 'Toujours utiliser les images de la boutique';
 MLI18n::gi()->{'hood_prepare_apply_form__field__description__label'} = 'Description';
-MLI18n::gi()->{'hood_prepare_apply_form__field__description__hint'} = 'Description du produit<br>Rubriques disponibles:<dl><dt style="font-weight:bold, color:black">#TITLE#</dt><dd>Nom du produit(titre)</dd><dt style="font-weight:bold, color:black">#ARTNR#</dt><dd>Nom de l\'article</dd><dt style="font-weight:bold, color:black">#PID#</dt><dd>Numéro de produit-ID</dd><dt style="font-weight:bold, color:black">#SHORTDESCRIPTION#</dt><dd>Courte description</dd><dt style="font-weight:bold, color:black">#DESCRIPTION#</dt><dd>Description</dd><dt style="font-weight:bold, color:black">#PICTURE1#</dt><dd>première photo de l\'article</dd><dt style="font-weight:bold, color:black">#PICTURE2# etc.</dt><dd>deuxième photo de l\'article, avec #PICTURE3#, #PICTURE4# etc. vous pouvez envoyer d\'autres photos, autant que disponible en magasin.</dd></dl>';
+MLI18n::gi()->{'hood_prepare_apply_form__field__description__hint'} = 'Description du produit<br>Rubriques disponibles:<dl><dt style="font-weight:bold; color:black">#TITLE#</dt><dd>Nom du produit(titre)</dd><dt style="font-weight:bold; color:black">#ARTNR#</dt><dd>Nom de l\'article</dd><dt style="font-weight:bold; color:black">#PID#</dt><dd>Numéro de produit-ID</dd><dt style="font-weight:bold; color:black">#SHORTDESCRIPTION#</dt><dd>Courte description</dd><dt style="font-weight:bold; color:black">#DESCRIPTION#</dt><dd>Description</dd><dt style="font-weight:bold; color:black">#PICTURE1#</dt><dd>première photo de l\'article</dd><dt style="font-weight:bold; color:black">#PICTURE2# etc.</dt><dd>deuxième photo de l\'article, avec #PICTURE3#, #PICTURE4# etc. vous pouvez envoyer d\'autres photos, autant que disponible en magasin.</dd></dl>';
 MLI18n::gi()->{'hood_prepare_apply_form__field__description__optional__checkbox__labelNegativ'} = 'Utilisez toujours la description actuelle de l\'article en magasin ';
 MLI18n::gi()->{'hood_prepare_apply_form__field__buyitnowprice__optional__select__true'} = 'Activez l\'achat immédiat';
 MLI18n::gi()->{'hood_prepare_apply_form__field__buyitnowprice__optional__select__false'} = 'Pas d\'achat immédiat';
@@ -62,7 +75,7 @@ MLI18n::gi()->{'hood_prepare_apply_form__field__paymentmethods__help'} = 'Prér�
 MLI18n::gi()->{'hood_prepare_apply_form__field__conditiontype__label'} = 'Etat de l\'article';
 MLI18n::gi()->{'hood_prepare_apply_form__field__conditiontype__hint'} = 'S\'affiche dans la plupart des catégories sur hood';
 MLI18n::gi()->{'hood_prepare_apply_form__field__privatelisting__label'} = 'Offre privée';
-MLI18n::gi()->{'hood_prepare_apply_form__field__privatelisting__hint'} = 'Option permettant aux enchérisseurs de conserver leur anonymat <span style="color:red">option payante</span>';
+MLI18n::gi()->{'hood_prepare_apply_form__field__privatelisting__hint'} = 'Option permettant aux enchérisseurs de conserver leur anonymat <span style="color:#e31a1c">option payante</span>';
 MLI18n::gi()->{'hood_prepare_apply_form__field__privatelisting__valuehint'} = 'Annonce privée';
 
 MLI18n::gi()->{'hood_prepare_apply_form__field__hitcounter__label'} = 'Compteur de visiteurs';
@@ -70,7 +83,7 @@ MLI18n::gi()->{'hood_prepare_apply_form__field__hitcounter__hint'} = '';
 MLI18n::gi()->{'hood_prepare_apply_form__field__starttime__label'} = 'Début de la vente </ br>
 (si prédifinie)
 ';
-MLI18n::gi()->{'hood_prepare_apply_form__field__starttime__hint'} = 'Normalement vos articles seront immédiatement disponible sur hood une fois que vous les avez téléchargés sauf si vous saisissez dans ce champs une date et une heure qui indiquent le début de l\'offre (<span style="color:red">option payante</span>)';
+MLI18n::gi()->{'hood_prepare_apply_form__field__starttime__hint'} = 'Normalement vos articles seront immédiatement disponible sur hood une fois que vous les avez téléchargés sauf si vous saisissez dans ce champs une date et une heure qui indiquent le début de l\'offre (<span style="color:#e31a1c">option payante</span>)';
 MLI18n::gi()->{'hood_prepare_apply_form__field__primarycategory__label'} = 'Catégorie principale';
 MLI18n::gi()->{'hood_prepare_apply_form__field__primarycategory__hint'} = 'Sélectionner';
 MLI18n::gi()->{'hood_prepare_apply_form__field__secondarycategory__label'} = 'Sous-catégorie';

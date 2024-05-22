@@ -84,7 +84,7 @@ class ML_PriceMinister_Model_Service_SyncOrderStatus extends ML_Modul_Model_Serv
                         }
                     }
                 } catch (Exception $oExc) {
-                    MLLog::gi()->add('SyncOrderStatus_' . MLModul::gi()->getMarketPlaceId() . '_Exception', array(
+                    MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_Exception', array(
                         'Exception' => array(
                             'Message' => $oExc->getMessage(),
                             'Code' => $oExc->getCode(),
@@ -92,6 +92,9 @@ class ML_PriceMinister_Model_Service_SyncOrderStatus extends ML_Modul_Model_Serv
                         )
                     ));
                 }
+
+                $oOrder->set('order_status_sync_last_check_date', 'NOW()'); // update date when last check happened
+                $oOrder->save();
             }
 
             $this->submitRequestAndProcessResult('ConfirmShipment', $aShippedRequest, $aShippedModels);

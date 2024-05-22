@@ -1,5 +1,6 @@
 <?php
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 global $_updaterTime, $_executionTime;
 $_executionTime = microtime(true) - $_executionTime;
 $memory = memory_usage();

@@ -68,3 +68,10 @@ if (!class_exists('ML', false))
 <?php
     }
 }
+
+// custom modal
+if (isset($aField['i18n']['modal'])) {
+    $aMyField = $aField;
+    $aMyField['type'] = 'radio_modal';
+    $this->includeType($aMyField);
+}

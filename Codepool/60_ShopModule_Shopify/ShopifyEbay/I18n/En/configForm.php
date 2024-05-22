@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -51,3 +51,14 @@ MLI18n::gi()->{'ebay_config_orderimport__field__update.paymentstatus__label'} = 
 MLI18n::gi()->{'ebay_config_orderimport__field__orderimport.paymentstatus__label'} = 'Payment Status in Shop';
 MLI18n::gi()->{'ebay_config_orderimport__field__orderimport.paymentstatus__hint'} = 'Please select which shop system payment status should be set in the order details during the magnalister order import.';
 MLI18n::gi()->{'ebay_config_orderimport__field__customergroup__help'} = '{#i18n:global_config_orderimport_field_customergroup_help#}';
+MLI18n::gi()->{'ebay_prepare_apply_form__field__description__hint'} = 'List of available place holders for product description:<dl><dt>#TITLE#</dt><dd>Product name (Titel)</dd><dt>#ARTNR#</dt><dd>Article number from the shop</dd><dt>#PID#</dt><dd>Products ID</dd><!--<dt>#PRICE#</dt><dd>Price</dd><dt>#VPE#</dt><dd>Price per packaging unit</dd>--><dt>#SHORTDESCRIPTION#</dt><dd>Short Description from Shop</dd><dt>#DESCRIPTION#</dt><dd>Description from Shop</dd><dt>#WEIGHT#</dt><dd>Products weight</dd><dt>#PICTURE1#</dt><dd>First Product-Image</dd><dt>#PICTURE2# etc.</dt><dd>Second Product-Image; with #PICTURE3#, #PICTURE4# etc. More Images can be sent, as many as available in the shop.</dd><dt>#TAGS#</dt><dd>TAGS</dd></dl></dl>';
+
+MLI18n::gi()->set('ebay_config_producttemplate__field__template.content__hint', MLI18n::gi()->{'ebay_prepare_apply_form__field__description__hint'}, true);
+MLI18n::gi()->set('ebay_prepare_apply_form_field_description_hint_metafield', '<dt>#Namespace and key of the meta field#</dt><dd>e.g.</dd>', true);
+MLI18n::gi()->{'orderstatus_carrier_default_send_order_carrier'} = 'Pass order shipping carrier';
+
+MLI18n::gi()->{'ebay_config_producttemplate__field__template.name__help'} = '<dl>
+    <dt>Name of the product on eBay</dt>
+    <dd>Decide how to name the product on eBay.
+        The placeholder <b>#TITLE#</b> will be replaced by the shop\'s product name.</dd></dl>';
+MLI18n::gi()->{'ebay_config_producttemplate__field__template.name__hint'} = 'Placeholder: #TITLE# - Product name';

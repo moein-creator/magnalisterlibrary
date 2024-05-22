@@ -1,5 +1,6 @@
 <?php 
-class_exists('ML', false) or die();
+if (!class_exists('ML', false))
+    throw new Exception();
 ?>
 <th><?php echo $this->__('ML_EBAY_YOUR_CHINESE_PRICE'); ?> :</th>
 <td class="input">

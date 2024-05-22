@@ -10,9 +10,11 @@ MLI18n::gi()->{'etsy_prepare_price_not_valid'} = 'Minimaler Artikelpreis auf Ets
 MLI18n::gi()->{'etsy_prepare_quantity_not_valid'} = 'Der Bestand für ein Produkt darf nicht größe als 999 sein.';
 
 MLI18n::gi()->{'etsy_inventory_listing_status_new'} = 'Produkt wird erstellt';
-MLI18n::gi()->{'etsy_inventory_listing_status_update'} = 'Produkt wird aktualisiert';
 MLI18n::gi()->{'etsy_inventory_listing_status_active'} = 'Aktiv';
 MLI18n::gi()->{'etsy_inventory_listing_status_inactive'} = 'Inaktiv';
+MLI18n::gi()->{'etsy_inventory_listing_status_expired'} = 'Expired';
+MLI18n::gi()->{'etsy_inventory_listing_status_draft'} = 'Draft';
+MLI18n::gi()->{'etsy_inventory_listing_status_sold_out'} = 'Sold Out';
 
 MLI18n::gi()->{'etsy_checkin_purge_popup_text'} = '
 <p><strong>Hinweis:</strong> Sie sind dabei Ihr Inventar auf Etsy vollst&auml;ndig zu ersetzen. Dieser Vorgang l&ouml;scht erst komplett Ihren Marktplatz-Bestand und ersetzt ihn dann mit den hier ausgew&auml;hlten Artikeln.</p>

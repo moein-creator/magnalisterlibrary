@@ -28,19 +28,22 @@ class ML_Etsy_Controller_Etsy_Config_Prepare extends ML_Form_Controller_Widget_F
         return self::calcConfigTabActive(__class__, false);
     }
 
-    public function callAjaxSaveShippingTemplate() {
-        $results = array(
-            'title'             => MLRequest::gi()->data('title'),
-            'origin_country_id' => MLRequest::gi()->data('originCountry'),
-            'primary_cost'      => MLRequest::gi()->data('primaryCost'),
-            'secondary_cost'    => MLRequest::gi()->data('secondaryCost')
-        );
+    public function callAjaxSaveShippingProfile() {
         try {
-            $result = MagnaConnector::gi()->submitRequest(array(
-                'ACTION' => 'SaveShippingTemplate',
-                'DATA'   => $results
+            MLModule::gi()->saveShippingProfile();
+            MLCache::gi()->flush();
+            $aField = $this->getField('shippingprofile');
+            $aField['type'] = 'select';//type seems missing from getField
+            $sField = $this->includeTypeBuffered($aField);
+            MLMessage::gi()->addSuccess(MLI18n::gi()->ML_LABEL_SAVED_SUCCESSFULLY);
+            MLSetting::gi()->add('aAjaxPlugin', array(
+                'dom' => array(
+                    '#etsy_config_prepare_field_shippingprofile' => $sField,
+                ),
             ));
         } catch (MagnaException $e) {
+            MLMessage::gi()->addError($e->getMessage());
+        } catch (Exception $e) {
             MLMessage::gi()->addDebug($e);
         }
     }

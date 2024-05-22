@@ -26,7 +26,7 @@ if (!empty($tpR)) {
                 <td class="ml-css-action"><?php echo isset($item['request']['ACTION']) ? $item['request']['ACTION'] : ''; ?></td>
                 <td class="ml-css-status"><?php echo $item['status']; ?></td>
                 <td class="ml-css-request">
-                    <textarea><?php echo htmlspecialchars(json_indent($item['request']))."\n".$sTrace; ?></textarea>
+                    <textarea><?php echo htmlspecialchars((isset($item['url']) ? $item['url'] . "\n" : '') . json_indent($item['request'])) . "\n" . $sTrace; ?></textarea>
                 </td>
                 <td class="ml-css-response">
                     <textarea><?php echo htmlspecialchars(isset($item['response']) ? json_indent($item['response']) : '--'); ?></textarea>

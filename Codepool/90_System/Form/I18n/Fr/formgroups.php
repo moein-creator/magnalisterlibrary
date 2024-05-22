@@ -18,10 +18,10 @@
 MLI18n::gi()->add('formgroups', array(
     'sync'                => 'Synchronisation de l\'inventaire',
     'mail'                => 'Gabarit de courriel',
-    'orderimport'         => 'Bestellimport',
+    'orderimport'         => 'Importation de commandes',
     'mwst'                => 'TVA',
     'comparisonprice'     => 'Calcul du prix',
     'config_magnaInvoice' => 'Données pour la création des factures via magnalister',
     'config_erpInvoice'   => 'Paramétrage pour la transmission de factures créées dans un système tiers (par exemple ERP)'
 ));
-MLI18n::gi()->config_headline_uploadinvoiceoption = 'Transmission des factures';
+MLI18n::gi()->config_headline_uploadinvoiceoption = 'Transmission des factures';MLI18n::gi()->{'config_headline_uploadinvoiceoption'} = 'Transmission des factures';

@@ -91,7 +91,7 @@ abstract class ML_Modul_Model_Table_Categories_Abstract extends ML_Database_Mode
                 ) {
 					// Workaround when returned category id is the same as parent category id
                     foreach ($aResponse['DATA'] as $iChildCat => $aChildCat) {
-                        if ($this->compareCategoryIds($aChildCat['CategoryID'], $this->get('categoryid')) ) {
+                        if (isset($aChildCat['CategoryID']) && $this->compareCategoryIds($aChildCat['CategoryID'], $this->get('categoryid'))) {
                             foreach ($aChildCat as $sKey => $sValue) {
                                 $this->set($sKey, $sValue);
                             }

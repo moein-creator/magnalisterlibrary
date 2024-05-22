@@ -84,4 +84,12 @@ class ML_Magento2_Model_Shop extends ML_Shop_Model_Shop_Abstract {
         );
     }
 
+    public function getShopVersion() {
+        try {
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            return $objectManager->create(\Magento\Framework\App\ProductMetadataInterface::class)->getVersion();
+        } catch (\Exception $ex) {
+            return '';
+        }
+    }
 }

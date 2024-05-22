@@ -21,9 +21,9 @@ MLFilesystem::gi()->loadClass('Productlist_Controller_Widget_ProductList_UploadA
 class ML_PriceMinister_Controller_PriceMinister_Checkin extends ML_Productlist_Controller_Widget_ProductList_UploadAbstract {
 
     public function getStock(ML_Shop_Model_Product_Abstract $oProduct) {
-        $aStockConf = MLModul::gi()->getStockConfig();
+        $aStockConf = MLModule::gi()->getStockConfig();
 
-        $checkinListingType = MLModul::gi()->getConfig('checkin.listingtype');
+        $checkinListingType = MLModule::gi()->getConfig('checkin.listingtype');
 
         if ($checkinListingType === 'free') {
             return 1;
@@ -35,7 +35,7 @@ class ML_PriceMinister_Controller_PriceMinister_Checkin extends ML_Productlist_C
     public function getConditions(ML_Shop_Model_Product_Abstract $oProduct) {
         $catSettings = $this->getGategorySettings($oProduct);
         if ($catSettings !== null) {
-            $checkinItemCondition = MLModul::gi()->getConfig('checkin.itemcondition');
+            $checkinItemCondition = MLModule::gi()->getConfig('checkin.itemcondition');
             $itemConditions = array();
 
             foreach ($catSettings['ItemConditions'] as $itemCondition) {
@@ -54,9 +54,9 @@ class ML_PriceMinister_Controller_PriceMinister_Checkin extends ML_Productlist_C
     }
 
     public function getListingTypes() {
-        $listingTypes = MLModul::gi()->getConfig('site.listing_types');
+        $listingTypes = MLModule::gi()->getConfig('site.listing_types');
 
-        $checkinListingType = MLModul::gi()->getConfig('checkin.listingtype');
+        $checkinListingType = MLModule::gi()->getConfig('checkin.listingtype');
         $availableListingTypes = array();
 
         foreach ($listingTypes as $value => $name) {

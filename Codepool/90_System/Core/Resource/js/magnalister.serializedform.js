@@ -48,8 +48,10 @@ var mlSerializer = null;
             var sForm = '<form action="' + form.attr('action') + '" method="' + form.attr('method') + '" style="display:none">';
             var newFormData = {'ml[FullSerializedForm]': sFormData};
             $.extend(newFormData, jqml('[data-mlNeededFormFields]').data('mlneededformfields'));
-            for (var newFormValue in newFormData) {
-                sForm += '<input type="hidden" name="' + newFormValue + '" value="' + newFormData[newFormValue] + '">';
+            for (let newFormValue in newFormData) {
+                if (typeof newFormValue !== 'undefined') {
+                    sForm += '<input type="hidden" name="' + newFormValue + '" value="' + newFormData[newFormValue] + '">';
+                }
             }
             sForm += '</form>';
 

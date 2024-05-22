@@ -126,11 +126,11 @@ class ML_Otto_Controller_Otto_Listings_Deleted extends ML_Listings_Controller_Wi
     }
 
     protected function getItemShopTitle($item) {
-        return '<td>' . $item['ShopTitle'] . '</td>';
+        return '<td>' . (isset($item['ShopTitle']) ? $item['ShopTitle'] : '&mdash;') . '</td>';
     }
 
     protected function getCategoryPath($item) {
-        return '<td>' . $item['category'] . '</td>';
+        return '<td>' . (isset($item['category']) ? $item['category'] : '&mdash;') . '</td>';
     }
 
     protected function getItemDateDeleted($item) {

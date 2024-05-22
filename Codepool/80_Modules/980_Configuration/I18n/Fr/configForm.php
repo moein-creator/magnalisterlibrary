@@ -49,13 +49,15 @@ Cette fonction est  particulièrement importante pour la gestion des marchandise
                 '9' => '10 mois',
                 '10' => '11 mois',
                 '11' => '12 mois',
+                '12' => '13 mois',
+                '13' => '14 mois',
             ),
         ),
         'general.order.information' => array(
             'label' => 'Information sur la commande',
-            'valuehint' => 'Enregistrez le numéro de la commande et le nom de la place de marché dans les commentaires clients.',
-            'help' => 'Si vous activez la fonctionnalité, le numéro de la commande et le nom de la place de marché seront enregistrés dans les commentaires du client, à l\'importation des commandes.<br/>
-Cette fonction est prise en charge par la plupart des programmes de boutique en ligne. Elle dépend donc de la programmation de votre boutique en ligne.
+            'valuehint' => 'Enregistrer le numéro de commande, le nom de la place de marché et le message de commande de l&apos;acheteur (si disponible) dans le commentaire client',
+            'help' => 'Si vous activez cette fonction, le numéro de commande de la place de marché, le nom de la place de marché et, si transmis, le message de l&apos;acheteur, seront enregistrés dans le commentaire du client après l&apos;importation de la commande.<br/>
+Cette fonction est prise en charge par la plupart des programmes de boutique en ligne. Elle dépend donc de la programmation de votre boutique en ligne. 
 Ces commentaires peuvent apparaître sur la facture de sorte que le client soit informé de l’origine de ses achats. <br/> <br/>
 
 Vous pouvez également faire programmer des extensions pour obtenir plus d\'analyses statistiques sur l\'évolution du chiffre d\'affaires.<br/> <br/>
@@ -77,16 +79,9 @@ Vous pouvez également faire programmer des extensions pour obtenir plus d\'anal
                 'none_none' => 'Acceptez les données directement, un simple texte. '
             ),
         ),
-        'general.cronfronturl'                            => array(
+        'general.cronfronturl' => array(
             'label' => 'Base CRON Url',
-            'help'  => 'Diese URL wird automatisch aus den Einstellungen des Shopsystems errechnet und aufgerufen, um die Inventarsynchronisation, den Bestellimport und ... von magnalister-Servern durchzuführen. Nur wenn die aktuelle URL nicht aufrufbar ist, können Sie die URL hier ändern. Um die URL auf das Original zurückzusetzen, leeren Sie die Eingabe und speichern Sie die Konfiguration.',
-        ),
-        'general.trigger.checkoutprocess.inventoryupdate' => array(
-            'label' => 'Déclencheur de synchronisation<br /> lors de commandes effectuées.',
-            'help' => 'Est-ce que les commandes en boutique doivent être automatiquement comparées avec les stocks correspondants des places de marché?<br /><br />
-							<b>Avantage</b>: Vous évitez ainsi les excès de ventes<br />
-							<b>Désavantage</b>: La comparaison peut prendre quelques secondes, ce qui retarde le processus de commande.<br />',
-            'valuehint' => 'Synchronisez immédiatement l\'inventaire avec les places de marché, pour toute commande en boutique.',
+            'help' => 'Cette URL est calculée et appelée automatiquement à partir des paramètres du système de boutique en ligne afin de synchroniser l\'inventaire, l\'importation des commandes et ... à partir des serveurs magnalister. Ce n\'est que si l\'URL actuelle ne peut pas être appelée que vous pouvez la modifier ici. Pour réinitialiser l\'URL à l\'original, videz la saisie et enregistrez la configuration.',
         ),
         'general.inventar.productstatus' => array(
             'label' => 'Statut du produit',
@@ -95,7 +90,7 @@ ou juste <strong>inactifs </strong>(sur les autres).<br/><br/>
 
 Pour que cette fonctionnalité soit prise en compte, sélectionnez le module correspondant à la place de marché en cliquant sur :<br/><br/>
 
-"synchronisation des inventaires" &rarr;  "Variation des stocks de la boutique" →
+"synchronisation des inventaires" &rarr;  "Variation des stocks de la boutique" → 
 "synchronisation automatique par CronJob".
 ',
             'values' => array(

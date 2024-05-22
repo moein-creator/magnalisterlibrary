@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -22,7 +22,7 @@ if (!class_exists('ML', false))
     <?php foreach ($aField['subfields'] as $aSubField){ ?>
         <?php $aSubField['type'] = 'select'; ?>
         <tr>
-            <td style="width:90%;border:none;"><?php $this->includeType($aSubField); ?></td>
+            <td style="width:95%;border:none; padding-left: 0px;padding-right: 0px;"><?php $this->includeType($aSubField); ?></td>
             <td style="border:none;">
                 <button class="mlbtn ml-js-category-btn" type="button" data-ml-catselector="#modal-<?php echo $aSubField['id']; ?>">
                     <?php echo MLI18n::gi()->get('form_text_choose'); ?>
@@ -31,6 +31,7 @@ if (!class_exists('ML', false))
         </tr>
     <?php } ?>
 </table>
+
 <?php foreach ($aField['subfields'] as $aSubField){ ?>
     <?php
         $sType = $aSubField['cattype'];
@@ -41,7 +42,8 @@ if (!class_exists('ML', false))
             <div class="successBoxBlue"><?php echo $aSubField['i18n']['catinfo'] ?></div>
             <?php } ?>
             <span class="ml-js-ui-dialog-titlebar-additional">
-                <a class="ui-icon ui-corner-all ui-state-focus global-ajax ui-icon-arrowrefresh-wrap ml-js-noBlockUi" href="<?php echo MLHttp::gi()->getUrl(array('mp' => MLModul::gi()->getMarketPlaceId(), 'controller' => 'do_categories', 'method' => 'getChildCategories', 'parentid' => 0, 'type' => $sType)); ?>">
+                <a class="ui-icon ui-corner-all ui-state-focus global-ajax ui-icon-arrowrefresh-wrap ml-js-noBlockUi"
+                   href="<?php echo MLHttp::gi()->getUrl(array('mp' => MLModule::gi()->getMarketPlaceId(), 'controller' => 'do_categories', 'method' => 'getChildCategories', 'parentid' => 0, 'type' => $sType)); ?>">
                     <span class="ui-icon ui-icon-arrowrefresh-1-n">reload</span>
                 </a>
             </span>
@@ -73,7 +75,7 @@ if (!class_exists('ML', false))
                             width : '75%',
                             buttons: [
                                 {
-                                    "text": "<?php echo MLI18n::gi()->get('ML_BUTTON_LABEL_ABORT'); ?>",
+                                    "text": '<?php echo MLI18n::gi()->get('ML_BUTTON_LABEL_ABORT'); ?>',
                                     "class": 'mlbtnreset',
                                     "click": function () {
                                         jqml(this).dialog("close");

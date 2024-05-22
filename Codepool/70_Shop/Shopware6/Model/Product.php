@@ -11,30 +11,31 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 use Redgecko\Magnalister\Controller\MagnalisterController;
 use Shopware\Core\Checkout\Cart\Price\Struct\CartPrice;
-use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
-use Shopware\Core\Checkout\Order\OrderStates;
+use Shopware\Core\Content\Product\ProductCollection;
 use Shopware\Core\Content\Product\ProductEntity;
+use Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionEntity;
 use Shopware\Core\Defaults;
-use Shopware\Core\Framework\Api\Context\SystemSource;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Country\Aggregate\CountryState\CountryStateEntity;
-use Shopware\Core\System\Currency\CurrencyFormatter;
+use Shopware\Core\System\Currency\CurrencyEntity;
 use Shopware\Core\System\SalesChannel\Context\SalesChannelContextService;
 use Shopware\Core\System\Tax\Aggregate\TaxRule\TaxRuleEntity;
 use Shopware\Core\System\Tax\TaxRuleType\IndividualStatesRuleTypeFilter;
 use Shopware\Core\System\Tax\TaxRuleType\ZipCodeRangeRuleTypeFilter;
 use Shopware\Core\System\Tax\TaxRuleType\ZipCodeRuleTypeFilter;
+use Shopware\Models\Shop\Currency;
 
 class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
 
@@ -131,23 +132,54 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                 ->save();
             MLMessage::gi()->addObjectMessage($this, MLI18n::gi()->get('Productlist_ProductMessage_sErrorToManyVariants', array('variantCount' => $iVariationCount, 'maxVariantCount' => MLSetting::gi()->get('iMaxVariantCount'))));
         } else {
-
             $criteriaIVariantCount = new Criteria();
-            //Add variations attributes to the 'product.repository'
-            $criteriaIVariantCount->addAssociations(['options']);
-            //Sorting 'product.repository' via name of variation attributes. Variation attribute called 'options'
-            $criteriaIVariantCount->addSorting(new FieldSorting('options.position', FieldSorting::ASCENDING));
-            $criteriaIVariantCount->addSorting(new FieldSorting('options.name', FieldSorting::ASCENDING));
+            //Add variation attributes to the 'product.repository'
+            $criteriaIVariantCount->addAssociations(['options', 'options.group', 'options.option']);
             $criteriaIVariantCount->addFilter(new EqualsFilter('product.parentId', $this->getMasterProductEntity()->getId()));
+            /** @var ProductCollection $oVariantProductEntities */
             $oVariantProductEntities = MLShopware6Alias::getRepository('product')->search($criteriaIVariantCount, $this->getShopwareContext())->getEntities();
+            $oVariantProductEntities->sort(
+                function (ProductEntity $p1, ProductEntity $p2) {
+                    if($p1->getId() !== $p2->getId()) {
+                        $options1 = $p1->getOptions();
+                        $options1->sort(function (PropertyGroupOptionEntity $op1, PropertyGroupOptionEntity $op2) {
+                            return $op1->getGroup()->getId() > $op2->getGroup()->getId();
+                        });
+                        $options2 = $p2->getOptions();
+                        $options2->sort(function (PropertyGroupOptionEntity $op1, PropertyGroupOptionEntity $op2) {
+                            return $op1->getGroup()->getId() > $op2->getGroup()->getId();
+                        });
+                        foreach ($p1->getOptions() as $option1) {
+                            foreach ($p2->getOptions() as $option2) {
+                                if ($option2->getGroup()->getId() === $option1->getGroup()->getId()) {
+//if (MLSetting::gi()->blDebug) !Kint::dump($option2->getGroup()->getName());
+                                    if ($option1->getId() != $option2->getId()) {
+                                        if ($option1->getPosition() === $option2->getPosition()) {
+//if (MLSetting::gi()->blDebug) !Kint::dump($option1->getName(), $option2->getName(), $option1->getName() > $option2->getName());
+                                            return $option1->getName() > $option2->getName();
+                                        } else {
+//if (MLSetting::gi()->blDebug) !Kint::dump($option1->getPosition(), $option2->getPosition(), $option1->getPosition() > $option2->getPosition());
 
+                                            return $option1->getPosition() > $option2->getPosition();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
             $aVariant['variationObject'] = $this->oProduct;
             if ($this->oProduct->getChildCount() == 0) {
                 $this->addVariant(
                     MLProduct::factory()->loadByShopProduct($this->oProduct, $this->get('id'), $aVariant)
                 );
             }
+            //$aInfo = [];
             foreach ($oVariantProductEntities as $oVariantProductEntity) {
+               // foreach ($oVariantProductEntity->getOptions() as $option) {
+               //     $aInfo[$oVariantProductEntity->getProductNumber()][$option->getGroup()->getName() . '-' . $option->getName()] = $option->getPosition();
+                //}
                 $aVariant = array();
                 $aVariant['variation_id'] = $oVariantProductEntity->getId();
                 $aVariant['variationObject'] = $oVariantProductEntity;
@@ -157,6 +189,9 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                     );
                 }
             }
+//            if (MLSetting::gi()->blDebug) {
+//                !Kint::dump($aInfo);
+//            }
         }
         return $this;
     }
@@ -182,8 +217,6 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
         $this->set('parentid', $iParentId);
         $sMessage = array();
         if ($iParentId == 0) {
-
-            //   die('test1');
             $this
                 ->set('marketplaceidentid', $this->oProduct->getId())
                 ->set('marketplaceidentsku', $this->oProduct->getProductNumber())
@@ -228,7 +261,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
     public function createModelProductByMarketplaceSku($sSku) {
         $aOut = array('master' => null, 'variant' => null);
         $oMyTable = MLProduct::factory();
-        /* @var $oMyTable ML_Shopware_Model_Product */
+        /* @var $oMyTable ML_Shopware6_Model_Product */
         $oShopProduct = null;
         if (MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'general.keytype')->get('value') == 'pID') {
             $sIdent = 'marketplaceidentid';
@@ -280,10 +313,17 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                     }
                 }
 
-                if (self::$createdObjectCache[$iShopProductId]['master']->get($sIdent) === $sSku) {
+                $marketplaceSku = self::$createdObjectCache[$iShopProductId]['master']->get($sIdent);
+                if ($marketplaceSku === $sSku
+                    || ( // if migration used check for M add end of SKU and replace it again with _Master to get correct result
+                        $sIdent === 'marketplaceidentsku'
+                        && MLModule::gi()->getConfig('shopware6.master.sku.migration.options') === '1'
+                        && ((($iLastIndex = strlen((string)$marketplaceSku) - 7) > 0 && substr($marketplaceSku, $iLastIndex) === '_Master') ? substr($marketplaceSku, 0, $iLastIndex).'M' : $marketplaceSku) === $sSku
+                    )
+                ) {
                     $aOut['master'] = self::$createdObjectCache[$iShopProductId]['master'];
                 }
-                //moein question: the $sSku is master product sku but here my varient has a diffrent sku and it never run the cindition
+                //moein question: the $sSku is master product sku but here my variant has a different sku, and it never runs the condition
 
                 if (isset(self::$createdObjectCache[$iShopProductId]['variants'][$sSku])) {
                     $aOut['variant'] = self::$createdObjectCache[$iShopProductId]['variants'][$sSku];
@@ -302,6 +342,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getByMarketplaceSKU($sSku, $blMaster = false) {
         if ($blMaster && substr($sSku, -7) === '_Master') {
+            // replace _Master with M - for shopware 5 to 6 migrations they extend it with an M
             $sSku = substr($sSku, 0, strrpos($sSku, '_Master')).'M';
         }
         if (empty($sSku)) {
@@ -386,7 +427,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                     //Replacing the Variation cover image by Parent product image if the  Variation cover image  is null
                     $ProductMediaId = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getParentId())->getCoverId();
                 } else {
-                    // Variation cover image 
+                    // Variation cover image
                     $ProductMediaId = $this->getCorrespondingProductEntity()->getCoverId();
                 }
             }
@@ -397,7 +438,17 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
 
                 if ($PM !== null) {
                     $criteria = new Criteria();
-                    $aImg = MagnalisterController::getShopwareMyContainer()->get('media.repository')->search($criteria->addFilter(new EqualsFilter('id', $PM->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                    $oMedia = MagnalisterController::getShopwareMyContainer()->get('media.repository')->search($criteria->addFilter(new EqualsFilter('id', $PM->getMediaId())), $this->getShopwareContext())->first();
+                    $aImg = $oMedia->getUrl();
+
+                    try {
+                        $aMediaCache = MLSetting::gi()->get('oShopwareMediaCache', array());
+                    } catch (Exception $ex) {
+                        $aMediaCache = array();
+                    }
+                    $aMediaCache[$aImg] = $oMedia;
+                    MLSetting::gi()->set('oShopwareMediaCache', $aMediaCache, true);
+
                     $sImagePath = $aImg;
                 } else {
                     $sImagePath = false;
@@ -405,10 +456,9 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
             } else {
                 $sImagePath = false;
             }
-            if (($sImagePath) !== false) {
+            if ($sImagePath !== false) {
                 return MLImage::gi()->resizeImage($sImagePath, 'products', $iX, $iY, true);
-            } else {//get images by media
-                //die('there is no imageurl C:\MAMP\htdocs\magnagit\v3\magnalister\Codepool\70_Shop\Shopware6\Model\Product.php::getImageUrl ');
+            } else {
                 return '';
             }
         } catch (Exception $oEx) {
@@ -426,6 +476,36 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
             $aImages = array();
             $aImgs = array();
             $VariationaImgs = array();
+
+            /**
+             * Anonymus function to get data and put to cache
+             *
+             * @param $criteria Criteria
+             * @param $media
+             * @return \Shopware\Models\Media\Repository
+             */
+            $getMediaUrlInMediaRepositoryById = function($criteria, $media) {
+                $oMedia = MagnalisterController::getShopwareMyContainer()
+                    ->get('media.repository')
+                    ->search(
+                        $criteria->addFilter(
+                            new EqualsFilter('id', $media->getMediaId())
+                        ), $this->getShopwareContext()
+                    )->first();
+
+                $imgUrl = $oMedia->getUrl();
+
+                try {
+                    $aMediaCache = MLSetting::gi()->get('oShopwareMediaCache', array());
+                } catch (Exception $ex) {
+                    $aMediaCache = array();
+                }
+                $aMediaCache[$imgUrl] = $oMedia;
+                MLSetting::gi()->set('oShopwareMediaCache', $aMediaCache, true);
+
+                return $oMedia->getUrl();
+            };
+
             if ($this->get('parentid') == 0) {
                 //Parent Product
                 $productMediacriteria = new Criteria();
@@ -436,10 +516,10 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                 foreach ($productMedia as $media) {
                     if ($media->getId() == $this->getCorrespondingProductEntity()->getCoverId()) {
                         $criteriaCoverImage = new Criteria();
-                        $CoverImage[] = MLShopware6Alias::getRepository('media')->search($criteriaCoverImage->addFilter(new EqualsFilter('id', $media->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                        $CoverImage[] = $getMediaUrlInMediaRepositoryById($criteriaCoverImage, $media);
                     } else {
                         $criteria = new Criteria();
-                        $aImgs[] = MLShopware6Alias::getRepository('media')->search($criteria->addFilter(new EqualsFilter('id', $media->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                        $aImgs[] = $getMediaUrlInMediaRepositoryById($criteria, $media);
                     }
                 }
                 //Collect all variations picture and merge it with master product
@@ -457,14 +537,14 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                             foreach ($VariationMedia as $media2) {
                                 $vmcriteria2 = new Criteria();
                                 if ($value->getCoverId() == $media2->getId()) {
-                                    $VariationaImgs[] = MagnalisterController::getShopwareMyContainer()->get('media.repository')->search($vmcriteria2->addFilter(new EqualsFilter('id', $media2->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                                    $VariationaImgs[] = $getMediaUrlInMediaRepositoryById($vmcriteria2, $media2);
                                 }
                             }
                             $vmcriteria = new Criteria();
                             if ($value->getCoverId() == $media->getId()) {
                                 //escape the cover image because with add the cover image for variation on the foreach above
                             } else {
-                                $VariationaImgs[] = MagnalisterController::getShopwareMyContainer()->get('media.repository')->search($vmcriteria->addFilter(new EqualsFilter('id', $media->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                                $VariationaImgs[] = $getMediaUrlInMediaRepositoryById($vmcriteria, $media);
                             }
                         }
                     }
@@ -482,10 +562,10 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                     foreach ($productMedia as $media) {
                         if ($media->getId() == $this->getCorrespondingProductEntity()->getCoverId()) {
                             $criteriaCoverImage = new Criteria();
-                            $CoverImage[] = MagnalisterController::getShopwareMyContainer()->get('media.repository')->search($criteriaCoverImage->addFilter(new EqualsFilter('id', $media->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                            $CoverImage[] = $getMediaUrlInMediaRepositoryById($criteriaCoverImage, $media);
                         }
                         $criteria = new Criteria();
-                        $aImgs[] = MagnalisterController::getShopwareMyContainer()->get('media.repository')->search($criteria->addFilter(new EqualsFilter('id', $media->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                        $aImgs[] = $getMediaUrlInMediaRepositoryById($criteria, $media);
                     }
                 } else {
                     //If variation images is inherited and the variation is empty then it will fill by parent product images
@@ -496,10 +576,10 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                     foreach ($productParentMedia as $media) {
                         if ($media->getId() == $this->getCorrespondingProductEntity()->getCoverId()) {
                             $criteriaParentCoverImage = new Criteria();
-                            $CoverImage[] = MagnalisterController::getShopwareMyContainer()->get('media.repository')->search($criteriaParentCoverImage->addFilter(new EqualsFilter('id', $media->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                            $CoverImage[] = $getMediaUrlInMediaRepositoryById($criteriaParentCoverImage, $media);
                         }
                         $criteria = new Criteria();
-                        $aImgs[] = MagnalisterController::getShopwareMyContainer()->get('media.repository')->search($criteria->addFilter(new EqualsFilter('id', $media->getMediaId())), $this->getShopwareContext())->first()->getUrl();
+                        $aImgs[] = $getMediaUrlInMediaRepositoryById($criteria, $media);
                     }
                 }
                 $aImgs = array_merge($CoverImage, $aImgs);
@@ -538,16 +618,16 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @return \Doctrine\ORM\PersistentCollection|int|string|null
      * @throws Exception
      */
-    public function getModulField($sFieldName, $blGeneral = false) {
+    public function getModulField($sFieldName, $blGeneral = false, $blMultiValue = false) {
         $this->load();
         if ($blGeneral) {
             $sField = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', $sFieldName)->get('value');
         } else {
-            $sField = MLModul::gi()->getConfig($sFieldName);
+            $sField = MLModule::gi()->getConfig($sFieldName);
         }
         $sField = empty($sField) ? $sFieldName : $sField;
 
-        return $this->getProductField($sField);
+        return $this->getProductField($sField, $blMultiValue);
     }
 
     /**
@@ -601,7 +681,6 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
             foreach ($this->getCorrespondingProductEntity()->getOptionIds() as $oOption) {
 
                 $optionsName = $optionsentity->search(new Criteria(['id' => $oOption]), $this->getShopwareContext())->first();
-                // @Masoud please check
                 // Product has options and an attribute but the option themselves doesn't exist
                 if (!is_object($optionsName)) {
                     continue;
@@ -679,19 +758,20 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @param null $fTax
      * @return mixed
      * @throws Exception
-     * @see \Shopware\Core\Content\Test\Product\SalesChannel\ProductPriceDefinitionBuilderTest
+     * @see  \Shopware\Core\Checkout\Cart\Delivery\DeliveryCalculator::getCurrencyPrice Shopware 6.4
+     * @see  \Shopware\Core\Content\Test\Product\SalesChannel\ProductPriceDefinitionBuilderTest Shopware 6.3
      */
     protected function getPrice($blGros, $blFormated, $sPriceKind = '', $fPriceFactor = 0.0, $iPriceSignal = null, $fTax = null) {
+        /** @var CurrencyEntity $CurrencyObject */
+        $CurrencyObject = MLShopware6Alias::getRepository('currency')
+            ->search((new Criteria([$this->getShopwareContext()->getCurrencyId()])), $this->getShopwareContext())->first();
         $oProductEntity = $this->getCorrespondingProductEntity();
         $advancedPrice = array();
         if ($this->blIsMarketplacePrice) {
-            $advancedPrice = $this->getAdvancedPrice($oProductEntity, $advancedPrice);
+            $advancedPrice = $this->getAdvancedPrice($oProductEntity, $advancedPrice, $CurrencyObject);
         }
-
         $price = $oProductEntity->getPrice();
-        if ($price === null) {
-            //Variations of a "Parent Product" don't have a TaxId and the Tax Id has been stored in "Parent Product". Getting the "Parent Product Id" from Variations via "$oProductEntity->getParentId()" and put it on the "product.repository" search section to get the "Parent Product" object with Tax Id.
-            $CriteriaPrice = new Criteria();
+        if ($price === null) {//price is inherited from parent product
             $oProductEntity = $this->getShopwareProduct($oProductEntity->getParentId());
         }
 
@@ -701,63 +781,12 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
             $oProductEntity->setTaxId($oProductTaxID->getTaxId());
         }
 
-        $defaultSalesChannel = $this->getSalesChannel();
-
-        $context = MagnalisterController::getSalesChannelContextFactory()
-            ->create($oProductEntity->getId(), $defaultSalesChannel, [SalesChannelContextService::CURRENCY_ID => $this->getShopwareContext()->getCurrencyId()]);
-
-        /** @var \Shopware\Models\Shop\Currency $CurrencyObject */
-        $CurrencyObject = MLShopware6Alias::getRepository('currency')
-            ->search((new Criteria())->addFilter(new EqualsFilter('isoCode', MLModule::gi()->getConfig('currency'))), Context::createDefaultContext())->first();
-
         if (version_compare(MLSHOPWAREVERSION, '6.4.0.0', '>=')) {
-            if (!isset($advancedPrice['net'])) {
-                $fBrutPrice = 0.00;
-                // iterate through all prices per currency
-                foreach ($oProductEntity->getPrice() as $value) {
-                    if ($value->getCurrencyId() == $this->getShopwareContext()->getCurrencyId()) {
-                        $fBrutPrice = $value->getGross();
-                        break;
-                    }
-                }
-                $fBrutPrice = $fBrutPrice * $CurrencyObject->getFactor();
-            } else {
-
-                $fBrutPrice = $advancedPrice['gross'] * $CurrencyObject->getFactor();
-            }
-
-        } else {
-            if (!isset($advancedPrice['net'])) {
-                $fBrutPrice = MagnalisterController::getProductPriceDefinitionBuilder()->build($oProductEntity, $context)->getPrice()->getPrice();
-            } else {
-                $fBrutPrice = $advancedPrice['gross'] * $CurrencyObject->getFactor();
-            }
+            list($fBrutPrice, $fNetPrice) = $this->getShopware64Price($oProductEntity, $advancedPrice, $CurrencyObject);
+        } else {//Shopware 6.3
+            list($fBrutPrice, $fNetPrice) = $this->getShopware63Price($oProductEntity, $advancedPrice, $CurrencyObject);
         }
 
-        $context->setTaxState(CartPrice::TAX_STATE_NET);
-
-        if (version_compare(MLSHOPWAREVERSION, '6.4.0.0', '>=')) {
-            if (!isset($advancedPrice['net'])) {
-                $fNetPrice = 0.00;
-                // iterate through all prices per currency
-                foreach ($oProductEntity->getPrice() as $value) {
-                    if ($value->getCurrencyId() == $this->getShopwareContext()->getCurrencyId()) {
-                        $fNetPrice = $value->getNet();
-                    }
-                }
-                $fNetPrice = $fNetPrice * $CurrencyObject->getFactor();
-            } else {
-                $fNetPrice = $advancedPrice['net'] * $CurrencyObject->getFactor();
-            }
-
-        } else {
-            if (!isset($advancedPrice['net'])) {
-                $fNetPrice = MagnalisterController::getProductPriceDefinitionBuilder()->build($oProductEntity, $context)->getPrice()->getPrice();
-            } else {
-                $fNetPrice = $advancedPrice['net'] * $CurrencyObject->getFactor();
-            }
-        }
-        //        Kint::dump(__FUNCTION__,$this->getShopwareContext()->getCurrencyId(), $fBrutPrice,$fNetPrice);
         $oPrice = MLPrice::factory();
         if ($fTax !== null) {
             $fBrutPrice = $oPrice->calcPercentages(null, $fNetPrice, $fTax);
@@ -785,8 +814,14 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
 
         $fPrice = round($blGros ? $fBrutPrice : $fNetPrice, 2);
         $fPrice = $this->priceAdjustment($fPrice);
+        if (
+            $this->getCorrespondingProductEntity()->getParentId() !== null //price of master product is not important
+            && (float)$fPrice === 0.00
+        ) {
+            throw new Exception(MLI18n::gi()->get('Productlist_ProductMessage_NotAllPricesValid'));
+        }
         if ($blFormated) {
-            $fPrice = MLShopware6Alias::getPriceModel()->format($fPrice, MLModul::gi()->getConfig('currency'), false);
+            $fPrice = MLShopware6Alias::getPriceModel()->format($fPrice, MLModule::gi()->getConfig('currency'), false);
         }
         return $fPrice;
     }
@@ -841,9 +876,9 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getTax($aAddressSets = null) {
         try {
-            $oShopwareProduct = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getId(), null, ['tax.rules.tax']);
+            $oShopwareProduct = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getId(), null, ['tax.rules.tax', 'tax.rules.type']);
             if ($oShopwareProduct->getTax() === null && $oShopwareProduct->getParentId() != null) {
-                $oShopwareProduct = $this->getShopwareProduct($oShopwareProduct->getParentId(), null, ['tax.rules.tax']);
+                $oShopwareProduct = $this->getShopwareProduct($oShopwareProduct->getParentId(), null, ['tax.rules.tax', 'tax.rules.type']);
             }
             $fTax = $oShopwareProduct->getTax()->getTaxRate();
 
@@ -853,11 +888,12 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                 $countryCriteria->addFilter(new EqualsFilter('country.iso', $aAddressData['CountryCode']));
                 $oCountry = MLShopware6Alias::getRepository('country')
                     ->search($countryCriteria, $this->getShopwareContext())->first();
-                if (is_object($oCountry)) {//when country exist or when country doesn't have any area, we cannot use address to calculate tax, we retrun normal tax
+                if (is_object($oCountry)) {//when country exist or when country doesn't have any area, we cannot use address to calculate tax, we return normal tax
                     foreach ($oShopwareProduct->getTax()->getRules()->filterByProperty('countryId', $oCountry->getId()) as $taxRuleEntity) {
                         /** @var $taxRuleEntity TaxRuleEntity */
                         $zipCode = $aAddressData['Postcode'] ?? 0;
-                        switch ($taxRuleEntity->getType()->getTechnicalName()) {
+                        $ProductTaxTypeTechnicalName = $taxRuleEntity->getType()->getTechnicalName();
+                        switch ($ProductTaxTypeTechnicalName) {
                             case ZipCodeRangeRuleTypeFilter::TECHNICAL_NAME:
                                 $toZipCode = isset($taxRuleEntity->getData()['toZipCode']) ? $taxRuleEntity->getData()['toZipCode'] : null;
                                 $fromZipCode = isset($taxRuleEntity->getData()['fromZipCode']) ? $taxRuleEntity->getData()['fromZipCode'] : null;
@@ -978,11 +1014,6 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
 
     public function getPrefixedVariationData() {
         $variationData = $this->getVariatonDataOptinalField(array('name', 'value', 'code', 'valueid'));
-
-        foreach ($variationData as &$variation) {
-            $variation['code'] = 'a_'.$variation['code'];
-        }
-
         return $variationData;
     }
 
@@ -999,14 +1030,16 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
         $aOut = array();
 
         if ($oVariantProduct->getOptionIds() != null) {
-            foreach ($oVariantProduct->getOptionIds() as $aAtribute) {
-                $options = $optionsentity->search(new Criteria(['id' => $aAtribute]), $this->getShopwareContext())->first();
-                // @Masoud please check
+            foreach ($oVariantProduct->getOptionIds() as $aAttribute) {
+                $options = $optionsentity->search(new Criteria(['id' => $aAttribute]), $this->getShopwareContext())->first();
                 // Product has options and an attribute but the option themselves doesn't exist
                 if (!is_object($options)) {
                     continue;
                 }
                 $group = $groupentity->search(new Criteria(['id' => $options->getGroupId()]), $this->getShopwareContext())->first();
+                if ($group->getName() == null) {
+                    $group = $groupentity->search(new Criteria(['id' => $options->getGroupId()]), Context::createDefaultContext())->first();
+                }
                 $aData = array();
                 if (in_array('code', $aFields)) {//an identifier for group of attributes , that used in Meinpaket at the moment
                     $aData['code'] = 'a_'.$group->getId();
@@ -1021,12 +1054,17 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                     if ($options->getName() !== null) {
                         $aData['value'] = $options->getName();
                     } else {
-                        $optionsReplace = $optionsentity->search(new Criteria(['id' => $aAtribute]), Context::createDefaultContext())->first();
+                        $optionsReplace = $optionsentity->search(new Criteria(['id' => $aAttribute]), Context::createDefaultContext())->first();
                         $aData['value'] = $optionsReplace->getName();
                     }
                 }
                 $aOut[] = $aData;
             }
+        }
+        if (in_array('name', $aFields)) {
+            usort($aOut, function ($a, $b) {
+                return $a['name'] <=> $b['name'];
+            });
         }
         return $aOut;
     }
@@ -1070,7 +1108,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
             foreach ($this->getMasterProductEntity()->getCategoryTree() as $oCat) {
                 $cat = $category->search(new Criteria(['id' => $oCat]), $this->getShopwareContext())->first();
                 $sInnerCat = '';
-                //this condition will remove root category 
+                //this condition will remove root category
                 if (!in_array($oCat, $aInvalidIds)) {
                     $sInnerCat = $cat->getName().'&nbsp;&gt;&nbsp;'.$sInnerCat;
                 }
@@ -1155,28 +1193,30 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @return \Doctrine\ORM\PersistentCollection|int|string|null
      * @throws Exception
      */
-    public function getProductField($sName, $sMethod = null) {
-        //"Color" group id
-        //763a00fca43a4dd8895036ea6b6e41c2            
+    public function getProductField($sName, $blMultiValue = false) {
+        $mValue = '';
         if (strpos($sName, 'a_') === 0) {
             if ($this->getCorrespondingProductEntity()->getOptionIds() !== null) {
                 $sName = substr($sName, 2);
                 foreach ($this->getCorrespondingProductEntity()->getOptionIds() as $value) {
-                    $OptionEntitesCereteria = new Criteria();
-                    $OptionEntites = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($OptionEntitesCereteria->addFilter(new EqualsFilter('id', $value)), $this->getShopwareContext())->first();
-
-                    // @Masoud please check
-                    // Product has options and an attribute but the option themselves doesn't exist
-                    if (!is_object($OptionEntites)) {
+                    $OptionEntitiesCriteria = new Criteria();
+                    $OptionEntities = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($OptionEntitiesCriteria->addFilter(new EqualsFilter('id', $value)), $this->getShopwareContext())->first();
+                    if (!is_object($OptionEntities)) {
                         continue;
                     }
-                    if ($OptionEntites->getGroupId() == $sName) {
-                        if ($OptionEntites->getName() !== NULL) {
-                            return $OptionEntites->getName();
+                    if ($OptionEntities->getGroupId() == $sName) {
+                        if ($OptionEntities->getName() !== NULL) {
+                            $mPropertyValue = $OptionEntities->getName();
                         } else {
                             $DefaultLangCriteria = new Criteria();
-                            $DefaultLangOptionEntites = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($DefaultLangCriteria->addFilter(new EqualsFilter('id', $value)), Context::createDefaultContext())->first();
-                            return $DefaultLangOptionEntites->getName();
+                            $DefaultLangOptionEntities = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($DefaultLangCriteria->addFilter(new EqualsFilter('id', $value)), Context::createDefaultContext())->first();
+                            $mPropertyValue = $DefaultLangOptionEntities->getName();
+                        }
+                        if ($blMultiValue) {
+                            $mValue .= (($mValue === '') ? '' : ',') . $mPropertyValue;
+                        } else {
+                            $mValue = $mPropertyValue;
+                            break;
                         }
                     }
                 }
@@ -1189,11 +1229,17 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                     $OptionPropertiesEntites = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($OptionPropertiesEntitesCereteria->addFilter(new EqualsFilter('id', $value)), $this->getShopwareContext())->first();
                     if ($OptionPropertiesEntites->getGroupId() == $sName) {
                         if ($OptionPropertiesEntites->getName() !== NULL) {
-                            return $OptionPropertiesEntites->getName();
+                            $mPropertyValue = $OptionPropertiesEntites->getName();
                         } else {
                             $DefaultLangCriteria2 = new Criteria();
-                            $DefaultLangOptionPropertiesEntites = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($DefaultLangCriteria2->addFilter(new EqualsFilter('id', $value)), Context::createDefaultContext())->first();
-                            return $DefaultLangOptionPropertiesEntites->getName();
+                            $DefaultLangOptionPropertiesEntities = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($DefaultLangCriteria2->addFilter(new EqualsFilter('id', $value)), Context::createDefaultContext())->first();
+                            $mPropertyValue = $DefaultLangOptionPropertiesEntities->getName();
+                        }
+                        if ($blMultiValue) {
+                            $mValue .= (($mValue === '') ? '' : ',') . $mPropertyValue;
+                        } else {
+                            $mValue = $mPropertyValue;
+                            break;
                         }
                     }
                 }
@@ -1202,54 +1248,60 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
             $sName = substr($sName, 2);
             if (isset($this->getCorrespondingProductEntity()->getCustomFields()[$sName])) {
                 $aAttribute['value'] = $this->getCorrespondingProductEntity()->getCustomFields()[$sName];
-                return $aAttribute['value'];
+                $mValue = $aAttribute['value'];
             } else if (isset($this->getMasterProductEntity()->getCustomFields()[$sName])) {
                 $aAttribute['value'] = $this->getMasterProductEntity()->getCustomFields()[$sName];
-                return $aAttribute['value'];
-            } else {
-                return '';
+                $mValue = $aAttribute['value'];
             }
         } else {
             if (method_exists($this->getCorrespondingProductEntity(), 'get'.$sName)) {
-                $mValue = $this->getCorrespondingProductEntity()->{'get'.$sName}();
-                if ($mValue === null && $this->getCorrespondingProductEntity()->getParentId() !== null) {//if it is variant and value is inherited
-                    $oMasterProduct = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getParentId());
-                    $mValue = $oMasterProduct->{'get'.$sName}();
+                try {
+                    $mValue = $this->getCorrespondingProductEntity()->{'get' . $sName}();
+                } catch (\Throwable $ex) {
+                    MLMessage::gi()->addDebug($ex);
+                }
+                if ($mValue === null ) {
+                    //if it is variant and value is inherited
+                    if($this->getCorrespondingProductEntity()->getParentId() !== null){
+                        $oMasterProduct = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getParentId());
+                        $mValue = $oMasterProduct->{'get'.$sName}();
+                        //if it is variant product and value is inherited from default language
+                        if($mValue == null){
+                            $oMasterProduct =   $this->getShopwareProduct($this->getCorrespondingProductEntity()->getParentId(),Context::createDefaultContext());
+                            $mValue = $oMasterProduct->{'get'.$sName}();
+                        }
+                    }else {//if it is Master product and value is inherited from default language
+                        $oMasterProduct = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getId(),Context::createDefaultContext());
+                        $mValue = $oMasterProduct->{'get'.$sName}();
+                    }
                 }
 
-                if ($sName == 'ManufacturerId' && $this->getCorrespondingProductEntity()->getManufacturerId() !== null) {
-                    $criteria = new Criteria();
-                    $mValue1 = MagnalisterController::getShopwareMyContainer()->get('product_manufacturer.repository')->search($criteria->addFilter(new EqualsFilter('id', $mValue)), $this->getShopwareContext())->first();
-                    if ($mValue1 !== null) {
-                        if ($mValue1->getName() !== null) {
-                            $mValue = $mValue1->getName();
-                        } else {
-                            $criteriaReplaceTranslation = new Criteria();
-                            $mValue2 = MagnalisterController::getShopwareMyContainer()->get('product_manufacturer.repository')->search($criteriaReplaceTranslation->addFilter(new EqualsFilter('id', $mValue)), Context::createDefaultContext())->first();
-                            $mValue = $mValue2->getName();
-                        }
-                    }
-                } elseif ($sName == 'ManufacturerId' && $this->getCorrespondingProductEntity()->getManufacturerId() == null && $this->getCorrespondingProductEntity()->getParentId() !== null) {
-                    $criteria = new Criteria();
-                    $mValue1 = MagnalisterController::getShopwareMyContainer()->get('product_manufacturer.repository')->search($criteria->addFilter(new EqualsFilter('id', $mValue)), $this->getShopwareContext())->first();
-                    if ($mValue1 !== null) {
-                        if ($mValue1->getName() !== null) {
-                            $mValue = $mValue1->getName();
-                        } else {
-                            $criteriaReplaceTranslation = new Criteria();
-                            $mValue2 = MagnalisterController::getShopwareMyContainer()->get('product_manufacturer.repository')->search($criteriaReplaceTranslation->addFilter(new EqualsFilter('id', $mValue)), Context::createDefaultContext())->first();
-                            $mValue = $mValue2->getName();
-                        }
+                if ($sName == 'ManufacturerId') {
+                    $mValue = $this->getProductManufactureValueAttributeMatching($mValue);
+                } elseif ($sName == 'UnitId') {
+                    $mValue = $this->getProductUnitValueAttributeMatching($mValue);
+                }
+
+            } else if (strpos($sName, '_ValueWithUnit') !== false) {
+                $aName = explode('_', $sName);
+                if (isset($aName[0]) && in_array($aName[0], ['Width', 'Height', 'Length', 'Weight'])) {
+                    $mValue = $this->getProductField($aName[0]).' '.$this->getProductField($aName[0].'_Unit');
+                }
+            } else if (strpos($sName, '_Unit') !== false) {
+                $aName = explode('_', $sName);
+                if (isset($aName[0])) {
+                    if (in_array($aName[0], ['Width', 'Height', 'Length'])) {
+                        $mValue = 'mm';
+                    } else if ($aName[0] === 'Weight') {
+                        $mValue = 'KG';
                     }
                 }
             } else {
                 MLMessage::gi()->addDebug('method get'.$sName.' does not exist in Article or ArticleDetails');
                 return '';
             }
-            return $mValue;
         }
-
-        return '';
+        return $mValue;
     }
 
     /**
@@ -1295,21 +1347,37 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getBasePrice() {
         $oDetail = $this->getCorrespondingProductEntity();
+        $oMaster = $this->getMasterProductEntity();
         if (!is_object($oDetail)) {
             return array();
         }
-        if ($oDetail->getUnitId() !== null) {
-            $BasePriceCereteria = new Criteria();
-            $BasePrice = MagnalisterController::getShopwareMyContainer()->get('unit.repository')->search($BasePriceCereteria->addFilter(new EqualsFilter('id', $oDetail->getUnitId())), $this->getShopwareContext())->first();
-            if ($BasePrice->getName() == null) {
-                $BasePriceCereteriaReplace = new Criteria();
-                $BasePriceReplace = MagnalisterController::getShopwareMyContainer()->get('unit.repository')->search($BasePriceCereteriaReplace->addFilter(new EqualsFilter('id', $oDetail->getUnitId())), Context::createDefaultContext())->first();
-                $BasePrice = $BasePriceReplace;
+        $sUnitId = $oDetail->getUnitId();
+        if ($sUnitId === null && $oMaster->getUnitId() !== null) {
+            $sUnitId = $oMaster->getUnitId();
+        }
+        if ($sUnitId !== null) {
+            $BasePriceCriteria = new Criteria();
+            $BasePrice = MagnalisterController::getShopwareMyContainer()->get('unit.repository')->search($BasePriceCriteria->addFilter(new EqualsFilter('id', $sUnitId)), $this->getShopwareContext())->first();
+
+            if (is_object($BasePrice) && $BasePrice->getName() == null) {
+                $BasePriceCriteriaReplace = new Criteria();
+                $BasePrice = MagnalisterController::getShopwareMyContainer()->get('unit.repository')->search($BasePriceCriteriaReplace->addFilter(new EqualsFilter('id', $sUnitId)), Context::createDefaultContext())->first();
+            }
+
+            // If no base price unit was found
+            if (!is_object($BasePrice)) {
+                return array();
             }
 
             try {
                 $fReferenceUnit = $oDetail->getReferenceUnit();
+                if ($fReferenceUnit === null && $oMaster->getReferenceUnit() !== null) {
+                    $fReferenceUnit = $oMaster->getReferenceUnit();
+                }
                 $fPurchaseUnit = $oDetail->getPurchaseUnit();
+                if ($fPurchaseUnit === null && $oMaster->getPurchaseUnit() !== null) {
+                    $fPurchaseUnit = $oMaster->getPurchaseUnit();
+                }
                 $sUnitName = $BasePrice->getName();
                 $sUnit = $BasePrice->getShortCode();
             } catch (Exception $oEx) {
@@ -1340,44 +1408,24 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      * return html list, that contain property name and values
      * @return string
      */
-    protected function getProperties() {
+    public function getProperties($sSeparator = null) {
         try {
             $sPropertiesHtml = ' ';
             if ($this->getCorrespondingProductEntity()->getPropertyIds() !== null) {
-                $sRowClass = 'odd';
+                $aProperties = $this->getPropertiesGrouped();
+
                 $sPropertiesHtml .= '<ul class="magna_properties_list">';
-                foreach ($this->getCorrespondingProductEntity()->getPropertyIds() as $value) {
-                    $OptionPropertiesEntitesCereteria = new Criteria();
-                    $OptionPropertiesEntites = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($OptionPropertiesEntitesCereteria->addFilter(new EqualsFilter('id', $value)), $this->getShopwareContext())->first();
-                    $groupentity = MagnalisterController::getShopwareMyContainer()->get('property_group.repository');
-                    $group = $groupentity->search(new Criteria(['id' => $OptionPropertiesEntites->getGroupId()]), $this->getShopwareContext())->first();
-                    if ($OptionPropertiesEntites->getName() !== NULL) {
-                        $sPropertiesHtml .= '<li class="magna_property_item '.$sRowClass.'">'
-                            .'<span class="magna_property_name">'.$group->getName()
-                            .'</span>'
-                            .'<span  class="magna_property_value">'.$OptionPropertiesEntites->getName()
-                            .'</span>'
-                            .'</li>';
-                        $sRowClass = $sRowClass === 'odd' ? 'even' : 'odd';
-                    } else {
-                        $DefaultLangCriteria2 = new Criteria();
-                        $DefaultLangOptionPropertiesEntites = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($DefaultLangCriteria2->addFilter(new EqualsFilter('id', $value)), Context::createDefaultContext())->first();
-
-                        $DefaultGroupentity = MagnalisterController::getShopwareMyContainer()->get('property_group.repository');
-                        if ($group->getName() == null) {
-                            $DefaultGroup = $DefaultGroupentity->search(new Criteria(['id' => $DefaultLangOptionPropertiesEntites->getGroupId()]), Context::createDefaultContext())->first();
-                        } else {
-                            $DefaultGroup = $DefaultGroupentity->search(new Criteria(['id' => $DefaultLangOptionPropertiesEntites->getGroupId()]), $this->getShopwareContext())->first();
-                        }
-
-                        $sPropertiesHtml .= '<li class="magna_property_item '.$sRowClass.'">'
-                            .'<span class="magna_property_name">'.$DefaultGroup->getName()
-                            .'</span>'
-                            .'<span  class="magna_property_value">'.$DefaultLangOptionPropertiesEntites->getName()
-                            .'</span>'
-                            .'</li>';
-                        $sRowClass = $sRowClass === 'odd' ? 'even' : 'odd';
-                    }
+                $sRowClass = 'odd';
+                foreach ($aProperties as $sPropertyGroup => $aPropertyValues) {
+                    natsort($aPropertyValues);
+                    $sPropertiesHtml .= '<li class="magna_property_item '.$sRowClass.'">'
+                        .'<span class="magna_property_name">'.$sPropertyGroup
+                        .'</span>'
+                        .($sSeparator !== null ? $sSeparator : '')
+                        .'<span  class="magna_property_value">'.implode(', ', $aPropertyValues)
+                        .'</span>'
+                        .'</li>';
+                    $sRowClass = $sRowClass === 'odd' ? 'even' : 'odd';
                 }
                 $sPropertiesHtml .= '</ul>';
             }
@@ -1421,7 +1469,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                         if (isset($CustomeFildData->getConfig()['customFieldPosition'])) {
                             $iCustomFieldPosition = $CustomeFildData->getConfig()['customFieldPosition'];
                         }
-                        $aAttributes[$CustomeFildData->getName()] = array('label' => $Label, 'customFieldPosition' => $iCustomFieldPosition, 'value' => $value);
+                        $aAttributes[$CustomeFildData->getName()] = array('label' => $Label, 'customFieldPosition' => $iCustomFieldPosition, 'value' => $value,'technicalname'=> $CustomeFildData->getName());
                     }
                 }
             }
@@ -1431,7 +1479,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
     }
 
     protected function getLanguage() {
-        $aConfig = MLModul::gi()->getConfig();
+        $aConfig = MLModule::gi()->getConfig();
         if (isset($aConfig['lang']) && $aConfig['lang'] != NULL && Uuid::isValid($aConfig['lang'])) {
             $iLangId = $aConfig['lang'];
         } else {
@@ -1445,13 +1493,34 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function getReplaceProperty() {
         $aReplace = parent::getReplaceProperty();
-        foreach ($this->getCustomField() as $iPosition => $sAttrValue) {
-            $aReplace['#Freetextfield'.$sAttrValue['customFieldPosition'].'#'] = $aReplace['#Freitextfeld'.$sAttrValue['customFieldPosition'].'#'] =
-            $aReplace['#Customfield'.$sAttrValue['customFieldPosition'].'#'] = $aReplace['#Zusatzfeld'.$sAttrValue['customFieldPosition'].'#'] = $sAttrValue['value'];
-            $aReplace['#Description'.$sAttrValue['customFieldPosition'].'#'] = $aReplace['#Bezeichnung'.$sAttrValue['customFieldPosition'].'#'] = $sAttrValue['label'];
+        foreach ($this->getCustomField() as $iPosition => $aAttrValue) {
+            $mValue = $aAttrValue['value'];
+            if (is_array($mValue)) {
+                $mValue = implode(', ', $mValue);
+            }
+            // We do not support PriceField as custom field typ
+            if (is_object($mValue)) {
+                continue;
+            }
+            $aReplace['#Freetextfield' . $aAttrValue['customFieldPosition'] . '#'] = $aReplace['#Freitextfeld' . $aAttrValue['customFieldPosition'] . '#'] =
+            $aReplace['#Customfield' . $aAttrValue['customFieldPosition'] . '#'] = $aReplace['#Zusatzfeld' . $aAttrValue['customFieldPosition'] . '#'] =
+            $aReplace['#VALUE_' . $aAttrValue['technicalname'] . '#'] = $mValue;
+            $aReplace['#Description' . $aAttrValue['customFieldPosition'] . '#'] = $aReplace['#Bezeichnung' . $aAttrValue['customFieldPosition'] . '#'] =
+            $aReplace['#LABEL_' . $aAttrValue['technicalname'] . '#'] = $aAttrValue['label'];
         }
         $aReplace['#PROPERTIES#'] = $this->getProperties();
         return $aReplace;
+    }
+
+    public function getReplacePropertyCountingKeys() {
+        return array(
+            'Freetextfield',
+            'Freitextfeld',
+            'Description',
+            'Bezeichnung',
+            'Customfield',
+            'Zusatzfeld',
+        );
     }
 
     /**
@@ -1498,20 +1567,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @throws Exception
      */
     public function getAttributeValue($mAttributeCode) {
-        try {
-            // Overwrite getAttributeValue by Marketplace
-            $moduleValue =  MLModule::gi()->shopProductGetAttributeValue($this, $mAttributeCode);
-
-            // only if returned value is not null continue checking default behavior
-            if ($moduleValue !== null) {
-                return $moduleValue;
-            }
-        } catch (Exception $e) {
-            // check default behavior
-        }
-
-        $mAttributeValue = $this->getProductField($mAttributeCode);
-        return $mAttributeValue;
+        return $this->getProductField($mAttributeCode);
     }
 
     /**
@@ -1540,9 +1596,11 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      */
     public function isSingle() {
         $this->load();
-        $mConfiguratorSet = $this->getCorrespondingProductEntity()->getChildCount();
-        // echo print_m($this->getArticleDetail());
-        if ((int)$mConfiguratorSet == 0) {
+        $oProduct = $this->getCorrespondingProductEntity();
+        if ($oProduct->getParentId() !== null) {
+            $oProduct = $this->getShopwareProduct($oProduct->getParentId());
+        }
+        if ((int)$oProduct->getChildCount() == 0) {
             return true;
         } else {
             return false;
@@ -1552,7 +1610,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
     /**
      * @return Context
      */
-    protected function getShopwareContext() {
+    public function getShopwareContext() {
         if ($this->oShopwareContext === null) {
             $this->prepareProductForMarketPlace();
         }
@@ -1570,13 +1628,14 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
     public function get($sName) {
         $mValue = parent::get($sName);
         if (
-            strtolower($sName) === 'marketplaceidentsku' && !empty($mValue) &&
-            parent::get('ParentID') === '0' &&
-            MLModule::gi()->getConfig('shopware6.master.sku.migration.options') === '1'
-
+            strtolower($sName) === 'marketplaceidentsku'
+            && !empty($mValue)
+            && parent::get('ParentID') === '0'
+            && MLModule::gi()->getConfig('shopware6.master.sku.migration.options') === '1'
         ) {
             $iLastIndex = strlen((string)$mValue) - 1;
             if ($iLastIndex > 0 && $mValue[$iLastIndex] === 'M') {
+                // add _Master for migrated customer from shopware 5 when option enabled
                 return substr($mValue, 0, $iLastIndex).'_Master';
             }
         }
@@ -1587,44 +1646,118 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
     /**
      * @param ProductEntity|null $oProductEntity
      * @param array $advancedPrice
+     * @param CurrencyEntity $oCurrency
      * @return array
      */
-    protected function getAdvancedPrice(?ProductEntity $oProductEntity, array $advancedPrice): array {
-        $CriteriaProductPrice = new Criteria();
-        $CriteriaProductPrice->addFilter(new EqualsFilter('productId', $oProductEntity->getId()));
-        $CriteriaProductPrice->addFilter(new EqualsFilter('quantityStart', '1'));
-        $CriteriaProductPrice->addFilter(new EqualsFilter('ruleId', $this->sPriceRules));
-        $ProductPrice = MagnalisterController::getShopwareMyContainer()->get('product_price.repository')->search($CriteriaProductPrice, $this->getShopwareContext())->first();
-        if ($ProductPrice != null) {
-            foreach ($ProductPrice->getPrice() as $value) {
-
-                $advancedPrice['net'] = $value->getNet();
-                $advancedPrice['gross'] = $value->getGross();
-                /*list price functionality
-                 * $value->getListPrice()->getNet();
-                 * $value->getListPrice()->getGross();
-                */
-            }
-        } elseif ($oProductEntity->getParentId() !== null) {
-            $ParentProductAdvancedPrice = $this->getShopwareProduct($oProductEntity->getParentId());
+    protected function getAdvancedPrice(?ProductEntity $oProductEntity, array $advancedPrice, CurrencyEntity $oCurrency): array {
+        try {
             $CriteriaProductPrice = new Criteria();
-            $CriteriaProductPrice->addFilter(new EqualsFilter('productId', $ParentProductAdvancedPrice->getId()));
-            $CriteriaProductPrice->addFilter(new EqualsFilter('quantityStart', '1'));
-            $CriteriaProductPrice->addFilter(new EqualsFilter('ruleId', $this->sPriceRules));
-            $ProductPrice = MagnalisterController::getShopwareMyContainer()->get('product_price.repository')->search($CriteriaProductPrice, $this->getShopwareContext())->first();
+            $oQuantityFilter = new RangeFilter(
+                'quantityStart',
+                [
+                    RangeFilter::LTE => 1,
+                ]
+            );
+            $oRuleFilter = new EqualsFilter('ruleId', $this->sPriceRules);
+            $CriteriaProductPrice->addFilter(new EqualsFilter('productId', $oProductEntity->getId()));
+            $CriteriaProductPrice->addFilter($oQuantityFilter);
+            $CriteriaProductPrice->addFilter($oRuleFilter);
+            $ProductPrice = MLShopware6Alias::getRepository('product_price')->search($CriteriaProductPrice, $this->getShopwareContext())->first();
+            if ($ProductPrice === null && $oProductEntity->getParentId() !== null) {
+                $ParentProductAdvancedPrice = $this->getShopwareProduct($oProductEntity->getParentId());
+                $CriteriaProductPrice = new Criteria();
+                $CriteriaProductPrice->addFilter(new EqualsFilter('productId', $ParentProductAdvancedPrice->getId()));
+                $CriteriaProductPrice->addFilter($oQuantityFilter);
+                $CriteriaProductPrice->addFilter($oRuleFilter);
+                $ProductPrice = MLShopware6Alias::getRepository('product_price')->search($CriteriaProductPrice, $this->getShopwareContext())->first();
+            }
+            /** @var $ProductPrice Shopware\Core\Content\Product\Aggregate\ProductPrice\ProductPriceEntity */
             if ($ProductPrice != null) {
-                foreach ($ProductPrice->getPrice() as $value) {
-                    $advancedPrice['net'] = $value->getNet();
-                    $advancedPrice['gross'] = $value->getGross();
-                    /*list price functionality
-                     * $value->getListPrice()->getNet();
-                     * $value->getListPrice()->getGross();
-                    */
+                $oCurrencyPrice = $ProductPrice->getPrice()->getCurrencyPrice($this->getShopwareContext()->getCurrencyId());
+                if (
+                    MLShopware6Alias::getCurrencyModel()->isDefaultCurrency($oCurrencyPrice->getCurrencyId()) &&
+                    $oCurrencyPrice->getCurrencyId() !== $oCurrency->getId()
+                ) {
+                    $advancedPrice = ['net' => $oCurrencyPrice->getNet() * $oCurrency->getFactor(), 'gross' => $oCurrencyPrice->getGross() * $oCurrency->getFactor()];
+                } else {
+                    $advancedPrice = ['net' => $oCurrencyPrice->getNet(), 'gross' => $oCurrencyPrice->getGross()];
                 }
             }
+        } catch (\Throwable $ex) {
+            MLMessage::gi()->addDebug($ex);
+            return [];
         }
 
         return $advancedPrice;
+    }
+
+    /**
+     * @param ProductEntity|null $oProductEntity
+     * @param array $advancedPrice
+     * @return array
+     */
+    public function getVolumePrices($sGroup, $blGross = true, $sPriceKind = '', $fPriceFactor = 0.0, $iPriceSignal = null) {
+        $oProductEntity = $this->getCorrespondingProductEntity();
+        $aVolumePrices = [];
+        $oQuantitySorting = new FieldSorting('quantityStart', FieldSorting::ASCENDING);
+        $oRuleFilter = new EqualsFilter('ruleId', $sGroup);
+        $CriteriaProductPrice = new Criteria();
+        $CriteriaProductPrice->addFilter(new EqualsFilter('productId', $oProductEntity->getId()));
+        $CriteriaProductPrice->addFilter($oRuleFilter);
+        $CriteriaProductPrice->addSorting($oQuantitySorting);
+        $ProductPrices = MLShopware6Alias::getRepository('product_price')
+            ->search($CriteriaProductPrice, $this->getShopwareContext())->getEntities();
+        if ($ProductPrices->count() === 0 && $oProductEntity->getParentId() !== null) {
+            $ParentProductAdvancedPrice = $this->getShopwareProduct($oProductEntity->getParentId());
+            $CriteriaProductPrice = new Criteria();
+            $CriteriaProductPrice->addFilter(new EqualsFilter('productId', $ParentProductAdvancedPrice->getId()));
+            $CriteriaProductPrice->addFilter($oRuleFilter);
+            $CriteriaProductPrice->addSorting($oQuantitySorting);
+            $ProductPrices = MLShopware6Alias::getRepository('product_price')
+                ->search($CriteriaProductPrice, $this->getShopwareContext())->getEntities();
+        }
+
+        if ($ProductPrices->count() > 0) {
+            $oPrice = MLPrice::factory();
+
+            foreach ($ProductPrices as $ProductPrice) {
+                if ($ProductPrice->getQuantityStart() > 1) {// it is normal price, so ignore 1
+                    foreach ($ProductPrice->getPrice() as $value) {
+                        if ($value->getCurrencyId() == $this->getShopwareContext()->getCurrencyId()) {
+
+                            $fGrossPrice = $value->getGross();
+                            $fNetPrice = $value->getNet();
+
+                            // Marketplace Configuration - Addition or percentage price change
+                            if ($sPriceKind === 'percent') {
+                                $fGrossPrice = $oPrice->calcPercentages(null, $fGrossPrice, $fPriceFactor);
+                                $fNetPrice = $oPrice->calcPercentages(null, $fNetPrice, $fPriceFactor);
+                            } elseif ($sPriceKind === 'addition') {
+                                $fGrossPrice = $fGrossPrice + $fPriceFactor;
+                                $fNetPrice = $fNetPrice + $fPriceFactor;
+                            }
+
+                            // Marketplace Configuration - Price Signal
+                            if ($iPriceSignal !== null) {
+                                //If price signal is single digit then just add price signal as last digit
+                                if (strlen((string)$iPriceSignal) == 1) {
+                                    $fGrossPrice = (0.1 * (int)($fGrossPrice * 10)) + ((int)$iPriceSignal / 100);
+                                    $fNetPrice = (0.1 * (int)($fNetPrice * 10)) + ((int)$iPriceSignal / 100);
+                                } else {
+                                    $fGrossPrice = ((int)$fGrossPrice) + ((int)$iPriceSignal / 100);
+                                    $fNetPrice = ((int)$fNetPrice) + ((int)$iPriceSignal / 100);
+                                }
+                            }
+
+                            $fPrice = round($blGross ? $fGrossPrice : $fNetPrice, 2);
+                            $aVolumePrices[$ProductPrice->getQuantityStart()] = $this->priceAdjustment($fPrice);
+                            break; // run only once for a specific currency
+                        }
+                    }
+                }
+            }
+        }
+        return $aVolumePrices;
     }
 
     /**
@@ -1643,5 +1776,117 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
             ->search($oShopProductIDCriteria->addFilter(new EqualsFilter('product.id', $iProductID)), $oContext)->first();
         return $oShopProduct;
     }
+
+    /**
+     * @param ProductEntity|null $oProductEntity
+     * @param $defaultSalesChannel
+     * @param array $advancedPrice
+     * @param CurrencyEntity $CurrencyObject
+     * @return float[]|int[]
+     */
+    protected function getShopware63Price(?ProductEntity $oProductEntity, array $advancedPrice, CurrencyEntity $CurrencyObject): array {
+        $context = MagnalisterController::getSalesChannelContextFactory()
+            ->create($oProductEntity->getId(), $this->getSalesChannel(), [SalesChannelContextService::CURRENCY_ID => $this->getShopwareContext()->getCurrencyId()]);
+        if (!isset($advancedPrice['net'])) {
+            $fBrutPrice = MagnalisterController::getProductPriceDefinitionBuilder()->build($oProductEntity, $context)->getPrice()->getPrice();
+        } else {
+            $fBrutPrice = $advancedPrice['gross'] * $CurrencyObject->getFactor();
+        }
+        $context->setTaxState(CartPrice::TAX_STATE_NET);
+        if (!isset($advancedPrice['net'])) {
+            $fNetPrice = MagnalisterController::getProductPriceDefinitionBuilder()->build($oProductEntity, $context)->getPrice()->getPrice();
+        } else {
+            $fNetPrice = $advancedPrice['net'] * $CurrencyObject->getFactor();
+        }
+        return array($fBrutPrice, $fNetPrice);
+    }
+
+    /**
+     * @param ProductEntity|null $oProductEntity
+     * @param array $advancedPrice
+     * @param CurrencyEntity $oCurrency
+     * @return array
+     */
+    protected function getShopware64Price(?ProductEntity $oProductEntity, array $advancedPrice, CurrencyEntity $oCurrency): array {
+        if (!isset($advancedPrice['net'])) {
+            $oCurrencyPrice = $oProductEntity->getPrice()->getCurrencyPrice($oCurrency->getId());
+            if (
+                MLShopware6Alias::getCurrencyModel()->isDefaultCurrency($oCurrencyPrice->getCurrencyId()) &&
+                $oCurrencyPrice->getCurrencyId() !== $oCurrency->getId()
+            ) {
+                $fBrutPrice = $oCurrencyPrice->getGross() * $oCurrency->getFactor();
+                $fNetPrice = $oCurrencyPrice->getNet() * $oCurrency->getFactor();
+            } else {
+                $fBrutPrice = $oCurrencyPrice->getGross();
+                $fNetPrice = $oCurrencyPrice->getNet();
+            }
+        } else {
+            $fBrutPrice = $advancedPrice['gross'];
+            $fNetPrice = $advancedPrice['net'];
+        }
+        return array($fBrutPrice, $fNetPrice);
+    }
+
+    public function getPropertiesGrouped(): array {
+        $aProperties = array();
+        foreach ($this->getCorrespondingProductEntity()->getPropertyIds() as $value) {
+            $OptionPropertiesEntitiesCriteria = new Criteria();
+            $OptionPropertiesEntites = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($OptionPropertiesEntitiesCriteria->addFilter(new EqualsFilter('id', $value)), $this->getShopwareContext())->first();
+            $groupentity = MagnalisterController::getShopwareMyContainer()->get('property_group.repository');
+            $group = $groupentity->search(new Criteria(['id' => $OptionPropertiesEntites->getGroupId()]), $this->getShopwareContext())->first();
+            if ($OptionPropertiesEntites->getName() === NULL) {
+                $DefaultLangCriteria2 = new Criteria();
+                $OptionPropertiesEntites = MagnalisterController::getShopwareMyContainer()->get('property_group_option.repository')->search($DefaultLangCriteria2->addFilter(new EqualsFilter('id', $value)), Context::createDefaultContext())->first();
+                $DefaultGroupentity = MagnalisterController::getShopwareMyContainer()->get('property_group.repository');
+                if ($group->getName() == null) {
+                    $group = $DefaultGroupentity->search(new Criteria(['id' => $OptionPropertiesEntites->getGroupId()]), Context::createDefaultContext())->first();
+                } else {
+                    $group = $DefaultGroupentity->search(new Criteria(['id' => $OptionPropertiesEntites->getGroupId()]), $this->getShopwareContext())->first();
+                }
+            }
+            $aProperties[$group->getName()][] = $OptionPropertiesEntites->getName();
+
+        }
+        return $aProperties;
+    }
+
+    /**
+     * @param $mValue
+     * @return mixed
+     */
+    protected function getProductUnitValueAttributeMatching($mValue) {
+        $criteria = new Criteria();
+        $mValue1 = MagnalisterController::getShopwareMyContainer()->get('unit.repository')->search($criteria->addFilter(new EqualsFilter('id', $mValue)), $this->getShopwareContext())->first();
+        if ($mValue1 !== null) {
+            if ($mValue1->getName() !== null) {
+                $mValue = $mValue1->getName();
+            } else {
+                $criteriaReplaceTranslation = new Criteria();
+                $mValue2 = MagnalisterController::getShopwareMyContainer()->get('unit.repository')->search($criteriaReplaceTranslation->addFilter(new EqualsFilter('id', $mValue)), Context::createDefaultContext())->first();
+                $mValue = $mValue2->getName();
+            }
+        }
+        return $mValue;
+    }
+
+    /**
+     * @param $mValue
+     * @return mixed
+     */
+    protected function getProductManufactureValueAttributeMatching($mValue) {
+        $criteria = new Criteria();
+        $mValue1 = MagnalisterController::getShopwareMyContainer()->get('product_manufacturer.repository')->search($criteria->addFilter(new EqualsFilter('id', $mValue)), $this->getShopwareContext())->first();
+        if ($mValue1 !== null) {
+            if ($mValue1->getName() !== null) {
+                $mValue = $mValue1->getName();
+            } else {
+                $criteriaReplaceTranslation = new Criteria();
+                $mValue2 = MagnalisterController::getShopwareMyContainer()->get('product_manufacturer.repository')->search($criteriaReplaceTranslation->addFilter(new EqualsFilter('id', $mValue)), Context::createDefaultContext())->first();
+                $mValue = $mValue2->getName();
+            }
+        }
+        return $mValue;
+    }
+
 
 }

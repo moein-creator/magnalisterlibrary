@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -86,11 +86,11 @@ MLI18n::gi()->{'amazon_prepare_apply_form__field__browsenodes__hint'} = '';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__webshopattribute__label'} = '{#i18n:attributes_matching_web_shop_attribute#}';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__attributematching__matching__titlesrc'} = '{#i18n:attributes_matching_shop_value#}';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__attributematching__matching__titledst'} = '{#i18n:attributes_matching_marketplace_value#}';
-MLI18n::gi()->{'amazon_prepare_apply_form__field__itemtitle__label'} = 'Product name <span class="bull">•</span>';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__itemtitle__label'} = 'Product Name <span class="bull">•</span>';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__itemtitle__hint'} = '';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__itemtitle__optional__checkbox__labelNegativ'} = 'Always use product description from web-shop';
-MLI18n::gi()->{'amazon_prepare_apply_form__field__manufacturer__label'} = 'Product manufacturer <span class="bull">•</span>';
-MLI18n::gi()->{'amazon_prepare_apply_form__field__manufacturer__hint'} = 'Product manufacturer';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__manufacturer__label'} = 'Product Manufacturer <span class="bull">•</span>';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__manufacturer__hint'} = 'Product Manufacturer';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__manufacturer__optional__checkbox__labelNegativ'} = 'Always use the manufacturer from web-shop';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__brand__label'} = 'Brand <span class="bull">•</span>';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__brand__hint'} = 'Brand or Manufacturer';
@@ -148,8 +148,10 @@ MLI18n::gi()->{'amazon_prepare_apply_form__field__keywords__optional__checkbox__
 MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtime__label'} = 'Handling time (in days)';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtime__hint'} = 'The elapsed time between when the buyer places the order until you hand the order over to your carrier.';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtime__optional__checkbox__labelNegativ'} = 'Always use the Configuration value';
-MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtemplate__label'} = 'Seller shipping group';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtemplate__label'} = 'Seller Shipping Group';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtemplate__hint'} = 'You can define the Seller Shipping Groups in Configuration -&gt;Item Preparation';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__bopisstores__label'} = 'Activate product for "Click & Collect in store"';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__bopisstores__hint'} = 'Please select the stores where you want to activate this product for "Click & Collect in store".';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__b2bactive__label'} = 'Use Amazon B2B';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__b2bactive__help'} = 'If enabled, specific settings below will be used when uploading product to Amazon. <b>Please make sure that your account is enabled for Amazon Business services.</b> Otherwise, you might experience errors during upload if this option is enabled.';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__b2bactive__help_matching'} = 'If enabled, the settings set in <br> the configurations will be used.';
@@ -266,5 +268,6 @@ MLI18n::gi()->{'amazon_varmatch_attribute_deleted_from_shop'} = '{#i18n:attribut
 MLI18n::gi()->{'amazon_varmatch_attribute_value_deleted_from_shop'} = 'Dieses Attribut wurde von shop gel&ouml;scht oder ge&auml;ndert. Matchings dazu wurden daher aufgehoben. Bitte matchen Sie bei Bedarf erneut auf ein geeignetes shop Attribut.';
 MLI18n::gi()->{'amazon_prepare_variations_error_empty_custom_attribute_name'} = '{#i18n:form_action_default_empty_custom_attribute_name#}';
 MLI18n::gi()->{'amazon_prepare_variations_error_maximal_number_custom_attributes_exceeded'} = '{#i18n:form_action_default_maximal_number_custom_attributes_exceeded#}';
+MLI18n::gi()->{'amazon_prepare_variations_theme_mandatory_error'} = 'Please select the variant design.';
 MLI18n::gi()->{'amazon_prepare_variations_error_duplicated_custom_attribute_name'} = '{#i18n:form_action_default_duplicated_custom_attribute_name#}';
 MLI18n::gi()->{'amazon_prepare_variations_multiselect_hint'} = '{#i18n:attributes_matching_multi_select_hint#}';

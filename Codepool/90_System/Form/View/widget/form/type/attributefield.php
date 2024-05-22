@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -28,7 +28,7 @@ if (!class_exists('ML', false))
     <tr class="js-field">
         <th></th>
         <td class="mlhelp ml-js-noBlockUi"></td>
-        <td class="input"><?php echo MLI18n::gi()->get(MLModul::gi()->getMarketPlaceName() . '_prepare_variations_category_without_attributes_info') ?></td>
+        <td class="input"><?php echo MLI18n::gi()->get(MLModule::gi()->getMarketPlaceName() . '_prepare_variations_category_without_attributes_info') ?></td>
         <td class="info"></td>
     </tr>
 <?php } else {
@@ -66,7 +66,7 @@ if (!class_exists('ML', false))
                 <div id="attributeDropDown_<?php echo $aField['subFieldsContainer']['id'] ?>"
                      style="overflow: hidden;
                 <?php if (isset($aField['subFieldsContainer']['subfields']['select']['value']) && !empty($aField['subFieldsContainer']['subfields']['select']['value'])) { ?>
-                    background-color: #e9e9e9;
+                    background-color: #fff;
                 <?php } ?>">
                     <?php
                     if (array_key_exists('debug', $aField['subFieldsContainer']) && $aField['subFieldsContainer']['debug']) {
@@ -79,7 +79,7 @@ if (!class_exists('ML', false))
                         ?>
                     </div>
                     <?php if (isset($aField['subFieldsContainerExtra'])) { ?>
-                        <div id="attributeExtraFields_<?php echo $aField['subFieldsContainer']['id'] ?>">
+                        <div id="attributeExtraFields_<?php echo $aField['subFieldsContainer']['id'] ?>" style="display: flex; width: 360px; flex-direction: row">
                             <?php $this->includeType($aField['subFieldsContainerExtra']); ?>
                         </div>
                     <?php } ?>

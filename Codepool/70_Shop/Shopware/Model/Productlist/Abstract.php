@@ -1,4 +1,21 @@
 <?php
+/*
+ * 888888ba                 dP  .88888.                    dP
+ * 88    `8b                88 d8'   `88                   88
+ * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
+ * 88   `8b. 88ooood8 88'  `88 88   YP88 88ooood8 88'  `"" 88888"   88'  `88
+ * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
+ * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
+ *
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
+ *
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
+ */
+
 abstract class ML_Shopware_Model_ProductList_Abstract extends ML_Productlist_Model_ProductList_ShopAbstract {
     protected $sPrefix='ml_';
     /**
@@ -19,33 +36,28 @@ abstract class ML_Shopware_Model_ProductList_Abstract extends ML_Productlist_Mod
     protected $oSelectQuery = null ;
     public function __construct(){
         /* @var $oSelectquery ML_Database_Model_Query_Select */
-        $oSelectquery= MLHelper::gi("model_product")->getProductSelectQuery();                
-        
+        $oSelectquery = MLHelper::gi("model_product")->getProductSelectQuery();
+
+        $aConfig = MLModule::gi()->getConfig();
         // marketplace language
-        try{
-            $aConfig=MLModul::gi()->getConfig();
-            foreach(MLModul::gi()->getPriceGroupKeys() as $sGroupKey){
+        foreach (MLModule::gi()->getPriceGroupKeys() as $sGroupKey) {
+            try {
                 $oCustomerGroup = Shopware()->Models()->getRepository('\Shopware\Models\Customer\Group')->find($aConfig[$sGroupKey]);
-                if(!is_object($oCustomerGroup)){
-                    $sCurrentController = MLRequest::gi()->get('controller');
-                    MLHttp::gi()->redirect(MLHttp::gi()->getUrl(array(
-                        'controller' => substr($sCurrentController, 0, strpos($sCurrentController, '_')).'_config_price'
-                    )));
+            } catch (\Exception $ex) {
+                MLMessage::gi()->addDebug($ex);
+                $oCustomerGroup = null;
+            }
+            if (!is_object($oCustomerGroup)) {
+                $sMarketplace = MLModule::gi()->getModuleBaseUrl();
+                $sController = MLRequest::gi()->get('controller');
+                if (strpos($sController, $sMarketplace) !== false && !MLHttp::gi()->isAjax()) {
+                    MLHttp::gi()->redirect(MLHttp::gi()->getUrl(array('controller' => $sMarketplace . '_config' . MLModule::gi()->getPriceConfigurationUrlPostfix())));
+                } else {
+                    throw new Exception('Customer-group should be configured again:' . MLHttp::gi()->getUrl(array('controller' => $sMarketplace . '_config' . MLModule::gi()->getPriceConfigurationUrlPostfix())));
                 }
             }
-            
-            $iLangId=$aConfig['lang'];
-        }catch (Exception $oExc ){
-            $iLangId= MLShop::gi()->getDefaultShop()->getId();
         }
-        $oShop = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop')->find($iLangId);
-        // Shopware 5.7 compatiblity
-        if (version_compare(MLSHOPWAREVERSION, '5.7', '>=')) {
-            Shopware()->Container()->set('shop', $oShop);
-        } else {
-            Shopware()->Bootstrap()->registerResource('Shop', $oShop);
-        }
-        
+        MLShop::gi()->setShop();
         $this->oSelectQuery = $oSelectquery;
         $this->oFilter=  MLHelper::gi('model_productlist_filter')
             ->clear()

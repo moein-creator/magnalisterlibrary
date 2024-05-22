@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -36,7 +36,6 @@ class ML_Metro_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Ab
         try {
             $aDefineMasterMaster = $this->getFieldDefinition();
 
-
             foreach ($this->oList->getList() as $oMaster) {
                 $this->oCurrentProduct = $oMaster;
                 /* @var $oMaster ML_Shop_Model_Product_Abstract */
@@ -52,6 +51,7 @@ class ML_Metro_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Ab
                         $aProductData = $oPrepareHelper->getPrepareData($aDefineMasterMaster, 'value');
                         $aProductData['Price'] = (float)$aProductData['ShippingCost'] + (float)$aProductData['ProductPrice'];
                         $aProductData['Images'] = $this->replaceImages($aProductData['Images']);
+                        $aProductData['ShippingGroup'] = $this->replaceShippingGroup($aProductData['ShippingGroup']);
                         $aProductData['FreightForwarding'] = $aProductData['FreightForwarding'] === 'true';
                         $aOut[] = $aProductData;
                     }
@@ -62,7 +62,6 @@ class ML_Metro_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Ab
 
             echo $oEx->getMessage();
         }
-        MLMessage::gi()->addDebug(__LINE__.':'.microtime(true), $aOut);
         return $aOut;
     }
 
@@ -86,26 +85,28 @@ class ML_Metro_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Ab
         $aReturn = array(
             'SKU' => array('optional' => array('active' => true)),
             'MasterSKU' => array('optional' => array('active' => true)),
-            'Quantity' => array('optional' => array('active' => true)),
-            'GTIN' => array('optional' => array('active' => true)),
-            'CategoryID' => array('optional' => array('active' => true)),
-            'Title' => array('optional' => array('active' => true)),
-            'Manufacturer' => array('optional' => array('active' => true)),
-            'ManufacturerPartNumber' => array('optional' => array('active' => true)),
-            'Brand' => array('optional' => array('active' => true)),
+            'Quantity'                          => array('optional' => array('active' => true)),
+            'GTIN'                              => array('optional' => array('active' => true)),
+            'CategoryID'                        => array('optional' => array('active' => true)),
+            'Title'                             => array('optional' => array('active' => true)),
+            'Manufacturer'                      => array('optional' => array('active' => true)),
+            'ManufacturerPartNumber'            => array('optional' => array('active' => true)),
+            'Brand'                             => array('optional' => array('active' => true)),
             'ManufacturersSuggestedRetailPrice' => array('optional' => array('active' => true)),
-            'ShortDescription' => array('optional' => array('active' => true)),
-            'Description' => array('optional' => array('active' => true), 'preparemode' => true),
-            'Features' => array('optional' => array('active' => true)),
-            'ProcessingTime' => array('optional' => array('active' => true)),
-            'MaxProcessingTime' => array('optional' => array('active' => true)),
-            'BusinessModel' => array('optional' => array('active' => true)),
-            'FreightForwarding' => array('optional' => array('active' => true)),
-            'Vat' => array('optional' => array('active' => true)),
-            'Images' => array('optional' => array('active' => true), 'additemmode' => true),
-            'ShippingCost' => array('optional' => array('active' => true)),
-            'ProductPrice' => array('optional' => array('active' => true)),
-            'MarketplaceAttributes' => array('optional' => array('active' => true)),
+            'ShortDescription'                  => array('optional' => array('active' => true)),
+            'Description'                       => array('optional' => array('active' => true), 'preparemode' => true),
+            'Features'                          => array('optional' => array('active' => true)),
+            'ProcessingTime'                    => array('optional' => array('active' => true)),
+            'MaxProcessingTime'                 => array('optional' => array('active' => true)),
+            'BusinessModel'                     => array('optional' => array('active' => true)),
+            'FreightForwarding'                 => array('optional' => array('active' => true)),
+            'Vat'                               => array('optional' => array('active' => true)),
+            'Images'                            => array('optional' => array('active' => true), 'additemmode' => true),
+            'ShippingCost'                      => array('optional' => array('active' => true)),
+            'ShippingGroup'                     => array('optional' => array('active' => true)),
+            'ProductPrice'                      => array('optional' => array('active' => true)),
+            'MarketplaceAttributes'             => array('optional' => array('active' => true)),
+            'VolumePrices'                      => array('optional' => array('active' => true)),
         );
         return $aReturn;
     }
@@ -126,5 +127,26 @@ class ML_Metro_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Ab
             }
         }
         return $aOut;
+    }
+     /**
+     * @param $iShippingGroup
+     * @return string
+     */
+    protected function replaceShippingGroup($iShippingGroup) {
+        $groups = MLModule::gi()->getConfig('shipping.group.name');
+        if (!is_array($groups)) {
+            return '';
+        }
+        if (array_key_exists($iShippingGroup, $groups)) {
+            return $groups[$iShippingGroup];
+        } else {
+            $aDefaults = MLModule::gi()->getConfig('shipping.group');
+            foreach ($aDefaults as $aNo => $aDefault) {
+                if ($aDefault['default'] == 1) {
+                    return $groups[$aNo];
+                }
+            }
+        }
+        return '';
     }
 }

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -26,13 +26,13 @@ class ML_Ebay_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper_M
     protected $sAddressIdDeprecated = null;
     
     protected function getShippingCode($aTotal) {
-        $sShippingMethod = MLModul::gi()->getConfig('orderimport.shippingmethod');
+        $sShippingMethod = MLModule::gi()->getConfig('orderimport.shippingmethod');
         if ('textfield' == $sShippingMethod) {
-            $sShippingName = MLModul::gi()->getConfig('orderimport.shippingmethod.name');
+            $sShippingName = MLModule::gi()->getConfig('orderimport.shippingmethod.name');
             $sShippingMethod = $sShippingName == '' ? $aTotal['Code'] : $sShippingName;
         } else if ($sShippingMethod === null || 'matching' === $sShippingMethod) {
             if (!isset($aTotal['Code']) || in_array($aTotal['Code'], array('', 'none', 'None'))) {
-                $sShippingMethod = MLModul::gi()->getMarketPlaceName();
+                $sShippingMethod = MLModule::gi()->getMarketPlaceName();
             } else {
                 $sShippingMethod = $aTotal['Code'];
             }
@@ -52,7 +52,7 @@ class ML_Ebay_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper_M
         foreach ($this->aOrder['Totals'] as $aTotal) {
             if ($aTotal['Type'] == 'Payment' && isset($aTotal['Complete']) && $aTotal['Complete'] == true) {
                 $this->aOrder['Order']['Payed'] = true;
-                $this->aOrder['Order']['Status'] = MLModul::gi()->getConfig('orderstatus.paid');
+                $this->aOrder['Order']['Status'] = MLModule::gi()->getConfig('orderstatus.paid');
                 break;
             }
         }
@@ -69,7 +69,11 @@ class ML_Ebay_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper_M
              && !empty($this->aOrder['MPSpecific']['ExtendedOrderID'])) {
             $this->aOrder['MPSpecific']['InternalComment'] .= 'ExtendedOrderID: ' . $this->aOrder['MPSpecific']['ExtendedOrderID'];
         }
-        $this->aOrder['MPSpecific']['InternalComment'] .= "\n" . str_replace('{#_platformName_#}', MLModul::gi()->getMarketPlaceName(false), MLI18n::gi()->BuyerUsername) . ': ' . $this->aOrder['MPSpecific']['BuyerUsername'];
+        $this->aOrder['MPSpecific']['InternalComment'] .= "\n" . str_replace('{#_platformName_#}', MLModule::gi()->getMarketPlaceName(false), MLI18n::gi()->BuyerUsername) . ': ' . $this->aOrder['MPSpecific']['BuyerUsername'];
+        // Move the Buyer Message (if any) to the end
+        if (!empty($this->aOrder['Order']['Comments'])) {
+            $this->aOrder['MPSpecific']['InternalComment'] = str_replace("\n".$this->aOrder['Order']['Comments'], '', $this->aOrder['MPSpecific']['InternalComment']) . "\n\n". $this->aOrder['Order']['Comments'] . "\n";
+        }
         foreach ($this->aOrder['Totals'] as $aTotal) {
             if ($aTotal['Type'] == 'Payment' && isset($aTotal['Complete']) && $aTotal['Complete'] == true) {
                 foreach ($aTotal as $sTotalKey => $mTotalValue) {
@@ -84,7 +88,7 @@ class ML_Ebay_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper_M
         // prev. order-ids
         if ($this->getUpdateMode()) {
             $oOrder = MLOrder::factory()->getByMagnaOrderId($this->aOrder['MPSpecific']['MOrderID']);
-        } elseif (MLModul::gi()->getConfig('importonlypaid') != '1') {
+        } elseif (MLModule::gi()->getConfig('importonlypaid') != '1') {
             //we don't need set MPreviousOrderID in update order and if we import only paid orders
             $oOrder = $this->ebayGetNotFinalizedOrder();
         } else {
@@ -108,7 +112,7 @@ class ML_Ebay_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper_M
         }
 
         if(isset($this->aOrder['MPSpecific']['EbayRefundUrl'])){
-            $this->aOrder['MPSpecific'][''] = '<br>'.sprintf(MLI18n::gi()->{'ebay_order_detail_information_to_ebay_seller_hub'}, $this->aOrder['MPSpecific']['EbayRefundUrl']);
+            $this->aOrder['MPSpecific'][''] = sprintf(MLI18n::gi()->{'ebay_order_detail_information_to_ebay_seller_hub'}, $this->aOrder['MPSpecific']['EbayRefundUrl']);
             unset($this->aOrder['MPSpecific']['EbayRefundUrl']);
         }
 
@@ -117,7 +121,7 @@ class ML_Ebay_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper_M
 
     protected function ebayGetNotFinalizedOrder($iStart = 0) {
         // find existing order;
-        $aClosedStatuses = MLModul::gi()->getConfig('orderstatus.closed');
+        $aClosedStatuses = MLModule::gi()->getConfig('orderstatus.closed');
         $aClosedStatuses = is_array($aClosedStatuses) ? $aClosedStatuses : array();
         $oOrderList = MLOrder::factory()->getList();
         $oOrderList
@@ -166,7 +170,7 @@ class ML_Ebay_Helper_Model_Service_OrderData_Normalize extends ML_Modul_Helper_M
         }
         $sAddressId = $this->sAddressIdDeprecated;
         // find existing order;
-        $aClosedStatuses = MLModul::gi()->getConfig('orderstatus.closed');
+        $aClosedStatuses = MLModule::gi()->getConfig('orderstatus.closed');
         $aClosedStatuses = is_array($aClosedStatuses) ? $aClosedStatuses : array();
         $oOrderList = MLOrder::factory()->getList();
         $oOrderList

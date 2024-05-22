@@ -24,7 +24,7 @@ MLFilesystem::gi()->loadClass('Productlist_Helper_Model_ProductList_List_Abstrac
 class ML_Magento2_Helper_Model_ProductList_List extends ML_Productlist_Helper_Model_ProductList_List_Abstract {
     protected $oI18n = null;
     /**
-     * @var ML_Database_Model_Query_Select $oSelect
+     * @var Magento\Catalog\Model\ResourceModel\Product\Collection $oSelect
      */
     protected $oSelect = null;
     protected $aFields = array();
@@ -83,6 +83,8 @@ class ML_Magento2_Helper_Model_ProductList_List extends ML_Productlist_Helper_Mo
     }
 
     public function getList() {
+        MLMessage::gi()->addDebug('Magento SQL query to select product in current page: ' .
+            $this->oSelect->getSelect()->assemble()->__toString());
         $this->oSelect->load();
         foreach ($this->oSelect as $oProduct) {
             $this->oProduct = $oProduct;

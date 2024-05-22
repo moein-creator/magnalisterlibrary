@@ -17,8 +17,9 @@
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
-class_exists('ML', false) or die();
-$marketplaceName = MLModul::gi()->getMarketPlaceName();
+if (!class_exists('ML', false))
+    throw new Exception();
+$marketplaceName = MLModule::gi()->getMarketPlaceName();
 
 $sName = str_replace('field', '', $aField['name']);
 $sNameWithoutValue = str_replace('[Values]', '', $sName);
@@ -26,7 +27,7 @@ $aNameWithoutValue = explode('][', $sNameWithoutValue);
 $sFirst = substr($aNameWithoutValue[0], 1);
 $sLast = end($aNameWithoutValue);
 $sLast = substr($sLast, 0, -1);
-$sSelector = $this->aFields[$sFirst . '.' . strtolower($aNameWithoutValue[1]) . '.' . strtolower($sLast) . '.code']['id'];
+$sSelector = $this->aFields[$sFirst.'.'.strtolower($aNameWithoutValue[1]).'.'.strtolower($sLast).'.code']['id'];
 $blDisableFreeText = $aField['valuesdst']['from_mp'];
 
 // Getting type of tab (is it variation tab or apply form)

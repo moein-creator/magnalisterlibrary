@@ -7,14 +7,13 @@
  * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
  * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
- *                            m a g n a l i s t e r
- *                                        boost your Online-Shop
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
  *
- *   -----------------------------------------------------------------------------
- *   @author magnalister
- *   @copyright 2010-2022 RedGecko GmbH -- http://www.redgecko.de
- *   @license Released under the MIT License (Expat)
- *   -----------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
  */
 
 MLFilesystem::gi()->loadClass('Form_Helper_Model_Table_PrepareData_Abstract');
@@ -82,7 +81,19 @@ class ML_Hood_Helper_Model_Table_Hood_PrepareData extends ML_Form_Helper_Model_T
     }
 
     protected function taxField(&$aField) {
-        $aField['value'] = MLModul::gi()->getConfig('mwst');
+        // forcefallback active or not configured (then behave like before)
+        if (    (MLModul::gi()->getConfig('forcefallback') === null)
+             || (MLModul::gi()->getConfig('forcefallback') == 1)) {
+            $aField['value'] = MLModul::gi()->getConfig('mwst');
+            return;
+        }
+        // Hood.de is a German MP, so we use the German tax rate
+        $taxRate = $this->oProduct->getTax(array('Shipping' => array('CountryCode' => 'DE')));
+        if ($taxRate !== null) {
+            $aField['value'] = $taxRate;
+        } else {
+            $aField['value'] = MLModul::gi()->getConfig('mwst');
+        }
     }
 
     protected function postalCodeField(&$aField) {
@@ -130,7 +141,7 @@ class ML_Hood_Helper_Model_Table_Hood_PrepareData extends ML_Form_Helper_Model_T
                 '#PID#'   => $this->oProduct->get('marketplaceidentid'),
                 //            '#BASEPRICE#'       => $sBasePrice,
             );
-            $aReplace['#PRICE#'] = html_entity_decode(MLPrice::factory()->format($this->getField('Price', 'value'), MLModul::gi()->getConfig('currency')), null, 'UTF-8');
+            $aReplace['#PRICE#'] = html_entity_decode(MLPrice::factory()->format($this->getField('Price', 'value'), MLModul::gi()->getConfig('currency')), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
             $sTitle = str_replace(array_keys($aReplace), array_values($aReplace), $sTitle);
         }
         return trim($sTitle) == '' ? $this->oProduct->getName() : $sTitle;
@@ -228,6 +239,9 @@ class ML_Hood_Helper_Model_Table_Hood_PrepareData extends ML_Form_Helper_Model_T
         $sDescription = preg_replace('/#PICTURE\d+#/', '', $sDescription);
         // delete empty images
         $sDescription = preg_replace('/<img[^>]*src=(""|\'\')[^>]*>/i', '', $sDescription);
+        $sDescription = preg_replace(
+            '/#('.implode('|', $oProduct->getReplacePropertyCountingKeys()).')\d+#/', '', $sDescription
+        );
         return $sDescription;
     }
 
@@ -251,7 +265,7 @@ class ML_Hood_Helper_Model_Table_Hood_PrepareData extends ML_Form_Helper_Model_T
         }
         foreach ($aImages as $sImage) {
             try {
-                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 60, 60);
+                $aField['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 80, 80);
             } catch (Exception $oEx) {
                 //no image in fs
             }
@@ -270,94 +284,6 @@ class ML_Hood_Helper_Model_Table_Hood_PrepareData extends ML_Form_Helper_Model_T
         $aField['value'] = MLModul::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('HoodPicturePack') ? true : false;
     }
 
-    protected static $aCachedVariationDimensionForPictures = array();
-
-    protected function variationDimensionForPicturesField(&$aField) {
-        if (
-            MLModul::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('HoodPicturePack') && (
-                !$this->oProduct instanceof ML_Shop_Model_Product_Abstract ||
-                $this->oProduct->getVariantCount() > 1
-            )
-        ) {
-            if ($this->oProduct instanceof ML_Shop_Model_Product_Abstract) { // only from product
-                $iProductId = $this->oProduct->get('parentid');
-                $oMaster = $this->oProduct;
-                $this->oProduct = $iProductId == 0 ? $this->oProduct : $this->oProduct->getParent(); // getVariants should be always called by master product object
-                if (!isset(self::$aCachedVariationDimensionForPictures[$iProductId])) {
-                    foreach ($this->oProduct->getVariants() as $oVariant) {
-                        self::$aCachedVariationDimensionForPictures[$iProductId] = array('' => MLI18n::gi()->get('ConfigFormEmptySelect'));
-                        foreach ($oVariant->getVariatonDataOptinalField(array('name', 'code')) as $aVariationData) {
-                            self::$aCachedVariationDimensionForPictures[$iProductId][$aVariationData['code']] = $aVariationData['name'];
-                        }
-                    }
-                }
-                $aField['values'] = self::$aCachedVariationDimensionForPictures[$iProductId];
-                $this->oProduct = $oMaster;
-            } else {
-                $aField['values'] = array();
-                foreach (MLFormHelper::getShopInstance()->getPossibleVariationGroupNames() as $iKey => $sValue) {
-                    $aField['values'][$iKey] = $sValue;
-                }
-            }
-            reset($aField['values']);
-            $aField['value'] = $this->getFirstValue($aField, MLModul::gi()->getConfig('variationdimensionforpictures'), key($aField['values']));
-        }
-    }
-
-    protected static $aCachedVariationPictures = array();
-
-    protected function variationPicturesField(&$aField) {
-        if (
-            MLModul::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('HoodPicturePack') && $this->oProduct instanceof ML_Shop_Model_Product_Abstract && $this->oProduct->getVariantCount() > 1
-        ) {
-            $iProductId = $this->oProduct->get('parentid');
-            if (!isset(self::$aCachedVariationPictures[$iProductId])) {
-                self::$aCachedVariationPictures[$iProductId] = $aField;
-                $sControlValue = $this->getField('VariationDimensionForPictures', 'value');
-                if (!empty($sControlValue)) {
-                    $aValue = $this->getFirstValue(self::$aCachedVariationPictures[$iProductId], array());
-                    foreach ($aValue as $iImageGroup => $aImageGroups) {
-                        if ($iImageGroup !== $sControlValue) {
-                            unset($aValue[$iImageGroup]);
-                        } else {
-                            foreach ($aImageGroups as $iImageGroupKey => $aImageGroup) {
-                                foreach ($aImageGroup as $iImage => $sImage) {
-                                    if ($sImage == 'false') {
-                                        unset($aValue[$iImageGroup][$iImageGroupKey][$iImage]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    $oMaster = $this->oProduct;
-                    $this->oProduct = $iProductId == 0 ? $this->oProduct : $this->oProduct->getParent(); // getVariants should be always called by master product object
-                    foreach ($this->oProduct->getVariants() as $oVariant) {
-                        foreach ($oVariant->getVariatonDataOptinalField(array('code', 'value')) as $aVariationData) {
-                            if ($aVariationData['code'] == $sControlValue) {
-                                foreach (array_unique($oVariant->getImages()) as $sImage) {
-                                    try {
-                                        self::$aCachedVariationPictures[$iProductId]['variationpictures'][$aVariationData['code']][$aVariationData['value']]['values'][$sImage] = MLImage::gi()->resizeImage($sImage, 'products', 60, 60);
-                                        self::$aCachedVariationPictures[$iProductId]['variationpictures'][$aVariationData['code']][$aVariationData['value']]['title'] = $aVariationData['value'];
-                                        self::$aCachedVariationPictures[$iProductId]['default'][$aVariationData['code']][$aVariationData['value']][] = $sImage;
-                                    } catch (Exception $oEx) {
-                                        //no image in fs
-                                    }
-                                }
-                                self::$aCachedVariationPictures[$iProductId]['default'][$aVariationData['code']][$aVariationData['value']] = array_unique(self::$aCachedVariationPictures[$iProductId]['default'][$aVariationData['code']][$aVariationData['value']]);
-                                self::$aCachedVariationPictures[$iProductId]['value'][$aVariationData['code']][$aVariationData['value']] = array_unique(
-                                    array_key_exists($aVariationData['code'], $aValue) && array_key_exists($aVariationData['value'], $aValue[$aVariationData['code']]) ? $aValue[$aVariationData['code']][$aVariationData['value']] // saved
-                                        : self::$aCachedVariationPictures[$iProductId]['default'][$aVariationData['code']][$aVariationData['value']] // default = all
-                                );
-                                break;
-                            }
-                        }
-                    }
-                    $this->oProduct = $oMaster;
-                }
-            }
-            $aField = self::$aCachedVariationPictures[$iProductId];
-        }
-    }
 
     protected function purgePicturesField(&$aField) {
         $aField['value'] = MLModul::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('HoodPicturePack');
@@ -655,7 +581,9 @@ class ML_Hood_Helper_Model_Table_Hood_PrepareData extends ML_Form_Helper_Model_T
     }
 
     public function shortDescriptionField(&$aField) {
-        $aField['value'] = substr(trim(strip_tags($this->getFirstValue($aField, $this->oProduct->getShortDescription()))), 0, 500);
+        // Helper for php8 compatibility - can't pass null to strip_tags 
+        $sDescription = MLHelper::gi('php8compatibility')->checkNull($this->getFirstValue($aField, $this->oProduct->getShortDescription()));
+        $aField['value'] = substr(trim(strip_tags($sDescription)), 0, 500);
     }
 
     public function eanField(&$aField) {
@@ -708,7 +636,7 @@ class ML_Hood_Helper_Model_Table_Hood_PrepareData extends ML_Form_Helper_Model_T
      * @param array $aData
      * @return string
      */
-    public function basePriceReplace($mValue, $aData, $iMaxChars = 80) {
+    public function basePriceReplace($mValue, $aData, $iMaxChars = 85) {
         if (isset($aData['ShortBasePriceString'])) {
             $sBasePriceString = $aData['ShortBasePriceString'];
         } elseif (isset($aData['BasePriceString'])) {

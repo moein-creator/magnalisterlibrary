@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -272,11 +272,11 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
             'trigger' => 'change',
             'field' => array(
                 'type' => 'select',
-                'values' => MLModul::gi()->getListingDurations($sListingType),
+                'values' => MLModule::gi()->getListingDurations($sListingType),
             )
         );
         if (empty($aField['value']) || MLHttp::gi()->isAjax()) {//it is not in prepareData helper class because additems is ajax too and there it will be ever default value
-            $aField['value'] = MLModul::gi()->getConfig(strtolower($sListingType) == 'chinese' ? 'chinese.duration' : 'fixed.duration');
+            $aField['value'] = MLModule::gi()->getConfig(strtolower($sListingType) == 'chinese' ? 'chinese.duration' : 'fixed.duration');
         }
     }
 
@@ -286,7 +286,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     protected function titleField(&$aField) {
-        $aField['default'] = $this->oPrepareHelper->replaceTitle(MLModul::gi()->getConfig('template.name'));
+        $aField['default'] = $this->oPrepareHelper->replaceTitle(MLModule::gi()->getConfig('template.name'));
         $aField['type'] = 'string';
         $aField['maxlength'] = 80;
     }
@@ -302,10 +302,10 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
             if(method_exists($this->oPrepareHelper, $sMethodName.'Main')){
                 $sMethodName .= 'Main';
             }
-            $aSubField['default'] = $this->oPrepareHelper->{$sMethodName}(MLModul::gi()->getConfig($aSubField['default']));
+            $aSubField['default'] = $this->oPrepareHelper->{$sMethodName}(MLModule::gi()->getConfig($aSubField['default']));
         }
         unset($aSubField);
-        if (MLModul::gi()->getConfig('template.mobile.active') != 'true') {
+        if (MLModule::gi()->getConfig('template.mobile.active') != 'true') {
             unset($aField['subfields']['descriptionmobile']);
             unset($aField['fullwidth']);
 //            new dBug($aField);
@@ -335,7 +335,63 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
                 $aField['value'] = MLI18n::gi()->ml_ebay_no_conditions_applicable_for_cat;
             }
         } else {
-            $aField['values'] = MLModul::gi()->getConditionValues();
+            $aField['values'] = MLModule::gi()->getConditionValues();
+        }
+    }
+
+    protected function conditionDescriptorsField(&$aField) {
+        $aField['type'] = 'ajax';
+        $aField['ajax'] = array(
+            'selector' => '#' . $this->getField('ConditionID', 'id'),
+            'trigger' => 'change',
+            'field' => array(
+                'type' => 'ebay_conditiondescriptors',
+                'subfields' => $this->conditionDescriptorSubfields(
+                    $this->getField(array('name' => 'PrimaryCategory', 'hint' => array('template' => 'ebay_categories')), 'value'),
+                    $this->getField('ConditionID', 'value')
+                )
+            )
+        );
+    }
+
+    private function conditionDescriptorSubfields($iCategoryId, $iConditionId) {
+        $oPrepareTable = MLDatabase::getPrepareTableInstance();
+        $preparedData = $this->oPrepareList->get('ConditionDescriptors');
+        if (is_array($preparedData)) {
+            $preparedData = current($preparedData);
+        } else {
+            $preparedData = array();
+        }
+        $aConditionPolicies = MLDatabase::factory('ebay_categories')->set('categoryid', $iCategoryId)->getConditionPolicies();
+        $aSubfields = array();
+        if (    !empty($aConditionPolicies)
+             && isset($aConditionPolicies[$iConditionId]['conditionDescriptors'])
+        ) {
+            foreach ($aConditionPolicies[$iConditionId]['conditionDescriptors'] as $iDescriptorId => $aDescriptor) {
+                if ($aDescriptor['conditionDescriptorConstraint']['mode'] == 'SELECTION_ONLY') {
+                    $aSubfields[] = array(
+                        'name'    => 'field[conditionDescriptors]['.$iDescriptorId.']',
+                        'label'   => $aDescriptor['conditionDescriptorName'],
+                        'type'    => 'select',
+                        'values'  => $aDescriptor['conditionDescriptorValues'],
+                        'value' => isset($preparedData[$iDescriptorId])
+                            ? $preparedData[$iDescriptorId]
+                            : '',
+                    );
+                } else {
+                    $aSubfields[] = array(
+                        'name'   => 'field[conditionDescriptors]['.$iDescriptorId.']',
+                        'label'  => $aDescriptor['conditionDescriptorName'],
+                        'type'   => 'string',
+                        'value' => isset($preparedData[$iDescriptorId])
+                            ? $preparedData[$iDescriptorId]
+                            : '',
+                    );
+                }
+            }
+            return $aSubfields;
+        } else {
+            return array();
         }
     }
 
@@ -358,12 +414,12 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
         $aField['type'] = 'select';
         $aField['autooptional'] = false; // ändert nix wg multi
         $aField['values'] = array('false' => MLI18n::gi()->form_type_optional_select__false, 'true' => MLI18n::gi()->form_type_optional_select__true);
-        $aField['default'] = (MLModul::gi()->getConfig('strikeprice.active') == 1) ? 'true' : 'false';
+        $aField['default'] = (MLModule::gi()->getConfig('strikeprice.active') == 1) ? 'true' : 'false';
     }
 
     protected function buyItNowPriceField(&$aField) {
         if ($this->getField('listingType', 'value') == 'Chinese') {
-            $oActive = json_decode(MLModul::gi()->getConfig('chinese.buyitnow.price.active'));
+            $oActive = json_decode(MLModule::gi()->getConfig('chinese.buyitnow.price.active'));
             $aField['type'] = 'ebay_pricecontainer_buyitnow';
             $aField['autooptional'] = false;
             $aField['checkajax'] = false;
@@ -382,7 +438,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
 
     protected function siteField(&$aField) {
         $aField['type'] = 'readonly';
-        $aField['value'] = MLModul::gi()->getConfig('site');
+        $aField['value'] = MLModule::gi()->getConfig('site');
     }
 
     protected function privateListingField(&$aField) {
@@ -398,7 +454,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
         $aField['autooptional'] = false;
         $aField['disabled'] = true;
 
-        $aSetting = MLModul::gi()->getEBayAccountSettings();
+        $aSetting = MLModule::gi()->getEBayAccountSettings();
         if (isset($aSetting['eBayPlus']) && $aSetting['eBayPlus'] == "true") {
             $aField['disabled'] = false;
         }
@@ -410,7 +466,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     protected function pictureUrlField(&$aField) {
-        if (MLModul::gi()->getConfig('picturepack')) {
+        if (MLModule::gi()->getConfig('picturepack')) {
             $aField['type'] = 'imagemultipleselect';
         } else {
             $aField['type'] = 'imageselect';
@@ -418,9 +474,9 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
         }
         if (isset($aField['values']) && is_array($aField['values'])) {
             foreach ($aField['values'] as $no => $image) {
-                if ($image['height'] > 60) {
-                    $aField['values'][$no]['width'] = (int)((60 * $image['width']) / $image['height']);
-                    $aField['values'][$no]['height'] = 60;
+                if ($image['height'] > 80) {
+                    $aField['values'][$no]['width'] = (int)((80 * $image['width']) / $image['height']);
+                    $aField['values'][$no]['height'] = 80;
                 }
             }
             unset($no); unset($image);
@@ -433,7 +489,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
 
     protected function VariationDimensionForPicturesField(&$aField) {
         if (
-                MLModul::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('EbayPicturePack') && (
+            MLModule::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('EbayPicturePack') && (
                 !$this->oProduct instanceof ML_Shop_Model_Product_Abstract ||
                 $this->oProduct->getVariantCount() > 1
                 )
@@ -444,7 +500,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
 
     protected function VariationPicturesField(&$aField) {
         if (
-                MLModul::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('EbayPicturePack') && $this->oProduct instanceof ML_Shop_Model_Product_Abstract && $this->oProduct->getVariantCount() > 1
+            MLModule::gi()->getConfig('picturepack') && MLShop::gi()->addonBooked('EbayPicturePack') && $this->oProduct instanceof ML_Shop_Model_Product_Abstract && $this->oProduct->getVariantCount() > 1
         ) {
             $sControlValue = $this->getField('VariationDimensionForPictures', 'value');
             $aField['autooptional'] = false;
@@ -495,7 +551,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     protected function storeCategoryField(&$aField) {
-        if (!MLModul::gi()->hasStore()) {
+        if (!MLModule::gi()->hasStore()) {
             unset($aField);
         }
         try {
@@ -508,7 +564,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     protected function storeCategory2Field(&$aField) {
-        if (!MLModul::gi()->hasStore()) {
+        if (!MLModule::gi()->hasStore()) {
             unset($aField);
         }
         $this->_categoryField($aField, true);
@@ -519,6 +575,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
         $aField['ebay_categories'] = array(
             'field' => array(
                 'type' => 'select',
+                'select2' => true,
             )
         );
         $aAjaxData = $this->getAjaxData();
@@ -526,9 +583,8 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
             return;
         }
         if ($aAjaxData !== null || $aField['realname'] === 'primarycategory') {
-            require_once MLFilesystem::getOldLibPath('php/modules/ebay/ebayFunctions.php');
-            require_once MLFilesystem::getOldLibPath('php/modules/ebay/classes/eBayCategoryMatching.php');
-            $oCategories = new eBayCategoryMatching();
+            /* @var $oCategories ML_Ebay_Helper_Model_Service_CategoryMatching */
+            $oCategories = MLHelper::gi('Model_Service_CategoryMatching');
             $aField['ebay_categories']['oCategory'] = $oCategories;
         }
         if ($aAjaxData === null) {
@@ -630,12 +686,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     protected function listingTypeField(&$aField) {
-        $aField['values'] = MLModul::gi()->getListingTypeValues();
-        $aField['type'] = 'select';
-    }
-
-    protected function hitCounterField(&$aField) {
-        $aField['values'] = MLModul::gi()->getHitcounterValues();
+        $aField['values'] = MLModule::gi()->getListingTypeValues();
         $aField['type'] = 'select';
     }
 
@@ -650,7 +701,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     protected function paymentMethodsField(&$aField) {
-        $aField['values'] = MLModul::gi()->getPaymentOptions();
+        $aField['values'] = MLModule::gi()->getPaymentOptions();
         if (count($aField['values']) > 1) {
             $aField['type'] = 'multipleSelect';
             $this->getSellerProfileHelper()->manipulateFieldForSellerProfile($aField, $this->getField('paymentSellerProfile'), 'Payment');
@@ -687,14 +738,14 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     protected function shippingLocalField(&$aField) {
-        $aField['values'] = MLModul::gi()->getLocalShippingServices();
+        $aField['values'] = MLModule::gi()->getLocalShippingServices();
         $this->_shippingField($aField);
     }
 
     protected function shippingInternationalField(&$aField) {
         $aField['autooptional'] = false;
-        $aField['values'] = array_merge(array('' => MLI18n::gi()->get('sEbayNoInternationalShipping')), MLModul::gi()->getInternationalShippingServices());
-        $aField['locations'] = MLModul::gi()->getInternationalShippingLocations();
+        $aField['values'] = array_merge(array('' => MLI18n::gi()->get('sEbayNoInternationalShipping')), MLModule::gi()->getInternationalShippingServices());
+        $aField['locations'] = MLModule::gi()->getInternationalShippingLocations();
         $this->_shippingField($aField);
     }
 
@@ -717,9 +768,9 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
         $aProfiles = array();
         $oI18n = MLI18n::gi();
         $oPrice = MLPrice::factory();
-        $sCurrency = MLModul::gi()->getConfig('currency');
+        $sCurrency = MLModule::gi()->getConfig('currency');
         if (isset($aField['i18n'])) {
-            foreach (MLModul::gi()->getShippingDiscountProfiles() as $sProfil => $aProfil) {
+            foreach (MLModule::gi()->getShippingDiscountProfiles() as $sProfil => $aProfil) {
                 $aProfiles[$sProfil] = $oI18n->replace(
                         $aField['i18n']['option'], array(
                     'NAME' => $aProfil['name'],
@@ -733,11 +784,11 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
     }
 
     protected function shippingLocalProfileField(&$aField) {
-        $this->_shippingProfileField($aField, MLModul::gi()->getConfig('default.shippingprofile.international'));
+        $this->_shippingProfileField($aField, MLModule::gi()->getConfig('default.shippingprofile.international'));
     }
 
     protected function shippingInternationalProfileField(&$aField) {
-        $this->_shippingProfileField($aField, MLModul::gi()->getConfig('default.shippingprofile.local'));
+        $this->_shippingProfileField($aField, MLModule::gi()->getConfig('default.shippingprofile.local'));
     }
 
     protected function callGetCategoryDetails($sCategoryId) {
@@ -1019,6 +1070,9 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
 
     protected function getAttributesFromDB($sIdentifier, $sCustomIdentifier = '') {
         $aParent = parent::getAttributesFromDB($sIdentifier, $sCustomIdentifier = '');
+        if (!is_array($aParent)) {
+            return array();
+        }
         $aCategoryDetails = $this->callGetCategoryDetails($sIdentifier);
         if (isset($aCategoryDetails['DATA']) && isset($aCategoryDetails['DATA']['attributes'])) {
             $aProductListingDetailsFieldNames = MagnaConnector::gi()->submitRequestCached(array(
@@ -1038,14 +1092,14 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
                             }
                             if ($sConfigCode !== null) {
                                 $aValues = array();
-                                foreach ($this->getShopAttributeValues(MLModul::gi()->getConfig($sConfigCode)) as $sId => $sName) {
+                                foreach ($this->getShopAttributeValues(MLModule::gi()->getConfig($sConfigCode)) as $sId => $sName) {
                                     $aValues[] = array(
                                         'Shop' => array('Key' => $sId, 'Value' => $sName), 
                                         'Marketplace' => array('Key' => 'manual', 'Value' => $sName, 'Info' => $sName.self::getMessage('_prepare_variations_free_text_add'))
                                     );
                                 }
                                 $aParent[$aCategoryDetail['name']] = array(
-                                    'Code' => MLModul::gi()->getConfig($sConfigCode),
+                                    'Code' => MLModule::gi()->getConfig($sConfigCode),
                                     'Kind' => 'Matching',
                                     'Required' => true,
                                     'DataType' => 'selectAndText',
@@ -1123,7 +1177,7 @@ class ML_Ebay_Controller_Ebay_Prepare_Apply_Form extends ML_Form_Controller_Widg
 
     public function render() {
         if(!MLHttp::gi()->isAjax()) {
-            MLSetting::gi()->add('aCss','magnalister.ebayprepareform.css', true);
+            MLSetting::gi()->add('aCss', 'magnalister.ebayprepareform.css?%s', true);
         }
         parent::render();
     }

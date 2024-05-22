@@ -11,18 +11,19 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
+
+use Redgecko\Magnalister\Controller\MagnalisterController;
+use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
+use Shopware\Core\Checkout\Order\OrderStates;
+use Shopware\Core\Defaults;
+use Shopware\Core\Framework\Api\Context\SystemSource;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Redgecko\Magnalister\Controller\MagnalisterController;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\Framework\Api\Context\SystemSource;
-use Shopware\Core\Defaults;
-use Shopware\Core\Checkout\Order\OrderStates;
-use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
 
 MLFilesystem::gi()->loadClass('Shop_Model_ProductListDependency_SearchFilter_Abstract');
 class ML_Shopware6_Model_ProductListDependency_SearchFilter extends ML_Shop_Model_ProductListDependency_SearchFilter_Abstract {
@@ -32,19 +33,17 @@ class ML_Shopware6_Model_ProductListDependency_SearchFilter extends ML_Shop_Mode
      * @return void
      */
     public function manipulateQuery($mQuery) {
-        /*echo print_m($mQuery);
-        die('test Query');*/
         $sFilterValue = $this->getFilterValue();
         if (!empty($sFilterValue)) {
-            $aConf = MLModul::gi()->getConfig();
-            $iLangId = $aConf['lang'];         
+            $aConf = MLModule::gi()->getConfig();
+            $iLangId = $aConf['lang'];
             $mQuery
-                ->join(array(MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getEntityName().'_translation', 't', 't.`product_id` = p.`id` AND HEX(t.`language_id`)=\''.(string)$iLangId.'\''), 1)               
+                ->join(array(MagnalisterController::getShopwareMyContainer()->get('product.repository')->getDefinition()->getEntityName() . '_translation', 't', 't.`product_id` = p.`id` AND HEX(t.`language_id`)=\'' . (string)$iLangId . '\''), 1)
                 ->where(
                     array(
-                        'or' => array (                           
-                            array ('p.`product_number`',"=" , "$sFilterValue" ) ,
-                            array ('t.`name`' ,"LIKE", "%{$sFilterValue}%" ),                           
+                        'or' => array(
+                            array('p.`product_number`', "LIKE", "%{$sFilterValue}%"),
+                            array('t.`name`', "LIKE", "%{$sFilterValue}%"),
                         )
                     )
                 )

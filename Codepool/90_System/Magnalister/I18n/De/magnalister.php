@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -512,7 +512,9 @@ MLI18n::gi()->ML_AMAZON_LABEL_OLD_AMAZON_PRICE_SHORT = 'Mein alter Amazon Preis'
 MLI18n::gi()->ML_AMAZON_LABEL_MATCHED = 'Vorbereitet';
 MLI18n::gi()->ML_AMAZON_LABEL_MATCH = 'Vorbereiten';
 MLI18n::gi()->ML_AMAZON_LABEL_MANUAL_MATCHING = 'Manuelles Matching';
+MLI18n::gi()->ML_AMAZON_LABEL_MANUAL_MATCHING_POPUP = 'manuelles Matching';
 MLI18n::gi()->ML_AMAZON_LABEL_AUTOMATIC_MATCHING = 'Automatisches Matching';
+MLI18n::gi()->ML_AMAZON_LABEL_AUTOMATIC_MATCHING_POPUP = 'automatisches Matching';
 MLI18n::gi()->ML_AMAZON_BUTTON_MATCHING_DELETE = 'Matching aufheben';
 MLI18n::gi()->ML_AMAZON_LABEL_BATCHID = 'BatchID';
 MLI18n::gi()->ML_AMAZON_LABEL_PRODUCT_IN_AMAZON = 'Ihr Angebot bei Amazon';
@@ -531,7 +533,7 @@ MLI18n::gi()->ML_AMAZON_LABEL_SIMILAR_PRODUCTS = '&Auml;hnliche Angebote bei Ama
 MLI18n::gi()->ML_AMAZON_LABEL_SAME_PRODUCTS = 'Gleiche Angebote bei Amazon';
 MLI18n::gi()->ML_AMAZON_LABEL_TITLE = 'Amazon Titel';
 MLI18n::gi()->ML_AMAZON_LABEL_ASIN = 'ASIN';
-MLI18n::gi()->ML_AMAZON_LABEL_QUANTITY = 'Bestand <br />Shop / Amazon';
+MLI18n::gi()->ML_AMAZON_LABEL_QUANTITY = 'Bestand: Shop / Amazon';
 MLI18n::gi()->ML_AMAZON_LABEL_PRODUCT_AT_AMAZON = 'Produkt bei Amazon';
 MLI18n::gi()->ML_AMAZON_LABEL_ONLY_NOT_MATCHED = 'Nur nicht gematchte';
 MLI18n::gi()->ML_AMAZON_LABEL_MISSING_FIELDS = 'Fehlende Felder';
@@ -602,9 +604,8 @@ MLI18n::gi()->ML_AMAZON_TEXT_AUTOMATIC_MATCHING_CONFIRM = 'Bitte beachten Sie, d
             RedGecko GmbH &uuml;bernimmt daher keine Haftung f&uuml;r die Korrektheit der gematchten Produkte.';
 MLI18n::gi()->ML_AMAZON_TEXT_MATCHING_NO_ITEMS_SELECTED = 'Sie haben noch keine Artikel ausgew&auml;hlt.';
 MLI18n::gi()->ML_AMAZON_TEXT_AUTOMATIC_MATCHING_SUMMARY = '%d Artikel wurden erfolgreich gematcht. <br/ ><br/ >
-            %d Artikel konnten nicht erfolgreich gematcht werden.<br />
-            Davon %d mit mehrfachen Ergebnissen.
-            <div style="display: none">Der Vorgang ben&ouml;tigte insgesammt %s.</div>';
+            %d Artikel konnten nicht erfolgreich gematcht werden.<br/ >
+            Davon %d mit mehrfachen Ergebnissen.';
 MLI18n::gi()->ML_AMAZON_TEXT_APPLY_REQUIERD_FIELDS = '<b>Hinweis:</b> Die mit <span class="bull">&bull;</span> markierten Felder sind Pflichtfelder und m&uuml;ssen ausgef&uuml;llt werden.';
 MLI18n::gi()->ML_AMAZON_TEXT_APPLY_MANUFACTURER_NAME = 'Hersteller des Produktes';
 MLI18n::gi()->ML_AMAZON_TEXT_APPLY_BRAND = 'Marke oder Hersteller des Produktes';
@@ -621,7 +622,7 @@ MLI18n::gi()->ML_AMAZON_TEXT_APPLY_DATA_INCOMPLETE = 'Einige Pflichtfelder wurde
 MLI18n::gi()->ML_AMAZON_TEXT_APPLY_REQUIERD_IDENTIFIER = 'Nicht relevant, wenn an den Varianten %type% hinterlegt ist';
 
 MLI18n::gi()->ML_AMAZON_ERROR_CREATE_TOKEN_LINK_HEADLINE = 'Token Link konnte nicht erzeugt werden';
-MLI18n::gi()->ML_AMAZON_ERROR_CREATE_TOKEN_LINK_TEXT = 'Es konnte keine Verbindung zu amazon aufgebaut werden. Bitte laden Sie die Seite erneut.<br><br>Sollte der Fehler wiederholt auftreten, setzen Sie sich mit dem magnalister-Support in Verbindung.';;
+MLI18n::gi()->ML_AMAZON_ERROR_CREATE_TOKEN_LINK_TEXT = 'Es konnte keine Verbindung zu amazon aufgebaut werden. Bitte laden Sie die Seite erneut.<br><br>Sollte der Fehler wiederholt auftreten, setzen Sie sich mit dem magnalister-Support in Verbindung.';
 MLI18n::gi()->ML_AMAZON_ERROR_WRONG_CURRENCY = 'Die W&auml;hrung des Amazon-Marktplätze (%s) den Sie in der Konfiguration ausgew&auml;hlt haben unterscheidet sich von der 
             Standardw&auml;hrung dieses Shops (%s). Der Preis wird automatisch in die entsprechende W&auml;hrung umgerechnet. Der Umrechnungsfaktor wird den W&auml;hrungseinstellungen
             entnommen.';
@@ -782,7 +783,7 @@ MLI18n::gi()->ML_LABEL_EBAY_EPID = 'ePID';
 MLI18n::gi()->ML_EBAY_LABEL_PREPARE_KIND = 'Vorbereitungsart';
 MLI18n::gi()->ML_LABEL_EBAY_TITLE = 'eBay Titel';
 MLI18n::gi()->ML_PRICE_SHOP_PRICE_EBAY = 'Preis Shop / eBay';
-MLI18n::gi()->ML_STOCK_SHOP_STOCK_EBAY = 'Bestand Shop / eBay';
+MLI18n::gi()->ML_STOCK_SHOP_STOCK_EBAY = 'Bestand: Shop / eBay';
 MLI18n::gi()->ML_LAST_SYNC = 'Letzte Synchronisation';
 MLI18n::gi()->ML_EBAY_N_PENDING_UPDATES_ESTIMATED_TIME_M = '%s Artikel werden derzeit synchronisiert. Restdauer ca. %s Minuten.';
 MLI18n::gi()->ML_LABEL_EBAY_DELETION_REASON = 'Gel&ouml;scht durch';
@@ -941,6 +942,7 @@ MLI18n::gi()->ML_COUNTRY_SWITZERLAND = 'Schweiz';
 MLI18n::gi()->ML_COUNTRY_TAIWAN = 'Taiwan';
 MLI18n::gi()->ML_COUNTRY_UK = 'Vereinigtes K&ouml;nigreich Gro&szlig;britannien';
 MLI18n::gi()->ML_COUNTRY_USA = 'Vereinigte Staaten von Amerika';
+MLI18n::gi()->ML_COUNTRY_PORTUGAL = 'Portugal';
 MLI18n::gi()->ML_EBAY_SITE_MOTORS = 'eBay Motors';
 
 
@@ -996,9 +998,10 @@ MLI18n::gi()->ML_RATE_ULTIMATE2 = 'Ultimate 2';
 MLI18n::gi()->ML_RATE_ULTIMATE12 = 'Ultimate 12';
 MLI18n::gi()->ML_RATE_FLAT2 = 'Flat 2';
 MLI18n::gi()->ML_RATE_FLAT12 = 'Flat 12';
+MLI18n::gi()->{'ML_RATE_ENTERPRISE'} = 'Enterprise';
 
 MLI18n::gi()->ML_RATE_SWITCH = '%s &ndash; g&uuml;ltig bis %s. Danach beantragte Umstellung auf Tarif %s.';
-MLI18n::gi()->ML_RATE_SWITCH_TRIAL = 'Testzeitraum bis zum %s. Tarif nach Testzeitraum: %s ';
+MLI18n::gi()->ML_RATE_SWITCH_TRIAL = 'Testzeitraum bis zum %s. Tarif nach Testzeitraum: %s';
 MLI18n::gi()->ML_RATE_END = '%s. Vertrag zum %s gek&uuml;ndigt.';
 MLI18n::gi()->ML_RATE_CONTINUE = '%s';
 
@@ -1092,8 +1095,11 @@ Stimmen Sie bitte der automatischen Währungsumrechnung zu, um diese zu nutzen. 
 MLI18n::gi()->ML_CHECKCURRENCY_INFO = '1 %s entspricht %.4f %s (zuletzt aktualisiert: %s Uhr)';
 
 MLI18n::gi()->ML_PRODUCTPREPARATION_ALWAYS_USE_FROM_WEBSHOP = 'Immer aktuell aus Web-Shop verwenden';
-
+MLI18n::gi()->ML_PRODUCTPREPARATION_ALWAYS_USE_FROM_CONFIGURATION = 'Immer aktuell aus Konfiguration übernehmen';
 
 // hovertexts
-MLI18n::gi()->ML_DUPLICATE_INFO = "Bitte speichern Sie die Konfiguration / Vorbereitung 
-                                   bevor Sie Zeilen hinzufügen oder entfernen";
+MLI18n::gi()->ML_DUPLICATE_INFO = "Bitte speichern Sie die Konfiguration / Vorbereitung bevor Sie Zeilen hinzufügen oder entfernen";
+
+MLI18n::gi()->ML_BUTTON_TOKEN_NEW = 'Token beantragen / &auml;ndern';
+MLI18n::gi()->ML_ERROR_CREATE_TOKEN_LINK_HEADLINE = 'Fehler beim Herstellen der Verbindung zu {#setting:currentMarketplaceName#}';
+MLI18n::gi()->ML_ERROR_CREATE_TOKEN_LINK_TEXT = 'Es konnte keine Verbindung zu {#setting:currentMarketplaceName#} aufgebaut werden. Bitte versuchen Sie es zu einem späteren Zeitpunkt erneut.<br><br>Sollte der Fehler wiederholt auftreten, setzen Sie sich mit dem magnalister-Support in Verbindung.';

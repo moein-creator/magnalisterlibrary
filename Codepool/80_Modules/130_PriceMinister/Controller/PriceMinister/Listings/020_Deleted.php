@@ -32,7 +32,7 @@ class ML_PriceMinister_Controller_PriceMinister_Listings_Deleted extends ML_List
 
     public static function getTabActive()
     {
-        return MLModul::gi()->isConfigured();
+        return MLModule::gi()->isConfigured();
     }
 
     public static function getTabDefault()

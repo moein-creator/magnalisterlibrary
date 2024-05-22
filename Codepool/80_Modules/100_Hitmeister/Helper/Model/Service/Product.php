@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -30,6 +30,10 @@ class ML_Hitmeister_Helper_Model_Service_Product {
     /** @var ML_Shop_Model_Product_Abstract $oProduct  */
     protected $oVariant = null;
     protected $aData = null;
+    /**
+     * @var ML_Hitmeister_Helper_Model_Table_Hitmeister_PrepareData
+     */
+    protected $oPrepareHelper = null;
 
 	protected $aLang = null;
 
@@ -43,7 +47,11 @@ class ML_Hitmeister_Helper_Model_Service_Product {
     }
 
     public function setProduct(ML_Shop_Model_Product_Abstract $oProduct) {
-        $this->oProduct = $oProduct;
+        $this->oPrepareHelper = MLHelper::gi('Model_Table_Hitmeister_PrepareData');
+        $this->oProduct = $oProduct;//old way to get product data by uploading product, completely different from preparation
+        $this->oPrepareHelper
+            ->setPrepareList(null)
+            ->setProduct($oProduct);//standard way to get product data to upload them, with same method that is used by preparation
         $this->sPrepareType = '';
         $this->aData = null;
         return $this;
@@ -51,12 +59,14 @@ class ML_Hitmeister_Helper_Model_Service_Product {
     
     public function setVariant(ML_Shop_Model_Product_Abstract $oProduct){
         $this->oVariant=$oProduct;
+        $this->oPrepareHelper
+            ->setProduct($oProduct);
         return $this;
     }
     
     public function resetData () {
         $this->aData = null;
-		$this->aLang = MLModul::gi()->getConfig('lang');
+        $this->aLang = MLModule::gi()->getConfig('lang');
         return $this;
     }
     
@@ -64,7 +74,7 @@ class ML_Hitmeister_Helper_Model_Service_Product {
         if ($this->aData === null) {
             $this->oPrepare->init()->set('products_id', $this->oVariant->get('id'));
             $aData = array();
-			$aFields = array(
+            $aFields = array(
                 'SKU',
                 'EAN',
                 'MarketplaceCategory',
@@ -75,15 +85,22 @@ class ML_Hitmeister_Helper_Model_Service_Product {
                 'Images',
                 'Quantity',
                 'Price',
+                'Currency',
+                'MinimumPrice',
                 'Manufacturer',
                 'ManufacturerPartNumber',
                 'ItemTax',
-                'ShippingTime',
+                'HandlingTime',
                 'ConditionType',
                 'Location',
+                'ShippingGroup',
                 'Comment',
                 'Matched',
             );
+            if (    MLModule::gi()->getConfig('minimumpriceautomatic') !== '2'
+                 || MLModule::gi()->getConfig('price.lowest.addkind')  === null) {
+                unset($aFields[array_search('MinimumPrice', $aFields)]);
+            }
 
             foreach ($aFields as $sField) {
                 if (method_exists($this, 'get' . $sField)) {
@@ -99,6 +116,8 @@ class ML_Hitmeister_Helper_Model_Service_Product {
                     if ($mValue !== null) {
                         $aData[$sField] = $mValue;
                     }
+                } else if ($sField == 'Currency') {
+                    $aData[$sField] = MLModule::gi()->getConfig('currency');
                 } else {
                     MLMessage::gi()->addWarn("function  ML_Hitmeister_Helper_Model_Service_Product::get" . $sField . "() doesn't exist");
                 }
@@ -134,22 +153,28 @@ class ML_Hitmeister_Helper_Model_Service_Product {
     protected function getCategoryAttributes() {
         /* @var $attributesMatchingService ML_Hitmeister_Helper_Model_Service_AttributesMatching */
         $attributesMatchingService = MLHelper::gi('Model_Service_AttributesMatching');
-        return $attributesMatchingService->mergeConvertedMatchingToNameValue(
+        $value = $attributesMatchingService->mergeConvertedMatchingToNameValue(
             $this->oPrepare->get('ShopVariation'),
             $this->oVariant,
             $this->oProduct
         );
+
+        if (is_array($value) && array_key_exists('weight', $value)) {
+            $value['weight'] = mb_strtolower($value['weight']);
+        }
+
+        return $value;
     }
 
     protected function getTitle() {
         $sTitle = $this->oPrepare->get('Title');
         if (isset($sTitle) === false || empty($sTitle)) {
-            $iLangId = MLModul::gi()->getConfig('lang');
+            $iLangId = MLModule::gi()->getConfig('lang');
             $this->oVariant->setLang($iLangId);
             $sTitle = $this->oVariant->getName();
         }
         
-        if (MLModul::gi()->getConfig('checkin.variationtitle') && !$this->oVariant->isSingle()) {
+        if (MLModule::gi()->getConfig('checkin.variationtitle') && !$this->oVariant->isSingle()) {
             foreach ($this->oVariant->getVariatonData() as $aVariation) {
                 $sTitle .= ' '.$aVariation['name'].': '.$aVariation['value'];
             }
@@ -180,14 +205,13 @@ class ML_Hitmeister_Helper_Model_Service_Product {
 	}
 
     protected function getDescription() {
-        $sDescription = $this->oPrepare->get('Description');
-        if (isset($sDescription) === false || empty($sDescription)) {
-            $iLangId = MLModul::gi()->getConfig('lang');
-            $this->oVariant->setLang($iLangId);
-            $sDescription = $this->oVariant->getDescription();
-        }
+        $aData = $this->oPrepareHelper->getPrepareData(
+            array(
+                'Description' => array('optional' => array('active' => true),),
+            ), 'value'
+        );
         
-        return $sDescription;
+        return $aData['Description'];
     }
 
     protected function getImages() {
@@ -223,15 +247,19 @@ class ML_Hitmeister_Helper_Model_Service_Product {
 
     protected function getQuantity() {
         $iQty = $this->oVariant->getSuggestedMarketplaceStock(
-            MLModul::gi()->getConfig('quantity.type'),
-            MLModul::gi()->getConfig('quantity.value')
+            MLModule::gi()->getConfig('quantity.type'),
+            MLModule::gi()->getConfig('quantity.value')
         );
         
         return $iQty < 0 ? 0 : $iQty;
     }
 
     protected function getPrice() {
-        return $this->oVariant->getSuggestedMarketplacePrice(MLModul::gi()->getPriceObject());
+        return $this->oVariant->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject());
+    }
+
+    protected function getMinimumPrice() {
+        return $this->oVariant->getSuggestedMarketplacePrice(MLModule::gi()->getPriceObject('lowest'));
     }
            
     protected function getManufacturer() {
@@ -250,12 +278,20 @@ class ML_Hitmeister_Helper_Model_Service_Product {
         return $this->oPrepare->get('ShippingTIme');
     }
     
+    protected function getHandlingTIme() {
+        return $this->oPrepare->get('HandlingTIme');
+    }
+    
     protected function getConditionType() {
         return $this->oPrepare->get('ItemCondition');
     }
     
     protected function getLocation() {
         return $this->oPrepare->get('ItemCountry');
+    }
+    
+    protected function getShippingGroup() {
+        return $this->oPrepare->get('ShippingGroup');
     }
     
     protected function getComment() {

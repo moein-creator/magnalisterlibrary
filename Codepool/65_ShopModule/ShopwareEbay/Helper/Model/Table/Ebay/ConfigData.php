@@ -53,14 +53,23 @@ class ML_ShopwareEbay_Helper_Model_Table_Ebay_ConfigData extends ML_Ebay_Helper_
     
     public function orderstatus_carrier_defaultField (&$aField) {
         parent::orderstatus_carrier_defaultField($aField);
-        $aValues = array();
-        foreach ($aField['values'] as $sKey => $sValue) {
-            $aValues[$sKey] = $sValue;
-            if ($sKey == '') {
-                $aValues['-1'] = MLI18n::gi()->get('orderstatus_carrier_defaultField_value_shippingname');
+        if (is_array($aField['values'][key($aField['values'])])) {
+            $aField['values'] += array(
+                MLI18n::gi()->get('ebay_config_carrier_option_group_additional_option').':' =>
+                    array(
+                        '-1' => MLI18n::gi()->get('orderstatus_carrier_defaultField_value_shippingname')
+                    )
+            );
+        } else {
+            $aValues = array();
+            foreach ($aField['values'] as $sKey => $sValue) {
+                $aValues[$sKey] = $sValue;
+                if ($sKey == '') {
+                    $aValues['-1'] = MLI18n::gi()->get('orderstatus_carrier_defaultField_value_shippingname');
+                }
             }
+            $aField['values'] = $aValues;
         }
-        $aField['values'] = $aValues;
     }
     
 }

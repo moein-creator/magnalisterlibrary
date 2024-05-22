@@ -1,4 +1,5 @@
-<?php class_exists('ML', false) or die() ?>
+<?php if (!class_exists('ML', false))
+    throw new Exception(); ?>
 <?php
 /*
  * 888888ba                 dP  .88888.                    dP
@@ -44,7 +45,7 @@ $this->includeView('widget_listings_misc_listingbox');
     <table class="datagrid ml-plist-old-fix">
         <thead>
             <tr>
-                <th>Zeitraum</th>
+                <th><?php echo $this->__('Productlist_Time_Period'); ?></th>
             </tr>
         </thead>
             <tbody>
@@ -53,17 +54,17 @@ $this->includeView('widget_listings_misc_listingbox');
                         <table>
                             <tbody>
                                 <tr>
-                                    <td>Von:</td>
+                                    <td><?php echo $this->__('Productlist_From'); ?>:</td>
                                     <td>
                                         <input type="text" id="fromDate" readonly="readonly"/>
                                         <input type="hidden" id="fromActualDate" name="<?php echo MLHttp::gi()->parseFormFieldName('date[from]') ?>" value=""/>
                                     </td>
-                                    <td>Bis:</td>
+                                    <td><?php echo $this->__('Productlist_To'); ?>:</td>
                                     <td>
                                         <input type="text" id="toDate" readonly="readonly"/>
                                         <input type="hidden" id="toActualDate" name="<?php echo MLHttp::gi()->parseFormFieldName('date[to]') ?>" value=""/>
                                     </td>
-                                    <td><input class="mlbtn" type="submit" value="Los"/></td>
+                                    <td><input class="mlbtn" type="submit" value="<?php echo $this->__('Productlist_Submit'); ?>"/></td>
                                 </tr>
                             </tbody>
                         </table>

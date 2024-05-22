@@ -10,7 +10,7 @@ class ML_PrestashopAmazon_Helper_Model_Service_OrderData_Normalize extends ML_Am
         }else{
             $sStatusKey = 'orderimport.shippingmethod';
         }
-        $sShippingMethod = MLModul::gi()->getConfig($sStatusKey);
+        $sShippingMethod = MLModule::gi()->getConfig($sStatusKey);
         return $sShippingMethod == 'textfield'/*check for old configuration*/ ? null: $sShippingMethod;
     }
 

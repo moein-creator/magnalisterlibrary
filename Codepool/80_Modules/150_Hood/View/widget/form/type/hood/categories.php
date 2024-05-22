@@ -1,5 +1,6 @@
 <?php
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 if (MLHttp::gi()->isAjax()) {
     MLSetting::gi()->add('aAjaxPlugin', array('content' => $aField['hood_categories']['oCategory']->renderAjax()));
 } else {

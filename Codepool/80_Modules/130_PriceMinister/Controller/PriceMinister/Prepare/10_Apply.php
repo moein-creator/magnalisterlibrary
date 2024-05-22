@@ -52,7 +52,7 @@ class ML_PriceMinister_Controller_PriceMinister_Prepare_Apply extends ML_Product
                         }
                         case 'resetdescription': {//set products description of priceminister to actual product-description
                             if ($oModel->exists()) {
-                                $sLang = MLModul::gi()->getConfig('lang');
+                                $sLang = MLModule::gi()->getConfig('lang');
 
                                 MLProduct::factory()->set('id', $iPid)->setLang($sLang);
                                 $sName = MLProduct::factory()->set('id', $iPid)->getName();

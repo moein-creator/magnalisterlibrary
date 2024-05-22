@@ -16,7 +16,7 @@ MLI18n::gi()->{'ricardo_prepare_form__field__listinglangs__label'} = 'Langue de 
 MLI18n::gi()->{'ricardo_prepare_form__field__langde__label'} = 'DE';
 MLI18n::gi()->{'ricardo_prepare_form__field__langfr__label'} = 'FR';
 MLI18n::gi()->{'ricardo_prepare_form__field__detitle__label'} = 'Titre (en allemand)';
-MLI18n::gi()->{'ricardo_prepare_form__field__detitle__hint'} = 'Tittre 40 caractères max. <br> Espaces réservés disponibles : <br> #BASEPRICE# - Prix de base';
+MLI18n::gi()->{'ricardo_prepare_form__field__detitle__hint'} = 'Tittre 60 caractères max. <br> Espaces réservés disponibles : <br> #BASEPRICE# - Prix de base';
 MLI18n::gi()->{'ricardo_prepare_form__field__detitle__optional__checkbox__labelNegativ'} = 'Reprendre toujours le nom actuel de l\'article de la boutique en ligne';
 MLI18n::gi()->{'ricardo_prepare_form__field__desubtitle__label'} = 'Sous-titre (allemand)';
 MLI18n::gi()->{'ricardo_prepare_form__field__desubtitle__hint'} = 'Sous-titre 60 caractères max. payant';
@@ -26,7 +26,7 @@ MLI18n::gi()->{'ricardo_prepare_form__field__dedescription__label'} = 'Descripti
 MLI18n::gi()->{'ricardo_prepare_form__field__dedescription__hint'} = 'Espaces réservés disponible <br>pour la description du produit:<dl><dt style="font-weight:bold, color:black">#TITLE#</dt><dd>Nom du produit (Titre)</dd><dt style="font-weight:bold, color:black">#ARTNR#</dt><dd>Numéro de l\'article</dd><dt style="font-weight:bold, color:black">#PID#</dt><dd>Produit-ID</dd><dt style="font-weight:bold, color:black">#SHORTDESCRIPTION#</dt><dd>petite description deu produit en magasin</dd><dt style="font-weight:bold, color:black">#DESCRIPTION#</dt><dd>Description du Shop</dd><dt style="font-weight:bold, color:black">#PICTURE1#</dt><dd>première photo du produit</dd><dt style="font-weight:bold, color:black">#PICTURE2# etc.</dt><dd>deuxième photo du produit, avec #PICTURE3#, #PICTURE4# etc. vous pouvez envoyer d\'autres photos, autant que disponibles en boutique.</dd></dl>';
 MLI18n::gi()->{'ricardo_prepare_form__field__dedescription__optional__checkbox__labelNegativ'} = 'Reprendre toujours la description de l\'article de la boutique en ligne.';
 MLI18n::gi()->{'ricardo_prepare_form__field__frtitle__label'} = 'Titre (en français)';
-MLI18n::gi()->{'ricardo_prepare_form__field__frtitle__hint'} = 'Tittre 40 caractères max. <br> Espaces réservés disponibles : <br> #BASEPRICE# - Prix de base';
+MLI18n::gi()->{'ricardo_prepare_form__field__frtitle__hint'} = 'Tittre 60 caractères max. <br> Espaces réservés disponibles : <br> #BASEPRICE# - Prix de base';
 MLI18n::gi()->{'ricardo_prepare_form__field__frtitle__optional__checkbox__labelNegativ'} = 'Reprendre toujours le nom de l\'article de la boutique en ligne.';
 MLI18n::gi()->{'ricardo_prepare_form__field__frsubtitle__label'} = 'Sous-titre (en français)';
 MLI18n::gi()->{'ricardo_prepare_form__field__frsubtitle__hint'} = 'Sous-titre 60 caractères max. payant';
@@ -80,9 +80,9 @@ MLI18n::gi()->{'ricardo_prepare_form__field__availabilitycontainer__label'} = 'D
 MLI18n::gi()->{'ricardo_prepare_form__field__availability__label'} = 'Disponibilité de l\'article après réception du paiement';
 MLI18n::gi()->{'ricardo_prepare_form__field__promotion__label'} = 'Promotion';
 MLI18n::gi()->{'ricardo_prepare_form__field__firstpromotion__label'} = 'Formule promotionnelle';
-MLI18n::gi()->{'ricardo_prepare_form__field__firstpromotion__hint'} = '<span style="color:red;">Les promotions ne sont pas gratuites. Veuillez vérifier, s\'il vous plaît, les prix sur Ricardo.</span>';
+MLI18n::gi()->{'ricardo_prepare_form__field__firstpromotion__hint'} = '<span style="color:#e31a1c;">Les promotions ne sont pas gratuites. Veuillez vérifier, s\'il vous plaît, les prix sur Ricardo.</span>';
 MLI18n::gi()->{'ricardo_prepare_form__field__secondpromotion__label'} = 'Page d\'accueil : option de publication promotionnelle';
-MLI18n::gi()->{'ricardo_prepare_form__field__secondpromotion__hint'} = '<span style="color:red;">Les promotions ne sont pas gratuites. Veuillez vérifier, s\'il vous plaît, les prix sur Ricardo.</span>';
+MLI18n::gi()->{'ricardo_prepare_form__field__secondpromotion__hint'} = '<span style="color:#e31a1c;">Les promotions ne sont pas gratuites. Veuillez vérifier, s\'il vous plaît, les prix sur Ricardo.</span>';
 MLI18n::gi()->{'ricardo_prepareform_max_length_part1'} = 'Longueur max de';
 MLI18n::gi()->{'ricardo_prepareform_max_length_part2'} = 'L\'attribut est';
 MLI18n::gi()->{'ricardo_prepareform_category'} = 'La catégorie de l\'attribut est obligatoire.';

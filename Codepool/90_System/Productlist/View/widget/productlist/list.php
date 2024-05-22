@@ -13,7 +13,7 @@ if ($this instanceof ML_Productlist_Controller_Widget_ProductList_Abstract) {
     $this->includeView('widget_productlist_list_head', array('oList' => $oList, 'aStatistic' => $aStatistic));
     while ($oIterator->valid()) {
         ?>
-        <tbody class="<?php echo $iRow % 2 == 0 ? 'even' : 'odd' ?>" id="productlist-master-<?php echo $oIterator->current()->get('id'); ?>"><?php
+        <tbody id="productlist-master-<?php echo $oIterator->current()->get('id'); ?>"><?php
         $oProduct = $oIterator->current();
         $this->includeView('widget_productlist_list_article', array('oProduct' => $oProduct, 'oList' => $oList));
         $iRow++;

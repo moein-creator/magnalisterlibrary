@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -19,6 +19,7 @@
 /**
  * all groups using form-fields and includes i18n for legend directly
  */
+
 MLSetting::gi()->add('formgroups_idealo', array(
     'account' => array(
         'legend' => array('i18n' => '{#i18n:formgroups_idealo__account#}',),
@@ -26,52 +27,37 @@ MLSetting::gi()->add('formgroups_idealo', array(
             'access.inventorypath' => '{#setting:formfields_idealo__access.inventorypath#}',
         ),
     ),
-    'directbuycredential' => array(
-        'legend' => array('i18n' => '{#i18n:formgroups_idealo__directbuycredential#}',),
+    'comparisonprice' => array(
+        'legend' => array('i18n' => '{#i18n:formgroups__comparisonprice#}'),
         'fields' => array(
-            'directbuyactive' => '{#setting:formfields_idealo__directbuyactive#}',
-            'idealoclientid' => '{#setting:formfields_idealo__idealoclientid#}',
-            'idealopassword' => '{#setting:formfields_idealo__idealopassword#}',
-        ),
-    ),
-    'checkoutenabled' => array(
-        'legend' => array(
-            'i18n' => '',
-            'classes' => array('mlhidden'),
-        ),
-        'fields' => array(
-            'checkoutenabled' => '{#setting:formfields_idealo__checkoutenabled#}',
+            'currency' => '{#setting:formfields_idealo__currency#}',
+            'priceoptions' => '{#setting:formfields__priceoptions#}',
+            'exchangerate_update' => '{#setting:formfields__exchangerate_update#}',
         ),
     ),
     'prepare' => array(
         'legend' => array('i18n' => '{#i18n:formgroups_idealo__prepare#}'),
         'fields' => array(
             'prepare.status' => '{#setting:formfields__prepare.status#}',
-            'checkout' => '{#setting:formfields_idealo__checkout#}',
             'paymentmethod' => '{#setting:formfields_idealo__paymentmethod#}',
         ),
     ),
     'shipping' => array(
         'legend' => array('i18n' => '{#i18n:formgroups_idealo__shipping#}'),
         'fields' => array(
-            'subheader.pd' => '{#setting:formfields_idealo__subheader.pd#}',
             'shippingcountry' => '{#setting:formfields_idealo__shippingcountry#}',
             'shippingmethodandcost' => '{#setting:formfields_idealo__shippingmethodandcost#}',
             'shippingtime' => '{#setting:formfields_idealo__shippingtime#}',
             'shippingtimeproductfield' => '{#setting:formfields_idealo__shippingtimeproductfield#}',
-            'fulfillmenttype' => '{#setting:formfields_idealo__fulfillmenttype#}',
-            'twomanhandlingfee' => '{#setting:formfields_idealo__twomanhandlingfee#}',
-            'disposalfee' => '{#setting:formfields_idealo__disposalfee#}',
         ),
     ),
     'upload' => array(
         'legend' => array('i18n' => '{#i18n:formgroups_idealo__upload#}'),
         'fields' => array(
-            'subheader.pd' => '{#setting:formfields_idealo__subheader.pd#}',
             'checkin.status' => '{#setting:formfields__checkin.status#}',
             'lang' => '{#setting:formfields__lang#}',
             'quantity' => '{#setting:formfields__quantity#}',
-            'maxquantity' => '{#setting:formfields__maxquantity#}',
+            'campaignlink' => '{#setting:formfields_idealo__campaignlink#}',
         ),
     ),
     'orderstatus' => array(
@@ -109,20 +95,18 @@ MLSetting::gi()->add('formgroups_idealo', array(
     'prepare_general' => array(
         'legend' => array('i18n' => '{#i18n:formgroups_idealo__prepare_general#}'),
         'fields' => array(
-            'subheader.pd' => '{#setting:formfields_idealo__subheader.pd#}',
             'paymentmethod' => '{#setting:formfields_idealo__paymentmethod#}',
             'shippingcountry' => '{#setting:formfields_idealo__shippingcountry#}',
             'shippingmethodandcost' => '{#setting:formfields_idealo__shippingmethodandcost#}',
             'shippingtime' => '{#setting:formfields_idealo__shippingtime#}',
         ),
     ),
-    'directbuy' => array(
-        'legend' => array('i18n' => '{#i18n:formgroups_idealo__directbuy#}'),
+    'sync' => array(
+        'legend' => array('i18n' => '{#i18n:formgroups__sync#}'),
         'fields' => array(
-            'checkout' => '{#setting:formfields_idealo__checkout#}',
-            'fulfillmenttype' => '{#setting:formfields_idealo__fulfillmenttype#}',
-            'twomanhandlingfee' => '{#setting:formfields_idealo__twomanhandlingfee#}',
-            'disposalfee' => '{#setting:formfields_idealo__disposalfee#}',
+            'stocksync.tomarketplace' => '{#setting:formfields__stocksync.tomarketplace#}',
+            'inventorysync.price' => '{#setting:formfields__inventorysync.price#}',
         ),
     ),
 ));
+

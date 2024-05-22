@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -24,16 +24,6 @@ MLSetting::gi()->add('formfields_etsy', array(
         'i18n' => '{#i18n:formfields_etsy__access.token#}',
         'name' => 'etsytoken',
         'type' => 'etsy_token',
-    ),
-    'access.username' => array(
-        'i18n' => '{#i18n:formfields_etsy__access.username#}',
-        'name' => 'username',
-        'type' => 'string',
-    ),
-    'access.password' => array(
-        'i18n' => '{#i18n:formfields_etsy__access.password#}',
-        'name' => 'password',
-        'type' => 'password',
     ),
     'shop.language' => array(
         'i18n' => '{#i18n:formfields_etsy__shop.language#}',
@@ -74,9 +64,9 @@ MLSetting::gi()->add('formfields_etsy', array(
         'type' => 'select',
         'default' => 1000,
     ),
-    'shippingtemplate' => array(
-        'i18n' => '{#i18n:formfields_etsy__shippingtemplate#}',
-        'name' => 'shippingtemplate',
+    'shippingprofile' => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofile#}',
+        'name' => 'shippingprofile',
         'type' => 'select',
     ),
     'category' => array(
@@ -97,35 +87,71 @@ MLSetting::gi()->add('formfields_etsy', array(
         'name' => 'quantity',
         'type' => 'hidden',
     ),
-    'shippingtemplatetitle' => array(
-        'i18n' => '{#i18n:formfields_etsy__shippingtemplatetitle#}',
-        'name' => 'shippingtemplatetitle',
+    'shippingprofiletitle'             => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofiletitle#}',
+        'name' => 'shippingprofiletitle',
         'type' => 'string',
     ),
-    'shippingtemplatecountry' => array(
-        'i18n' => '{#i18n:formfields_etsy__shippingtemplatecountry#}',
-        'name' => 'shippingtemplatecountry',
+    'shippingprofileorigincountry'     => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofileorigincountry#}',
+        'name' => 'shippingprofileorigincountry',
         'type' => 'select',
     ),
-    'shippingtemplateprimarycost' => array(
-        'i18n' => '{#i18n:formfields_etsy__shippingtemplateprimarycost#}',
-        'name' => 'shippingtemplateprimarycost',
+    'shippingprofiledestinationcountry'=> array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofiledestinationcountry#}',
+        'name' => 'shippingprofiledestinationcountry',
+        'type' => 'select',
+    ),
+
+    'shippingprofiledestinationregion'=> array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofiledestinationregion#}',
+        'name' => 'shippingprofiledestinationregion',
+        'type' => 'select',
+    ),
+    'shippingprofileprimarycost'       => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofileprimarycost#}',
+        'name' => 'shippingprofileprimarycost',
         'type' => 'string',
     ),
-    'shippingtemplatesecondarycost' => array(
-        'i18n' => '{#i18n:formfields_etsy__shippingtemplatesecondarycost#}',
-        'name' => 'shippingtemplatesecondarycost',
+    'shippingprofilesecondarycost'     => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofilesecondarycost#}',
+        'name' => 'shippingprofilesecondarycost',
         'type' => 'string',
     ),
-    'shippingtemplatesend' => array(
-        'i18n' => '{#i18n:formfields_etsy__shippingtemplatesend#}',
-        'name' => 'shippingtemplatesend',
-        'type' => 'etsy_shippingtemplatesave',
+    'shippingprofileminprocessingtime' => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofileminprocessingtime#}',
+        'name' => 'shippingprofileminprocessingtime',
+        'type' => 'string',
     ),
-    'fixed.price' => array(
-        'i18n' => '{#i18n:formfields_etsy__fixed.price#}',
-        'name' => 'fixed.price',
-        'type' => 'subFieldsContainer',
+    'shippingprofilemaxprocessingtime' => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofilemaxprocessingtime#}',
+        'name' => 'shippingprofilemaxprocessingtime',
+        'type' => 'string',
+    ),
+    'shippingprofilemindeliverydays'   => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofilemindeliverydays#}',
+        'name' => 'shippingprofilemindeliverydays',
+        'type' => 'string',
+    ),
+    'shippingprofilemaxdeliverydays'   => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofilemaxdeliverydays#}',
+        'name' => 'shippingprofilemaxdeliverydays',
+        'type' => 'string',
+    ),
+    'shippingprofileoriginpostalcode'  => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofileoriginpostalcode#}',
+        'name' => 'shippingprofileoriginpostalcode',
+        'type' => 'string',
+    ),
+    'shippingprofilesend'              => array(
+        'i18n' => '{#i18n:formfields_etsy__shippingprofilesend#}',
+        'name' => 'shippingprofilesend',
+        'type' => 'etsy_shippingprofilesave',
+    ),
+    'fixed.price'                       => array(
+        'i18n'      => '{#i18n:formfields_etsy__fixed.price#}',
+        'name'      => 'fixed.price',
+        'type'      => 'subFieldsContainer',
         'subfields' => array(
             'addkind' => array(
                 'name' => 'price.addkind',
@@ -218,12 +244,34 @@ MLSetting::gi()->add('formfields_etsy', array(
         ),
         'subfields' => array(
             array(
-                'i18n' => array('label' => ''),
-                'name' => 'orderstatus.shipping.matching',
+                'i18n'        => array('label' => ''),
+                'name'        => 'orderstatus.shipping.matching',
                 'breakbefore' => true,
-                'type' => 'matchingcarrier',
-                'cssclasses' => array('tableHeadCarrierMatching')
+                'type'        => 'matchingcarrier',
+                'cssclasses'  => array('tableHeadCarrierMatching')
             ),
         ),
     ),
 ));
+
+
+MLSetting::gi()->{'formgroups__orderimport__fields__orderimport.paymentmethod'} = array(
+    'i18n'      => '{#i18n:formfields__orderimport.paymentmethod#}',
+    'name'      => 'orderimport.paymentmethod',
+    'type'      => 'selectwithtextoption',
+    'subfields' => array(
+        'select' => array('name' => 'orderimport.paymentmethod', 'type' => 'select'),
+        'string' => array('name' => 'orderimport.paymentmethod.name', 'type' => 'string', 'default' => '{#setting:currentMarketplaceName#}',)
+    ),
+    'expert'    => true,
+);
+MLSetting::gi()->{'formgroups__orderimport__fields__orderimport.shippingmethod'} = array(
+    'i18n'      => '{#i18n:formfields__orderimport.shippingmethod#}',
+    'name'      => 'orderimport.shippingmethod',
+    'type'      => 'selectwithtextoption',
+    'subfields' => array(
+        'select' => array('name' => 'orderimport.shippingmethod', 'type' => 'select'),
+        'string' => array('name' => 'orderimport.shippingmethod.name', 'type' => 'string', 'default' => '{#setting:currentMarketplaceName#}',)
+    ),
+    'expert'    => true,
+);

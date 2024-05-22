@@ -120,7 +120,7 @@ class ML_PriceMinister_Controller_PriceMinister_Prepare_Match_Auto extends ML_Fo
                 $autoMatchingStats['nosuccess']++;
                 MLDatabase::getDbInstance()->delete(TABLE_MAGNA_SELECTION, array(
                     'pID' => $product['Id'],
-                    'mpID' => MLModul::gi()->getMarketPlaceId(),
+                    'mpID' => MLModule::gi()->getMarketPlaceId(),
                     'selectionname' => 'match',
                     'session_id' => session_id()
                 ));
@@ -129,7 +129,7 @@ class ML_PriceMinister_Controller_PriceMinister_Prepare_Match_Auto extends ML_Fo
                 $iMatchedArrayKey = 0;
             }
 
-            $oModul = MLModul::gi();
+            $oModul = MLModule::gi();
             $ShopVariation = $this->getMatchedVariations($searchResults[$iMatchedArrayKey]['alias']);
 
             if (empty($ShopVariation)){
@@ -158,7 +158,7 @@ class ML_PriceMinister_Controller_PriceMinister_Prepare_Match_Auto extends ML_Fo
 
             MLDatabase::getDbInstance()->delete(TABLE_MAGNA_SELECTION, array(
                 'pID' => $product['Id'],
-                'mpID' => MLModul::gi()->getMarketPlaceId(),
+                'mpID' => MLModule::gi()->getMarketPlaceId(),
                 'selectionname' => 'match',
                 'session_id' => session_id()
             ));

@@ -7,14 +7,13 @@
  * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
  * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
- *                            m a g n a l i s t e r
- *                                        boost your Online-Shop
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
  *
- *   -----------------------------------------------------------------------------
- *   @author magnalister
- *   @copyright 2010-2022 RedGecko GmbH -- http://www.redgecko.de
- *   @license Released under the MIT License (Expat)
- *   -----------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
  */
 
 MLFilesystem::gi()->loadClass('Shop_Model_Order_Abstract');
@@ -215,6 +214,9 @@ class ML_WooCommerce_Model_Order extends ML_Shop_Model_Order_Abstract {
 
             return $mReturn;
         } catch (Exception $oEx) {
+            $Model = MLDatabase::factory('config')->set('mpid', 0)->set('mkey', 'woocommerce_prices_include_tax');
+            update_option('woocommerce_prices_include_tax', $Model->get('value'));
+            $Model->delete();
             throw $oEx;
         }
     }
@@ -291,4 +293,68 @@ class ML_WooCommerce_Model_Order extends ML_Shop_Model_Order_Abstract {
         }
     }
 
+    public function getShopOrderInvoiceNumber($sType) {
+        if (is_plugin_active('woocommerce-german-market/WooCommerce-German-Market.php') && MLService::getUploadInvoices()->getInvoiceOptionConfig() === 'germanmarket') {
+            return $this->getShopOrderObject()->get_id();
+        }
+        return '';
+    }
+    public function getShopOrderInvoice($sType) {
+        if (is_plugin_active('woocommerce-german-market/WooCommerce-German-Market.php') && MLService::getUploadInvoices()->getInvoiceOptionConfig() === 'germanmarket') {
+            // load Wordpress order first
+            $order = wc_get_order($this->getShopOrderObject()->get_id());
+
+            $generateFileName = function ($fileName, $documentFilter, $documentOption, $order) {
+                return WP_WC_Invoice_Pdf_Email_Attachment::repair_filename(
+                    apply_filters($documentFilter,
+                        get_option($documentOption,
+                            __($fileName, 'woocommerce-german-market')
+                        ), $order)
+                );
+            };
+
+            // invoice generation args
+            $args = array(
+                'order' => $order,
+                'output_format' => 'pdf',
+                'output' => 'cache',
+                'filename' => null,
+                'admin' => true
+            );
+
+            if ($this->isInvoiceDocumentType($sType)) {
+                $fileName = 'Invoice {{order-number}}';
+                $documentOption = 'wp_wc_invoice_pdf_file_name_backend';
+                $documentFilter = 'wp_wc_invoice_pdf_backend_filename';
+            } elseif ($this->isCreditNoteDocumentType($sType)) {
+                $refund_id = $order->get_refunds()[0];
+                $refund = wc_get_order($refund_id);
+                $args['refund'] = $refund;
+
+                $documentOption = 'wp_wc_invoice_pdf_refund_file_name_backend';
+                $documentFilter = 'wp_wc_invoice_pdf_refund_backend_filename';
+                $fileName = 'Refund {{refund-id}} - {{order-number}}';
+            } else {
+                // invoice type not detected
+                return '';
+            }
+
+            // set filename
+            $args['filename'] = $generateFileName($fileName, $documentFilter, $documentOption, $order);
+
+            // generate the invoice
+            $document = new WP_WC_Invoice_Pdf_Create_Pdf($args);
+            $filePath = WP_WC_INVOICE_PDF_CACHE_DIR.$document->cache_dir.DIRECTORY_SEPARATOR.$document->filename;
+
+            if (isset($filePath) && file_exists($filePath)){
+                $pdf = file_get_contents($filePath);
+                return base64_encode($pdf);
+            }
+        }
+        return '';
+    }
+
+    public function getShopOrderProducts() {
+        return array();
+    }
 }

@@ -20,7 +20,7 @@
 if (!class_exists('ML', false))
     throw new Exception();
 ?>
-    <div style="float:right;margin:.5em 0;">
+    <div style="float:right;margin:.5em; margin-bottom:1.57em;">
         <?php $this->includeType(array('type' => 'reset', 'i18n' => array('label' => MLI18n::gi()->get('ML_BUTTON_RESTORE_DEFAULTS')))); ?>
         &nbsp;
         <?php $this->includeType(array('type' => 'submit', 'id' => $aField['id'].'_testmail', 'name' => 'action[testmailaction]','i18n' => array('label' => MLI18n::gi()->form_config_send_mailcontentcontailner_testmail))); ?>

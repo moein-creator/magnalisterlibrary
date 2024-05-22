@@ -1,15 +1,384 @@
 /* Shopware css */
 
 body.shopware div.magna table#tableWrap {
-    padding: 0 25px !important;
+    padding: 0 50px 0px 50px !important;
 }
 
-body.shopware div.magna form{
+body.shopware div.magna form {
     display: inline;
 }
-html{
-    overflow:auto;
+html {
+    overflow: auto;
 }
 #magnafooter .latest-version-text {
-    color: red;
+    color: #e31a1c;
+    font-size: 11px;
+}
+
+
+
+@media screen and (max-width: 1860px) {
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1827px) {
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(3) div.duplicate div,
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(3) div.duplicate div > div,
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(3) div.duplicate div > span,
+    table tbody#otto_config_order_fieldset_orderstatus tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1817px) {
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(8) div.duplicate div,
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(8) div.duplicate div > div,
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#cdiscount_config_prepare_fieldset_prepare tr:nth-child(8) div.duplicate div > span,
+    table tbody#cdiscount_prepare_apply_form_fieldset_unit tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1797px) {
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1775px) {
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > div,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > span,
+    table tbody#metro_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+        margin-bottom: 10px;
+    }
+}
+@media screen and (max-width: 1710px) {
+    table tbody#etsy_config_orderimport_fieldset_orderstatus tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#etsy_config_orderimport_fieldset_orderstatus tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#etsy_config_orderimport_fieldset_orderstatus tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1654px) {
+    table tbody#ebay_prepare_apply_form_fieldset_shipping tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#ebay_prepare_apply_form_fieldset_shipping tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#ebay_prepare_apply_form_fieldset_shipping tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1602px) {
+    table tbody#ebay_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#ebay_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div > div.ebay-shipping {
+        width: 100%;
+    }
+
+    table tbody#ebay_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1589px) {
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span,
+    table tbody#ebay_config_prepare_fieldset_shipping tr:nth-child(5) div.duplicate div > span {
+        position: inherit;
+        margin-top: 14px;
+        padding-bottom: inherit;
+    }
+}
+@media screen and (max-width: 1525px) {
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(4) div.duplicate div > div {
+        width: 100%;
+        padding-bottom: 0px;
+    }
+
+    table tbody#amazon_config_orderimport_fieldset_orderstatus tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1519px) {
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#amazon_config_shippinglabel_fieldset_shippingaddresses tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+        padding-top: 0px;
+    }
+}
+@media screen and (max-width: 1471px) {
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+        margin-top: 14px;
+        padding-bottom: inherit;
+    }
+}
+@media screen and (max-width: 1450px) {
+    #ricardo_config_prepare_fieldset_prepare tr:nth-child(14) td.input {
+        display: flex;
+        flex-direction: column;
+        row-gap: 5px;
+        border-bottom: unset;
+        border-bottom: unset;
+    }
+}
+@media screen and (max-width: 1409px) {
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_config_prepare_fieldset_shipping tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+        margin-top: 14px;
+        padding-bottom: inherit;
+    }
+}
+@media screen and (max-width: 1507px) {
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div > div{
+        width: 100%;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_shippingtemplate tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1315px) {
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div > div {
+        width: 100% !important;
+    }
+
+    table tbody#amazon_config_prepare_fieldset_b2b tr:nth-child(4) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1337px) {
+    table.datagrid.ml-plist-old-fix > tbody > tr > td,
+    table.datagrid.ml-plist-old-fix thead tr th,
+    table.datagrid thead tr th,
+    table.datagrid thead tr td {
+        font-size: 13px;
+        padding: 8px 13px;
+    }
+}
+
+@media screen and (max-width: 1230px) {
+    table.datagrid.ml-plist-old-fix > tbody > tr > td,
+    table.datagrid.ml-plist-old-fix thead tr th,
+    table.datagrid thead tr th,
+    table.datagrid thead tr td {
+        font-size: 12px;
+        line-height: 18px;
+        padding: 8px 10px;
+    }
+}
+@media screen and (max-width: 1200px) {
+    #amazon_config_shippinglabel_fieldset_shippinglabel tr:nth-child(4) > td:nth-child(3) table td {
+        padding: 3px;
+    }
+}
+
+@media screen and (max-width: 1167px) {
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(3) div.duplicate div > span {
+        position: inherit;
+    }
+}
+
+@media screen and (max-width: 1163px) {
+    table.datagrid.ml-plist-old-fix > tbody > tr > td,
+    table.datagrid.ml-plist-old-fix thead tr th,
+    table.datagrid thead tr th,
+    table.datagrid thead tr td {
+        padding: 8px 5px;
+    }
+
+    tbody#ricardo_prepare_form_fieldset_shipping tr.js-field td.input {
+        display: flex;
+        flex-direction: column;
+        row-gap: 4px;
+        border-top: 0px solid #dadada;
+    }
+}
+@media screen and (max-width: 1400px) {
+    #cdiscount_config_prepare_fieldset_prepare .cdiscount_config_prepare_field_shippingprofile > div:nth-child(1) {
+        display: flex;
+        flex-direction: column;
+    }
+    #cdiscount_config_prepare_fieldset_prepare .cdiscount_config_prepare_field_shippingprofile div:nth-child(1) span select,
+    #cdiscount_config_prepare_fieldset_prepare .cdiscount_config_prepare_field_shippingprofile div:nth-child(1) span:not(:last-child) input {
+        margin-bottom: 5px;
+    }
+}
+@media screen and (max-width: 1119px){
+    .ml-errorlog-th,
+    .ml-inventory-th,
+    .ml-ricardo-inventory-th {
+        flex-wrap: wrap;
+    }
+
+    div.magnamain table .js-field th, div.magnamain table .js-field td.input {
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 1106px) {
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div {
+        justify-content: end;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div > div {
+        width: 100%;
+    }
+
+    table tbody#hood_prepare_apply_form_fieldset_shipping tr:nth-child(2) div.duplicate div > span {
+        position: inherit;
+    }
+}
+@media screen and (max-width: 1080px){
+    div.magnamain table,
+    table.attributesTable td select,
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        font-size: 13px !important;
+    }
+}
+
+@media screen and (max-width: 1090px) {
+    body.shopware div.magna table#tableWrap {
+        padding: 0 20px 0px 20px !important;
+    }
+    div.magnamain table {
+        font-size: 11px;
+    }
+    table.attributesTable td input[type="text"],
+    table.attributesTable td input[type="password"],
+    table.attributesTable td select,
+    table.attributesTable td textarea {
+        font-size: 10px;
+    }
+    div.magnamain table .js-field td.input,
+    table.attributesTable > tbody > tr.headline > td,
+    table.attributesTable > tbody > tr,
+    table.attributesTable th {
+        padding: 6px !important;
+    }
+}
+
+@media screen and (max-width: 990px){
+    table.datagrid.ml-plist-old-fix > tbody > tr > td,
+    table.datagrid.ml-plist-old-fix thead tr th,
+    table.datagrid thead tr th,
+    table.datagrid thead tr td {
+        font-size: 11px;
+        padding: 8px 4px;
+    }
+    table.attributesTable td,
+    table.attributesTable th {
+        padding: 16px 8px 10px 8px;
+    }
+    table.attributesTable td:nth-child(2) {
+        padding: 16px 8px 10px 8px;
+    }
+    div.magnamain table {
+        font-size: 10px !important;
+    }
+
 }

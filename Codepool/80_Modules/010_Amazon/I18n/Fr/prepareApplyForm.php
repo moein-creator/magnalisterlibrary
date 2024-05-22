@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -28,6 +28,7 @@ MLI18n::gi()->{'amazon_prepare_apply_form__legend__moredetails'} = 'Autre détai
 MLI18n::gi()->{'amazon_prepare_apply_form__legend__common'} = 'Configuration générale';
 MLI18n::gi()->{'amazon_prepare_apply_form__legend__b2b'} = 'Amazon Business (B2B)';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__variationgroups.value__label'} = 'Catégorie principale';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__variationthemecode__label'} = 'Type de déclinaisons <span class="bull">•</span>';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__producttype__label'} = 'Sous-catégorie <span class="bull">•</span>';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__producttype__hint'} = 'Type de produit';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__browsenodes__label'} = 'Arborescence des catégories <span class="bull">•</span>';
@@ -100,6 +101,8 @@ MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtime__hint'} = 'Temps 
 MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtime__optional__checkbox__labelNegativ'} = 'Toujours utiliser la valeur de la configuration.';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtemplate__label'} = 'Modes d\'expédition vendeur ';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__shippingtemplate__hint'} = 'Sous "Configuration" -&gt; "Préparation d\'articles" vous pouvez donner différents modes d\'expédition.';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__bopisstores__label'} = 'Activer le produit pour "Click & Collect en magasin"';
+MLI18n::gi()->{'amazon_prepare_apply_form__field__bopisstores__hint'} = 'Veuillez sélectionner les magasins où vous souhaitez activer ce produit pour "Click & Collect en magasin".';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__b2bactive__label'} = 'Utilisez Amazon B2B';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__b2bactive__help'} = 'Pour pouvoir utiliser Amazon Business, vous devez l\'activer sur votre compte Amazon. <b>Veuillez vous assurer, que sur votre compte Amazon, l\'option Amazon business est bien activée. </b>Si ce n\'est pas le cas, le téléchargement des articles B2B entraînera des messages d\'erreurs. ';
 MLI18n::gi()->{'amazon_prepare_apply_form__field__b2bactive__help_matching'} = 'Si cette option est activée, les paramètres <br> définis dans les configurations seront utilisés.';
@@ -199,7 +202,7 @@ MLI18n::gi()->{'amazon_prepare_variations_additional_category'} = '{#i18n:attrib
 MLI18n::gi()->{'amazon_prepare_variations_error_text'} = '{#i18n:attributes_matching_attribute_required_error#}';
 MLI18n::gi()->{'amazon_prepare_variations_error_empty_custom_attribute_name'} = '{#i18n:form_action_default_empty_custom_attribute_name#}';
 MLI18n::gi()->{'amazon_prepare_variations_error_maximal_number_custom_attributes_exceeded'} = '{#i18n:form_action_default_maximal_number_custom_attributes_exceeded#}';
-MLI18n::gi()->{'amazon_prepare_variations_theme_mandatory_error'} = 'amazon_prepare_variations_theme_mandatory_error';
+MLI18n::gi()->{'amazon_prepare_variations_theme_mandatory_error'} = 'Veuillez choisir le design de la variante.';
 MLI18n::gi()->{'amazon_prepare_variations_error_duplicated_custom_attribute_name'} = '{#i18n:form_action_default_duplicated_custom_attribute_name#}';
 MLI18n::gi()->{'amazon_prepare_variations_error_missing_value'} = '{#i18n:attributes_matching_attribute_required_missing_value#}';
 MLI18n::gi()->{'amazon_prepare_variations_error_free_text'} = '{#i18n:attributes_matching_attribute_free_text_error#}';

@@ -45,7 +45,7 @@ Choisissez cette option si vous souhaitez <strong>utiliser les sociétés de liv
 <ul>
     <li><span class="bold underline">magnalister ajoute un champ de texte dans les commandes sous “Informations supplémentaires”</span></li>
 </ul>
-Si vous sélectionnez cette option, un champ sera ajouté dans l’aperçu de la commande  dans la rubrique “Informations supplémentaires”dans Shopify dans lequel vous pouvez renseigner la société de livraison.<br>
+Si vous sélectionnez cette option, un champ sera ajouté dans l’aperçu de la commande dans la rubrique “Informations supplémentaires” dans Shopify dans lequel vous pouvez renseigner la société de livraison.<br>
 <br>
 Choisissez cette option si vous souhaitez <strong>utiliser différents transporteurs</strong> pour les commandes Amazon.<br>
 <ul>

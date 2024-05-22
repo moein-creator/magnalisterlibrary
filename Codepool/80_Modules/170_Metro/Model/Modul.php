@@ -7,14 +7,13 @@
  * 88     88 88.  ... 88.  .88 Y8.   .88 88.  ... 88.  ... 88  `8b. 88.  .88
  * dP     dP `88888P' `88888P8  `88888'  `88888P' `88888P' dP   `YP `88888P'
  *
- *                            m a g n a l i s t e r
- *                                        boost your Online-Shop
+ *                          m a g n a l i s t e r
+ *                                      boost your Online-Shop
  *
- *   -----------------------------------------------------------------------------
- *   @author magnalister
- *   @copyright 2010-2022 RedGecko GmbH -- http://www.redgecko.de
- *   @license Released under the MIT License (Expat)
- *   -----------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
+ *     Released under the MIT License (Expat)
+ * -----------------------------------------------------------------------------
  */
 
 class ML_Metro_Model_Modul extends ML_Modul_Model_Modul_Abstract {
@@ -24,9 +23,13 @@ class ML_Metro_Model_Modul extends ML_Modul_Model_Modul_Abstract {
      * @var array $aPrice list of ML_Shop_Model_Price_Interface
      */
     protected $aPrice = array(
-        'fixed' => null,
-        'chinese' => null,
-        'buyitnow' => null,
+        'price' => null,
+        '2'     => null,
+        '3'     => null,
+        '4'     => null,
+        '5'     => null,
+        'a'     => null,
+        'b'     => null,
     );
 
     /**
@@ -101,8 +104,9 @@ class ML_Metro_Model_Modul extends ML_Modul_Model_Modul_Abstract {
 
     public function getStockConfig($sType = null) {
         return array(
-            'type' => $this->getConfig('quantity.type'),
-            'value' => $this->getConfig('quantity.value')
+            'type'  => $this->getConfig('quantity.type'),
+            'value' => $this->getConfig('quantity.value'),
+            'max'   => $this->getConfig('quantity.maxquantity')
         );
     }
 
@@ -160,6 +164,51 @@ class ML_Metro_Model_Modul extends ML_Modul_Model_Modul_Abstract {
         return array('noselection' => MLI18n::gi()->ML_ERROR_API);
     }
 
+    /**
+     * @return ML_Shop_Model_Price_Interface
+     * @var string $sType defines price type, if marketplace supports multiple prices
+     */
+    public function getPriceObject($sType = 'price') {
+        $sType = empty($sType) ? 'price' : $sType;
+        if (!isset($this->aPrice[$sType]) || $this->aPrice[$sType] === null) {
+            $this->aPrice[$sType] = MLPrice::factory();
+            if ($sType === 'price') {
+                $sKind = $this->getConfig('price.addkind');
+                $fFactor = (float)$this->getConfig('price.factor');
+                $iSignal = $this->getConfig('price.signal');
+                $iSignal = ($iSignal === '' || $iSignal === null) ? null : $iSignal;
+                $sGroup = $this->getConfig('price.group');
+                $blSpecial = (boolean)$this->getConfig($this->aPrice[$sType]->getSpecialPriceConfigKey());
+                $this->aPrice[$sType]->setPriceConfig($sKind, $fFactor, $iSignal, $sGroup, $blSpecial);
+            } elseif ($sType === 'webshoppriceoptions') {
+                $sKind = $this->getConfig('volumeprices'.$sType.'addkind');
+                $fFactor = (float)$this->getConfig('volumeprices'.$sType.'factor');
+                $iSignal = $this->getConfig('volumeprices'.$sType.'signal');
+                $iSignal = ($iSignal === '' || $iSignal === null) ? null : $iSignal;
+                $sGroup = $this->getConfig('price.group');
+
+                // without activating special price in Prestashop group price won't be included
+                $blSpecial = MLShop::gi()->getShopSystemName() === 'prestashop' ? true : false;
+                $this->aPrice[$sType]->setPriceConfig($sKind, $fFactor, $iSignal, $sGroup, $blSpecial);
+            } else { //volume price calculation
+                $sKind = $this->getConfig('volumepriceprice'.$sType.'addkind');
+                if ($sKind !== 'dontuse') {
+                    $fFactor = (float)$this->getConfig('volumepriceprice'.$sType.'factor');
+                    $iSignal = $this->getConfig('volumepriceprice'.$sType.'signal');
+                    $iSignal = ($iSignal === '' || $iSignal === null) ? null : $iSignal;
+                    if ($sKind === 'customergroup') {
+                        $sGroup = $this->getConfig('volumepriceprice'.$sType.'customergroup');
+                        $iSignal = null; // no price signal using customer group
+                    } else {
+                        $sGroup = $this->getConfig('price.group');
+                    }
+                    $blSpecial = MLShop::gi()->getShopSystemName() === 'prestashop' ? true : false;//Without activating special price in PrestaShop group price won't be included
+                    $this->aPrice[$sType]->setPriceConfig($sKind, $fFactor, $iSignal, $sGroup, $blSpecial);
+                }
+            }
+        }
+        return $this->aPrice[$sType];
+    }
 
     /**
      * if attribute name in GetCategoryDetail contains some specific character, those are not allowed in jquery selector,

@@ -19,18 +19,18 @@
 MLI18n::gi()->add('formgroups_etsy', array(
     'account' => array(
         'title' => 'Etsy Zugangsdaten',
-        'info' => 'The term \'Etsy\' is a trademark of Etsy, Inc. This application uses the Etsy API but is not endorsed or certified by Etsy, Inc.',
+        'info' => 'Der Begriff \'Etsy\' ist eine Marke von Etsy, Inc. Diese Anwendung verwendet die Etsy-API, wird aber nicht von Etsy, Inc. unterstützt oder zertifiziert.',
     ),
     'prepare' => 'Artikelvorbereitung',
     'shipping' => array(
         'title' => 'Versand',
         'info' => 'Legt fest, mit welchen Versandeinstellungen die Produkte bei {#setting:currentMarketplaceName#} eingestellt werden sollen.',
     ),
-    'shippingtemplate' => 'Neue Versandgruppe erstellen',
+    'shippingprofile' => 'Neue Versandgruppe erstellen',
     'upload' => 'Artikel hochladen: Voreinstellungen',
     'orderstatus' => 'Synchronisation des Bestell-Status vom Shop zu {#setting:currentMarketplaceName#}',
     'prepare_details' => 'Angebotseinstellungen',
     'prepare_general' => 'Allgemeine Einstellungen',
-    'prepare_shippingtemplate' => 'Versandgruppen Einstellungen',
+    'prepare_shippingprofile' => 'Versandgruppen Einstellungen',
     'prepare_variations' => 'Kategorie',
 ));

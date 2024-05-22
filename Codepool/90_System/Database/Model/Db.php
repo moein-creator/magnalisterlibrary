@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -20,6 +20,9 @@ class ML_Database_Model_Db {
     protected static $instance = null;
     protected $destructed = false;
 
+    /**
+     * @var ML_Database_Model_Db_Mysql|ML_Database_Model_Db_Mysqli|null
+     */
     protected $driver = null; // instanceof mysqli or mysql driver
 
     protected $access = array(
@@ -27,6 +30,7 @@ class ML_Database_Model_Db {
         'user' => '',
         'pass' => '',
         'persistent' => false,
+        'encrypt' => array(),
     );
     protected $database = '';
 
@@ -53,6 +57,9 @@ class ML_Database_Model_Db {
     /* Caches */
     protected $columnExistsInTableCache = array();
 
+    public function setDoLogQueryTimes($doLogQueryTimes) {
+        $this->doLogQueryTimes = $doLogQueryTimes;
+    }
     /**
      * Class constructor
      */
@@ -74,17 +81,26 @@ class ML_Database_Model_Db {
         }
         $this->access['persistent'] = (isset($aDbConnection['persistent']) && $aDbConnection['persistent']);
         $this->database = $aDbConnection['database'];
+        if (isset($aDbConnection['encrypt'])) {
+            $this->access['encrypt'] = $aDbConnection['encrypt'];
+        }
 
         $driverClass = $this->selectDriver();
         $this->driver = new $driverClass($this->access);
 
+        $backTrace = '';
+        try {
+            throw new \Exception();
+        } catch (\Exception $ex) {
+            $backTrace = $ex->getTraceAsString();
+        }
 
         $this->timePerQuery[] = array(
             'query' => 'Driver: "'.get_class($this->driver).'" ('.$this->getDriverDetails().')',
             'error' => false,
-            'time' => 0
+            'time' => 0,
+            'back-trace' => $backTrace
         );
-
         $this->selfConnect(false, true);
         if (defined('MAGNADB_ENABLE_LOGGING') && MAGNADB_ENABLE_LOGGING) {
             $dbt = @debug_backtrace();
@@ -121,7 +137,13 @@ class ML_Database_Model_Db {
         $data = $this->driver->getDriverDetails();
         $info = '';
         foreach ($data as $key => $value) {
-            $info .= '"'.$key.'": "'.$value.'",   ';
+            if (is_array($value)) {
+                foreach ($value as $itemKey => $item) {
+                    $info .= '"'.$itemKey.'": "'.$item.'",   ';
+                }
+            } else {
+                $info .= '"'.$key.'": "'.$value.'",   ';
+            }
         }
         $info = rtrim($info, ', ').'';
         return $info;
@@ -277,28 +299,38 @@ class ML_Database_Model_Db {
 
     protected function execQuery($query) {
         $i = 8;
-
-        $errno = 0;
-
+        $result = null;
+        $errorMessage = '';
         $this->selfConnect();
+        try {
+            do {
+                $errno = 0;
+                $result = $this->driver->query($query);
+                if ($result === false) {
+                    $errno = $this->driver->getLastErrorNumber();
+                    $errorMessage = $this->driver->getLastErrorMessage();
+                }
+                //if (defined('MAGNALISTER_PLUGIN')) echo 'mmysql_query errorno: '.var_export($errno, true)."\n";
+                if (($errno === false) || ($errno == 2006)) {
+                    $this->closeConnection(true);
+                    $this->timePerQuery[] = array(
+                        'query' => 'PHP - usleep(100000)',
+                        'error' => '',
+                        'time' => 10,
+                        'back-trace' => $query,
+                    );
+                    usleep(100000);
+                    $this->selfConnect(true);
+                }
+                # Retry if '2006 MySQL server has gone away'
+            } while (($errno == 2006) && (--$i >= 0));
 
-        do {
-            $errno = 0;
-            $result = $this->driver->query($query);
-            if ($result === false) {
-                $errno = $this->driver->getLastErrorNumber();
-            }
-            //if (defined('MAGNALISTER_PLUGIN')) echo 'mmysql_query errorno: '.var_export($errno, true)."\n";
-            if (($errno === false) || ($errno == 2006)) {
-                $this->closeConnection(true);
-                usleep(100000);
-                $this->selfConnect(true);
-            }
-            # Retry if '2006 MySQL server has gone away'
-        } while (($errno == 2006) && (--$i >= 0));
-
+        } catch (\mysqli_sql_exception $ex) {
+            $errno = $ex->getCode();
+            $errorMessage = $ex->getMessage();
+        }
         if ($errno != 0) {
-            $this->fatalError($query, $errno, $this->driver->getLastErrorMessage());
+            $this->fatalError($query, $errno, $errorMessage);
         }
 
         return $result;
@@ -317,7 +349,7 @@ class ML_Database_Model_Db {
 
         $this->query = $query;
         if ($verbose || false) {
-            echo function_exists('print_m') ? print_m($this->query)."\n" : $this->query."\n";
+            echo function_exists('print_m') ? print_m($this->query) . "\n" : print_r($this->query, true) . "\n";
         }
         MLLog::gi()->add('db_query', "### ".$this->count."\n".$this->query."\n");
         $t = microtime(true);
@@ -342,11 +374,16 @@ class ML_Database_Model_Db {
             return false;
         }
         if ($this->doLogQueryTimes) {
-            $this->timePerQuery[] = array(
-                'query' => $this->query,
-                'error' => false,
-                'time' => $t
-            );
+            try {
+                throw new \Exception('test');
+            } catch (\Exception $ex) {
+                $this->timePerQuery[] = array(
+                    'query' => $this->query,
+                    'error' => $this->getLastError(),
+                    'time' => $t,
+                    'back-trace' => $ex->getTraceAsString(),
+                );
+            }
         }
         ++$this->count;
         //echo print_m(debug_backtrace());
@@ -498,7 +535,6 @@ class ML_Database_Model_Db {
         }
 
         $array = array();
-
         while ($row = $this->fetchNext($this->result)) {
             if ($singleField && (count($row) == 1)) {
                 $array[] = array_pop($row);

@@ -65,8 +65,6 @@ ul.magna_properties_list li span.magna_property_value {
 <p>#PICTURE3#</p>
 <p>#DESCRIPTION#</p>
 <p>#MOBILEDESCRIPTION#</p>
-<p>#Description1# #Freetextfield1#</p>
-<p>#Description2# #Freetextfield2#</p>
 <div>#PROPERTIES#</div>';
 MLI18n::gi()->{'ebay_config_orderimport__field__updateablepaymentstatus__label'} = 'Update Payment Status When';
 MLI18n::gi()->{'ebay_config_orderimport__field__updateablepaymentstatus__help'} = 'Order statuses that can be triggered by eBay payments. 
@@ -123,11 +121,11 @@ MLI18n::gi()->{'ebay_config_producttemplate__field__template.content__label'} = 
 MLI18n::gi()->{'ebay_config_producttemplate__field__template.content__hint'} = 'List of available placeholders for Content:
 <dl>
     <dt>#TITLE#</dt>
-            <dd>Product Name (Title)</dd>
+            <dd>Product Name (Title)</dd><br>
     <dt>#ARTNR#</dt>
-            <dd>Item Number in Shop</dd>
+            <dd>Item Number in Shop</dd><br>
     <dt>#PID#</dt>
-            <dd>Product ID in Shop</dd>
+            <dd>Product ID in Shop</dd><br>
     <!--<dt>#PRICE#</dt>
             <dd>Price</dd>
     <dt>#VPE#</dt>
@@ -139,7 +137,11 @@ MLI18n::gi()->{'ebay_config_producttemplate__field__template.content__hint'} = '
     <dt>#MOBILEDESCRIPTION#</dt>
         <dd>Short description for mobile devices (if defined)</dd>
     <dt>#PICTURE1#</dt>
-            <dd>First product image</dd>
+            <dd>First product image</dd><br>
     <dt>#PICTURE2# etc.</dt>
-            <dd>Second product image; with #PICTURE3#, #PICTURE4# etc, you can transfer as many pictures as you have available in your Shop.</dd><br><dt>Free text field:</dt><br><dt>#Description1#&nbsp;#Freetextfield1#</dt><dt>#Description2#&nbsp;#Freetextfield2#</dt><dt>#Description..#&nbsp;#Freetextfield..#</dt><br><dd>Transfer of item free text field&nbsp;the characters after the placeholder (e.g. #Freetextfield1#) designates the position of the free text field.***
-                           <br> See Settings > Basic Settings > Items > Item Free Text Field***</dd><dt>#PROPERTIES#</dt><dd>A list of all product attributes. Appearance can be determined with CSS (see the code from the Standard Template)</dd></dl>br';
+            <dd>Second product image; with #PICTURE3#, #PICTURE4# etc, you can transfer as many pictures as you have available in your Shop.</dd><br>
+            <dt>#PROPERTIES#</dt>
+                <dd>A list of all product attributes. Appearance can be determined with CSS (see the code from the Standard Template)</dd>
+</dl>';
+MLI18n::gi()->set('ebay_config_producttemplate__field__template.content__hint', MLI18n::gi()->{'ebay_prepare_apply_form__field__description__hint'}, true);
+MLI18n::gi()->set('ebay_prepare_apply_form_field_description_hint_customfield', '<dt>Custom field:</dt><dt>#LABEL_{Technical Name}# #VALUE_{Technical Name}#</dt><dd>e.g.</dd>', true);

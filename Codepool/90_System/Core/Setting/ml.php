@@ -29,6 +29,7 @@ MLSetting::gi()->sClientBuild = isset($aClientVersion['CLIENT_BUILD_VERSION']) ?
 
 MLSetting::gi()->sShowToolsMenu = '';
 MLSetting::gi()->blTranslateInline = false;
+MLSetting::gi()->blShowTranslationKeys = false;
 MLSetting::gi()->blDebug = false;
 MLSetting::gi()->blPreventRedirect = false;
 MLSetting::gi()->aServiceVars=array(
@@ -43,7 +44,8 @@ MLSetting::gi()->aServiceVars=array(
     'blJsonBase64'              => array('validation' => FILTER_VALIDATE_BOOLEAN,   'ajax' => true, ),
     'blDryAddItems'             => array('validation' => FILTER_VALIDATE_BOOLEAN,   'ajax' => true, ),
     'blCleanRunOncePerSession'  => array('validation' => FILTER_VALIDATE_BOOLEAN,   'ajax' => true, ),
-    'blTranslateInline'         => array('validation' => FILTER_VALIDATE_BOOLEAN,   'ajax' => true, ),
+    'blShowTranslationKeys' => array('validation' => FILTER_VALIDATE_BOOLEAN, 'ajax' => true,),
+    //'blTranslateInline'         => array('validation' => FILTER_VALIDATE_BOOLEAN,   'ajax' => true, ),
     'blPreventRedirect'         => array('validation' => FILTER_VALIDATE_BOOLEAN,   'ajax' => false, ),
     'sTranslationLanguage'      => array('validation' => ('/^' . implode('$|^', MLI18n::gi()->getPossibleLanguages()) . '$/'),   'ajax' => true, ),
     'sUpdateUrl'                => array('validation' => FILTER_VALIDATE_URL,       'ajax' => true, ),

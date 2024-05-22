@@ -50,12 +50,12 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
     }
 
     protected function getCarrier($oOrder) {
-        $sConfigCarrier = MLModul::gi()->getConfig('orderstatus.carrier.select');
+        $sConfigCarrier = MLModule::gi()->getConfig('orderstatus.carrier.select');
 
         switch ($sConfigCarrier) {
             case 'matchShopShippingOptions':
                 $sCarrier = $oOrder->getShopOrderCarrierOrShippingMethodId();
-                $aCarrierShippingMethodMatching = MLModul::gi()->getConfig('orderstatus.carrier.matching');
+                $aCarrierShippingMethodMatching = MLModule::gi()->getConfig('orderstatus.carrier.matching');
                 $sMatchedKey = $this->findTheConfigKey($aCarrierShippingMethodMatching, $sCarrier, 'shopCarrier');
                 if (isset($sMatchedKey)) {
                     if($aCarrierShippingMethodMatching[$sMatchedKey]['marketplaceCarrier'] === 'Other'){
@@ -63,7 +63,7 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
                     }
                     return $aCarrierShippingMethodMatching[$sMatchedKey]['marketplaceCarrier'];
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_WrongConfiguration', array(
                         'Problem' => '#carrier-code# is not matched correctly!',
                     ));
                     return null;
@@ -73,17 +73,17 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
                 if ($mData !== null) {
                     return $mData;
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_WrongConfiguration', array(
                         'Problem' => '#carrier-code# is not filled in order detail of shop or it is empty!',
                     ));
                     return null;
                 }
             case 'freetext':
-                $sTextField = MLModul::gi()->getConfig('orderstatus.carrier.freetext');
+                $sTextField = MLModule::gi()->getConfig('orderstatus.carrier.freetext');
                 if (!empty($sTextField)) {
                     return $sTextField;
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_WrongConfiguration', array(
                         'Problem' => 'For #carrier-code# "freetext" configuration right text field is empty!',
                     ));
                     return null;
@@ -99,7 +99,7 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
                 if (!empty($sConfigCarrier)) {
                     return $sConfigCarrier;
                 }
-                MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_WrongConfiguration', array(
                     'Problem' => '#carrier-code# is not configured!',
                 ));
                 return null;
@@ -110,16 +110,16 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
 
 
     protected function getShippingMethod($oOrder) {
-        $sConfigShippingMethod = MLModul::gi()->getConfig('orderstatus.shipmethod.select');
+        $sConfigShippingMethod = MLModule::gi()->getConfig('orderstatus.shipmethod.select');
         switch ($sConfigShippingMethod) {
             case 'matchShopShippingOptions':
                 $sShippingMethod = $oOrder->getShopOrderCarrierOrShippingMethodId();
-                $aCarrierShippingMethodMatching = MLModul::gi()->getConfig('orderstatus.shipmethod.matching');
+                $aCarrierShippingMethodMatching = MLModule::gi()->getConfig('orderstatus.shipmethod.matching');
                 $sMatchedKey = $this->findTheConfigKey($aCarrierShippingMethodMatching, $sShippingMethod, 'shopCarrier');
                 if (isset($sMatchedKey)) {
                     return $aCarrierShippingMethodMatching[$sMatchedKey]['marketplaceValue'];
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_WrongConfiguration', array(
                         'Problem' => '#ship-method# is not matched correctly!',
                     ));
                     return null;
@@ -129,17 +129,17 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
                 if ($mData !== null) {
                     return $mData;
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_WrongConfiguration', array(
                         'Problem' => '#ship-method# is not filled in order detail of shop or it is empty!',
                     ));
                     return null;
                 }
             case 'freetext':
-                $sTextField = MLModul::gi()->getConfig('orderstatus.shipmethod.freetext');
+                $sTextField = MLModule::gi()->getConfig('orderstatus.shipmethod.freetext');
                 if (!empty($sTextField)) {
                     return $sTextField;
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_WrongConfiguration', array(
                         'Problem' => 'For #ship-method# "freetext" configuration right text field is empty!',
                     ));
                     return null;
@@ -150,7 +150,7 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
                 if (strpos($sConfigShippingMethod, 'a_') === 0) {
                     return $oOrder->getAttributeValue($sConfigShippingMethod);
                 }
-                MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                MLLog::gi()->add('SyncOrderStatus_' . MLModule::gi()->getMarketPlaceId() . '_WrongConfiguration', array(
                     'Problem' => '#ship-method# is not configured!',
                 ));
                 return null;
@@ -165,7 +165,7 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
      * @param null|ML_Shop_Model_Order_Abstract $oOrder
      */
     protected function extendShippedRequest(&$aRequest, $sShopOrderStatus, $oOrder = null) {
-        $oModule = MLModul::gi();
+        $oModule = MLModule::gi();
         $aShippedState = $oModule->getConfig('orderstatus.shippedaddress');
         $aRequest['ShipMethod'] = $this->getShippingMethod($oOrder);
 
@@ -189,9 +189,6 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
         $aRequest['ShipFromAddressStateOrRegion'] = $aRegion[$sSelectedIndex];
         $aRequest['ShipFromAddressPostalCode'] = $aZip[$sSelectedIndex];
         $aRequest['ShipFromAddressCountryCode'] = $aCountryCode[$sSelectedIndex];
-        /*var_dump($aRequest);
-        $line = __FILE__.__LINE__;
-        die($line);*/
     }
 
     /**
@@ -228,5 +225,88 @@ class ML_Amazon_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_Syn
 
         $oDateTime->setTimezone(new DateTimeZone("UTC"));
         return $oDateTime->format("Y-m-d\TH:i:s\Z");
+    }
+
+    /**
+     * Triggered for each order single by single
+     *
+     * @param $oOrder
+     * @return null
+     */
+    protected function otherActions($oOrder) {
+        $oModule = MLModule::gi();
+        $sAmazonStatus = '';
+        $sReadyForPickup = $oModule->getConfig('bopis.orderstatus.readyforpickup');
+        $sPickedUp = $oModule->getConfig('bopis.orderstatus.pickedup');
+        $sRefunded = $oModule->getConfig('bopis.orderstatus.refund');
+        $sShopStatus = $oOrder->getShopOrderStatus();
+
+        switch ($sShopStatus) {
+            case $sReadyForPickup :
+                $sAmazonStatus = 'ReadyForPickup';
+                $sAction = 'UpdateShippingStatus';
+                break;
+            case $sPickedUp :
+                $sAmazonStatus = 'PickedUp';
+                $sAction = 'UpdateShippingStatus';
+                break;
+            case $sRefunded :
+                $sAction = 'InitiateRefund';
+                break;
+        }
+        if (!isset($sAction)) {
+            return;
+        }
+        $orderData = $oOrder->get('orderData');
+        $data = $oOrder->get('data');
+        $marketplaceOrderId = $data[$this->sOrderIdentifier];
+
+        if ($sAction == 'InitiateRefund') {
+            $preparedRefund = array();
+            //at the moment we expect only one product per order
+            foreach ($orderData['Products'] as $product) {
+                $preparedRefund = array(
+                    'MarketplaceIds' => MLModule::gi()->getMarketPlaceId(), # REQUIRED
+                    'AmazonOrderID' => $marketplaceOrderId, # REQUIRED
+                    'AmazonOrderItemID' => $product['AmazonOrderItemID'], # REQUIRED
+                    'AdjustmentReasonCode' => $oModule->getConfig('bopis.refund.reason'), # REQUIRED NoInventory, CustomerReturn, GeneralAdjustment, CouldNotShip, DifferentItem, Abandoned, CustomerCancel, PriceError
+                    'Currency' => $orderData['Order']['Currency'], # REQUIRED --> USD, GBP, EUR, JPY, CAD
+                    //                this is not included at the moment, maybe in the future
+                    //                'ItemPriceAdj' => '',
+                    //                'ItemTaxAdj' => '',
+                    //                'ShippingPriceAdj' => '',
+                    //                'ShippingTaxAdj' => '',
+                    //                'GiftWrapPriceAdj' => '',
+                    //                'GiftWrapTaxAdj' => '',
+                    //                'ItemPromotionAdj' => '',
+                    //                'ItemPromotionId' => '',
+                    //                'ShipPromotionAdj' => '',
+                    //                'ShipPromotionId' => '',
+                    //                'QuantityCancelled' => ''
+                );
+            }
+            $aUpdateRequest = $preparedRefund;
+        } else {
+            $orderItems = array();
+            $aUpdateRequest = array(
+                'AmazonOrderIDs' => array($marketplaceOrderId),
+                'ShipmentStatus' => $sAmazonStatus,
+            );
+
+            // not supported by amazon at the moment the field will be ignored, but it will be supported later
+            // at the moment we expect only one product per order
+            foreach ($orderData['Products'] as $product) {
+                $orderItems[] = array(
+                  'orderItemId' => $product['AmazonOrderItemID'],
+                  'quantity' => $product['Quantity'],
+                );
+            }
+
+            $aUpdateRequest['orderItems'] = $orderItems;
+        }
+
+        $aUpdateModels[$marketplaceOrderId] = $oOrder;
+        $this->submitRequestAndProcessResult($sAction, $aUpdateRequest, $aUpdateModels, $marketplaceOrderId);
+
     }
 }

@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -55,7 +55,7 @@ abstract class ML_Shop_Model_Order_Abstract extends ML_Database_Model_Table_Orde
     public function getModul() {
         if ($this->oModul === null) {
             try {
-                $this->oModul = MLModul::gi();
+                $this->oModul = MLModule::gi();
             } catch (Exception $oEx) {
 
             }
@@ -278,6 +278,9 @@ abstract class ML_Shop_Model_Order_Abstract extends ML_Database_Model_Table_Orde
     public function getShopOrderId() {
         return $this->get('orders_id');
     }
+    public function getShopAlternativeOrderId() {
+        return $this->get('current_orders_id');
+    }
 
     public function getMarketplaceOrderId() {
         return $this->get('special');
@@ -368,6 +371,18 @@ abstract class ML_Shop_Model_Order_Abstract extends ML_Database_Model_Table_Orde
         $sDefaultCarrier = MLModule::gi()->getConfig('orderstatus.carrier.default');
         $sDefaultCarrier = $sDefaultCarrier === null ? MLModule::gi()->getConfig('orderstatus.carrier') : $sDefaultCarrier;
         return $sDefaultCarrier;
+    }
+
+    /**
+     * Return a formatted array of product data
+     *
+     * @return array[]
+     * @throws Exception
+     */
+    abstract public function getShopOrderProducts();
+
+    public function getOrderIdForAcknowledge() {
+        return $this->get('orders_id');
     }
 
 }

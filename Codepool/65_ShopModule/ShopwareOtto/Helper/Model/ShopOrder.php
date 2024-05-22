@@ -20,49 +20,14 @@ MLFilesystem::gi()->loadClass('Shopware_Helper_Model_ShopOrder');
 
 class ML_ShopwareOtto_Helper_Model_ShopOrder extends ML_Shopware_Helper_Model_ShopOrder {
 
-    public function updateAnnouncedOrder($updateProductQuantity = false) {
-        // update order status
-        try {
-            Shopware()->Models()->clear();
-            Zend_Session::$_unitTestEnabled = true; //if it is not true , it make problem in session creation in frontend url call
-            $oOrder = $this->oOrder;
-            if (is_object($this->oCurrentOrder)) {
-                $oShopwareOrder = $this->oCurrentOrder;
-                //updating order status
-                $iNewOrderStatus = (int)$oOrder->get('status');
-                if ($iNewOrderStatus !== $oShopwareOrder->getOrderStatus()->getId()) {
-                    Shopware()->Modules()->Order()->setOrderStatus($oShopwareOrder->getId(), $iNewOrderStatus, false);
-                }
-            }
-        } catch (Exception $oExc) {
-            MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
-                'MOrderId'  => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
-                'PHP'       => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
-                'Exception' => $oExc->getMessage()
-            ));
-        }
-
-        // update stock of products
-        if ($updateProductQuantity) {
-            /** @var ML_Shopware_Model_Product $oProduct */
-            $oProduct = MLProduct::factory();
-            foreach ($this->aNewData['Products'] as $product) {
-                if ($oProduct->getByMarketplaceSKU($product['SKU'])->exists()
-                    && MLModul::gi()->getConfig('stocksync.frommarketplace') === 'rel') {
-                    $oProduct->setStock($oProduct->getStock() + $product['Quantity']);
-                }
-            }
-        }
-    }
-
     /**
-     * Checks if we need to create custom fields when trucking number is configured 'auto'
-     *
-     * @param $orderId
+     * Checks if we need to create custom fields when tracking number is configured 'auto'
      * @return void
      */
-    protected function addCustomFields($orderId) {
-        if (MLModul::gi()->getConfig('customfieldtrackingnumber') === 'auto') {
+    protected function addCustomFields() {
+        // This function should not be used on Shopware5
+        return;
+        if (MLModule::gi()->getConfig('customfieldtrackingnumber') === 'auto') {
             $usedAttributeColumns = $this->getUsedAttributeColumns();
             $returnTrackingKeyExists = false;
 
@@ -73,7 +38,15 @@ class ML_ShopwareOtto_Helper_Model_ShopOrder extends ML_Shopware_Helper_Model_Sh
             }
 
             if (!$returnTrackingKeyExists) {
-                $this->createCustomFieldsInShopwareDb('Return Tracking Key');
+                try {
+                    $this->createCustomFieldsInShopwareDb('Return Tracking Key');
+                } catch (Exception $e) {
+                    MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
+                        'MOrderId'  => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
+                        'PHP'       => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
+                        'Exception' => $e->getMessage()
+                    ));
+                }
             }
         }
     }

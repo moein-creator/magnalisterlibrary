@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -55,7 +55,7 @@ abstract class ML_Form_Helper_Model_Table_ConfigData_Abstract {
 
     public function quantity_valueField(&$aField) {
         $aField['value'] = isset($aField['value']) ? trim($aField['value']) : 0;
-        if (MLModul::gi()->getConfig('quantity.type') != 'stock' && (string)((int)$aField['value']) != $aField['value']) {
+        if (MLModule::gi()->getConfig('quantity.type') != 'stock' && (string)((int)$aField['value']) != $aField['value']) {
             $this->addError($aField, MLI18n::gi()->get('configform_quantity_value_error'));
         }
     }
@@ -277,7 +277,7 @@ abstract class ML_Form_Helper_Model_Table_ConfigData_Abstract {
                 $aField['values'] = MLFormHelper::getShopInstance()->getShippingMethodValues();
             } else {
                 try {
-                    $sMpName = MLModul::gi()->getMarketPlaceName(false);
+                    $sMpName = MLModule::gi()->getMarketPlaceName(false);
                     $aField['values'] = array($sMpName => $sMpName);
                 } catch (Exception $ex) {
 

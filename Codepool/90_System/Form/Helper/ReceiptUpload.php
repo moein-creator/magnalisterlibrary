@@ -59,12 +59,14 @@ class ML_Form_Helper_ReceiptUpload {
     public function setConfig($config) {
         $this->config = $config;
         foreach ($this->config as $key => &$value) {
-            $value = rtrim($value, DIRECTORY_SEPARATOR);
-            $value .= DIRECTORY_SEPARATOR;
+            if($value !== null) {//in Kaufland there is no refund document
+                $value = rtrim($value, DIRECTORY_SEPARATOR);
+                $value .= DIRECTORY_SEPARATOR;
 
-            if (!file_exists($value)) {
-                $outputString = str_replace(array('{#ConfigPath#}', '{#ConfigFieldLabel#}'), array($value, $this->getTranslationOfConfigurationType($key)), MLI18n::gi()->get('UploadInvoice_Error_PathNotExists'));
-                throw new MagnaException($outputString, self::$ReceiptUploadError);
+                if (!file_exists($value) || scandir($value) === false) {
+                    $outputString = str_replace(array('{#ConfigPath#}', '{#ConfigFieldLabel#}'), array($value, $this->getTranslationOfConfigurationType($key)), MLI18n::gi()->get('UploadInvoice_Error_PathNotExists'));
+                    throw new MagnaException($outputString, self::$ReceiptUploadError);
+                }
             }
         }
     }
@@ -142,7 +144,13 @@ class ML_Form_Helper_ReceiptUpload {
      * @throws MagnaException
      */
     private function getReceiptByOrderId($orderId, $type) {
-        $files = preg_grep('/^'.$orderId.'_.*\.(pdf|PDF)$/', scandir($this->config[$type]));
+        $scanDir = scandir($this->config[$type]);
+        if ($scanDir === false) {
+            $outputString = str_replace(array('{#ConfigPath#}', '{#ConfigFieldLabel#}'), array($this->config[$type], $this->getTranslationOfConfigurationType($type)), MLI18n::gi()->get('UploadInvoice_Error_PathNotExists'));
+            throw new MagnaException($outputString, self::$ReceiptUploadError);
+        }
+
+        $files = preg_grep('/^'.$orderId.'_.*\.(pdf|PDF)$/', $scanDir);
         if (empty($files)) {
             if (file_exists($this->config[$type].$orderId.'.pdf')) {
                 $files = array($orderId.'.pdf');

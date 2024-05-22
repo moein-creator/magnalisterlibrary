@@ -76,7 +76,7 @@ class ML_Otto_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncO
                                         'ShipFromCity' => $oShipAddress['City'],
                                         'ShipFromCountryCode' => $oShipAddress['Country'],
                                         'ShipFromZip' => $oShipAddress['Zip'],
-                                        'ShippingDate' => $oOrder->getShippingDateTime(),
+                                        'ShippingDate' => $this->getShippingDate($oOrder),
                                         'ReturnCarrier' => $this->getCarrierValue('orderstatus.returncarrier', $oOrder, 'return'),
                                         'ReturnTrackingKey' => $this->getReturnTrackingKey($returnTrackingKeyConfig, $oOrder),
                                     );
@@ -98,11 +98,35 @@ class ML_Otto_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncO
                         )
                     ));
                 }
+
+                $oOrder->set('order_status_sync_last_check_date', 'NOW()'); // update date when last check happened
+                $oOrder->save();
             }
             $this->submitRequestAndProcessResult('ConfirmShipment', $aShippedRequest, $aShippedModels);
             $this->submitRequestAndProcessResult('CancelOrder', $aCanceledRequest, $aCanceledModels);
         }
     }
+
+    /**
+     * Send Shipping time including timezone to API...
+     *
+     * @param $oOrder
+     * @return string
+     * @throws Exception
+     */
+    protected function getShippingDate($oOrder) {
+        $sDateTime = parent::getShippingDate($oOrder);
+        $sTimeZone = MLShop::gi()->getTimeZone();
+        if (!empty($sTimeZone)) {
+            $oDateTime = new DateTime($sDateTime, new DateTimeZone($sTimeZone));
+        } else {
+            $oDateTime = new DateTime($sDateTime);
+        }
+
+        $oDateTime->setTimezone(new DateTimeZone("UTC"));
+        return $oDateTime->format("Y-m-d\TH:i:s\Z");
+    }
+
 
     protected function manipulateRequest($aRequest) {
         $aConfig = MLModul::gi()->getConfig();
@@ -118,7 +142,7 @@ class ML_Otto_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_SyncO
      * Returns carrier value based on configuration settings and shipping type in shop system
      *
      * @param $carrierType
-     * @param null $oOrder
+     * @param ML_Shop_Model_Order_Abstract $oOrder
      * @param string $marketplaceCarrierType
      * @return string
      */

@@ -19,16 +19,10 @@
 MLSetting::gi()->add('formgroups_otto__account', array(
     'legend' => array('i18n' => '{#i18n:formgroups_otto__account#}',),
     'fields' => array(
-        'clientkey' => array(
-            'i18n' => '{#i18n:formfields_otto__clientkey#}',
-            'name' => 'clientkey',
-            'type' => 'string',
-        ),
-        'secretkey' => array(
-            'i18n' => '{#i18n:formfields_otto__secretkey#}',
-            'name' => 'secretkey',
-            'type' => 'password',
-            'savevalue' => '__saved__',
+        'token' => array(
+            'i18n' => '{#i18n:formfields_otto__token#}',
+            'name' => 'token',
+            'type' => 'otto_token',
         ),
     ),
 ));
@@ -143,7 +137,7 @@ MLSetting::gi()->add('formgroups_otto__prepare_category', array(
 MLSetting::gi()->add('formgroups_otto__prepare_action', array(
     'legend' => array(
         'classes' => array(
-            'mlhidden',
+            /*'mlhidden',*/
         ),
     ),
     'row' => array(

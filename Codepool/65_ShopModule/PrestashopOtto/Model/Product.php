@@ -41,6 +41,9 @@ class ML_PrestashopOtto_Model_Product extends ML_Prestashop_Model_Product {
     }
 
     public function getBulletPointDefaultField() {
+        if (defined('_PS_VERSION_') && version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            return 'meta_title';
+        }
         return 'meta_keywords';
     }
 }

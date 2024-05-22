@@ -1,4 +1,5 @@
-<?php class_exists('ML', false) or die();
+<?php if (!class_exists('ML', false))
+    throw new Exception();
 /**
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
@@ -42,19 +43,27 @@ $this->includeView('widget_listings_misc_lastreport');
         <thead>
         <tr>
             <?php foreach ($this->getFields() as $aFiled) { ?>
-                <td> <?php
-                    echo $aFiled['Label'];
-                    if ($aFiled['Sorter'] != null) {
-                        ?>
-                        <input class="noButton ml-right arrowAsc" type="submit"
-                               value="<?php echo $aFiled['Sorter'] ?>-asc"
-                               title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"
-                               name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>"/>
-                        <input class="noButton ml-right arrowDesc" type="submit"
-                               value="<?php echo $aFiled['Sorter'] ?>-desc"
-                               title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"
-                               name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>"/>
-                    <?php } ?>
+                <td>
+                    <div class="ml-inventory-th">
+                        <div> <?php
+                            echo $aFiled['Label'];
+                            if ($aFiled['Sorter'] != null) {
+                            ?>
+                        </div>
+                            <div style="min-width: 42px;">
+                                <input class="noButton ml-right arrowAsc" type="submit"
+                                       value="<?php echo $aFiled['Sorter'] ?>-asc"
+                                       title="<?php echo $this->__('Productlist_Header_sSortAsc') ?>"
+                                       name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>"/>
+                                <input class="noButton ml-right arrowDesc" type="submit"
+                                       value="<?php echo $aFiled['Sorter'] ?>-desc"
+                                       title="<?php echo $this->__('Productlist_Header_sSortDesc') ?>"
+                                       name="<?php echo MLHttp::gi()->parseFormFieldName('sorting'); ?>"/>
+                            </div>
+
+                        <?php } ?>
+                    </div>
+
                 </td>
             <?php } ?>
         </tr>

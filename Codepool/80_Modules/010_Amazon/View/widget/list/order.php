@@ -1,12 +1,13 @@
 <?php
 /* @var $this  ML_Amazon_Controller_Amazon_ShippingLabel_Upload_Summary */
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 //        new dBug($aStatistic);
 //        new dBug($oList->getHead());
 //        new dBug(array('product'=>$oList->getList()->current(),'data'=>$oList->getList()->current()->mixedData()));
 $aStatistic = isset($aStatistic) ? $aStatistic : array();
 ?>
-<div class="ml-plist <?php echo MLModul::gi()->getMarketPlaceName(); ?>">
+<div class="ml-plist <?php echo MLModule::gi()->getMarketPlaceName(); ?>">
     <table class="fullWidth nospacing nopadding valigntop topControls"><tbody><tr>
                 <td class="actionLeft">
                     <?php
@@ -30,7 +31,7 @@ $aStatistic = isset($aStatistic) ? $aStatistic : array();
                 </td>
             </tr></tbody></table>
     <div class="clear"></div>
-    <div class="pagination_bar">
+    <div class="pagination_bar" style="align-items: center;justify-content: space-between;">
         <?php
         if ($this->showPagination()) {
             $this->includeView('widget_list_order_pagination', get_defined_vars());
@@ -40,7 +41,7 @@ $aStatistic = isset($aStatistic) ? $aStatistic : array();
     <?php
     $this->includeView('widget_list_order_list', get_defined_vars());
     ?>
-    <div class="pagination_bar">
+    <div class="pagination_bar" style="align-items: center;justify-content: space-between;">
         <?php
         if ($this->showPagination()) {
             $this->includeView('widget_list_order_pagination', get_defined_vars());

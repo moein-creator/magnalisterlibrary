@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * 888888ba                 dP  .88888.                    dP
  * 88    `8b                88 d8'   `88                   88
  * 88aaaa8P' .d8888b. .d888b88 88        .d8888b. .d8888b. 88  .dP  .d8888b.
@@ -12,9 +12,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * $Id$
- *
- * (c) 2010 - 2019 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -108,7 +106,7 @@ class ML_Form_Helper_Controller_Widget_Form_PrepareAMCommon {
             'ACTION' => 'GetCategoryDetails',
             'DATA' => array('CategoryID' => $sCategoryId),
         ));
-        if(MLModul::gi()->isNeededPackingAttrinuteName()) {
+        if (MLModule::gi()->isNeededPackingAttrinuteName()) {
             $aCodedKeys = array();
             foreach ($aCategoryDetails['DATA']['attributes'] as $aCategoryDetail) {
                 $aCodedKeys[current(unpack('H*', $aCategoryDetail['name']))] = $aCategoryDetail;
@@ -133,5 +131,13 @@ class ML_Form_Helper_Controller_Widget_Form_PrepareAMCommon {
 
     public function addExtraInfo(&$aField) {
 
+    }
+
+    /**
+     * @param $values array
+     * @return array
+     */
+    public function getManipulateMarketplaceAttributeValues($values) {
+        return $values;
     }
 }

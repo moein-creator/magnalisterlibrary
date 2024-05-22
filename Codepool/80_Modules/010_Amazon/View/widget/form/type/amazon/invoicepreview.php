@@ -16,7 +16,8 @@
  * -----------------------------------------------------------------------------
  */
 
-class_exists('ML', false) or die();
+ if (!class_exists('ML', false))
+     throw new Exception();
 ?>
 
 <input class="mlbtn" type="button" value="<?php /** @var array $aField */ echo $aField['i18n']['buttontext'] ?>" id="invoice_preview"

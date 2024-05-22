@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -41,7 +41,7 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
             $sLocale = 'Deutsch';
         }
 
-        $aDescriptionValues[1] = $sShopName.' - '.$sLocale;
+        $aDescriptionValues[1] = $sShopName . ' - ' . $sLocale;
 
         return $aDescriptionValues;
     }
@@ -76,7 +76,7 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
         }
 
         //return $aFormattedCustomerGroupValues;
-        return array(0 => 'This option is not supported');
+        return array(0 => MLI18n::gi()->get('CustomerGroupSettingNotSupported'));
     }
 
     /**
@@ -88,7 +88,7 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
         //@todo
         //returns all possible status for orders
         return [
-            'open'      => MLI18n::gi()->get('OrderStatus_Open'),
+            'open' => MLI18n::gi()->get('OrderStatus_Open'),
             'fulfilled' => MLI18n::gi()->get('OrderStatus_Fulfilled'),
             'cancelled' => MLI18n::gi()->get('OrderStatus_Cancelled'),
         ];
@@ -99,11 +99,11 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      */
     public function getPaymentStatusValues() {
         return [
-            ''           => MLI18n::gi()->get('FinancialStatus_Empty'),
-            'pending'    => MLI18n::gi()->get('FinancialStatus_Pending'),
+            '' => MLI18n::gi()->get('FinancialStatus_Empty'),
+            'pending' => MLI18n::gi()->get('FinancialStatus_Pending'),
             'authorized' => MLI18n::gi()->get('FinancialStatus_Authorized'),
             //'partially_paid' => MLI18n::gi()->get('FinancialStatus_PartiallyPaid'), // Partially options are generally not supported by magnalister
-            'paid'       => MLI18n::gi()->get('FinancialStatus_Paid'),
+            'paid' => MLI18n::gi()->get('FinancialStatus_Paid'),
             //'partially_refunded'   => MLI18n::gi()->get('FinancialStatus_PartiallyRefunded'), // Partially options are generally not supported by magnalister
             //'refunded'   => MLI18n::gi()->get('FinancialStatus_Refunded'), // will not be supported by magnalister
             // 'voided'   => MLI18n::gi()->get('FinancialStatus_Voided'), // will not be supported by magnalister
@@ -164,8 +164,8 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      */
     public function getManufacturerPartNumber() {
         return array(
-            ''        => MLI18n::gi()->get('ConfigFormPleaseSelect'),
-            'sku'     => MLI18n::gi()->get('SKU'),
+            '' => MLI18n::gi()->get('ConfigFormPleaseSelect'),
+            'sku' => MLI18n::gi()->get('SKU'),
             'barcode' => MLI18n::gi()->get('Barcode'),
         );
     }
@@ -179,13 +179,17 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
         return $this->getListOfArticleFields();
     }
 
+    public function getShopSystemAttributeList() {
+        return $this->getListOfArticleFields();
+    }
+
     /**
      * Returns product fields.
      *
      * @return array
      */
     protected function getProductFields() {
-        return [];
+        return $this->getGroupedAttributesForMatching();
     }
 
     /**
@@ -201,7 +205,7 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      * @inheritDoc
      */
     public function getPrefixedAttributeList($getProperties = false) {
-        $aAttributes = $this->getPossibleVariationGroupNames();
+        $aAttributes = $this->getPossibleVariationGroupNames() + $this->getPossibleMetaFields();
         $aAttributes['p_title'] = 'Title';
         $aAttributes['pd_sku'] = 'sku';
         $aAttributes['p_body_html'] = 'Description';
@@ -213,25 +217,13 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
 
         return $aAttributes;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAttributeListWithOptions() {
-
-        ML::gi()->instance('Shopify_Model_Table_ShopifyAttribute');
-
-        $aAttributes = array('' => MLI18n::gi()->get('ConfigFormPleaseSelect'));
-
-        $queryAttributeName = 'SELECT Distinct AttributeName FROM magnalister_shopify_attributes';
-        $aAttributeNames = MLDatabase::getDbInstance()->fetchArray($queryAttributeName);
-
-        foreach ($aAttributeNames as $aAttributeName) {
-            $aAttributes['c_'.$aAttributeName['AttributeName']] = $aAttributeName['AttributeName'];
-
-        }
-        return $aAttributes;
-    }
+    //
+    //    /**
+    //     * @inheritDoc
+    //     */
+    //    public function getAttributeListWithOptions() {
+    //        return $this->getPossibleVariationGroupNames();
+    //    }
 
     /**
      * @inheritDoc
@@ -249,21 +241,41 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
             foreach ($attributeValues as $attributeValue) {
                 $aAttributeValues = json_decode($attributeValue['AttributeValues']);
                 foreach ($aAttributeValues as $value) {
-                    $attributes[$aAttributeCode[1].'_'.$value] = $value;
+                    $attributes[$aAttributeCode[1] . '_' . $value] = $value;
                 }
             }
 
             return $attributes;
         }
+        if ($aAttributeCode[0] === 'm') {
+            $aMetaFields = MLShopifyAlias::getMetaFieldModel()
+                ->set('Type', 'select')
+                ->getList()->getQueryObject()
+                ->select('ShopifyMetaFieldValue', true)
+                ->join([MLShopifyAlias::getObjectMetaFieldRelationModel()->getTableName(), 'omr', 'omr.MetaFieldId = ' . MLShopifyAlias::getMetaFieldModel()->getTableName() . '.MetaFieldId'], MLDatabase::factorySelectClass()::JOIN_TYPE_INNER)
+                ->where(['omr.MetaFieldId', '=', $aAttributeCode[1]])
+                ->getResult();
+            if (is_array($aMetaFields)) {
+                foreach ($aMetaFields as $aMetaField) {
+                    $aAttributeValues = json_decode($aMetaField['ShopifyMetaFieldValue'], true);
+                    if (is_array($aAttributeValues)) {
+                        foreach ($aAttributeValues as $value) {
+                            $attributes[$aAttributeCode[1] . '_' . $value] = $value;
+                        }
+                    }
+                }
+            }
+            return $attributes;
+        }
 
         if (isset($aAttributeCode[1]) && $aAttributeCode[1] === 'vendor') {
-            $query = 'SELECT distinct `ShopifyVendor` FROM '.MLShopifyAlias::getProductModel()->getTableName();
+            $query = 'SELECT distinct `ShopifyVendor` FROM ' . MLShopifyAlias::getProductModel()->getTableName();
 
             $attributeValues = MLDatabase::getDbInstance()->fetchArray($query);
 
             foreach ($attributeValues as $key => $value) {
                 if ($value['ShopifyVendor'] !== '') {
-                    $attributes[$aAttributeCode[1].'_'.$key] = $value['ShopifyVendor'];
+                    $attributes[$aAttributeCode[1] . '_' . $key] = $value['ShopifyVendor'];
                 }
             }
 
@@ -275,14 +287,14 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
 
     /**
      * Returns prefixed attribute options.
-     *
      * @param string $sAttributeCode
      * @param integer $iLangId
      *
      * @return array
+     * @todo check
      */
     public function getPrefixedAttributeOptions($sAttributeCode, $iLangId = null) {
-        return [];
+        return $this->getAttributeOptions($sAttributeCode, $iLangId);
     }
 
     /**
@@ -328,7 +340,35 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      * @return array
      */
     public function getPossibleVariationGroupNames() {
-        return $this->getAttributeListWithOptions();
+
+        ML::gi()->instance('Shopify_Model_Table_ShopifyAttribute');
+
+        $aAttributes = array('' => MLI18n::gi()->get('ConfigFormPleaseSelect'));
+
+        $queryAttributeName = 'SELECT Distinct AttributeName FROM magnalister_shopify_attributes';
+        $aAttributeNames = MLDatabase::getDbInstance()->fetchArray($queryAttributeName);
+
+        foreach ($aAttributeNames as $aAttributeName) {
+            $aAttributes[MLShopifyAlias::getProductModel()::ATTRIBUTE_PREFIX_VARIANT . $aAttributeName['AttributeName']] = $aAttributeName['AttributeName'];
+
+        }
+        return $aAttributes;
+    }
+
+    /**
+     * Returns possible meta field.
+     *
+     * @return array
+     */
+    public function getPossibleMetaFields() {
+        $aAttributes = [];
+        foreach (MLShopifyAlias::getMetaFieldModel()->getList()->getList() as $oMetaField) {
+            /** @var $oMetaField  ML_Shopify_Model_Table_ShopifyMetaField */
+            if ($oMetaField->get('ShopifyMetaFieldType') !== 'rich_text_field') {
+                $aAttributes['m_' . $oMetaField->get('MetaFieldId')] = $oMetaField->getNameOfMetaField();
+            }
+        }
+        return $aAttributes;
     }
 
     /**
@@ -336,11 +376,9 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      * @throws MLAbstract_Exception
      */
     protected function getListOfArticleFields() {
-        return array(
-            ''       => MLI18n::gi()->get('ConfigFormPleaseSelect'),
-            'vendor' => MLI18n::gi()->get('Vendor'),
-        );
+        return $this->getPrefixedAttributeList();
     }
+
 
     /**
      * @param array $aForm
@@ -350,32 +388,10 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
         try {
             $sController = MLRequest::gi()->data('controller');
 
-            if (strpos($sController, '_config_price') !== false) {
-                foreach ($aForm as $sKey => $aGroups) {
-                    if (strpos($sKey, 'price') !== false) {
-                        MLDatabase::factory('config')->set('mpid', MLModul::gi()->getMarketPlaceId())->set('mkey', 'price.group')->set('value', 0)->save();
-                        foreach ($aForm[$sKey]['fields'] as $sInnerKey => $aField) {
+            $aForm = $this->manipulateFormAfterNormalizeRemoveCustomerGroup($sController, $aForm);
+            $aForm = $this->manipulateFormAfterNormalizeRemoveLanguage($sController, $aForm);
+            $aForm = $this->manipulateFormAfterNormalizeEbayProductTemplate($sController, $aForm);
 
-                            if (isset($aForm[$sKey]['fields'][$sInnerKey]) && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'priceoptions') !== false) {
-                                //                                echo print_m($aForm[$sKey]['fields'][$sInnerKey]);
-                                MLDatabase::factory('config')->set('mpid', MLModul::gi()->getMarketPlaceId())->set('mkey', $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['realname'])->set('value', 0)->save();
-                                unset($aForm[$sKey]['fields'][$sInnerKey]);
-                            }
-                        }
-                    }
-                }
-            }
-            if (strpos($sController, '_config_order') !== false) {
-                foreach ($aForm as $sKey => $aGroups) {
-                    foreach ($aForm[$sKey]['fields'] as $sInnerKey => $aField) {
-                        if (isset($aForm[$sKey]['fields'][$sInnerKey]) && isset($aForm[$sKey]['fields'][$sInnerKey]['realname']) && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'customergroup') !== false) {
-                            MLDatabase::factory('config')->set('mpid', MLModul::gi()->getMarketPlaceId())->set('mkey', $aForm[$sKey]['fields'][$sInnerKey]['realname'])->set('value', 0)->save();
-                            unset($aForm[$sKey]['fields'][$sInnerKey]);
-                        }
-                    }
-                }
-
-            }
         } catch (\Exception $ex) {
             MLMessage::gi()->addDebug($ex);
         }
@@ -401,7 +417,81 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      * @return array
      */
     public function getShippingTime() {
-        return $this->getListOfArticleFields();
+        return $this->getGroupedAttributesForMatching();
+    }
+
+
+
+    protected function manipulateFormAfterNormalizeRemoveCustomerGroup($sController, array $aForm): array {
+        if (strpos($sController, '_config_price') !== false) {
+            foreach ($aForm as $sKey => $aGroups) {
+                if (strpos($sKey, 'price') !== false) {
+                    MLDatabase::factory('config')->set('mpid', MLModule::gi()->getMarketPlaceId())->set('mkey', 'price.group')->set('value', 0)->save();
+                    foreach ($aForm[$sKey]['fields'] as $sInnerKey => $aField) {
+
+                        if (isset($aForm[$sKey]['fields'][$sInnerKey]) && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'priceoptions') !== false) {
+                            //                                echo print_m($aForm[$sKey]['fields'][$sInnerKey]);
+                            MLDatabase::factory('config')->set('mpid', MLModule::gi()->getMarketPlaceId())->set('mkey', $aForm[$sKey]['fields'][$sInnerKey]['subfields']['group']['realname'])->set('value', 0)->save();
+                            unset($aForm[$sKey]['fields'][$sInnerKey]);
+                        }
+                    }
+                }
+            }
+        }
+        if (strpos($sController, '_config_order') !== false) {
+            foreach ($aForm as $sKey => $aGroups) {
+                foreach ($aForm[$sKey]['fields'] as $sInnerKey => $aField) {
+                    if (isset($aForm[$sKey]['fields'][$sInnerKey]) && isset($aForm[$sKey]['fields'][$sInnerKey]['realname']) && strpos($aForm[$sKey]['fields'][$sInnerKey]['realname'], 'customergroup') !== false) {
+                        MLDatabase::factory('config')->set('mpid', MLModule::gi()->getMarketPlaceId())->set('mkey', $aForm[$sKey]['fields'][$sInnerKey]['realname'])->set('value', 0)->save();
+                        unset($aForm[$sKey]['fields'][$sInnerKey]);
+                    }
+                }
+            }
+
+        }
+        return $aForm;
+    }
+
+    protected function manipulateFormAfterNormalizeRemoveLanguage($sController, array $aForm): array {
+        if (strpos($sController, '_config_prepare') !== false) {
+            foreach ($aForm as $sKey => $aGroups) {
+                foreach ($aForm[$sKey]['fields'] as $sInnerKey => $aField) {
+                    if ($aField['realname'] === 'lang') {
+                        unset($aForm[$sKey]['fields'][$sInnerKey]);
+                    }
+                }
+            }
+        }
+        return $aForm;
+    }
+
+    protected function manipulateFormAfterNormalizeEbayProductTemplate($sController, array $aForm): array {
+        if (MLModule::gi()->getMarketPlaceName() === 'ebay' && strpos($sController, '_config_producttemplate') !== false) {
+            $aForm['product']['fields']['template.tabs']['subfields']['template.content']['i18n']['hint'] =
+                $this->addMetaFieldsToDescriptionHint($aForm['product']['fields']['template.tabs']['subfields']['template.content']['i18n']['hint']);
+
+        }
+        return $aForm;
+    }
+
+    public function addMetaFieldsToDescriptionHint(string $aField): string {
+        $sHint = str_replace('</dl></dl>', '', $aField);
+
+        $sMetaFieldInfo = MLI18n::gi()->ebay_prepare_apply_form_field_description_hint_metafield;
+
+        $i = 5;
+        foreach (MLShopifyAlias::getMetaFieldModel()->getList()->getList() as $oMetaField) {
+            if ($oMetaField->get('ShopifyMetaFieldType') !== 'rich_text_field') {
+                if ($i === 0) {
+                    break;
+                }
+                /** @var $oMetaField  ML_Shopify_Model_Table_ShopifyMetaField */
+                $aMetaFieldsKeys = $oMetaField->getMetaFieldExtraInformationAllPossibleKeys();
+                $sMetaFieldInfo .= '<dd>#' . current($aMetaFieldsKeys) . '#</dd>';
+                $i--;
+            }
+        }
+        return $sHint . $sMetaFieldInfo . '</dl></dl>';
     }
 
     /**
@@ -422,11 +512,11 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      */
     private function getDefaultFieldsAttributes() {
         $aShopDefaultFieldsAttributes = array(
-            'p_title'     => array(
+            'p_title' => array(
                 'name' => MLI18n::gi()->get('Title'),
                 'type' => 'text',
             ),
-            'pd_sku'      => array(
+            'pd_sku' => array(
                 'name' => MLI18n::gi()->get('SKU'),
                 'type' => 'text',
             ),
@@ -434,15 +524,15 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
                 'name' => MLI18n::gi()->get('Description'),
                 'type' => 'text',
             ),
-            'pd_barcode'  => array(
+            'pd_barcode' => array(
                 'name' => MLI18n::gi()->get('Barcode'),
                 'type' => 'text',
             ),
-            'pd_weight'   => array(
+            'pd_weight' => array(
                 'name' => MLI18n::gi()->get('Weight'),
                 'type' => 'text',
             ),
-            'p_vendor'   => array(
+            'p_vendor' => array(
                 'name' => MLI18n::gi()->get('Vendor'),
                 'type' => 'select',
             ),
@@ -450,7 +540,7 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
                 'name' => MLI18n::gi()->get('ProductType'),
                 'type' => 'text',
             ),
-            'pd_tags'     => array(
+            'pd_tags' => array(
                 'name' => 'Tags',
                 'type' => 'text',
             ),
@@ -477,13 +567,31 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
 
         foreach ($aAttributeNames as $aAttributeName) {
 
-            $aShopVariationAttributes['c_'.$aAttributeName['AttributeName']] = array(
+            $aShopVariationAttributes[MLShopifyAlias::getProductModel()::ATTRIBUTE_PREFIX_VARIANT . $aAttributeName['AttributeName']] = array(
                 'name' => $aAttributeName['AttributeName'],
                 'type' => 'select',
             );
 
         }
         return $aShopVariationAttributes;
+    }
+
+    /**
+     * Returns attribute list with options.
+     *
+     * @return array
+     */
+    public function getMetaFieldAttributes(): array {
+        $aAttributes = [];
+        foreach (MLShopifyAlias::getMetaFieldModel()->getList()->getList() as $oMetaField) {
+            if ($oMetaField->get('ShopifyMetaFieldType') !== 'rich_text_field') {
+                $aAttributes['m_' . $oMetaField->get('MetaFieldId')] = array(
+                    'name' => $oMetaField->getNameOfMetaField(),
+                    'type' => $oMetaField->get('Type'),
+                );
+            }
+        }
+        return $aAttributes;
     }
 
     /**
@@ -513,6 +621,12 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
             $aShopAttributes += array(MLI18n::gi()->get('ProductDefaultFieldsOptGroup') => $aShopDefaultFieldsAttributes);
         }
 
+        // Product meta field
+        $aMetaFieldAttributes = $this->getMetaFieldAttributes();
+        if (!empty($aMetaFieldAttributes)) {
+            $aMetaFieldAttributes['optGroupClass'] = 'property';
+            $aShopAttributes += array(MLI18n::gi()->get('MetaFieldOptGroup') => $aMetaFieldAttributes);
+        }
 
         return $aFirstElement + $aShopAttributes;
     }
@@ -525,7 +639,7 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      */
     public function getFlatShopAttributesForMatching($attributeCode = null, $product = null) {
 
-        $result = $this->getVariationAttributes() + $this->getDefaultFieldsAttributes();
+        $result = $this->getVariationAttributes() + $this->getDefaultFieldsAttributes() + $this->getMetaFieldAttributes();
 
         if (!empty($attributeCode) && !empty($result[$attributeCode])) {
             $result = $result[$attributeCode];
@@ -546,53 +660,180 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
         $aListOfShopifyCarriers =
             [
                 '4PX',
+                '90 Minutos',
+                'Aeronet',
+                'AGS',
                 'Amazon Logistics UK',
                 'Amazon Logistics US',
+                'Amm Spedition',
+                'An Post',
+                'ANDREANI',
                 'Anjun Logistics',
                 'APC',
+                'APG eCommerce Solutions Ltd.',
+                'Apple Express',
+                'Arame New Zealand',
+                'Aruba Post',
+                'Asendia USA',
+                'ASL Canada',
                 'Australia Post',
-                'Bluedart',
+                'AxleHire',
+                'Better Trucks',
+                'Bonshaw',
+                'Border Express',
+                'BPost',
+                'BPost International',
                 'Canada Post',
-                'Canpar',
+                'Canpar Canada',
+                'Canpar USA',
+                'Cargo Expreso GT',
+                'Cargo Expreso SV',
+                'Caribou',
+                'CDEK',
+                'CDL Last Mile',
+                'CEVA logistics',
+                'China EMS',
                 'China Post',
+                'Chronopost',
+                'Chit Chats',
+                'Chronopost',
                 'Chukou1',
+                'Colissimo',
+                'Comingle',
+                'Coordinadora',
                 'Correios',
-                'Couriers Please',
-                'Delhivery',
-                'Deutsche Post (DE)',
-                'Deutsche Post (EN)',
-                'DHL',
+                'Correos',
+                'CTT',
+                'CTT Express',
+                'Cyprus Post',
+                'Deliver it',
+                'Delnext',
+                'Deprisa',
+                'Deutsche Post',
+                'DHL eCommerce',
+                'DHL PAKET',
+                'DHL Commerce Asia',
+                'DHL Express',
+                'DHL Global Mail Asia',
+                'DHL Sweden',
+                'Dimerco Express Group',
+                'DoorDash',
                 'DPD',
+                'DPD Belgium',
+                'DPD Germany',
+                'DPD Hungary',
                 'DPD Local',
                 'DPD UK',
+                'DTD Express',
+                'DX',
                 'Eagle',
+                'Emons',
+                'Estes',
+                'Evri',
                 'Fastway Australia',
+                'Fastway South Africa',
                 'FedEx',
+                'First Global Logistics',
+                'First Line',
+                'Fleet Optics',
                 'FSC',
-                'Globegistics',
+                'Fulfilla',
                 'GLS',
-                'GLS (US)',
+                'GLS DE',
+                'GP Logistic Service',
+                'Guangdong Weisuyi Information Technology (WSE)',
+                'Heppner Internationale Spedition GmbH &amp; Co.',
+                'HR Parcel',
+                'Iceland Post',
+                'IDEX',
+                'Interparcel',
+                'Israel Post',
                 'Japan Post',
                 'La Poste',
+                'La Poste Burkina Faso',
+                'Landmark Global',
+                'Landmark Global Reference',
+                'Lasership',
+                'Latvia Post',
+                'Libya Post',
+                'Lietuvos Paštas',
+                'Logisters',
+                'Lone Star Overnight',
+                'M3 Logistics',
+                'Maldives Post',
+                'Mauritius Post',
+                'Meteor Space',
+                'Mondial Relay',
+                'moovin',
+                'NCS',
                 'New Zealand Post',
-                'Newgistics',
+                'NinjaVan',
+                'North Russia Supply Chain (Shenzhen) Co.',
+                'NOX Germany',
+                'OnTrac',
+                'OPT-NC',
+                'Packeta',
+                'Pago Logistics',
+                'Parcel Force',
+                'Passport',
+                'Ping An Da Tengfei Express',
+                'Pitney Bowes',
+                'Portal PostNord',
+                'Poste Italiane',
                 'PostNL',
-                'PostNord',
+                'PostNL International',
+                'PostNL International 35',
+                'PostNord DK',
+                'PostNord NO',
+                'PostNord SE',
                 'Purolator',
+                'Qxpress',
+                'Qyun Express',
                 'Royal Mail',
+                'Royal Shipments',
                 'Sagawa',
                 'Sendle',
+                'Servientrega Ecuador',
                 'SF Express',
                 'SFC Fulfillment',
+                'SHREE NANDAN COURIER',
                 'Singapore Post',
+                'SmartCat',
+                'Southwest Air Cargo',
                 'StarTrack',
+                'Spee-Dee Delivery Service',
+                'Sprinter',
+                'Step Forward Freight',
+                'Surpost',
+                'Swiship DE',
+                'Swiss Post',
+                'Tele Post',
+                'TForce Final Mile',
+                'Tinghao',
                 'TNT',
+                'TNT Reference',
+                'TNT UK',
+                'TNT UK Reference',
                 'Toll IPEC',
+                'United Delivery Service',
                 'UPS',
                 'USPS',
+                'UPS Canada',
+                'USPS',
+                'Venipak',
+                'We Pick Up',
+                'We Post',
                 'Whistl',
+                'Wizmo',
+                'WMYC',
+                'Xpedigo',
+                'XPO Logistics',
+                'XYY Logistics',
                 'Yamato',
+                'YDH',
+                'YiFan Express',
                 'YunExpress',
+                'YYZ Logistics',
                 'Yamato (JA)',
                 'Sagawa (JA)',
                 'Japan Post (JA)'
@@ -601,11 +842,25 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
         foreach ($aListOfShopifyCarriers as $sCarrier) {
             $aCarriers[$sCarrier] = $sCarrier;
         }
+        $aCarriers['Other'] = MLI18n::gi()->get('Shopify_Carrier_Other');
         return $aCarriers;
     }
 
     public function getShippingMethodValues() {
-        return $this->getShopShippingModuleValues();
+        $aShippingMethods = array(
+            'textfield' => array(
+                'title' => '{#i18n:form_orderimport_paymentandshipping_values_textfield_title#}',
+                'textoption' => true
+            ),
+        );
+        $aCarriers = $this->getShopShippingModuleValues();
+        unset($aCarriers['Other']);
+        foreach ($aCarriers as $sCarrier) {
+            $aShippingMethods[$sCarrier] = array(
+                'title' => $sCarrier,
+            );
+        }
+        return $aShippingMethods;
     }
 
     /**
@@ -613,10 +868,11 @@ class ML_Shopify_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_Abs
      * @return mixed
      */
     public function getVariationValueID($aVariationOption) {
-        return $aVariationOption['name'].'_'.$aVariationOption['valueid'];
+        return $aVariationOption['name'] . '_' . $aVariationOption['valueid'];
     }
 
     public function getDefaultCancelStatus() {
         return 'cancelled';
     }
+
 }

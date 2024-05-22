@@ -20,5 +20,5 @@ global $magnaConfig;
 return (
         isset($magnaConfig['maranon']['Marketplaces'][MLRequest::gi()->data('mp')]) && $magnaConfig['maranon']['Marketplaces'][MLRequest::gi()->data('mp')]=='ebay' //ebay module activation
         &&
-        class_exists('Shopware\Storefront\Framework\Routing\StorefrontResponse') //Showpare 6 shop activation
+        class_exists('Shopware\Storefront\Framework\Routing\StorefrontRouteScope') //Showpare 6 shop activation
 );

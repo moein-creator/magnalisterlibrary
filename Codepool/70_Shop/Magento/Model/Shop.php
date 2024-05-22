@@ -108,4 +108,8 @@ class ML_Magento_Model_Shop extends ML_Shop_Model_Shop_Abstract {
     public function getTimeZone() {
         return Mage::getStoreConfig('general/locale/timezone');
     }
+
+    public function getShopVersion() {
+        return Mage::getVersion();
+    }
 }

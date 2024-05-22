@@ -127,17 +127,22 @@ function var_dump () {
             }
             lgth = 0;
             for (someProp in obj) {
-                lgth++;
+                if (typeof someProp !== 'undefined') {
+                    lgth++;
+                }
+
             }
             str += 'array('+lgth+') {\n';
-            for (var key in obj) {
-                var objVal = obj[key];
-                if (typeof objVal === 'object' && objVal !== null &&
-                    !(objVal instanceof Date) && !(objVal instanceof RegExp) && !objVal.nodeName) {
-                    str += thick_pad + '[' + key + '] =>\n' + thick_pad + _formatArray(objVal, cur_depth + 1, pad_val, pad_char);
-                } else {
-                    val = _getInnerVal(objVal, thick_pad);
-                    str += thick_pad + '[' + key + '] =>\n' + thick_pad + val + '\n';
+            for (let key in obj) {
+                if (typeof key !== 'undefined') {
+                    let objVal = obj[key];
+                    if (typeof objVal === 'object' && objVal !== null &&
+                        !(objVal instanceof Date) && !(objVal instanceof RegExp) && !objVal.nodeName) {
+                        str += thick_pad + '[' + key + '] =>\n' + thick_pad + _formatArray(objVal, cur_depth + 1, pad_val, pad_char);
+                    } else {
+                        val = _getInnerVal(objVal, thick_pad);
+                        str += thick_pad + '[' + key + '] =>\n' + thick_pad + val + '\n';
+                    }
                 }
             }
             str += base_pad + '}\n';

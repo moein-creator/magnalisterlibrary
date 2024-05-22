@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2022 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -30,6 +30,7 @@ class ML_Cdiscount_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_
         if (   isset($aError['DETAILS']['ErrorType'])
             && in_array ($aError['DETAILS']['ErrorType'], array(
                 'OrderStateIncoherent', // OrderStateIncoherent: Shipped state is not possible to set at this stage
+                'UnexpectedException', // could be many errors of cdiscount
             ))
         ) {
             $this->saveOrderData($aModels[$sMarketplaceOrderId]);
@@ -37,23 +38,26 @@ class ML_Cdiscount_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_
         }
     }
 
+    /**
+     * @param $oOrder
+     * @return array|mixed|string|null
+     */
     protected function getCarrier($oOrder) {
-        $sConfigCarrier = MLModul::gi()->getConfig('orderstatus.shipmethod.select');
+        $sConfigCarrier = MLModule::gi()->getConfig('orderstatus.carrier.select');
 
         switch ($sConfigCarrier) {
             case 'matchShopShippingOptions':
                 $sCarrier = $oOrder->getShopOrderCarrierOrShippingMethodId();
 
-                $aCarrierShippingMethodMatching = MLModul::gi()->getConfig('orderstatus.shipmethod.matching');
+                $aCarrierShippingMethodMatching = MLModule::gi()->getConfig('orderstatus.carrier.matching');
                 $sMatchedKey = $this->findTheConfigKey($aCarrierShippingMethodMatching, $sCarrier, 'shopCarrier');
-                echo print_m($sMatchedKey, __LINE__);
                 if (isset($sMatchedKey)) {
-                    if($aCarrierShippingMethodMatching[$sMatchedKey]['marketplaceCarrier'] === 'Other'){
+                    if ($aCarrierShippingMethodMatching[$sMatchedKey]['marketplaceCarrier'] === 'UseShopValue') {
                         return $oOrder->getShopOrderCarrierOrShippingMethod();
                     }
                     return $aCarrierShippingMethodMatching[$sMatchedKey]['marketplaceCarrier'];
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_'.MLModule::gi()->getMarketPlaceId().'_WrongConfiguration', array(
                         'Problem' => '#carrier-code# is not matched correctly!',
                     ));
                     return null;
@@ -63,17 +67,17 @@ class ML_Cdiscount_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_
                 if ($mData !== null) {
                     return $mData;
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_'.MLModule::gi()->getMarketPlaceId().'_WrongConfiguration', array(
                         'Problem' => '#carrier-code# is not filled in order detail of shop or it is empty!',
                     ));
                     return null;
                 }
             case 'freetext':
-                $sTextField = MLModul::gi()->getConfig('orderstatus.shipmethod.freetext');
+                $sTextField = MLModule::gi()->getConfig('orderstatus.carrier.freetext');
                 if (!empty($sTextField)) {
                     return $sTextField;
                 } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                    MLLog::gi()->add('SyncOrderStatus_'.MLModule::gi()->getMarketPlaceId().'_WrongConfiguration', array(
                         'Problem' => 'For #carrier-code# "freetext" configuration right text field is empty!',
                     ));
                     return null;
@@ -89,58 +93,8 @@ class ML_Cdiscount_Model_Service_SyncOrderStatus extends ML_Modul_Model_Service_
                 if (!empty($sConfigCarrier)) {
                     return $sConfigCarrier;
                 }
-                MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
+                MLLog::gi()->add('SyncOrderStatus_'.MLModule::gi()->getMarketPlaceId().'_WrongConfiguration', array(
                     'Problem' => '#carrier-code# is not configured!',
-                ));
-                return null;
-            }
-        }
-
-    }
-    
-    protected function getShippingMethod($oOrder) {
-        $sConfigShippingMethod = MLModul::gi()->getConfig('orderstatus.shipmethod.select');
-        switch ($sConfigShippingMethod) {
-            case 'matchShopShippingOptions':
-                $sShippingMethod = $oOrder->getShopOrderCarrierOrShippingMethodId();
-                $aCarrierShippingMethodMatching = MLModul::gi()->getConfig('orderstatus.shipmethod.matching');
-                $sMatchedKey = $this->findTheConfigKey($aCarrierShippingMethodMatching, $sShippingMethod, 'shopCarrier');
-                if (isset($sMatchedKey)) {
-                    return $aCarrierShippingMethodMatching[$sMatchedKey]['marketplaceValue'];
-                } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
-                        'Problem' => '#ship-method# is not matched correctly!',
-                    ));
-                    return null;
-                }
-            case 'orderFreetextField':
-                $mData = $oOrder->getAdditionalOrderField('shipMethod');
-                if ($mData !== null) {
-                    return $mData;
-                } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
-                        'Problem' => '#ship-method# is not filled in order detail of shop or it is empty!',
-                    ));
-                    return null;
-                }
-            case 'freetext':
-                $sTextField = MLModul::gi()->getConfig('orderstatus.shipmethod.freetext');
-                if (!empty($sTextField)) {
-                    return $sTextField;
-                } else {
-                    MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
-                        'Problem' => 'For #ship-method# "freetext" configuration right text field is empty!',
-                    ));
-                    return null;
-                }
-            default:
-            {
-                //order attribute freetext field(only in Shopware 5)
-                if (strpos($sConfigShippingMethod, 'a_') === 0) {
-                    return $oOrder->getAttributeValue($sConfigShippingMethod);
-                }
-                MLLog::gi()->add('SyncOrderStatus_'.MLModul::gi()->getMarketPlaceId().'_WrongConfiguration', array(
-                    'Problem' => '#ship-method# is not configured!',
                 ));
                 return null;
             }

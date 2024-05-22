@@ -11,7 +11,7 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2021 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2023 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
@@ -19,32 +19,9 @@
 class ML_Cdiscount_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abstract {
 
     protected function getProductArray() {
-        /* @var $oHelper ML_Cdiscount_Helper_Model_Service_Product */
-        $oHelper = MLHelper::gi('Model_Service_Product');
-        $aMasterProducts = array();
-        foreach ($this->oList->getList() as $oProduct) {
-            $sParentSku = $oProduct->getMarketPlaceSku();
-            $oHelper->setProduct($oProduct);
-            foreach ($this->oList->getVariants($oProduct) as $oVariant) {
-                /* @var $oVariant ML_Shop_Model_Product_Abstract */
-                if ($this->oList->isSelected($oVariant)) {
-                    $oHelper->resetData();
-                    $variationData = $oHelper->setVariant($oVariant)->getData();
-                    if ($variationData['SKU'] === $sParentSku) {
-                        $variationData['ParentSKU'] = $sParentSku;
-                        $aMasterProducts[$oVariant->get('id')] = $variationData;
-                        continue;
-                    }
-                    $variationData['ItemTitle'] = $variationData['Title'];
-                    $aMasterProducts[$oVariant->get('id')] = $variationData;
-                    $aMasterProducts[$oVariant->get('id')]['SKU'] = $sParentSku;
-                    $variationData['Variation'] = $oVariant->getVariatonData();
-                    $aMasterProducts[$oVariant->get('id')]['Variations'][] = $variationData;
-                }
-            }
-        }
-
-        return $aMasterProducts;
+        $aMasterProducts = $this->indexingProductData();
+        $aDataToBeUpload = $this->processingVariationData($aMasterProducts);
+        return $aDataToBeUpload;
     }
 
     protected function hasAttributeMatching() {
@@ -64,4 +41,70 @@ class ML_Cdiscount_Model_Service_AddItems extends ML_Modul_Model_Service_AddItem
 
         return $variationProducts;
     }
+
+
+    protected function indexingProductData() {
+        /* @var $oHelper ML_Cdiscount_Helper_Model_Service_Product */
+        $oHelper = MLHelper::gi('Model_Service_Product');
+        $aMasterProducts = array();
+        $aPreparedImageExcludeVariantImages = array();
+        foreach ($this->oList->getList() as $oProduct) {
+            $sParentSku = $oProduct->getMarketPlaceSku();
+            $oHelper->setProduct($oProduct);
+            foreach ($this->oList->getVariants($oProduct) as $oVariant) {
+                /* @var $oVariant ML_Shop_Model_Product_Abstract */
+                if ($this->oList->isSelected($oVariant)) {
+                    $oHelper->resetData();
+                    $variationData = $oHelper->setVariant($oVariant)->getData();
+                    $aPreparedImageExcludeVariantImages = $this->gatheringGenericImages($aPreparedImageExcludeVariantImages, $sParentSku, $variationData);
+                    unset($variationData['PreparedImages']);
+                    $aMasterProducts[$sParentSku][$oVariant->get('id')] = $variationData;
+
+                }
+            }
+            foreach ($aMasterProducts[$sParentSku] as &$aVariantProduct) {
+                if (isset($aPreparedImageExcludeVariantImages[$sParentSku])) {
+                    $aVariantProduct['Images'] = array_merge($aVariantProduct['Images'], $aPreparedImageExcludeVariantImages[$sParentSku]);
+                    $aImages = array();
+                    foreach ($aVariantProduct['Images'] as &$image) {
+                        $aImages[] = array('URL' => $image);
+                    }
+                    $aVariantProduct['Images'] = $aImages;
+                }
+            }
+        }
+        return $aMasterProducts;
+    }
+
+    protected function processingVariationData($aMasterProducts) {
+        $aDataToUpload = array();
+        foreach ($aMasterProducts as $sParentSku => $variationData) {
+            foreach ($variationData as $variantId => $variationDatum) {
+                if ($variationDatum['SKU'] === $sParentSku) {
+                    $variationDatum['ParentSKU'] = $sParentSku;
+                    $aDataToUpload[$variantId] = $variationDatum;
+                    continue;
+                }
+                $variationDatum['ItemTitle'] = $variationDatum['Title'];
+                $aDataToUpload[$variantId] = $variationDatum;
+                $aDataToUpload[$variantId]['SKU'] = $sParentSku;
+                $variationDatum['Variation'] = $variationDatum;
+                $aDataToUpload[$variantId]['Variations'][] = $variationDatum;
+            }
+        }
+        return $aDataToUpload;
+    }
+
+    protected function gatheringGenericImages($aPreparedImageExcludeVariantImages, $sParentSku, $variationData) {
+        if (!isset($aPreparedImageExcludeVariantImages[$sParentSku])) {//initial prepared image
+            $aPreparedImageExcludeVariantImages[$sParentSku] = $variationData['PreparedImages'];
+        }
+        //remove variant image from prepared image
+        $aPreparedImageExcludeVariantImages[$sParentSku] = array_diff(
+            $aPreparedImageExcludeVariantImages[$sParentSku],
+            $variationData['Images']
+        );
+        return $aPreparedImageExcludeVariantImages;
+    }
+
 }
