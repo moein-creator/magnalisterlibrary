@@ -1,0 +1,9 @@
+<svg width="52.875" height="15.9398" viewBox="0 0 52.875 15.9398" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .text { font: 13px serif; fill: red; }
+        .text2 { font: 6px serif; fill: gray; }
+    </style>
+
+    <text x="0" y="10" class="text">Dummy</text>
+    <text x="0" y="15" class="text2">Developer</text>
+</svg>

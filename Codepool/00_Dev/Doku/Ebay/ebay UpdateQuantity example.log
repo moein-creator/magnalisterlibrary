@@ -1,0 +1,311 @@
+{
+    "SUBSYSTEM": "eBay",
+    "MARKETPLACEID": "157",
+    "ACTION": "UpdateQuantity",
+    "DATA": {
+        "ItemID": "110100816118",
+        "NewQuantity": 15,
+        "Variations": {
+            "Variations": [
+                {
+                    "Quantity": 15,
+                    "SKU": "p20m810",
+                    "StartPrice": 25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "M (38)"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Schwarz"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20mGRUEN",
+                    "StartPrice": 25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "M (38)"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Gr\u00fcn"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20mBLAU",
+                    "StartPrice": 26.25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "M (38)"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Blau"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20mROT",
+                    "StartPrice": 25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "M (38)"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Rot"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20L810",
+                    "StartPrice": 25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "L (40)"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Schwarz"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20LGRUEN",
+                    "StartPrice": 25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "L (40)"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Gr\u00fcn"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20LBLAU",
+                    "StartPrice": 26.25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "L (40)"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Blau"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20LROT",
+                    "StartPrice": 25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "L (40)"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Rot"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20XL810",
+                    "StartPrice": 26.25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "XL, 44"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Schwarz"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20XLGRUEN",
+                    "StartPrice": 26.25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "XL, 44"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Gr\u00fcn"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20XLBLAU",
+                    "StartPrice": 27.5,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "XL, 44"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Blau"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20XLROT",
+                    "StartPrice": 26.25,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "XL, 44"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Rot"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20803810",
+                    "StartPrice": 27.5,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "XXL, 48"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Schwarz"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20803GRUEN",
+                    "StartPrice": 27.5,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "XXL, 48"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Gr\u00fcn"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20803BLAU",
+                    "StartPrice": 28.75,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "XXL, 48"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Blau"
+                        }
+                    ]
+                },
+                {
+                    "Quantity": 15,
+                    "SKU": "p20803ROT",
+                    "StartPrice": 27.5,
+                    "VariationSpecifics": [
+                        {
+                            "Name": "Gr\u00f6\u00dfe",
+                            "Value": "XXL, 48"
+                        },
+                        {
+                            "Name": "Farbe",
+                            "Value": "Rot"
+                        }
+                    ]
+                }
+            ],
+            "VariationSpecificsSet": [
+                {
+                    "Name": "Gr\u00f6\u00dfe",
+                    "Values": [
+                        "M (38)",
+                        "L (40)",
+                        "XL, 44",
+                        "XXL, 48"
+                    ]
+                },
+                {
+                    "Name": "Farbe",
+                    "Values": [
+                        "Schwarz",
+                        "Gr\u00fcn",
+                        "Blau",
+                        "Rot"
+                    ]
+                }
+            ]
+        },
+        "fixed.stocksync": "auto",
+        "fixed.pricesync": "auto",
+        "chinese.stocksync": "no",
+        "chinese.pricesync": "auto",
+        "Price": 26.25,
+        "DEBUG": {
+            "product": {
+                "products_id": "15",
+                "products_model": "p15",
+                "products_quantity": "136",
+                "products_price": "135.0000",
+                "products_status": "1"
+            },
+            "syncConf": {
+                "FixedStockSync": "auto",
+                "ChineseStockSync": "no",
+                "FixedPriceSync": "auto",
+                "ChinesePriceSync": "auto",
+                "FixedQuantityType": "stock",
+                "FixedQuantityValue": "",
+                "Lang": "2",
+                "StatusMode": "false",
+                "SKUType": "artNr",
+                "FixedQuantitySub": 0,
+                "ChineseQuantitySub": 0,
+                "ChineseQuantityType": "lump",
+                "ChineseQuantityValue": 1
+            },
+            "contrib": false,
+            "calledBy": "SyncInventory"
+        },
+    },
+    "PASSPHRASE": "9xd2sga4ypkfeq0mt78ib3r6vzwohjnc",
+    "ECHOREQUEST": true,
+    "LANGUAGE": "de",
+    "CLIENTVERSION": "2.8.0",
+    "CLIENTBUILDVERSION": 2825,
+    "SHOPSYSTEM": "xtcommerce",
+    "SHOPURL": "http:\/\/devshops.magnalister.com\/shops\/xtcommerce\/"
+}
