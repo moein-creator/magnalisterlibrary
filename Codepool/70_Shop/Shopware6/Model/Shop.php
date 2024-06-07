@@ -18,6 +18,8 @@
 
 use Redgecko\Magnalister\Controller\MagnalisterController;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 
 class ML_Shopware6_Model_Shop extends ML_Shop_Model_Shop_Abstract {
 
@@ -118,5 +120,18 @@ class ML_Shopware6_Model_Shop extends ML_Shop_Model_Shop_Abstract {
 
     public function getShopVersion() {
         return MLSHOPWAREVERSION;
+    }
+
+    public function getTimeZoneOnlyForShow() {
+        /**
+         * @var $oUser \Shopware\Core\System\User\UserEntity
+         */
+        $oUser = MagnalisterController::getShopwareMyContainer()->get('user.repository')
+            ->search((new Criteria())->addFilter(new EqualsFilter('id', MagnalisterController::getShopwareUserId())), Context::createDefaultContext())->getEntities()->last();
+        if ($oUser !== null) {
+            return $oUser->getTimeZone();
+        } else {
+            return null;
+        }
     }
 }

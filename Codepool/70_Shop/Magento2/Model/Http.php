@@ -209,25 +209,6 @@ class ML_Magento2_Model_Http extends ML_Shop_Model_Http_Abstract {
     }
 
     /**
-     * @return string
-     */
-    public function getConfigFrontCronURL($aParams) {
-        $sParent = parent::getUrl($aParams);
-        $aSubmittedValues = MLRequest::gi()->data();
-        if (isset($aSubmittedValues['field']['general.cronfronturl'])) {
-            $mConfig = $aSubmittedValues['field']['general.cronfronturl'] === '' ? null : $aSubmittedValues['field']['general.cronfronturl'];
-        } else {
-            $mConfig = MLDatabase::factory('config')->set('mpid', '0')->set('mkey', 'general.cronfronturl')->get('value');
-        }
-
-        if ($mConfig != null) {
-            return $mConfig.($sParent == '' ? '' : '?'.$sParent);
-        } else {
-            return '';
-        }
-    }
-
-    /**
      * return directory or path (file system) of specific shop images
      * @return string
      */

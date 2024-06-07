@@ -42,13 +42,17 @@
     border-top-left-radius: 1em;
 } 
 #devBar>.magnaTabs2>ul{
-    height: 43px;
+    height: 53px;
     background:silver;
     padding-top:4px;
     margin-top:0;
     border-top-right-radius: 1em;
     border-bottom-right-radius: 1em;
     padding-right:0;
+}
+
+#devBar .magnaTabs2 ul > li > a {
+    background-color: white;
 }
 #devBar .magnaTabs2{
     margin-bottom: 0;

@@ -469,24 +469,16 @@ class ML_I18n_Controller_Main_Tools_I18n_TranslationTool extends ML_Core_Control
     }
 
     protected function callAjaxCheckKeys() {
-
+        $limit = 100;
         $offset = (int)MLRequest::gi()->data('offset');
         $this->oSelect = MLDatabase::factorySelectClass()->from(MLRequest::gi()->data('tablename'), 't')
-            ->limit($offset, 500);
+            ->limit($offset, $limit);
+        $total = (int)$this->oSelect->getCount();
         foreach ($this->oSelect->getResult() as $aRow) {
             $hash = hash('sha3-256', $aRow['TranslationKey'] . $aRow['FileRelativePath']);
-            MLDatabase::getDbInstance()->update(MLRequest::gi()->data('tablename'),
-                [
-                    'SHA3256Key' => $hash
-                ],
-                [
-                    'TranslationKey' => $aRow['TranslationKey'],
-                    'FileRelativePath' => $aRow['FileRelativePath']
-                ]
-            );
             if ($aRow['SHA3256Key'] !== $hash) {
                 MLMessage::gi()->addWarn('false' . __LINE__ . ':' . microtime(true), array($aRow['TranslationKey'], $hash, $aRow['SHA3256Key']));
-                $result = MLDatabase::getDbInstance()->update(MLRequest::gi()->data('tablename'),
+                MLDatabase::getDbInstance()->update(MLRequest::gi()->data('tablename'),
                     [
                         'SHA3256Key' => $hash
                     ],
@@ -495,27 +487,23 @@ class ML_I18n_Controller_Main_Tools_I18n_TranslationTool extends ML_Core_Control
                         'FileRelativePath' => $aRow['FileRelativePath']
                     ]
                 );
+                $result = (int)MLDatabase::getDbInstance()->affectedRows() > 0;
+                if (!$result) {
+                    $this->checkRecordsWithOldAndNewKey($aRow, $hash);
 
-                MLMessage::gi()->addWarn('result' . __LINE__ . ':' . microtime(true), array($result));
-
-                if ($result === false) {
-                    MLDatabase::getDbInstance()->delete(MLRequest::gi()->data('tablename'),
-                        [
-                            'SHA3256Key' => $aRow['SHA3256Key']
-                        ]
-                    );
-                    MLMessage::gi()->addWarn('delete' . __LINE__ . ':' . microtime(true), array(MLDatabase::getDbInstance()->affectedRows()));
                 }
             }
         }
-        $total = (int)$this->oSelect->getCount();
-
+        $blSuccess = $total <= $offset;
+        if (!$blSuccess && MLRequest::gi()->data('saveSelection') !== 'true') {
+            $offset = $offset + $limit;
+        }
         MLSetting::gi()->add(
             'aAjax',
             array(
-                'success' => $offset >= $total,
+                'success' => $blSuccess,
                 'error' => '',
-                'offset' => $offset + 500,
+                'offset' => $offset,
                 'info' => array(
                     'total' => $total,
                     'current' => $offset,
@@ -557,11 +545,25 @@ WHERE (t.`DE` ='') AND (t.`$language` IS NULL)");
                     ->save();
             }
         }
+
+        $aListOfFiles = array_unique(array_column($aData, 'FileRelativePath'));
+        foreach ($aListOfFiles as $sFile) {
+            $filePath = $this->getFullPath($language, $sFile);
+            $wholeContent = "<?php\n\n";
+            foreach (MLDatabase::factory('translation')->set('FileRelativePath', $sFile)
+                         ->getList()
+                         ->getQueryObject()
+                         ->getResult() as $aRow) {
+                $wholeContent .= 'MLI18n::gi()->{' . var_export($aRow['TranslationKey'], true) . '} = ' . var_export($aRow[$language], true) . ";\n";
+
+            }
+            file_put_contents($filePath, $wholeContent);
+        }
         foreach ($aData as $aRow) {
             $errors = [];
             //MLMessage::gi()->addDebug($aRow['TranslationKey'].':'.microtime(true));
             if (isset($aRow[$language])) {
-                $filePath = MLFilesystem::getLibPath() . str_replace('#lang#', ucfirst(strtolower($language)), $aRow['FileRelativePath']);//De, Fr
+                $filePath = $this->getFullPath($language, $aRow['FileRelativePath']);//De, Fr
                 foreach (
                     [
                         $language,//DE, FR
@@ -724,5 +726,72 @@ WHERE (t.`DE` ='') AND (t.`$language` IS NULL)");
             $searchingString = "%$searchingString%";
         }
         return $searchingString;
+    }
+
+    protected function checkRecordsWithOldAndNewKey(array $aRow, string $hash): void {
+        [$first, $second] = MLDatabase::getDbInstance()->fetchArray('SELECT * FROM `' . MLRequest::gi()->data('tablename') . '` WHERE `TranslationKey` =\'' . $aRow['TranslationKey'] . '\' AND `FileRelativePath` = \'' . $aRow['FileRelativePath'] . '\'');
+        if (!empty($first) && !empty($second)) {
+            $main = null;
+            $copy = null;
+            if ($first['SHA3256Key'] === $hash) {
+                $main = $first;
+                $copy = $second;
+            } elseif ($second['SHA3256Key'] === $hash) {
+                $main = $second;
+                $copy = $first;
+            }
+            if ($main !== null) {
+                $isDifferent = false;
+                $aUpdate = [];
+                foreach ($this->getListOfLang() as $column) {
+                    if (
+                        $main[$column] !== $copy[$column] &&
+                        !in_array($copy[$column], ['', null], true)
+                    ) {
+                        if ($main[$column] === null) {
+                            $aUpdate[$column] = $copy[$column];
+                        }
+                        $isDifferent = true;
+                        break;
+                    }
+                }
+                if ($isDifferent) {
+                    if (!empty($aUpdate)) {
+                        MLDatabase::getDbInstance()->update(MLRequest::gi()->data('tablename'),
+                            $aUpdate,
+                            [
+                                'SHA3256Key' => $hash
+                            ]
+                        );
+                    }
+                    MLMessage::gi()->addWarn('first and second are different. Hash:' . $hash, [$first, $second]);
+                } else {
+                    MLDatabase::getDbInstance()->delete(MLRequest::gi()->data('tablename'),
+                        [
+                            'SHA3256Key' => $copy['SHA3256Key']
+                        ]
+                    );
+                    MLMessage::gi()->addWarn('delete - ' . $hash, [$first, $second]);
+                }
+            } else {
+                MLMessage::gi()->addDebug('main cannot be found. Hash:' . $hash, [$first, $second]);
+            }
+
+            MLMessage::gi()->addDebug(__LINE__ . ':' . microtime(true), array($hash, [$first, $second]));
+
+
+        } else {
+
+            MLMessage::gi()->addDebug('first or second are empty. Hash:' . $hash, [$first, $second]);
+        }
+    }
+
+    /**
+     * @param string $language
+     * @param string $fileRelativePath
+     * @return string
+     */
+    protected function getFullPath($language, $fileRelativePath) {
+        return MLFilesystem::getLibPath() . str_replace('#lang#', ucfirst(strtolower($language)), $fileRelativePath);
     }
 }

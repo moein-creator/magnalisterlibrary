@@ -336,6 +336,10 @@ abstract class ML_Shop_Model_Shop_Abstract {
         return null;
     }
 
+    public function getTimeZoneOnlyForShow() {
+        return null;
+    }
+
     /**
      * It is useful to test special CRONs in Shopify, may be in future another cloud shop
      * @return array

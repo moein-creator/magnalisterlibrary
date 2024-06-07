@@ -69,7 +69,11 @@
         $result = MLDatabase::getDbInstance()->fetchRow($sql);
 
         if ($result) {
-            $date = new DateTime($result['ImportOrUpdateTime']);
+            if (isset($result['ImportOrUpdateTime'])) {
+                $date = new DateTime($result['ImportOrUpdateTime']);
+            } else {
+                $date = new DateTime('now');
+            }
             $lastImportTime = $date->format("F d, Y, H:i a");
         }
 

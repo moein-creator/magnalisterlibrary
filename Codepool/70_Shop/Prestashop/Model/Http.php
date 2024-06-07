@@ -20,7 +20,8 @@
  * Prestashop specific implementation of the Http Model.
  */
 class ML_Prestashop_Model_Http extends ML_Shop_Model_Http_Abstract {
-    
+
+    protected $frontUrlBeginningSign = '&';
     protected $sAdminPath = null;
     
     protected static $iTestShopId = null;

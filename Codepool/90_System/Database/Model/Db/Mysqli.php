@@ -19,6 +19,10 @@
 MLFilesystem::gi()->loadClass("model_db_abstract");
 
 class ML_Database_Model_Db_Mysqli extends ML_Database_Model_Db_Abstract {
+
+    /**
+     * @var false|mysqli
+     */
     protected $oInstance = null;
 
     protected $access = array(

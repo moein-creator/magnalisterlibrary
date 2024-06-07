@@ -73,30 +73,14 @@ class ML_Shopware66_Model_Order extends ML_Shopware6_Model_Order {
         $mTime = null;
         try {
             $oOrder = $this->getShopOrderObject([
-                'stateMachineState' // without the association we don't get the machine states
+                'stateMachineState.toStateMachineHistoryEntries' // without the association we don't get the machine states
             ]);
-            $OrderStateMachineStateEntity = MLShopware6Alias::getRepository('state_machine_state.repository')->search(
-                (new Criteria())
-                    ->addFilter(new EqualsFilter('id', $oOrder->getStateId()))
-                , Context::createDefaultContext()
-            )->getEntities()->first();
+            $oHistory = $oOrder->getStateMachineState()->getToStateMachineHistoryEntries();//here shopware get only the last change history
+            $mTime = $oHistory === null ? null : $oHistory->last()->getCreatedAt()->format('Y-m-d H:i:s');
 
-            if (MLService::getSyncOrderStatusInstance()->isShipped($OrderStateMachineStateEntity->getTechnicalName())) {
-                /** @var StateMachineHistoryEntity $oHistory */
-                $sStateID = $oOrder->getStateMachineState()->getId();
-                $oHistory = MLShopware6Alias::getRepository('state_machine_history')
-                    ->search(
-                        (new Criteria())
-                            ->addFilter(new EqualsFilter('entityName', OrderDefinition::ENTITY_NAME))
-                            ->addFilter(new ContainsFilter('entityId', '"'.$oOrder->getId().'"'))
-                            ->addFilter(new EqualsFilter('toStateMachineState.id', $sStateID))
-                            ->addSorting(new FieldSorting('createdAt', 'DESC'))
-                        , Context::createDefaultContext())->first();
-                $mTime = $oHistory === null ? null : $oHistory->getCreatedAt()->format('Y-m-d H:i:s');
-            }
         } catch (Exception $oEx) {
+            MLMessage::gi()->addDebug($oEx);
         }
-
         return $mTime;
     }
 

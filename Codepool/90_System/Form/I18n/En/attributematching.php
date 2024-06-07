@@ -11,3 +11,4 @@ MLI18n::gi()->Product_DefaultAttribute_LengthValue = 'Length: Value (in numbers,
 MLI18n::gi()->Product_DefaultAttribute_WeightWithUnit = 'Weight: Value incl. unit (e.g. 100 Kg)';
 MLI18n::gi()->Product_DefaultAttribute_WeightUnit = 'Weight: Unit (e.g. Kg)';
 MLI18n::gi()->Product_DefaultAttribute_WeightValue = 'Weight: Value (in numbers, e.g. 100)';
+MLI18n::gi()->AttributeMatching_AutoMatching_UseShopValue = 'Use webshop provided value';

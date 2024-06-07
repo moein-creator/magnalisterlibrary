@@ -161,6 +161,10 @@ if (is_array($aParentValue) && count($aParentValue) === 2 && reset($aParentValue
         if (isset($aField['doKeyPacking'])) {
             $aNewField['doKeyPacking'] = $aField['doKeyPacking'];
         }
+        $useShopValues = $this->getUseShopValues($sVariationValue, $sCustomIdentifier, $sMPAttributeCode);
+        if (isset($useShopValues)) {
+            $aNewField['useShopValues'] = $useShopValues;
+        }
     }
     $aNewField['notMatchIsSupported'] = MLFormHelper::getShopInstance()->shouldBeDisplayedAsVariationAttribute($sAttributeCode) && MLModul::gi()->isAttributeMatchingNotMatchOptionImplemented();
     $this->includeType($aNewField);

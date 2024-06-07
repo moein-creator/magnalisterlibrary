@@ -92,3 +92,15 @@ button.mlbtn.fullfont {
 .magnalisterForm .borderCollapseInitial {
     border-collapse: initial;
 }
+
+.ml-disableElement {
+    z-index: 1000 !important;
+    background-color: rgba(102, 102, 102, 0.5) !important;
+    opacity: 0.7 !important;
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
+.ml-transparentBackground {
+    background-color: transparent !important;
+}

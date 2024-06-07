@@ -55,8 +55,8 @@ class ML_Core_Model_SettingRegistry {
      */
     public function addCss($mStyle, $blOverwrite = true) {
         $mStyle = is_string($mStyle) ? array($mStyle) : $mStyle;
-        foreach ($mStyle as $i => $mStyle) {
-            $mStyle[$i] = $mStyle.'?%s';
+        foreach ($mStyle as $i => $sStyle) {
+            $mStyle[$i] = $sStyle . '?%s';
         }
         MLSetting::gi()->add('aCss', $mStyle, $blOverwrite);
         return $this;

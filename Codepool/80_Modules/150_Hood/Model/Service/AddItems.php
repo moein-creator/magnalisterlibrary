@@ -11,13 +11,14 @@
  *                                      boost your Online-Shop
  *
  * -----------------------------------------------------------------------------
- * (c) 2010 - 2020 RedGecko GmbH -- http://www.redgecko.de
+ * (c) 2010 - 2024 RedGecko GmbH -- http://www.redgecko.de
  *     Released under the MIT License (Expat)
  * -----------------------------------------------------------------------------
  */
 
 class ML_Hood_Model_Service_AddItems extends ML_Modul_Model_Service_AddItems_Abstract {
 
+    protected $blCheckVariantQuantity = false;
     protected $sVariationDimensionForPictures = null;
 
     /**

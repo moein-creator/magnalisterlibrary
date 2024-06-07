@@ -24,6 +24,7 @@
      throw new Exception();
 $marketplaceName = MLModul::gi()->getMarketPlaceName();
 
+$sUseShopValuesName = str_replace('[Values]', '', $aField['name']);
 $sName = str_replace('field', '', $aField['name']);
 $sNameWithoutValue = str_replace('[Values]', '', $sName);
 $aNameWithoutValue = explode('][', $sNameWithoutValue);
@@ -40,6 +41,18 @@ if ($ini == 0) return '';
 $ini += strlen($marketplaceName . '_prepare_');
 $len = strpos($sChangedSelector, '_field', $ini) - $ini;
 $tabType = substr($sChangedSelector, $ini, $len);
+$useShopValuesFieldId = null;
+if (!$blDisableFreeText) {
+    $useShopValuesFieldId = rtrim($sSelector, '_code') . '_useshopvalues';
+    $useShopValuesField = array(
+        'i18n' => array('valuehint' => MLI18n::gi()->AttributeMatching_AutoMatching_UseShopValue),
+        'id' => $useShopValuesFieldId,
+        'name' => $sUseShopValuesName . '[UseShopValues]' ,
+        'type' => 'bool',
+        'value' => isset($aField['useShopValues']) ? $aField['useShopValues'] : true
+    );
+    $this->includeType($useShopValuesField);
+}
 ?>
 <span>
     <table style="width:100%;margin-top: 15px">
@@ -514,9 +527,12 @@ $tabType = substr($sChangedSelector, $ini, $len);
 <script>
     (function($) {
         var isShopMultiSelect = <?php echo json_encode($isShopMultiSelect); ?>,
-            isMPMultiSelect = <?php echo json_encode($isMPMultiSelect); ?>;
+            isMPMultiSelect = <?php echo json_encode($isMPMultiSelect); ?>,
+            useShopValueId = <?php echo json_encode($useShopValuesFieldId) ?>;
+
 
         $(document).ready(function() {
+
             $('select option[value="separator_line_3"]').attr('disabled', 'disabled');
 
             if (!isShopMultiSelect) {
@@ -525,6 +541,20 @@ $tabType = substr($sChangedSelector, $ini, $len);
 
             if (!isMPMultiSelect) {
                 $('[name="ml[field]<?php echo $sName ?>[0][Marketplace][Key]"]').find('[value="multiSelect"]').attr('disabled', 'disabled');
+            }
+
+            if (useShopValueId !== null) {
+                var useShopValueSelector = $("#" + useShopValueId);
+                if(useShopValueSelector.prop('checked')) {
+                    useShopValuesDropdownManipulation(true)
+                }
+                useShopValueSelector.change(function () {
+                    if(this.checked) {
+                        useShopValuesDropdownManipulation(true)
+                    } else {
+                        useShopValuesDropdownManipulation(false)
+                    }
+                });
             }
         });
 
@@ -613,6 +643,41 @@ $tabType = substr($sChangedSelector, $ini, $len);
             });
 
             return allCheckedValues;
+        }
+
+        function useShopValuesDropdownManipulation(checked){
+            var shopAttributeSelect = $('select[name="ml[field]<?php echo $sName ?>[0][Shop][Key]"]'),
+                marketplaceAttributeSelect = $('select[name="ml[field]<?php echo $sName ?>[0][Marketplace][Key]"]'),
+                matchTableSelect =  $('#<?php echo $sSelector ?>_button_matched_table select'),
+                matchTableButton =  $('#<?php echo $sSelector ?>_button_matched_table button');
+
+            if (checked) {
+                shopAttributeSelect.val('all').trigger('change')
+                marketplaceAttributeSelect.val("auto").trigger('change')
+                shopAttributeSelect.prop('disabled', true)
+                marketplaceAttributeSelect.prop('disabled', true)
+                $('button#<?php echo $id ?>[value="<?php echo $sLast ?>"]').prop('disabled', true)
+                matchTableSelect.prop('disabled', true)
+                matchTableButton.prop('disabled', true)
+                shopAttributeSelect.next('.select2-container').addClass('ml-disableElement');
+                marketplaceAttributeSelect.next('.select2-container').addClass('ml-disableElement');
+                matchTableSelect.addClass('ml-disableElement');
+                shopAttributeSelect.next('.select2-container').find('.select2-selection').addClass('ml-transparentBackground');
+                marketplaceAttributeSelect.next('.select2-container').find('.select2-selection').addClass('ml-transparentBackground');
+            } else {
+                shopAttributeSelect.val('noselection').trigger('change')
+                marketplaceAttributeSelect.val('noselection').trigger('change')
+                marketplaceAttributeSelect.prop('disabled', false)
+                shopAttributeSelect.prop('disabled', false)
+                $('button#<?php echo $id ?>[value="<?php echo $sLast ?>"]').prop('disabled', false)
+                matchTableSelect.prop('disabled', false)
+                matchTableButton.prop('disabled', false)
+                shopAttributeSelect.next('.select2-container').removeClass('ml-disableElement');
+                marketplaceAttributeSelect.next('.select2-container').removeClass('ml-disableElement');
+                matchTableSelect.removeClass('ml-disableElement');
+                shopAttributeSelect.next('.select2-container').find('.select2-selection').removeClass('ml-transparentBackground');
+                marketplaceAttributeSelect.next('.select2-container').find('.select2-selection').removeClass('ml-transparentBackground');
+            }
         }
     })(jqml);
 </script>

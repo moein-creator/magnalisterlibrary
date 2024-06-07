@@ -6,6 +6,11 @@
 ?>
 <?php if (isset($aField)) {
     $selectid = isset($aField['id']) ? 'id="'.$aField['id'].'"' : uniqid('autoprefix-option');
+    if (!empty($aField['value']) && isset($aField['values'][$aField['value']])) {
+        $blValueExists = false;
+    } else {
+        $blValueExists = true;
+    }
     ?>
     <div style="width: 100%" class='ml-searchable-select' lang="<?php echo strtolower(MLLanguage::gi()->getCurrentIsoCode()); ?>" >
         <select style="width: 100%"
@@ -22,7 +27,8 @@
             <?php if (!empty($aField['values']) && isset($aField['isbrand']) && !$aField['isbrand']) {
                 foreach ($aField['values'] as $value => $label) {
                     if(isset($aField['value']) && !empty($aField['value']) && $aField['value'] !== 'noselection' && $aField['value'] == $value)  {?>
-                        <option value="<?php echo $aField['value'] ?>" selected="selected"><?php echo $aField['values'][$aField['value']] ?></option>
+                        <option value="<?php echo $aField['value'] ?>"
+                                selected="selected"><?php echo(isset($aField['values'][$aField['value']]) ? $aField['values'][$aField['value']] : MLI18n::gi()->get('ML_LABEL_INVALID')); ?></option>
                     <?php  } else { ?>
                         <option value="<?php echo $value?>"><?php echo $label?></option>
                     <?php
@@ -30,7 +36,8 @@
                 }
             } else {
                 if(isset($aField['value']) && !empty($aField['value']) && $aField['value'] !== 'noselection')  {?>
-            <option value="<?php echo $aField['value'] ?>" selected="selected"><?php echo $aField['values'][$aField['value']] ?></option>
+                    <option value="<?php echo $aField['value'] ?>"
+                            selected="selected"><?php echo(isset($aField['values'][$aField['value']]) ? $aField['values'][$aField['value']] : MLI18n::gi()->get('ML_LABEL_INVALID')); ?></option>
             <?php  } else {?>
             <option value="noselection"><?php echo MLI18n::gi()->get('otto_please_value_search')?></option>
 

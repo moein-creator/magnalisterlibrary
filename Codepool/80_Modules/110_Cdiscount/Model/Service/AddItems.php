@@ -97,6 +97,14 @@ class ML_Cdiscount_Model_Service_AddItems extends ML_Modul_Model_Service_AddItem
 
     protected function gatheringGenericImages($aPreparedImageExcludeVariantImages, $sParentSku, $variationData) {
         if (!isset($aPreparedImageExcludeVariantImages[$sParentSku])) {//initial prepared image
+            // Backwards compatibility for PHP 8
+            // PreparedImages could be null, which turns into a Fatal Error on the array_diff() call below
+            if (null === $variationData['PreparedImages']) {
+                $aPreparedImageExcludeVariantImages[$sParentSku] = null;
+
+                return $aPreparedImageExcludeVariantImages;
+            }
+
             $aPreparedImageExcludeVariantImages[$sParentSku] = $variationData['PreparedImages'];
         }
         //remove variant image from prepared image

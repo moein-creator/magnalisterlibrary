@@ -254,6 +254,7 @@ abstract class ML_Shop_Model_Http_Abstract {
         }
     }
 
+    protected $frontUrlBeginningSign = '?';
     /**
      * @return string
      */
@@ -273,7 +274,7 @@ abstract class ML_Shop_Model_Http_Abstract {
         }
 
         if ($mConfig != null) {
-            return $mConfig.($sParent == '' ? '' : '&'.$sParent);
+            return $mConfig . ($sParent == '' ? '' : $this->frontUrlBeginningSign . $sParent);
         } else {
             return '';
         }

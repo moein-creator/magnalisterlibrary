@@ -116,9 +116,19 @@ class ML_WooCommerce_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopOrd
         $this->oCurrentOrder = null;
         $this->iCustomerId = null;
         if ($this->oOrder->exists()) {
-            $this->oCurrentOrder = new WC_Order($oOrder->get('current_orders_id'));
+            try {
+                $this->oOrder->getShopOrderObject();
+                $this->oCurrentOrder = new WC_Order($oOrder->get('current_orders_id'));
+                $this->aCurrentData = $oOrder->get('orderdata');
+            } catch (Exception $exception) {
+                MLLog::gi()->add(MLSetting::gi()->get('sCurrentOrderImportLogFileName'), array(
+                    'MOrderId'     => MLSetting::gi()->get('sCurrentOrderImportMarketplaceOrderId'),
+                    'PHP'          => get_class($this).'::'.__METHOD__.'('.__LINE__.')',
+                    'Error' => $exception->getMessage()
+                ));
+            }
+
         }
-        $this->aCurrentData = $oOrder->get('orderdata');
 
         return $this;
     }

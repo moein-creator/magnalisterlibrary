@@ -187,121 +187,129 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
 
                     $value['Error'] = false;
                     $isSelectedAttribute = $key === $aActions['saveaction'];
-                    $this->transformMatching($value);
-                    $this->validateCustomAttributes($key, $value, $previouslyMatchedAttributes, $aErrors,
-                        $emptyCustomName, $savePrepare, $isSelectedAttribute);
-                    $this->removeCustomAttributeHint($value);
-                    $sAttributeName = $value['AttributeName'];
 
-                    if (!isset($value['Code'])) {
-                        // this will happen only if attribute was matched and then it was deleted from the shop
-                        $value['Code'] = '';
-                    }
+                    // this field is only available on attributes that are FreeText Kind
+                    // this is used to improve auto matching if checked no matched values will be saved
+                    // we will use shop values and do the matching during product upload
+                    if (isset($value['UseShopValues']) && $value['UseShopValues'] === '1') {
+                        $value['Values'] = array();
+                    } else {
+                        $this->transformMatching($value);
+                        $this->validateCustomAttributes($key, $value, $previouslyMatchedAttributes, $aErrors,
+                            $emptyCustomName, $savePrepare, $isSelectedAttribute);
+                        $this->removeCustomAttributeHint($value);
+                        $sAttributeName = $value['AttributeName'];
 
-                    if ($value['Code'] === '' || (empty($value['Values']) && $value['Values'] !== '0')) {
-                        if (isset($value['Required']) && $value['Required']) {
-                            if ($savePrepare || $isSelectedAttribute) {
+                        if (!isset($value['Code'])) {
+                            // this will happen only if attribute was matched and then it was deleted from the shop
+                            $value['Code'] = '';
+                        }
+
+                        if ($value['Code'] === '' || (empty($value['Values']) && $value['Values'] !== '0')) {
+                            if (isset($value['Required']) && $value['Required']) {
+                                if ($savePrepare || $isSelectedAttribute) {
+                                    if ($savePrepare) {
+                                        $aErrors[] = self::getMessage('_prepare_variations_error_text',
+                                            array('attribute_name' => $sAttributeName));
+                                    }
+                                    $value['Error'] = true;
+                                }
+                            }
+
+                            // $key should be unset whenever condition (isset($value['Required']) && $value['Required'] && $savePrepare)
+                            // is not true.
+                            if (!isset($value['Required']) || !$value['Required'] || !$savePrepare) {
+                                unset($aMatching[$key]);
+                            }
+
+                            continue;
+                        }
+
+                        if (!is_array($value['Values']) || !isset($value['Values']['FreeText'])) {
+                            continue;
+                        }
+
+                        $sInfo = self::getMessage('_prepare_variations_manualy_matched');
+                        $sFreeText = $value['Values']['FreeText'];
+                        unset($value['Values']['FreeText']);
+
+                        if ($value['Values']['0']['Shop']['Key'] === 'noselection'
+                            || $value['Values']['0']['Marketplace']['Key'] === 'noselection'
+                        ) {
+                            unset($value['Values']['0']);
+                            if (empty($value['Values']) && $value['Required'] && ($savePrepare || $isSelectedAttribute)) {
                                 if ($savePrepare) {
                                     $aErrors[] = self::getMessage('_prepare_variations_error_text',
                                         array('attribute_name' => $sAttributeName));
                                 }
                                 $value['Error'] = true;
                             }
-                        }
 
-                        // $key should be unset whenever condition (isset($value['Required']) && $value['Required'] && $savePrepare)
-                        // is not true.
-                        if (!isset($value['Required']) || !$value['Required'] || !$savePrepare) {
-                            unset($aMatching[$key]);
-                        }
-
-                        continue;
-                    }
-
-                    if (!is_array($value['Values']) || !isset($value['Values']['FreeText'])) {
-                        continue;
-                    }
-
-                    $sInfo = self::getMessage('_prepare_variations_manualy_matched');
-                    $sFreeText = $value['Values']['FreeText'];
-                    unset($value['Values']['FreeText']);
-
-                    if ($value['Values']['0']['Shop']['Key'] === 'noselection'
-                        || $value['Values']['0']['Marketplace']['Key'] === 'noselection'
-                    ) {
-                        unset($value['Values']['0']);
-                        if (empty($value['Values']) && $value['Required'] && ($savePrepare || $isSelectedAttribute)) {
-                            if ($savePrepare) {
-                                $aErrors[] = self::getMessage('_prepare_variations_error_text',
-                                    array('attribute_name' => $sAttributeName));
-                            }
-                            $value['Error'] = true;
-                        }
-
-                        foreach ($value['Values'] as $k => &$v) {
-                            if (empty($v['Marketplace']['Info']) || $v['Marketplace']['Key'] === 'manual') {
-                                $v['Marketplace']['Info'] = $v['Marketplace']['Value'].
-                                    self::getMessage('_prepare_variations_free_text_add');
-                            }
-                        }
-
-                        continue;
-                    }
-
-                    if ($value['Values']['0']['Marketplace']['Key'] === 'reset') {
-                        $aMatching[$key]['Values'] = array();
-                        continue;
-                    }
-
-                    if ($value['Values']['0']['Marketplace']['Key'] === 'manual') {
-                        $sInfo = self::getMessage('_prepare_variations_free_text_add');
-                        if (empty($sFreeText)) {
-                            if ($savePrepare || $isSelectedAttribute) {
-                                if ($savePrepare) {
-                                    $aErrors[] = $sAttributeName.self::getMessage('_prepare_variations_error_free_text');
+                            foreach ($value['Values'] as $k => &$v) {
+                                if (empty($v['Marketplace']['Info']) || $v['Marketplace']['Key'] === 'manual') {
+                                    $v['Marketplace']['Info'] = $v['Marketplace']['Value'].
+                                        self::getMessage('_prepare_variations_free_text_add');
                                 }
-                                $value['Error'] = true;
                             }
 
-                            unset($value['Values']['0']);
                             continue;
                         }
 
-                        $value['Values']['0']['Marketplace']['Value'] = $sFreeText;
-                    }
-
-                    if ($value['Values']['0']['Marketplace']['Key'] === 'auto') {
-                        $addNotAllValuesMatchedNotice = !$this->autoMatch($sIdentifier, $key, $value);
-                        continue;
-                    }
-
-                    $this->checkNewMatchedCombination($value['Values']);
-                    if ($value['Values']['0']['Shop']['Key'] === 'all') {
-                        $newValue = array();
-                        $i = 0;
-                        $matchedMpValue = $value['Values']['0']['Marketplace']['Value'];
-
-                        foreach ($this->getShopAttributeValues($value['Code']) as $keyAttribute => $valueAttribute) {
-                            $newValue[$i]['Shop']['Key'] = $keyAttribute;
-                            $newValue[$i]['Shop']['Value'] = $valueAttribute;
-                            $newValue[$i]['Marketplace']['Key'] = $value['Values']['0']['Marketplace']['Key'];
-                            $newValue[$i]['Marketplace']['Value'] = $value['Values']['0']['Marketplace']['Value'];
-                            // $matchedMpValue can be array if it is multi value, so that`s why this is checked and converted to
-                            // string if it is. That is done because this information will be displayed in matched table.
-                            $newValue[$i]['Marketplace']['Info'] = (is_array($matchedMpValue) ? implode(', ', $matchedMpValue)
-                                    : $matchedMpValue).$sInfo;
-                            $i++;
+                        if ($value['Values']['0']['Marketplace']['Key'] === 'reset') {
+                            $aMatching[$key]['Values'] = array();
+                            continue;
                         }
 
-                        $value['Values'] = $newValue;
-                    } else {
-                        foreach ($value['Values'] as $k => &$v) {
-                            if (empty($v['Marketplace']['Info'])) {
-                                // $v['Marketplace']['Value'] can be array if it is multi value, so that`s why this is checked
-                                // and converted to string if it is. That is done because this information will be displayed in matched
-                                // table.
-                                $v['Marketplace']['Info'] = (is_array($v['Marketplace']['Value']) ?
-                                        implode(', ', $v['Marketplace']['Value']) : $v['Marketplace']['Value']).$sInfo;
+                        if ($value['Values']['0']['Marketplace']['Key'] === 'manual') {
+                            $sInfo = self::getMessage('_prepare_variations_free_text_add');
+                            if (empty($sFreeText)) {
+                                if ($savePrepare || $isSelectedAttribute) {
+                                    if ($savePrepare) {
+                                        $aErrors[] = $sAttributeName.self::getMessage('_prepare_variations_error_free_text');
+                                    }
+                                    $value['Error'] = true;
+                                }
+
+                                unset($value['Values']['0']);
+                                continue;
+                            }
+
+                            $value['Values']['0']['Marketplace']['Value'] = $sFreeText;
+                        }
+
+                        if ($value['Values']['0']['Marketplace']['Key'] === 'auto') {
+                            $addNotAllValuesMatchedNotice = !$this->autoMatch($sIdentifier, $key, $value);
+                            continue;
+                        }
+
+                        $this->checkNewMatchedCombination($value['Values']);
+                        if ($value['Values']['0']['Shop']['Key'] === 'all') {
+                            $newValue = array();
+                            $i = 0;
+                            $matchedMpValue = $value['Values']['0']['Marketplace']['Value'];
+
+                            foreach ($this->getShopAttributeValues($value['Code']) as $keyAttribute => $valueAttribute) {
+                                $newValue[$i]['Shop']['Key'] = $keyAttribute;
+                                $newValue[$i]['Shop']['Value'] = $valueAttribute;
+                                $newValue[$i]['Marketplace']['Key'] = $value['Values']['0']['Marketplace']['Key'];
+                                $newValue[$i]['Marketplace']['Value'] = $value['Values']['0']['Marketplace']['Value'];
+                                // $matchedMpValue can be array if it is multi value, so that`s why this is checked and converted to
+                                // string if it is. That is done because this information will be displayed in matched table.
+                                $newValue[$i]['Marketplace']['Info'] = (is_array($matchedMpValue) ? implode(', ', $matchedMpValue)
+                                        : $matchedMpValue).$sInfo;
+                                $i++;
+                            }
+
+                            $value['Values'] = $newValue;
+                        } else {
+                            foreach ($value['Values'] as $k => &$v) {
+                                if (empty($v['Marketplace']['Info'])) {
+                                    // $v['Marketplace']['Value'] can be array if it is multi value, so that`s why this is checked
+                                    // and converted to string if it is. That is done because this information will be displayed in matched
+                                    // table.
+                                    $v['Marketplace']['Info'] = (is_array($v['Marketplace']['Value']) ?
+                                            implode(', ', $v['Marketplace']['Value']) : $v['Marketplace']['Value']).$sInfo;
+                                }
                             }
                         }
                     }
@@ -642,6 +650,23 @@ abstract class ML_Form_Controller_Widget_Form_VariationsAbstract extends ML_Form
             $aReturn = $bFreeText ? '' : array();
         }
         return $aReturn;
+    }
+
+    protected function getUseShopValues($sIdentifier, $sCustomIdentifier, $sAttributeCode = null) {
+        $aValue = $this->getAttributesFromDB($sIdentifier, $sCustomIdentifier);
+        $result = null;
+        if ($aValue) {
+            if ($sAttributeCode !== null) {
+                foreach ($aValue as $sKey => $aMatch) {
+                    if ($sKey === $sAttributeCode && isset($aMatch['UseShopValues'])) {
+                        $result = $aMatch['UseShopValues'];
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 
     protected function getErrorValue($sIdentifier, $sCustomIdentifier, $sAttributeCode) {

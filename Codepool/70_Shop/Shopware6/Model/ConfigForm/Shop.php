@@ -213,13 +213,16 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
             foreach ($CustomeFildSetEntites as $value) {
                 if (!empty($value->getConfig())) {
                     $Label = '';
-                    foreach ($value->getConfig()['label'] as $index => $value2) {
-                        if ($LangCode === $index) {
-                            $Label = $value2;
-                        } elseif (!isset($value->getConfig()['label'][$LangCode])) {
-                            $Label = $value2;
+                    if (!empty($value->getConfig()['label']) && is_array($value->getConfig()['label'])) {
+                        foreach ($value->getConfig()['label'] as $index => $value2) {
+                            if ($LangCode === $index) {
+                                $Label = $value2;
+                            } elseif (!isset($value->getConfig()['label'][$LangCode])) {
+                                $Label = $value2;
+                            }
                         }
-                    }
+                    } else
+                        MLMessage::gi()->addDebug(__LINE__ . ':' . microtime(true), array());
                     if (empty($Label)) {
                         $Label = $value->getName();
                     } else {
@@ -242,7 +245,7 @@ class ML_Shopware6_Model_ConfigForm_Shop extends ML_Shop_Model_ConfigForm_Shop_A
             foreach ($CustomeFildSetEntites as $value) {
                 if (!empty($value->getConfig())) {
                     $Label = '';
-                    if (!empty($value->getConfig()['label'])) {
+                    if (!empty($value->getConfig()['label']) && is_array($value->getConfig()['label'])) {
                         foreach ($value->getConfig()['label'] as $index => $value2) {
                             if ($LangCode === $index) {
                                 $Label = $value2;

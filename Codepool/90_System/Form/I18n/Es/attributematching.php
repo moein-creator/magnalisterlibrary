@@ -27,3 +27,4 @@ MLI18n::gi()->{'Product_DefaultAttribute_LengthUnit'} = 'Largo: unidad (por ejem
 MLI18n::gi()->{'Product_DefaultAttribute_HeightWithUnit'} = 'Alto: valor incl. unidad (por ejemplo, 100 cm)';
 MLI18n::gi()->{'Product_DefaultAttribute_HeightValue'} = 'Alto: valor (en números, por ejemplo, 100)';
 MLI18n::gi()->{'Product_DefaultAttribute_HeightUnit'} = 'Alto: unidad (por ejemplo, cm)';
+MLI18n::gi()->{'AttributeMatching_AutoMatching_UseShopValue'} = 'Utilizar el valor proporcionado por la tienda web';

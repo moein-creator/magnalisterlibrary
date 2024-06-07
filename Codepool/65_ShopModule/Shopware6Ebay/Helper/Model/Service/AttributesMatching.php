@@ -42,8 +42,8 @@ class ML_Shopware6Ebay_Helper_Model_Service_AttributesMatching extends ML_Ebay_H
         if (!$this->valueIsEmpty($shopAttribute['value']) && ($shopAttribute['type'] === $class::Shop_Attribute_Type_Key_Text)) {
             return $shopAttribute['value'];
         }
-
-        $MultiplyPropertiesStringValueConvertToArray = explode(',', $shopAttribute['value']);
+         //magnalister already separate character by ',,' to prevent separate character that contains ','
+        $MultiplyPropertiesStringValueConvertToArray = explode(',,', $shopAttribute['value']);
         $MultiplyValueString = $shopAttribute['value'];
         $multiplyattributeValue = '';
         foreach ($MultiplyPropertiesStringValueConvertToArray as $value) {

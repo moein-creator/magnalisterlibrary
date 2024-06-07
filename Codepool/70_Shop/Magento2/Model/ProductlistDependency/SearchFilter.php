@@ -29,9 +29,12 @@ class ML_Magento2_Model_ProductListDependency_SearchFilter extends ML_Shop_Model
         if (!empty($sFilterValue)) {
             $sFilterValue = str_replace("'", "''", $sFilterValue);
             // query to search the variations
-            $result =  MLDatabase::getDbInstance()->fetchArray('SELECT ts.parent_id FROM `catalog_product_relation` AS ts
-                            INNER JOIN `catalog_product_entity` AS es ON es.entity_id = ts.child_id
-                            INNER JOIN `catalog_product_entity_varchar` AS vs ON es.entity_id = vs.entity_id
+            $productTable = MLMagento2Alias::getMagento2Db()->getTableName('catalog_product_entity');
+            $productRelation =MLMagento2Alias::getMagento2Db()->getTableName('catalog_product_relation');
+            $productVarChar =MLMagento2Alias::getMagento2Db()->getTableName('catalog_product_entity_varchar');
+            $result =  MLDatabase::getDbInstance()->fetchArray('SELECT ts.parent_id FROM `'.$productRelation.'` AS ts
+                            INNER JOIN `'.$productTable.'` AS es ON es.entity_id = ts.child_id
+                            INNER JOIN `'.$productVarChar.'` AS vs ON es.entity_id = vs.entity_id
                             WHERE vs.value LIKE \'%'.$sFilterValue.'%\'
                             OR es.entity_id = \''.$sFilterValue.'\'
                             OR es.sku = \''.$sFilterValue.'\'', true);

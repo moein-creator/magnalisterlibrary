@@ -248,7 +248,7 @@ class ML_Shopware6_Model_Order extends ML_Shop_Model_Order_Abstract {
         if ($blCount) {
             return $oQueryBuilder->getCount();
         } else {
-            $aOrders = $oQueryBuilder->limit($iOffset, 100)
+            $aOrders = $oQueryBuilder->limit($iOffset, 50)
                 ->getResult();
 
             if (!is_array($aOrders)) {

@@ -327,7 +327,7 @@ class ML_ShopwareCloud_Model_Order extends ML_Shop_Model_Order_Abstract {
                 $oShopwareStateMachineHistoryRequest = new ShopwareStateMachineHistory($sShopId);
                 $oHistory = $oShopwareStateMachineHistoryRequest->getStateMachineHistory('/api/search/state-machine-history', 'POST', $filter, false);
 
-                if (count($oHistory->getData())) {
+                if (is_array($oHistory->getData()) && count($oHistory->getData())) {
                     $mTime = date_format(new DateTime($oHistory->getData()[0]->getAttributes()->getCreatedAt()), "Y-m-d H:i:s");
                 }
             }
@@ -524,4 +524,26 @@ class ML_ShopwareCloud_Model_Order extends ML_Shop_Model_Order_Abstract {
         }
         return $sReturn;
     }
+
+    public function getLogo() {
+        if ($this->get('platform') !== null) {
+            if ($this->get('logo') !== null) {
+                $sLogo = $this->get('logo');
+            } else {
+                $sOrderLogoClass = 'ML_' . ucfirst($this->get('platform')) . '_Model_OrderLogo';
+                if (class_exists($sOrderLogoClass, false)) {
+                    $oOrderLogo = new $sOrderLogoClass;
+                    $sLogo = $oOrderLogo->getLogo($this);
+                    $this->set('logo', $sLogo);
+                } else {
+                    return null;
+                }
+            }
+            return MLHttp::gi()->getResourceUrl('images/logos/' . $sLogo, true);
+        } else {
+            return null;
+        }
+    }
+
+
 }

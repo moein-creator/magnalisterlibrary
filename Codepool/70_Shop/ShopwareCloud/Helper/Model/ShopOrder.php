@@ -923,9 +923,10 @@ class ML_ShopwareCloud_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopO
                 'vatIds'                 => $vatIds,
             ];
 
-        $blNewShippingAddress = $this->checkForDuplicateAddress($mDefaultShippingAddress, $sCustomerId);
-        $blNewBillingAddress = $this->checkForDuplicateAddress($mDefaultBillingAddress, $sCustomerId);
-
+        if (!$blNewCustomer) {
+            $blNewShippingAddress = $this->checkForDuplicateAddress($mDefaultShippingAddress, $sCustomerId);
+            $blNewBillingAddress = $this->checkForDuplicateAddress($mDefaultBillingAddress, $sCustomerId);
+        }
 
         if (($blNewCustomer || $this->isNewAddress() || $this->oExistingOrder === null)) {
             if ($blNewShippingAddress || $blNewCustomer) {
@@ -1509,9 +1510,6 @@ class ML_ShopwareCloud_Helper_Model_ShopOrder extends ML_Shop_Helper_Model_ShopO
     }
 
     /**
-     * NOTE:
-     *  Error "Field 'orders_id' doesn't have a default value (1364)" could occur and can be ignored
-     *  It's because new orders doesn't exists at this moment this function is triggered
      *
      * @param array $aData
      * @return string

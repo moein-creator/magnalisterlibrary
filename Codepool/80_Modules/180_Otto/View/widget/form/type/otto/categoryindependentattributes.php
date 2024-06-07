@@ -181,11 +181,12 @@ $i18n = $this->getFormArray('aI18n');
 
         if (!empty($aSelectField['value'])) {
             $aSelectField['values'] = $aShopAttributes;
-        
-            // remove Variations from Brand matching
-            if ($key === current(unpack('H*', 'Brand')) )  {
-                unset($aSelectField['values']['Variations']);
-            }
+        }
+
+        // remove Variations from Brand matching
+        if ($key === current(unpack('H*', 'Brand')) )  {
+            $aSelectField['values'] = $aShopAttributes;
+            unset($aSelectField['values']['Variations']);
         }
 
         $aSelectField['isAttributeMatching'] = true;

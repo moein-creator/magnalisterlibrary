@@ -146,6 +146,22 @@ class ML_Modul_Helper_Model_Service_AttributesMatching
             if (!empty($filterBy) && !in_array($attribute['Code'], $filterBy)) {
                 continue;
             }
+            if (isset($attribute['UseShopValues']) && $attribute['UseShopValues']) {
+                $shopAttributeValues =  MLFormHelper::getPrepareAMCommonInstance()->getShopAttributeValues($attribute['Code']);
+                foreach ($shopAttributeValues as $shopAttributeId => $shopAttributeName) {
+                    $attribute['Values'][] = array(
+                        'Shop' => array(
+                            'Key' => $shopAttributeId,
+                            'Value' => $shopAttributeName,
+                        ),
+                        'Marketplace' => array(
+                            'Key' => $shopAttributeName,
+                            'Value' => $shopAttributeName,
+                            'Info' => $shopAttributeName . MLI18n::gi()->get('attributes_matching_type_auto_matched'),
+                        )
+                    );
+                }
+            }
 
             if (!isset($attribute['Values']) || $this->valueIsEmpty($attribute['Values'])) {
                 continue;

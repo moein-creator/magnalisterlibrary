@@ -515,100 +515,116 @@ abstract class ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstra
                 $value['Error'] = false;
                 // Flag used for validating only those attributes for which save or delete button is pressed.
                 $isSelectedAttribute = $key === $aActions['prepareaction'];
-                $this->transformMatching($value);
-                $this->validateCustomAttributes($key, $value, $previouslyMatchedAttributes, $aErrors, $emptyCustomName,
-                    $savePrepare, $isSelectedAttribute, $numberOfMatchedAdditionalAttributes);
-                $this->removeCustomAttributeHint($value);
 
-                $sAttributeName = $value['AttributeName'];
-                // If variation theme is sent in request and submitted attribute is in attributes of variation theme
-                // that is variation theme attribute for which validation should be the same as for required attribute.
-                $isVariationThemeAttribute = $variationThemeExists && in_array($key, $variationThemeAttributes);
+                // this field is only available on attributes that are FreeText Kind
+                // this is used to improve auto matching if checked no matched values will be saved
+                // we will use shop values and do the matching during product upload
+                if (isset($value['UseShopValues']) && $value['UseShopValues'] === '1') {
+                    $value['Values'] = array();
+                } else {
+                    $this->transformMatching($value);
+                    $this->validateCustomAttributes($key, $value, $previouslyMatchedAttributes, $aErrors, $emptyCustomName,
+                        $savePrepare, $isSelectedAttribute, $numberOfMatchedAdditionalAttributes);
+                    $this->removeCustomAttributeHint($value);
 
-                if (!isset($value['Code'])) {
-                    // this will happen only if attribute was matched and then it was deleted from the shop
-                    $value['Code'] = '';
-                }
+                    $sAttributeName = $value['AttributeName'];
+                    // If variation theme is sent in request and submitted attribute is in attributes of variation theme
+                    // that is variation theme attribute for which validation should be the same as for required attribute.
+                    $isVariationThemeAttribute = $variationThemeExists && in_array($key, $variationThemeAttributes);
 
-                $this->setValidatedDataForRequiredOrVariationThemeAttribute(
-                    $value,
-                    $isVariationThemeAttribute,
-                    $savePrepare,
-                    $isSelectedAttribute,
-                    $sAttributeName,
-                    $aMatching,
-                    $aErrors,
-                    $key
-                );
+                    if (!isset($value['Code'])) {
+                        // this will happen only if attribute was matched and then it was deleted from the shop
+                        $value['Code'] = '';
+                    }
 
-                if (!$this->attributeIsMatched($value) || !is_array($value['Values']) ||
-                    !isset($value['Values']['FreeText'])
-                ) {
-                    continue;
-                }
+                    $this->setValidatedDataForRequiredOrVariationThemeAttribute(
+                        $value,
+                        $isVariationThemeAttribute,
+                        $savePrepare,
+                        $isSelectedAttribute,
+                        $sAttributeName,
+                        $aMatching,
+                        $aErrors,
+                        $key
+                    );
 
-                $sInfo = self::getMessage('_prepare_variations_manualy_matched');
-                $sFreeText = $value['Values']['FreeText'];
-                unset($value['Values']['FreeText']);
-                $isNoSelection = $value['Values']['0']['Shop']['Key'] === 'noselection'
-                    || $value['Values']['0']['Marketplace']['Key'] === 'noselection';
+                    // this field is only available on attributes that are FreeText Kind
+                    // this is used to improve auto matching if checked no matched values will be saved
+                    // we will use shop values and do the matching during product upload
+                    if (isset($value['UseShopValues']) && $value['UseShopValues'] === '1') {
+                        $value['Values'] = array();
+                    } else {
 
-                $this->setValidatedNoSelectionAttribute(
-                    $value,
-                    $isVariationThemeAttribute,
-                    $savePrepare,
-                    $isSelectedAttribute,
-                    $sAttributeName,
-                    $aErrors
-                );
+                        if (!$this->attributeIsMatched($value) || !is_array($value['Values']) ||
+                            !isset($value['Values']['FreeText'])
+                        ) {
+                            continue;
+                        }
 
-                if ($isNoSelection) {
-                    continue;
-                }
+                        $sInfo = self::getMessage('_prepare_variations_manualy_matched');
+                        $sFreeText = $value['Values']['FreeText'];
+                        unset($value['Values']['FreeText']);
+                        $isNoSelection = $value['Values']['0']['Shop']['Key'] === 'noselection'
+                            || $value['Values']['0']['Marketplace']['Key'] === 'noselection';
 
-                if ($value['Values']['0']['Marketplace']['Key'] === 'reset') {
-                    $aMatching[$key]['Values'] = array();
-                    continue;
-                }
+                        $this->setValidatedNoSelectionAttribute(
+                            $value,
+                            $isVariationThemeAttribute,
+                            $savePrepare,
+                            $isSelectedAttribute,
+                            $sAttributeName,
+                            $aErrors
+                        );
 
-                // here is useful for first matching not updating matched value
-                if ($value['Values']['0']['Marketplace']['Key'] === 'manual') {
-                    $sInfo = self::getMessage('_prepare_variations_free_text_add');
-                    if (empty($sFreeText)) {
-                        if ($this->shouldValidateAttribute($savePrepare, $isSelectedAttribute)) {
-                            if ($savePrepare) {
-                                $aErrors[] = $key . self::getMessage('_prepare_variations_error_free_text');
+                        if ($isNoSelection) {
+                            continue;
+                        }
+
+                        if ($value['Values']['0']['Marketplace']['Key'] === 'reset') {
+                            $aMatching[$key]['Values'] = array();
+                            continue;
+                        }
+
+                        // here is useful for first matching not updating matched value
+                        if ($value['Values']['0']['Marketplace']['Key'] === 'manual') {
+                            $sInfo = self::getMessage('_prepare_variations_free_text_add');
+                            if (empty($sFreeText)) {
+                                if ($this->shouldValidateAttribute($savePrepare, $isSelectedAttribute)) {
+                                    if ($savePrepare) {
+                                        $aErrors[] = $key.self::getMessage('_prepare_variations_error_free_text');
+                                    }
+                                    $value['Error'] = true;
+                                }
+
+                                unset($value['Values']['0']);
+                                continue;
                             }
-                            $value['Error'] = true;
+
+                            $value['Values']['0']['Marketplace']['Value'] = $sFreeText;
                         }
 
-                        unset($value['Values']['0']);
-                        continue;
-                    }
+                        if ($value['Values']['0']['Marketplace']['Key'] === 'auto') {
+                            $this->autoMatch($sIdentifier, $key, $value);
+                            $value['Values'] = $this->fixAttributeValues($value['Values']);
+                            // Validate if auto match didn't find any matching
+                            if (empty($value['Values']) &&
+                                $this->isRequiredAttribute($value, $isVariationThemeAttribute) &&
+                                $this->shouldValidateAttribute($savePrepare, $isSelectedAttribute)
+                            ) {
+                                if ($savePrepare) {
+                                    $aErrors[] = self::getMessage('_prepare_variations_error_text',
+                                        array('attribute_name' => $sAttributeName));
+                                }
 
-                    $value['Values']['0']['Marketplace']['Value'] = $sFreeText;
-                }
-
-                if ($value['Values']['0']['Marketplace']['Key'] === 'auto') {
-                    $this->autoMatch($sIdentifier, $key, $value);
-                    $value['Values'] = $this->fixAttributeValues($value['Values']);
-                    // Validate if auto match didn't find any matching
-                    if (empty($value['Values']) &&
-                        $this->isRequiredAttribute($value, $isVariationThemeAttribute) &&
-                        $this->shouldValidateAttribute($savePrepare, $isSelectedAttribute)
-                    ) {
-                        if ($savePrepare) {
-                            $aErrors[] = self::getMessage('_prepare_variations_error_text',
-                                array('attribute_name' => $sAttributeName));
+                                $value['Error'] = true;
+                            }
+                            continue;
                         }
 
-                        $value['Error'] = true;
+                        $this->checkNewMatchedCombination($value['Values']);
+                        $this->setAttributeValues($value, $sInfo);
                     }
-                    continue;
                 }
-                
-                $this->checkNewMatchedCombination($value['Values']);
-                $this->setAttributeValues($value, $sInfo);
             }
             
             if ($savePrepare && $numberOfMatchedAdditionalAttributes > $maxNumberOfAdditionalAttributes) {
@@ -1087,7 +1103,6 @@ abstract class ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstra
     protected function getAttributeValues($sIdentifier, $sCustomIdentifier, $sAttributeCode = null, $bFreeText = false)
     {
         $aValue = $this->getPreparedData($sIdentifier, $sCustomIdentifier);
-
         if ($aValue) {
             if ($sAttributeCode !== null) {
                 foreach ($aValue as $sKey => $aMatch) {
@@ -1105,6 +1120,23 @@ abstract class ML_Form_Controller_Widget_Form_PrepareWithVariationMatchingAbstra
         }
 
         return array();
+    }
+
+    protected function getUseShopValues($sIdentifier, $sCustomIdentifier, $sAttributeCode = null) {
+        $aValue = $this->getPreparedData($sIdentifier, $sCustomIdentifier);
+        $result = null;
+        if ($aValue) {
+            if ($sAttributeCode !== null) {
+                foreach ($aValue as $sKey => $aMatch) {
+                    if ($sKey === $sAttributeCode && isset($aMatch['UseShopValues'])) {
+                        $result = $aMatch['UseShopValues'];
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 
     protected function getShopAttributes()

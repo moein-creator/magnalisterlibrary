@@ -21,7 +21,15 @@ $oI18n = MLI18n::gi();
                 }
             } elseif ($sKey == 'MOrderID') {
                 $aOrderData = $oOrder->get('orderdata');
-                $sDate = isset($aOrderData['Order']['DatePurchased'])?$aOrderData['Order']['DatePurchased']:'--';
+                if (isset($aOrderData['Order']['DatePurchased'])) {
+                    $oDate = new DateTime($aOrderData['Order']['DatePurchased']);
+                    if (is_string(MLShop::gi()->getTimeZoneOnlyForShow())) {
+                        $oDate->setTimezone(new DateTimeZone(MLShop::gi()->getTimeZoneOnlyForShow()));
+                    }
+                    $sDate = $oDate->format('Y-m-d H:i:s');
+                } else {
+                    $sDate = '--';
+                }
             } elseif ($sKey == 'OttoOrderId') {
                 //removed duplicated id for OTTO implementation
                 continue;

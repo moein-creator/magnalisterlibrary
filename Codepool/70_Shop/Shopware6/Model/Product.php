@@ -48,6 +48,11 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
      * @var Context
      */
     protected $oShopwareContext;
+    /**
+     * @var mixed|null
+     */
+    protected $oMasterProductEntityWithDefault;
+    protected $oCorrespondingProductEntityWithDefault;
 
     /**
      * @return $this|ML_Shop_Model_Product_Abstract
@@ -91,11 +96,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
         try {
             $aConfig = MLModule::gi()->getConfig();
             $iLangId = $aConfig['lang'];
-            $currency = MLShopware6Alias::getRepository('currency')
-                ->search((new Criteria())->addFilter(new EqualsFilter('isoCode', (string)$aConfig['currency'])), Context::createDefaultContext())->first();
-            if ($currency == null) {
-                throw new Exception('Currency '.$aConfig['currency'].' doesn\'t exist in your shop ');
-            }
+            $currency = $this->getCurrencyWithISO($aConfig['currency']);
 
             try {
                 if (Uuid::isValid($iLangId)) {
@@ -703,7 +704,7 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                 $sMasterProductName = $oProduct3->getName().$attribute;
             }
         } elseif ($this->getCorrespondingProductEntity()->getName() == null && $this->getCorrespondingProductEntity()->getParentId() == null) {
-            $oProduct2 = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getId(), Context::createDefaultContext());
+            $oProduct2 = $this->getCorrespondingProductEntityWithDefault();
             $sMasterProductName = $oProduct2->getName().$attribute;
         } else {
             $sMasterProductName = $this->getCorrespondingProductEntity()->getName().$attribute;
@@ -1236,7 +1237,8 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
                             $mPropertyValue = $DefaultLangOptionPropertiesEntities->getName();
                         }
                         if ($blMultiValue) {
-                            $mValue .= (($mValue === '') ? '' : ',') . $mPropertyValue;
+                            //adding ',,' separator character to prevent separate character that contains ','
+                            $mValue .= (($mValue === '') ? '' : ',,') . $mPropertyValue;
                         } else {
                             $mValue = $mPropertyValue;
                             break;
@@ -1247,11 +1249,13 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
         } elseif (strpos($sName, 'c_') === 0) {
             $sName = substr($sName, 2);
             if (isset($this->getCorrespondingProductEntity()->getCustomFields()[$sName])) {
-                $aAttribute['value'] = $this->getCorrespondingProductEntity()->getCustomFields()[$sName];
-                $mValue = $aAttribute['value'];
+                $mValue = $this->getCorrespondingProductEntity()->getCustomFields()[$sName];
             } else if (isset($this->getMasterProductEntity()->getCustomFields()[$sName])) {
-                $aAttribute['value'] = $this->getMasterProductEntity()->getCustomFields()[$sName];
-                $mValue = $aAttribute['value'];
+                $mValue = $this->getMasterProductEntity()->getCustomFields()[$sName];
+            } else if (isset($this->getCorrespondingProductEntityWithDefault()->getCustomFields()[$sName])) {
+                $mValue = $this->getCorrespondingProductEntityWithDefault()->getCustomFields()[$sName];
+            } else if (isset($this->getMasterProductEntityWithDefault()->getCustomFields()[$sName])) {
+                $mValue = $this->getMasterProductEntityWithDefault()->getCustomFields()[$sName];
             }
         } else {
             if (method_exists($this->getCorrespondingProductEntity(), 'get'.$sName)) {
@@ -1886,6 +1890,33 @@ class ML_Shopware6_Model_Product extends ML_Shop_Model_Product_Abstract {
             }
         }
         return $mValue;
+    }
+
+    protected function getCurrencyWithISO($currency1) {
+        $currency = MLShopware6Alias::getRepository('currency')
+            ->search((new Criteria())->addFilter(new EqualsFilter('isoCode', (string)$currency1)), Context::createDefaultContext())->first();
+        if ($currency == null) {
+            throw new Exception('Currency ' . $currency1 . ' doesn\'t exist in your shop ');
+        }
+        return $currency;
+    }
+
+    protected function getCorrespondingProductEntityWithDefault() {
+        if ($this->oCorrespondingProductEntityWithDefault === null) {
+            $this->oCorrespondingProductEntityWithDefault = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getId(), Context::createDefaultContext());
+        }
+        return $this->oCorrespondingProductEntityWithDefault;
+    }
+
+    protected function getMasterProductEntityWithDefault() {
+        if ($this->oMasterProductEntityWithDefault === null) {
+            if ($this->getCorrespondingProductEntity()->getParent() !== null) {
+                $this->oMasterProductEntityWithDefault = $this->getShopwareProduct($this->getCorrespondingProductEntity()->getParentId(), Context::createDefaultContext());
+            } else {
+                $this->oMasterProductEntityWithDefault = $this->getCorrespondingProductEntityWithDefault();
+            }
+        }
+        return $this->oMasterProductEntityWithDefault;
     }
 
 

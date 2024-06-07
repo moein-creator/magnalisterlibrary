@@ -108,7 +108,8 @@ class ML_Form_Helper_Controller_Widget_Form_PrepareAMCommon {
         ));
         if (MLModule::gi()->isNeededPackingAttrinuteName()) {
             $aCodedKeys = array();
-            foreach ($aCategoryDetails['DATA']['attributes'] as $aCategoryDetail) {
+            $attributes = isset($aCategoryDetails['DATA']['attributes']) && isset($aCategoryDetails['DATA']['attributes']) ? $aCategoryDetails['DATA']['attributes'] : array();
+            foreach ($attributes as $aCategoryDetail) {
                 $aCodedKeys[current(unpack('H*', $aCategoryDetail['name']))] = $aCategoryDetail;
             }
             $aCategoryDetails['DATA']['attributes'] = $aCodedKeys;

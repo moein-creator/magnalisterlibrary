@@ -24,7 +24,8 @@ class ML_Magento_Model_Order extends ML_Shop_Model_Order_Abstract {
      */
     public function getShopOrder() {
         if ($this->oCurrentOrder === null) {
-            $this->oCurrentOrder = Mage::getModel('sales/order')->loadByIncrementId($this->get('current_orders_id'));
+            $iStoreId = (int)MLModule::gi()->getConfig('lang');
+            $this->oCurrentOrder = Mage::getModel('sales/order')->loadByIncrementId($this->get('current_orders_id'))->setStoreId($iStoreId);
         }
         return $this->oCurrentOrder;
     }
