@@ -1,3 +1,0 @@
-it is possible set blDebug via .htaccess.
-
-SetEnv ML_DEBUG true
